@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+#------------------------------------------------------------------#
+  synaps-back:
+    build:
+      context: ./Synaps-back
+      dockerfile: Dockerfile
+    container_name: synaps-back
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Synaps-back:/var/www
+    depends_on:
+      - mariadb
+      - redis
+    environment:
+      #------------------------------------------------------------------#
+      # Variables necesarias para Laravel
+      - APP_ENV=local
+      - APP_KEY=
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8000
+      - DB_CONNECTION=mysql
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_DATABASE=synaps
+      - DB_USERNAME=root
+      - DB_PASSWORD=rootpassword
+      - BROADCAST_DRIVER=redis
+      - CACHE_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - SESSION_DRIVER=redis
+      - REDIS_HOST=redis
+      #------------------------------------------------------------------#
+#------------------------------------------------------------------#
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+#------------------------------------------------------------------#
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=synaps
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+#------------------------------------------------------------------#
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    environment:
+      - PMA_HOST=mariadb
+      - PMA_USER=root
+      - PMA_PASSWORD=rootpassword
+    ports:
+      - "8082:80"
+    depends_on:
+      - mariadb
+#------------------------------------------------------------------#
+  redis-ws-bridge:
+    image: node:18
+    container_name: redis-ws-bridge
+    working_dir: /app
+    volumes:
+      - ./redis-ws-bridge:/app
+    command: ["npm", "start"]
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - WS_PORT=8082
+#------------------------------------------------------------------#
+
+volumes:
+  mariadb_data:
+  redis_data:
+#------------------------------------------------------------------#

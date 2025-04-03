@@ -1,0 +1,9 @@
+By :IanP 
+
+Usar Los comando npm install para instalar las dependecias que he creado para el uso del compilador de nest para este programa (npm install)
+
+Levantar TODOS los contenedores del docker
+
+Instalar Larabel (Si no lo teneis)
+
+Levanar los contenedores haciendo uso de AWS (Ubuntu) debe verse como en la foto AWS_Ubuntu.png
