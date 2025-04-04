@@ -1,133 +1,118 @@
-🧠 Resumen completo del avance del TFC – Proyecto Synaps
-📁 Estructura modular del proyecto
-Ubicada dentro de TFC/Synaps/:
+# Synaps
 
-bash
-Copiar
-Editar
+Synaps es una plataforma modular de notas y gestión de conocimiento que integra en un solo entorno funciones avanzadas como bases de datos sincronizadas, visualización tipo galaxia, colaboración entre usuarios y sistema de notificaciones. Su objetivo es combinar lo mejor de herramientas como Obsidian y Notion, añadiendo capacidades únicas para una organización más inteligente y conectada de la información.
+
+## Estructura del proyecto
+
+```
 Synaps/
 ├── Synaps-back         # Laravel (gestión base de datos y lógica central)
 ├── Synaps-api          # NestJS (API extendida, lógica compilador, microservicios)
 ├── Synaps-front        # React + Univer.js (editor de tablas y cliente WebSocket)
 ├── redis-ws-bridge     # Node.js + Redis + WebSocket bridge
 └── docker-compose.yml  # Orquestación completa del sistema
-🔧 Infraestructura general configurada
-✅ docker-compose con Laravel, Redis, MariaDB, phpMyAdmin, WebSocket bridge y NestJS
+```
 
-✅ Laravel configurado con Redis como sistema de cola, broadcast, sesión y caché
+---
 
-✅ WebSocket bridge (Node.js) suscribiéndose a Redis y comunicando con el frontend
+## 🛠️ Infraestructura General Configurada
 
-✅ MariaDB persistente y accesible vía phpMyAdmin
+- ✅ `docker-compose` con Laravel, Redis, MariaDB, phpMyAdmin, WebSocket bridge y NestJS
+- ✅ Laravel configurado con Redis como sistema de **cola**, **broadcast**, **sesión** y **caché**
+- ✅ WebSocket bridge (Node.js) suscribiéndose a Redis y comunicando con el frontend
+- ✅ MariaDB persistente y accesible vía phpMyAdmin
+- ✅ Volúmenes Docker para Redis y MySQL
 
-✅ Volúmenes Docker para Redis y MySQL
+---
 
-🧱 Backend
-Laravel (Synaps-back)
+## 🧱 Backend
 
-Configurado para Redis
+### 📦 Laravel (`Synaps-back`)
+- Configurado para Redis
+- Dockerizado
+- Esperando endpoints y lógica de negocio
 
-Dockerizado
+### 🧠 NestJS (`Synaps-api`)
+- Proyecto creado y limpiado (sin Keycloak)
+- Estructura lista con TypeORM, Axios, Config, Jest
+- Dockerfile listo para producción
 
-Esperando endpoints y lógica de negocio
+---
 
-NestJS (Synaps-api)
+## 🔁 WebSocket & Redis (`redis-ws-bridge`)
 
-Proyecto creado y limpiado (sin Keycloak)
+| Componente            | Funcionalidad                                                    |
+|-----------------------|------------------------------------------------------------------|
+| 🌐 WebSocket Server   | Comunicación en tiempo real con clientes frontend                |
+| 📢 Suscripción Redis  | Escucha canales `backend:updates:*`                              |
+| 📤 Publicación Redis  | Emite en canales `frontend:updates:*`                            |
+| 🔑 Gestión de tokens  | Autenticación y control de clientes WebSocket                    |
+| 📦 Dockerizado        | Puente en contenedor entre backend (Redis) y frontend (React)    |
 
-Estructura lista con TypeORM, Axios, Config, Jest
+---
 
-Dockerfile listo para producción
+## 🎨 Frontend (`Synaps-front`)
 
-🌐 WebSocket & Redis
-Servicio redis-ws-bridge creado con:
+- Creado con `create-react-app`
+- Estructura optimizada sin subcarpetas innecesarias
+- 🧩 React 18, `socket.io-client`, `ag-grid-react`, polyfills
+- 🧾 `@univerjs/core@0.6.9` para hojas de cálculo tipo Excel
+- 🔧 Dependencias ajustadas manualmente (conflictos en NPM)
+- 🎯 Listo para conectar a WebSocket y renderizar el editor
 
-WebSocket server
+---
 
-Subcripción a canales Redis (backend:updates:*)
+## 🧰 Herramientas y Tecnologías Utilizadas
 
-Publicación en canales frontend:updates:*
+| Categoría              | Tecnologías                                                                             |
+|------------------------|----------------------------------------------------------------------------------------|
+| 🐳 Contenedores        | Docker, Docker Compose                                                                 |
+| 🧱 Backend             | Laravel 10, NestJS 10, Node.js 18                                                      |
+| 🎨 Frontend            | React 18, Univer.js 0.6.9, Socket.IO, ag-grid-react                                    |
+| 🧠 Comunicación        | Redis, WebSocket, redis-ws-bridge                                                      |
+| 🗄️ Bases de datos      | MariaDB, phpMyAdmin                                                                    |
+| 🧪 Dev Tools           | PostCSS, ESLint, Prettier, Jest, TypeScript, Babel                                     |
 
-Clientes gestionados por token
+---
 
-Dockerizado y funcionando como puente entre backend y frontend
+## 📡 Comunicación y Flujo de Trabajo
 
-🎨 Frontend (Synaps-front)
-Creado con create-react-app
+- Coordinado por **WhatsApp** y esta terminal
+- Referencias a proyectos previos: *calclic*, etc.
+- Enfoque progresivo:
+  1. Infraestructura
+  2. Backend
+  3. Frontend
 
-Estructura corregida (evitando subcarpetas innecesarias)
+---
 
-React 18, socket.io-client, ag-grid-react, polyfills listos
+## 📦 Función de `Synaps-api` (NestJS)
 
-Univer.js (@univerjs/core@0.6.9) añadido para hojas de cálculo
+**NestJS** es el núcleo lógico del sistema, actuando como middleware y cerebro orquestador:
 
-Dependencias configuradas manualmente por conflictos en NPM
+### 🔌 1. API Gateway / Middleware Inteligente
+- Conecta frontend con servicios (Laravel, WebSocket, Redis)
+- Intermedia peticiones y eventos en tiempo real
 
-Preparado para conectar con WebSocket y renderizar el editor
+### ⚙️ 2. Lógica de Negocio Extensible
+- Compilación, validación, procesamiento de datos
+- Adaptadores para Redis, WebSocket, otros servicios
+- Publica eventos a Redis, reenvía por WebSocket
 
-⚒️ Herramientas y tecnologías utilizadas
-Docker & Docker Compose
+### 🚀 3. Visión a Futuro: Microservicios, IA e Integraciones
+- Controladores REST / GraphQL
+- Workers asíncronos con Redis
+- Servicios independientes y escalables
+- Compiladores, reglas de validación, cálculo complejo
+- Comunicación fluida Laravel ↔ Nest ↔ Redis ↔ WebSocket ↔ React
 
-Laravel 10
+```mermaid
+flowchart LR
+A["Frontend React"] --> B["NestJS Synapsapi"]
+B --> C["Laravel Synapsback"]
+C --> D["MariaDB"]
+B --> E["Redis"]
+E --> F["rediswsbridge Nodejs"]
+F --> A
+```
 
-NestJS 10
-
-Node.js 18
-
-React 18
-
-Univer.js 0.6.9
-
-Socket.IO
-
-Redis
-
-MariaDB
-
-phpMyAdmin
-
-PostCSS, ESLint, Prettier, Jest, TS, Babel
-
-💬 Comunicación y flujo
-Coordinado por WhatsApp y esta terminal
-
-Uso compartido de referencias de proyectos anteriores (calclic, etc.)
-
-Enfoque progresivo: primero infra, luego backend, ahora frontend
-
-📦 ¿Qué función cumple Synaps-api (NestJS)?
-✅ Es el núcleo lógico y comunicador entre componentes
-Mientras Laravel (Synaps-back) gestiona la persistencia y negocio de base, NestJS actúa como el “cerebro orquestador” y:
-
-🔌 1. API Gateway / Middleware inteligente
-Conecta el frontend con otros servicios
-
-Hace de capa intermedia entre:
-
-Laravel (back principal)
-
-Redis y WebSocket (real-time)
-
-Frontend (React)
-
-⚙️ 2. Lógica de negocio compleja / extensible
-Si Laravel es más para BD y reglas puras, Nest puede manejar:
-
-Compilación, validación y procesamiento de datos
-
-Adaptadores para Redis, WebSocket y otros microservicios
-
-Transmisión de eventos (publicar a Redis, reenviar a sockets)
-
-🧠 3. Futuro del TFC: microservicios, IA, integraciones
-Se usa Nest para:
-
-Añadir controladores REST o GraphQL
-
-Ejecutar workers con colas (Redis)
-
-Modularizar en servicios independientes
-
-Integrar lógica de cálculo (compiladores, reglas, etc.)
-
-Comunicación entre Laravel ↔ Nest ↔ Redis ↔ WebSocket ↔ React
