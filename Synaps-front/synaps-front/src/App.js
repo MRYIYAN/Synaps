@@ -7,13 +7,13 @@ function App() {
       fetch("http://localhost:8010/api/hello")
       .then((res) => res.json())
       .then((data) => setMessage(data.message))
-      .catch((err) => setMessage("Error al conectar con el backend 😢"));
+      .catch((err) => setMessage("Error al conectar con el backend "));
   }, []);
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>Frontend React 🟦</h1>
-      <h2>Respuesta desde Laravel 🟨:</h2>
+      <h1>Frontend React </h1>
+      <h2>Respuesta desde  :</h2>
       <p>{message}</p>
     </div>
   );

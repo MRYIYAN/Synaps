@@ -116,3 +116,79 @@ E --> F["rediswsbridge Nodejs"]
 F --> A
 ```
 
+
+====================================================================================================================================================
+
+##                                                              🛠️ UPDATE: 04/04/25
+===================================================================================================================================================
+
+### 🔄 Refactor y configuración completa de entorno Synaps Backend en Docker
+
+#### 🔧 Configuración del entorno Laravel
+- Se corrigió la carga de rutas de la API (`routes/api.php`) para permitir respuestas desde `/api/hello`.
+- Se generó y enlazó correctamente el `RouteServiceProvider` para registrar los endpoints de `api.php`.
+- Se actualizaron los permisos dentro del contenedor (`www-data` y `chmod 755`) para garantizar accesibilidad al framework.
+- Se eliminó el uso de `php artisan serve`, ya que el entorno Docker usa Apache para servir la aplicación.
+
+#### 🐳 Docker y contenedores
+- Se definieron correctamente los servicios en `docker-compose.yml`:
+  - `synaps-back` (Laravel con PHP 8.2 + Apache)
+  - `synaps-mariadb` (Base de datos MariaDB, puerto personalizado `3307`)
+  - `synaps-redis` (Redis en puerto `6380`)
+  - `synaps-phpmyadmin` (Interfaz DB en `http://localhost:8083`)
+  - `synaps-redis-ws-bridge` (Node.js + WebSocket bridge)
+- Los contenedores fueron reconstruidos manualmente para evitar conflictos de nombres (`ContainerConfig`) y de puertos.
+- Se limpiaron contenedores huérfanos con `docker-compose down --volumes --remove-orphans`.
+
+#### 🌍 Configuración del entorno `.env` y CORS
+- Se actualizaron los valores del archivo `.env` para reflejar:
+  - Nuevos puertos personalizados
+  - Hostnames adaptados para los servicios de Docker (e.g., `synaps-mariadb`, `synaps-redis`)
+- Se habilitaron correctamente los headers CORS para permitir la comunicación desde el frontend (`localhost:3000`).
+
+#### 🔁 Sincronización con Frontend
+- Se conectó el Frontend React al Backend en el endpoint `http://localhost:8010/api/hello`.
+- Se validó la respuesta en tiempo real desde la aplicación cliente y el navegador.
+
+#### 🧪 Validaciones realizadas
+- Se limpió la cache de rutas y configuración (`php artisan route:clear`, `config:cache`, etc).
+- Se validaron rutas expuestas con `php artisan route:list`.
+- Se confirmó acceso al API desde navegador y aplicación cliente.
+
+---
+
+### 🔍 Arquitectura general
+1. **Frontend (React)**
+   - Interfaz amigable para cargar documentos, gestionar reglas y visualizar resultados.
+   - Comunicación vía HTTP (`fetch`) con la API de Laravel.
+   - Puerto `3000`.
+
+2. **Backend (Laravel en Docker)**
+   - Laravel actúa como el "cerebro" del compilador, procesando lógica de negocio, orquestando cálculos y ofreciendo endpoints API.
+   - Expone rutas como `/api/hello`, y próximamente `/api/compile`, `/api/upload`, etc.
+   - Puerto `8010`.
+
+3. **Contenedor de Redis**
+   - Maneja la cola de trabajos y comunicación WebSocket si es necesario para tareas en tiempo real.
+   - Redis puede ser utilizado por Laravel (via `phpredis`) para colas, caché y sesiones.
+
+4. **Base de Datos (MariaDB)**
+   - Almacena registros de reglas, historial de ejecuciones, usuarios y configuraciones del sistema.
+   - Accesible desde Laravel vía `DB_CONNECTION=mysql`.
+
+5. **WebSocket Bridge (Node.js)**
+   - Permite comunicar eventos del backend a través de WebSockets (usando Redis Pub/Sub).
+   - Ideal para notificar al frontend cuando una compilación ha terminado, por ejemplo.
+
+### ⚙️ Flujo del compilador (simplificado)
+1. El usuario sube un archivo desde el frontend.
+2. Laravel lo recibe y lo pasa al módulo de compilación.
+3. Se ejecutan transformaciones, cálculos o reglas personalizadas.
+4. Los resultados se almacenan o envían de vuelta como respuesta.
+5. Opcionalmente, se emite un evento a través de Redis/WebSocket.
+
+---
+
+✨ Todo el entorno fue construido desde cero, configurado, probado y validado para dejar funcionando **Synaps Backend en contenedor Docker** de forma estable y escalable.
+
+📝 _By IanP_
