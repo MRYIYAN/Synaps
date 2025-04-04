@@ -6,4 +6,4 @@ Levantar TODOS los contenedores del docker
 
 Instalar Larabel (Si no lo teneís)
 
-Levantar los contenedores haciendo uso de AWS (Ubuntu) debe verse como en la foto AWS_Ubuntu.png
+Levantar los contenedores haciendo uso de WSL (Ubuntu) debe verse como en la foto WSL_Ubuntu.png
