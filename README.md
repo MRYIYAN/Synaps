@@ -120,7 +120,7 @@ Adaptadores para Redis, WebSocket y otros microservicios
 Transmisión de eventos (publicar a Redis, reenviar a sockets)
 
 🧠 3. Futuro del TFC: microservicios, IA, integraciones
-Podés usar Nest para:
+Se usa Nest para:
 
 Añadir controladores REST o GraphQL
 

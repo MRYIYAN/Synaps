@@ -4,6 +4,6 @@ Usar Los comando npm install para instalar las dependecias que he creado para el
 
 Levantar TODOS los contenedores del docker
 
-Instalar Larabel (Si no lo teneis)
+Instalar Larabel (Si no lo teneís)
 
-Levanar los contenedores haciendo uso de AWS (Ubuntu) debe verse como en la foto AWS_Ubuntu.png
+Levantar los contenedores haciendo uso de AWS (Ubuntu) debe verse como en la foto AWS_Ubuntu.png
