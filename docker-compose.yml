@@ -1,87 +1,79 @@
+# Synaps Docker Compose File
+# By: Ian P
+# This version of Docker Compose file is designed to work with the Synaps project.
+# It includes services for Laravel, Redis, MariaDB, phpMyAdmin, and a Redis WebSocket bridge.
+
 version: '3.8'
 
 services:
 #------------------------------------------------------------------#
   synaps-back:
     build:
-      context: ./Synaps-back
+      context: ./Synaps-back/laravel
       dockerfile: Dockerfile
     container_name: synaps-back
     ports:
-      - "8000:8000"
+      - "8010:80" # Laravel en Apache
     volumes:
-      - ./Synaps-back:/var/www
+      - ./Synaps-back/laravel:/var/www/html
     depends_on:
-      - mariadb
-      - redis
+      - synaps-mariadb
     environment:
-      #------------------------------------------------------------------#
-      # Variables necesarias para Laravel
-      - APP_ENV=local
-      - APP_KEY=
-      - APP_DEBUG=true
-      - APP_URL=http://localhost:8000
-      - DB_CONNECTION=mysql
-      - DB_HOST=mariadb
-      - DB_PORT=3306
-      - DB_DATABASE=synaps
-      - DB_USERNAME=root
-      - DB_PASSWORD=rootpassword
-      - BROADCAST_DRIVER=redis
-      - CACHE_DRIVER=redis
-      - QUEUE_CONNECTION=redis
-      - SESSION_DRIVER=redis
-      - REDIS_HOST=redis
-      #------------------------------------------------------------------#
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8010
+      DB_CONNECTION: mysql
+      DB_HOST: synaps-mariadb
+      DB_PORT: "3307"
+      DB_DATABASE: synaps
+      DB_USERNAME: root
+      DB_PASSWORD: rootpassword
 #------------------------------------------------------------------#
-  redis:
+  synaps-redis:
     image: redis:latest
-    container_name: redis
+    container_name: synaps-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
-      - redis_data:/data
+      - synaps_redis_data:/data
 #------------------------------------------------------------------#
-  mariadb:
+  synaps-mariadb:
     image: mariadb:latest
-    container_name: mariadb
+    container_name: synaps-mariadb
     environment:
       - MYSQL_ROOT_PASSWORD=rootpassword
       - MYSQL_DATABASE=synaps
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=rootpassword
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - synaps_mariadb_data:/var/lib/mysql
 #------------------------------------------------------------------#
-  phpmyadmin:
+  synaps-phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
+    container_name: synaps-phpmyadmin
     environment:
-      - PMA_HOST=mariadb
+      - PMA_HOST=synaps-mariadb
       - PMA_USER=root
       - PMA_PASSWORD=rootpassword
     ports:
-      - "8082:80"
+      - "8083:80"
     depends_on:
-      - mariadb
+      - synaps-mariadb
 #------------------------------------------------------------------#
   redis-ws-bridge:
     image: node:18
-    container_name: redis-ws-bridge
+    container_name: synaps-redis-ws-bridge
     working_dir: /app
     volumes:
       - ./redis-ws-bridge:/app
     command: ["npm", "start"]
     depends_on:
-      - redis
+      - synaps-redis
     environment:
-      - REDIS_URL=redis://redis:6379
-      - WS_PORT=8082
+      - REDIS_URL=redis://synaps-redis:6379
+      - WS_PORT=8084
 #------------------------------------------------------------------#
 
 volumes:
-  mariadb_data:
-  redis_data:
-#------------------------------------------------------------------#
+  synaps_mariadb_data:
+  synaps_redis_data:
