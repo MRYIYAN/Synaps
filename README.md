@@ -108,11 +108,11 @@ Synaps/
 
 ```mermaid
 flowchart LR
-    A[Frontend (React)] -->|HTTP + WebSocket| B[NestJS (Synaps-api)]
-    B -->|API y lógica| C[Laravel (Synaps-back)]
-    C -->|Base de datos| D[MariaDB]
-    B -->|Eventos Redis| E[Redis]
-    E -->|Publica eventos| F[redis-ws-bridge (Node.js)]
-    F -->|WebSocket| A
+    A[Frontend (React)] --> B[NestJS (Synaps-api)]
+    B --> C[Laravel (Synaps-back)]
+    C --> D[MariaDB]
+    B --> E[Redis]
+    E --> F[redis-ws-bridge (Node.js)]
+    F --> A
 ```
 
