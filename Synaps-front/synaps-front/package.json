@@ -17,6 +17,7 @@
     "redis": "^4.7.0",
     "socket.io-client": "^4.8.1",
     "stream-browserify": "^3.0.0",
+    "synaps-front": "file:",
     "tls": "^0.0.1",
     "url": "^0.11.4",
     "util": "^0.12.5",

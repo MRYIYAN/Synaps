@@ -94,3 +94,40 @@ Coordinado por WhatsApp y esta terminal
 Uso compartido de referencias de proyectos anteriores (calclic, etc.)
 
 Enfoque progresivo: primero infra, luego backend, ahora frontend
+
+📦 ¿Qué función cumple Synaps-api (NestJS)?
+✅ Es el núcleo lógico y comunicador entre componentes
+Mientras Laravel (Synaps-back) gestiona la persistencia y negocio de base, NestJS actúa como el “cerebro orquestador” y:
+
+🔌 1. API Gateway / Middleware inteligente
+Conecta el frontend con otros servicios
+
+Hace de capa intermedia entre:
+
+Laravel (back principal)
+
+Redis y WebSocket (real-time)
+
+Frontend (React)
+
+⚙️ 2. Lógica de negocio compleja / extensible
+Si Laravel es más para BD y reglas puras, Nest puede manejar:
+
+Compilación, validación y procesamiento de datos
+
+Adaptadores para Redis, WebSocket y otros microservicios
+
+Transmisión de eventos (publicar a Redis, reenviar a sockets)
+
+🧠 3. Futuro del TFC: microservicios, IA, integraciones
+Podés usar Nest para:
+
+Añadir controladores REST o GraphQL
+
+Ejecutar workers con colas (Redis)
+
+Modularizar en servicios independientes
+
+Integrar lógica de cálculo (compiladores, reglas, etc.)
+
+Comunicación entre Laravel ↔ Nest ↔ Redis ↔ WebSocket ↔ React
