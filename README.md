@@ -108,11 +108,11 @@ Synaps/
 
 ```mermaid
 flowchart LR
-    A[Frontend (React)] --> B[NestJS (Synaps-api)]
-    B --> C[Laravel (Synaps-back)]
-    C --> D[MariaDB]
-    B --> E[Redis]
-    E --> F[redis-ws-bridge (Node.js)]
-    F --> A
+A["Frontend React"] --> B["NestJS Synapsapi"]
+B --> C["Laravel Synapsback"]
+C --> D["MariaDB"]
+B --> E["Redis"]
+E --> F["rediswsbridge Nodejs"]
+F --> A
 ```
 
