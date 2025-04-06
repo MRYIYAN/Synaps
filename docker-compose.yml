@@ -15,7 +15,10 @@ services:
     ports:
       - "8010:80" # Laravel en Apache
     volumes:
-      - ./Synaps-back/laravel:/var/www/html
+      - ./Synaps-back/laravel/app:/var/www/html/app
+      - ./Synaps-back/laravel/routes:/var/www/html/routes
+      - ./Synaps-back/laravel/resources:/var/www/html/resources
+      - ./Synaps-back/laravel/public:/var/www/html/public
     depends_on:
       - synaps-mariadb
     environment:
@@ -28,6 +31,8 @@ services:
       DB_DATABASE: synaps
       DB_USERNAME: root
       DB_PASSWORD: rootpassword
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: "0"
+
 #------------------------------------------------------------------#
   synaps-redis:
     image: redis:latest
