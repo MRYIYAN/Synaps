@@ -1,0 +1,47 @@
+Table users {
+  id bigint [primary key]
+  name varchar
+  email varchar [unique]
+  password varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table notes {
+  id bigint [primary key]
+  user_id bigint [not null]
+  title varchar
+  content text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tags {
+  id bigint [primary key]
+  tag_id bigint
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table note_tag {
+  note_id bigint [not null]
+  tag_id bigint [not null]
+  created_at timestamp
+  updated_at timestamp
+
+  Indexes {
+    (note_id, tag_id) [unique]
+  }
+}
+
+Table sessions {
+  id varchar [primary key]
+  user_id bigint [not null]
+  ip_address varchar
+  user_agent text
+}
+
+Ref: notes.user_id > users.id
+Ref: note_tag.note_id > notes.id
+Ref: note_tag.tag_id > tags.id
+Ref: sessions.user_id > users.id
