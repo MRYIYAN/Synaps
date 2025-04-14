@@ -1,2 +1,3 @@
 Synaps-Api/synaps-api/
 */node_modules
+*/.env
