@@ -32,7 +32,7 @@ services:
       DB_PORT: "3307"
       DB_DATABASE: synaps
       DB_USERNAME: root
-      DB_PASSWORD: root
+      DB_PASSWORD: rootpassword
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: "0"
 
   # --------------------------------- REDIS --------------------------------- #
@@ -63,7 +63,7 @@ services:
     image: mariadb:latest
     container_name: synaps-mariadb
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=rootpassword
       - MYSQL_DATABASE=synaps
     ports:
       - "3307:3306"
@@ -77,7 +77,7 @@ services:
     environment:
       - PMA_HOST=synaps-mariadb
       - PMA_USER=root
-      - PMA_PASSWORD=root
+      - PMA_PASSWORD=rootpassword
     ports:
       - "8083:80"
     depends_on:
