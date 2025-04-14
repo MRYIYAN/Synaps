@@ -6,8 +6,7 @@
 version: '3.8'
 
 services:
-
-  # --------------------------------- LARAVEL --------------------------------- #
+#------------------------------------------------------------------#
   synaps-back:
     build:
       context: ./Synaps-back/laravel
@@ -20,7 +19,6 @@ services:
       - ./Synaps-back/laravel/routes:/var/www/html/routes
       - ./Synaps-back/laravel/resources:/var/www/html/resources
       - ./Synaps-back/laravel/public:/var/www/html/public
-      - ./Synaps-back/laravel/.env.example:/var/www/html/.env
     depends_on:
       - synaps-mariadb
     environment:
@@ -32,10 +30,10 @@ services:
       DB_PORT: "3307"
       DB_DATABASE: synaps
       DB_USERNAME: root
-      DB_PASSWORD: root
+      DB_PASSWORD: rootpassword
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: "0"
 
-  # --------------------------------- REDIS --------------------------------- #
+#------------------------------------------------------------------#
   synaps-redis:
     image: redis:latest
     container_name: synaps-redis
@@ -43,8 +41,30 @@ services:
       - "6380:6379"
     volumes:
       - synaps_redis_data:/data
-
-  # --------------------------------- REDIS-BRIDGE --------------------------------- #
+#------------------------------------------------------------------#
+  synaps-mariadb:
+    image: mariadb:latest
+    container_name: synaps-mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=synaps
+    ports:
+      - "3307:3306"
+    volumes:
+      - synaps_mariadb_data:/var/lib/mysql
+#------------------------------------------------------------------#
+  synaps-phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: synaps-phpmyadmin
+    environment:
+      - PMA_HOST=synaps-mariadb
+      - PMA_USER=root
+      - PMA_PASSWORD=rootpassword
+    ports:
+      - "8083:80"
+    depends_on:
+      - synaps-mariadb
+#------------------------------------------------------------------#
   redis-ws-bridge:
     image: node:18
     container_name: synaps-redis-ws-bridge
@@ -57,31 +77,7 @@ services:
     environment:
       - REDIS_URL=redis://synaps-redis:6379
       - WS_PORT=8084
-
-  # --------------------------------- MARIADB --------------------------------- #
-  synaps-mariadb:
-    image: mariadb:latest
-    container_name: synaps-mariadb
-    environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=synaps
-    ports:
-      - "3307:3306"
-    volumes:
-      - synaps_mariadb_data:/var/lib/mysql
-
-  # --------------------------------- SGBD --------------------------------- #
-  synaps-phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: synaps-phpmyadmin
-    environment:
-      - PMA_HOST=synaps-mariadb
-      - PMA_USER=root
-      - PMA_PASSWORD=root
-    ports:
-      - "8083:80"
-    depends_on:
-      - synaps-mariadb
+#------------------------------------------------------------------#
 
 volumes:
   synaps_mariadb_data:
