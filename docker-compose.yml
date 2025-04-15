@@ -68,7 +68,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - synaps_mariadb_data:/var/lib/mysql
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   # --------------------------------- PHPMYADMIN --------------------------------- #
   synaps-phpmyadmin:

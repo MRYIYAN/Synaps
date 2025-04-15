@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from "react";
+import LoginForm from "./components/LoginForm"; // Importamos el compoente LoginForm
 
 function App() {
-  const [message, setMessage] = useState("Cargando...");
+  const [message, set_message] = useState("Cargando...");
 
   useEffect(() => {
-      fetch("http://localhost:8010/api/hello")
+    fetch("http://localhost:8010/api/hello")
       .then((res) => res.json())
-      .then((data) => setMessage(data.message))
-      .catch((err) => setMessage("Error al conectar con el backend "));
+      .then((data) => set_message(data.message))
+      .catch(() => set_message("Error al conectar con el backend"));
   }, []);
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>Frontend React </h1>
-      <h2>Respuesta desde  :</h2>
+      <h1>Frontend React</h1>
+      <h2>Respuesta desde el backend:</h2>
       <p>{message}</p>
+
+      <hr/>
+
+      {/* Aquí mostramos el formulario de login (se carga dinamicamente) */}
+      <LoginForm />
     </div>
   );
 }
+
 export default App;
