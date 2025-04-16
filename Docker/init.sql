@@ -17,7 +17,7 @@ VALUES (
   'abc123',
   'test@example.com',
   'Usuario de prueba',
-  '$2y$10$E0NCg5E8R8lUnpOhRR9t1Op2ZVgPj44OYVVa35L7.SZfTZ0BQHvtW'
+  '$2y$12$423rSF4V2fqyddNr6AuCUeM1BiuIifLAEldi49Wr9tEwG5kX0azb.'
 );
 
 -- Crear base por cliente

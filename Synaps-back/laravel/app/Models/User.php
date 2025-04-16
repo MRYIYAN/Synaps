@@ -1,48 +1,60 @@
 <?php
 
+//===========================================================================//
+//                             MODELO USER                                   //
+//===========================================================================//
+//----------------------------------------------------------------------------//
+//  Este modelo representa a los usuarios en la base de datos. Define la      //
+//  tabla asociada, la clave primaria, los atributos rellenables y ocultos,   //
+//  y los métodos necesarios para la autenticación.                          //
+//----------------------------------------------------------------------------//
+
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    //---------------------------------------------------------------------------//
+    //  Define la tabla asociada al modelo y la clave primaria.                  //
+    //---------------------------------------------------------------------------//
+    protected $table = 'users';
+    protected $primaryKey = 'user_id';
+    public $timestamps = false;
+
+    //---------------------------------------------------------------------------//
+    //  Atributos rellenables para asignación masiva.                            //
+    //---------------------------------------------------------------------------//
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'user_email',
+        'user_name',
+        'user_password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
+    //---------------------------------------------------------------------------//
+    //  Atributos que deben permanecer ocultos al serializar el modelo.          //
+    //---------------------------------------------------------------------------//
     protected $hidden = [
-        'password',
-        'remember_token',
+        'user_password',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    //---------------------------------------------------------------------------//
+    //  Obtiene la contraseña del usuario para la autenticación.                 //
+    //---------------------------------------------------------------------------//
+    public function getAuthPassword()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->user_password;
+    }
+
+    //---------------------------------------------------------------------------//
+    //  Obtiene el identificador del usuario para la autenticación.              //
+    //---------------------------------------------------------------------------//
+    public function getAuthIdentifierName()
+    {
+        return 'user_email';
     }
 }
+//===========================================================================//

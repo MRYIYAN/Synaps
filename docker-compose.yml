@@ -20,7 +20,7 @@ services:
       - ./Synaps-back/laravel/routes:/var/www/html/routes
       - ./Synaps-back/laravel/resources:/var/www/html/resources
       - ./Synaps-back/laravel/public:/var/www/html/public
-      - ./Synaps-back/laravel/.env.example:/var/www/html/.env
+      - ./Synaps-back/laravel/.env:/var/www/html/.env 
     depends_on:
       - synaps-mariadb
     environment:
@@ -29,7 +29,7 @@ services:
       APP_URL: http://localhost:8010
       DB_CONNECTION: mysql
       DB_HOST: synaps-mariadb
-      DB_PORT: "3307"
+      DB_PORT: "3306"
       DB_DATABASE: synaps
       DB_USERNAME: root
       DB_PASSWORD: rootpassword
