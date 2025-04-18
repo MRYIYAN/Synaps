@@ -14,6 +14,14 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Clase que representa a los usuarios del sistema.
+ *
+ * @property int $user_id
+ * @property string $user_email
+ * @property string $user_name
+ * @property string $user_password
+ */
 class User extends Authenticatable
 {
     use Notifiable;
@@ -21,13 +29,37 @@ class User extends Authenticatable
     //---------------------------------------------------------------------------//
     //  Define la tabla asociada al modelo y la clave primaria.                  //
     //---------------------------------------------------------------------------//
+
+    /**
+     * Nombre de la tabla asociada.
+     *
+     * @var string
+     */
     protected $table = 'users';
+
+    /**
+     * Nombre de la clave primaria.
+     *
+     * @var string
+     */
     protected $primaryKey = 'user_id';
+
+    /**
+     * Desactiva los timestamps de Eloquent.
+     *
+     * @var bool
+     */
     public $timestamps = false;
 
     //---------------------------------------------------------------------------//
     //  Atributos rellenables para asignación masiva.                            //
     //---------------------------------------------------------------------------//
+
+    /**
+     * Atributos que se pueden asignar masivamente.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'user_email',
         'user_name',
@@ -37,6 +69,12 @@ class User extends Authenticatable
     //---------------------------------------------------------------------------//
     //  Atributos que deben permanecer ocultos al serializar el modelo.          //
     //---------------------------------------------------------------------------//
+
+    /**
+     * Atributos ocultos al serializar el modelo.
+     *
+     * @var array<int, string>
+     */
     protected $hidden = [
         'user_password',
     ];
@@ -44,7 +82,13 @@ class User extends Authenticatable
     //---------------------------------------------------------------------------//
     //  Obtiene la contraseña del usuario para la autenticación.                 //
     //---------------------------------------------------------------------------//
-    public function getAuthPassword()
+
+    /**
+     * Devuelve el valor del campo de contraseña para autenticación.
+     *
+     * @return string
+     */
+    public function getAuthPassword(): string
     {
         return $this->user_password;
     }
@@ -52,7 +96,13 @@ class User extends Authenticatable
     //---------------------------------------------------------------------------//
     //  Obtiene el identificador del usuario para la autenticación.              //
     //---------------------------------------------------------------------------//
-    public function getAuthIdentifierName()
+
+    /**
+     * Devuelve el nombre del campo usado como identificador único.
+     *
+     * @return string
+     */
+    public function getAuthIdentifierName(): string
     {
         return 'user_email';
     }

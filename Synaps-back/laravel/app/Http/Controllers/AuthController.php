@@ -13,14 +13,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 use App\Models\User;
 
+/**
+ * Controlador responsable del login de usuarios en Synaps.
+ */
 class AuthController extends Controller
 {
     //---------------------------------------------------------------------------//
     //  Método para manejar el inicio de sesión de usuarios.                     //
     //---------------------------------------------------------------------------//
-    public function login(Request $request)
+
+    /**
+     * Procesa la solicitud de login y autentica al usuario.
+     *
+     * @param Request $request Datos enviados por el cliente (email, password)
+     * @return JsonResponse Respuesta con mensaje de éxito o error, y datos del usuario autenticado
+     */
+    public function login(Request $request): JsonResponse
     {
         //------------------------------------------------------------------------//
         //  Obtiene las credenciales del usuario desde la solicitud.              //
@@ -43,6 +54,7 @@ class AuthController extends Controller
         //------------------------------------------------------------------------//
         //  Obtiene el usuario autenticado.                                       //
         //------------------------------------------------------------------------//
+        /** @var User $user */
         $user = Auth::user();
 
         //------------------------------------------------------------------------//

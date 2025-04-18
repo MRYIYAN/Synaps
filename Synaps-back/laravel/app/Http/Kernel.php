@@ -12,12 +12,9 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        // Middleware predeterminados
-        \Illuminate\Foundation\Http\Middleware\HandleCors::class,
-        \App\Http\Middleware\CorsMiddleware::class, // <-- CORS personalizado
+        \Illuminate\Http\Middleware\HandleCors::class, // Versión moderna de CORS
+        \App\Http\Middleware\CorsMiddleware::class,
         \App\Http\Middleware\TrustProxies::class,
-        \Fruitcake\Cors\HandleCors::class, // por compatibilidad
-        \Illuminate\Http\Middleware\HandleCors::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
