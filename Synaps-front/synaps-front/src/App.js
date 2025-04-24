@@ -1,28 +1,50 @@
-import React, { useEffect, useState } from "react";
-import LoginForm from "./components/LoginForm"; // Importamos el compoente LoginForm
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router";
+
+
+// ---------------------------------------------
+// Importamos las páginas de la aplicación
+// ---------------------------------------------
+
+import Landing        from "./pages/LandingPage";
+import Register       from "./pages/RegisterPage";
+import Login          from "./pages/LoginPage";
+
+import Home           from "./pages/HomePage";
+import Notes          from "./pages/NotesPage";
+import MarkdownEditor from "./pages/MarkdownEditorPage";
+import GalaxyView     from "./pages/GalaxyViewPage";
+import Todo           from "./pages/TodoPage";
+import Journal        from "./pages/JournalPage";
+import Settings       from "./pages/SettingsPage";
 
 function App() {
-  const [message, set_message] = useState("Cargando...");
-
-  useEffect(() => {
-    fetch("http://localhost:8010/api/hello")
-      .then((res) => res.json())
-      .then((data) => set_message(data.message))
-      .catch(() => set_message("Error al conectar con el backend"));
-  }, []);
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Frontend React</h1>
-      <h2>Respuesta desde el backend para:</h2>
-      <p>{message}</p>
+    <BrowserRouter>
+      <Routes>
+        
+        {/* --------------------–--------------------–--------------------– */}
+        {/* Rutas de la parte de la Landing */}
+        {/* --------------------–--------------------–--------------------– */}
+        <Route path="/"                 element={<Landing         />} />
+        <Route path="/register"         element={<Register        />} />
+        <Route path="/login"            element={<Login           />} />
 
-      <hr/>
-
-      {/* Aquí mostramos el formulario de login (se carga dinamicamente) */}
-      <LoginForm />
-    </div>
+        {/* --------------------–--------------------–--------------------– */}
+        {/* Aplicación */}
+        {/* --------------------–--------------------–--------------------– */}
+        <Route path="/home"             element={<Home            />} />
+        <Route path="/notes"            element={<Notes           />} />
+        <Route path="/markdown-editor"  element={<MarkdownEditor  />} />
+        <Route path="/galaxy-view"      element={<GalaxyView      />} />
+        <Route path="/todo"             element={<Todo            />} />
+        <Route path="/journal"          element={<Journal         />} />
+        <Route path="/settings"         element={<Settings        />} />
+      </Routes>
+    </BrowserRouter>
   );
+
 }
 
 export default App;

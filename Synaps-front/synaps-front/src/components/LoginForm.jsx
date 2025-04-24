@@ -1,13 +1,12 @@
-//===========================================================================//
-//                             LOGIN DE SYNAPS                               //
-//===========================================================================//
-//----------------------------------------------------------------------------//
-//  Este componente es un formulario de inicio de sesión que permite a los    //
-//  usuarios ingresar su correo electrónico y contraseña. Al enviar el       // 
-//  formulario, se realiza una solicitud POST a la API de inicio de sesión.    //
-//  Si la solicitud es exitosa, se muestra un mensaje de éxito en la consola.  //
-//  Si hay un error, se muestra un mensaje de error en la interfaz de usuario.   //
-//----------------------------------------------------------------------------//
+//===========================================================================   //
+//                             LOGIN DE SYNAPS                                  //
+//===========================================================================   //
+//  Este componente es un formulario de inicio de sesión que permite a los      //
+//  usuarios ingresar su correo electrónico y contraseña. Al enviar el          // 
+//  formulario, se realiza una solicitud POST a la API de inicio de sesión.     //
+//  Si la solicitud es exitosa, se muestra un mensaje de éxito en la consola.   //
+//  Si hay un error, se muestra un mensaje de error en la interfaz de usuario.  //
+//===========================================================================   //
 
 //===========================================================================//
 //                             IMPORTS                                       
@@ -20,12 +19,13 @@ import React, { useState } from "react";
 //                             COMPONENTE LOGINFORM                         
 //===========================================================================//
 const LoginForm = () => {
+
   //---------------------------------------------------------------------------//
   //  Estados para manejar los datos del formulario y los mensajes de error.   //
   //---------------------------------------------------------------------------//
-  const [email, set_email] = useState("");
-  const [password, set_password] = useState("");
-  const [error_msg, set_error_msg] = useState("");
+  const [email, set_email]          = useState("");
+  const [password, set_password]    = useState("");
+  const [error_msg, set_error_msg]  = useState("");
 
   //---------------------------------------------------------------------------//
   //  Función para manejar el envío del formulario. Realiza una solicitud      //
@@ -75,6 +75,7 @@ const LoginForm = () => {
   //---------------------------------------------------------------------------//
   //  Renderiza el formulario de inicio de sesión y muestra mensajes de error. //
   //---------------------------------------------------------------------------//
+
   return (
     <div>
       <h2>Iniciar sesión</h2>
@@ -98,6 +99,7 @@ const LoginForm = () => {
       {error_msg && <p style={{ color: "red" }}>{error_msg}</p>}
     </div>
   );
+  
 };
 
 //===========================================================================//

@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use App\Models\User;
+use Exception;
 
 /**
  * Controlador responsable del login de usuarios en Synaps.
@@ -33,41 +34,54 @@ class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        //------------------------------------------------------------------------//
-        //  Obtiene las credenciales del usuario desde la solicitud.              //
-        //------------------------------------------------------------------------//
-        $credentials = $request->only('email', 'password');
+        // Inicializamos el valor a devolver al Front
+        $value = '';
 
-        //------------------------------------------------------------------------//
-        //  Intenta autenticar al usuario con las credenciales proporcionadas.    //
-        //------------------------------------------------------------------------//
-        if (!Auth::attempt([
-            'user_email' => $credentials['email'],
-            'password' => $credentials['password'],
-        ])) {
-            //----------------------------------------------------------------------//
-            //  Devuelve un mensaje de error si las credenciales son inválidas.     //
-            //----------------------------------------------------------------------//
-            return response()->json(['message' => 'Credenciales inválidas'], 401);
+        try
+        {
+            //------------------------------------------------------------------------//
+            //  Obtiene las credenciales del usuario desde la solicitud.              //
+            //------------------------------------------------------------------------//
+            $credentials = $request->only('email', 'password');
+
+            //------------------------------------------------------------------------//
+            //  Intenta autenticar al usuario con las credenciales proporcionadas.    //
+            //------------------------------------------------------------------------//
+            if (!Auth::attempt([
+                'user_email' => $credentials['email'],
+                'password' => $credentials['password'],
+            ])) {
+                // Devuelve un mensaje de error si las credenciales son inválidas.
+                throw new Exception( 'Credenciales inválidas' );
+            }
+
+            //------------------------------------------------------------------------//
+            //  Obtiene el usuario autenticado.                                       //
+            //------------------------------------------------------------------------//
+            /** @var User $user */
+            $user = Auth::user();
+
+            //------------------------------------------------------------------------//
+            //  Devuelve una respuesta JSON con los datos del usuario autenticado.    //
+            //------------------------------------------------------------------------//
+            $value = response()->json([
+                'message' => 'Login exitoso',
+                'user' => [
+                    'id' => $user->user_id,
+                    'email' => $user->user_email,
+                    'name' => $user->user_name,
+                ]
+            ]);
+        }
+        catch( Exception $e )
+        {
+            $value = response()->json(['message' => $e->getMessage()], 401);
+        }
+        finally
+        {
+            return $value;
         }
 
-        //------------------------------------------------------------------------//
-        //  Obtiene el usuario autenticado.                                       //
-        //------------------------------------------------------------------------//
-        /** @var User $user */
-        $user = Auth::user();
-
-        //------------------------------------------------------------------------//
-        //  Devuelve una respuesta JSON con los datos del usuario autenticado.    //
-        //------------------------------------------------------------------------//
-        return response()->json([
-            'message' => 'Login exitoso',
-            'user' => [
-                'id' => $user->user_id,
-                'email' => $user->user_email,
-                'name' => $user->user_name,
-            ]
-        ]);
     }
 }
 //===========================================================================//
