@@ -27,61 +27,68 @@ class AuthController extends Controller
     //---------------------------------------------------------------------------//
 
     /**
-     * Procesa la solicitud de login y autentica al usuario.
+     * Procesa la solicitud de login y autentica al usuario usando Keycloak.
      *
      * @param Request $request Datos enviados por el cliente (email, password)
-     * @return JsonResponse Respuesta con mensaje de éxito o error, y datos del usuario autenticado
+     * @return JsonResponse Respuesta con mensaje de éxito o error, y token de Keycloak si es exitoso
      */
     public function login(Request $request): JsonResponse
+
     {
-        // Inicializamos el valor a devolver al Front
-        $value = '';
+    //---------------------------------------------------------------------------//
+    //                    Validar los datos recibidos                            //
+    //---------------------------------------------------------------------------//
+        $request->validate([
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-        try
-        {
-            //------------------------------------------------------------------------//
-            //  Obtiene las credenciales del usuario desde la solicitud.              //
-            //------------------------------------------------------------------------//
-            $credentials = $request->only('email', 'password');
+    //---------------------------------------------------------------------------//
+    //                      Configuración de Keycloak                            //
+    //---------------------------------------------------------------------------//
+        // Configuración de Keycloak
+        // Se obtienen las variables de entorno para la configuración de Keycloak
+    //---------------------------------------------------------------------------//    
+        $keycloak_url = env('KEYCLOAK_URL', 'http://localhost:8085');
+        $realm = env('KEYCLOAK_REALM', 'Synaps');
+        $client_id = env('KEYCLOAK_CLIENT_ID', 'synaps-front');
 
-            //------------------------------------------------------------------------//
-            //  Intenta autenticar al usuario con las credenciales proporcionadas.    //
-            //------------------------------------------------------------------------//
-            if (!Auth::attempt([
-                'user_email' => $credentials['email'],
-                'password' => $credentials['password'],
-            ])) {
-                // Devuelve un mensaje de error si las credenciales son inválidas.
-                throw new Exception( 'Credenciales inválidas' );
-            }
+    
+    //---------------------------------------------------------------------------//
+    //                  Hacemos la solicitud a Keycloak                          //
+    //---------------------------------------------------------------------------//
+        // Se envía una solicitud POST a Keycloak para autenticar al usuario
+        // Se utiliza el cliente HTTP de Laravel para enviar la solicitud
+        // Se envían las credenciales del usuario (email y password) como parámetros
+    //---------------------------------------------------------------------------//
+        $response = Http::asForm()->post("{$keycloak_url}/realms/{$realm}/protocol/openid-connect/token", [
+            'grant_type' => 'password',
+            'client_id' => $client_id,
+            'username' => $request->email,
+            'password' => $request->password,
+        ]);
 
-            //------------------------------------------------------------------------//
-            //  Obtiene el usuario autenticado.                                       //
-            //------------------------------------------------------------------------//
-            /** @var User $user */
-            $user = Auth::user();
+        // Verificamos la respuesta de Keycloak
+        if ($response->successful()) {
+            
+            // Si el login es exitoso, regeneramos sesión de Laravel si es necesario
+            $request->session()->regenerate();
 
-            //------------------------------------------------------------------------//
-            //  Devuelve una respuesta JSON con los datos del usuario autenticado.    //
-            //------------------------------------------------------------------------//
-            $value = response()->json([
+            //Guardar el token en sesión
+            session(['keycloak_token' => $response->json()['access_token']]);
+
+
+            // Guardar el usuario en sesión
+            return response()->json([
                 'message' => 'Login exitoso',
-                'user' => [
-                    'id' => $user->user_id,
-                    'email' => $user->user_email,
-                    'name' => $user->user_name,
-                ]
+                'token' => $response->json()['access_token'], // Devolver el token si es necesario
             ]);
+        } else {
+            // Si falla el login
+            return response()->json([
+                'message' => 'Email o contraseña incorrectos',
+            ], 401);
         }
-        catch( Exception $e )
-        {
-            $value = response()->json(['message' => $e->getMessage()], 401);
-        }
-        finally
-        {
-            return $value;
-        }
-
     }
 }
 //===========================================================================//
