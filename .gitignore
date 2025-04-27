@@ -3,3 +3,5 @@ Synaps-Api/synaps-api/
 */.env
 .DS_Store
 .devcontainer
+*.sql
+*.sql
