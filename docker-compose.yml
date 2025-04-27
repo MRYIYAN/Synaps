@@ -95,7 +95,10 @@ services:
     command: start-dev
     depends_on:
       - synaps-mariadb
+    volumes:
+      - synaps_keycloak_data:/opt/keycloak/data
 
 volumes:
   synaps_mariadb_data:
   synaps_redis_data:
+  synaps_keycloak_data: # <-- Añadido para Keycloak
