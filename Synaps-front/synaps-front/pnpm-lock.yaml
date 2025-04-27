@@ -11,6 +11,9 @@ importers:
 
   .:
     dependencies:
+      '@react-keycloak/web':
+        specifier: ^3.4.0
+        version: 3.4.0(keycloak-js@26.1.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@4.9.5)
       '@univerjs/core':
         specifier: ^0.6.9
         version: 0.6.10(@grpc/grpc-js@1.13.3)(@wendellhu/redi@0.18.1)(rxjs@7.8.2)
@@ -32,6 +35,9 @@ importers:
       crypto-browserify:
         specifier: ^3.12.1
         version: 3.12.1
+      keycloak-js:
+        specifier: ^26.1.5
+        version: 26.1.5
       net:
         specifier: ^1.0.2
         version: 1.0.2
@@ -1111,6 +1117,22 @@ packages:
 
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
+
+  '@react-keycloak/core@3.2.0':
+    resolution: {integrity: sha512-1yzU7gQzs+6E1v6hGqxy0Q+kpMHg9sEcke2yxZR29WoU8KNE8E50xS6UbI8N7rWsgyYw8r9W1cUPCOF48MYjzw==}
+    peerDependencies:
+      react: '>=16'
+
+  '@react-keycloak/web@3.4.0':
+    resolution: {integrity: sha512-yKKSCyqBtn7dt+VckYOW1IM5NW999pPkxDZOXqJ6dfXPXstYhOQCkTZqh8l7UL14PkpsoaHDh7hSJH8whah01g==}
+    peerDependencies:
+      keycloak-js: '>=9.0.2'
+      react: '>=16.8'
+      react-dom: '>=16.8'
+      typescript: '>=3.8'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   '@redis/bloom@1.2.0':
     resolution: {integrity: sha512-HG2DFjYKbpNmVXsa0keLHp/3leGJz1mjh09f2RLGGLQZzSHpkmZWuwJbAvo3QcRY8p80m5+ZdXZdYOSBLlp7Cg==}
@@ -3085,6 +3107,9 @@ packages:
   hmac-drbg@1.0.1:
     resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
 
+  hoist-non-react-statics@3.3.2:
+    resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
+
   hoopy@0.1.4:
     resolution: {integrity: sha512-HRcs+2mr52W0K+x8RzcLzuPPmVIKMSv97RGHy0Ea9y/mpcaK+xTrjICA04KAHi4GRzxliNqNJEFYWHghy3rSfQ==}
     engines: {node: '>= 6.0.0'}
@@ -3673,6 +3698,9 @@ packages:
 
   kdbush@4.0.2:
     resolution: {integrity: sha512-WbCVYJ27Sz8zi9Q7Q0xHC+05iwkm3Znipc2XTlrnJbsHMYktW4hPhXUE8Ys1engBrvffoSCqbil1JQAa7clRpA==}
+
+  keycloak-js@26.1.5:
+    resolution: {integrity: sha512-5m8DQceKgBD+iVyy8GYeOiH3Hu12q6azAxhBRabVnZANt5BEi9r/qEXyOeye9yzrjqPF6RlH48TTTYNd1iXZMQ==}
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -4741,6 +4769,9 @@ packages:
 
   react-error-overlay@6.1.0:
     resolution: {integrity: sha512-SN/U6Ytxf1QGkw/9ve5Y+NxBbZM6Ht95tuXNMKs8EJyFa/Vy/+Co3stop3KBHARfn/giv+Lj1uUnTfOJ3moFEQ==}
+
+  react-fast-compare@3.2.2:
+    resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -7177,6 +7208,22 @@ snapshots:
 
   '@protobufjs/utf8@1.1.0': {}
 
+  '@react-keycloak/core@3.2.0(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      react-fast-compare: 3.2.2
+
+  '@react-keycloak/web@3.4.0(keycloak-js@26.1.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@4.9.5)':
+    dependencies:
+      '@babel/runtime': 7.27.0
+      '@react-keycloak/core': 3.2.0(react@18.3.1)
+      hoist-non-react-statics: 3.3.2
+      keycloak-js: 26.1.5
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      typescript: 4.9.5
+
   '@redis/bloom@1.2.0(@redis/client@1.6.0)':
     dependencies:
       '@redis/client': 1.6.0
@@ -9575,6 +9622,10 @@ snapshots:
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
 
+  hoist-non-react-statics@3.3.2:
+    dependencies:
+      react-is: 16.13.1
+
   hoopy@0.1.4: {}
 
   hpack.js@2.1.6:
@@ -10440,6 +10491,8 @@ snapshots:
       object.values: 1.2.1
 
   kdbush@4.0.2: {}
+
+  keycloak-js@26.1.5: {}
 
   keyv@4.5.4:
     dependencies:
@@ -11514,6 +11567,8 @@ snapshots:
       scheduler: 0.23.2
 
   react-error-overlay@6.1.0: {}
+
+  react-fast-compare@3.2.2: {}
 
   react-is@16.13.1: {}
 

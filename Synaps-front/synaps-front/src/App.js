@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
-import keycloak from "./keycloak";
+import keycloak, { keycloakInitOptions } from "./keycloak";
 
 
 // ---------------------------------------------
@@ -21,9 +21,11 @@ import Journal        from "./pages/JournalPage";
 import Settings       from "./pages/SettingsPage";
 
 function App() {
-
   return (
-    <ReactKeycloakProvider authClient={keycloak}>
+    <ReactKeycloakProvider
+      authClient={keycloak}
+      initOptions={keycloakInitOptions}
+    >
       <BrowserRouter>
         <Routes>
           
@@ -48,7 +50,6 @@ function App() {
       </BrowserRouter>
     </ReactKeycloakProvider>
   );
-
 }
 
 export default App;
