@@ -8,10 +8,9 @@
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "description": "",
     "dependencies": {
         "ioredis": "^5.6.0",
-        "redis-ws-bridge": "file:",
         "ws": "^8.18.1"
-    }
+    },
+    "description": ""
 }

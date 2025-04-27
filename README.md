@@ -190,3 +190,40 @@ F --> A
 ✨ Todo el entorno fue construido desde cero, configurado, probado y validado para dejar funcionando **Synaps Backend en contenedor Docker** de forma estable y escalable.
 
 📝 _By IanP_
+
+
+## 🛠️ UPDATE: 27/04/25 - Frontend (Synaps-front)
+
+### 🧩 Páginas principales estructuradas en `src/pages/`
+
+- `LandingPage.jsx`
+- `LoginPage.jsx`
+- `RegisterPage.jsx`
+- `HomePage.jsx`
+- `GalaxyViewPage.jsx`
+- `NotesPage.jsx`
+- `JournalPage.jsx`
+- `TodoPage.jsx`
+- `MarkdownEditorPage.jsx`
+- `SettingsPage.jsx`
+
+> Cada página representa una sección principal de la plataforma Synaps.
+
+---
+
+### 🔀 Configuración de enrutado (`react-router-dom`)
+
+- Instalado `react-router-dom`.
+- Definidas rutas básicas en `App.js`:
+  - `/` ➔ `LandingPage`
+  - `/login` ➔ `LoginPage`
+  - `/register` ➔ `RegisterPage`
+  - `/home` ➔ `HomePage`
+  - `/galaxy` ➔ `GalaxyViewPage`
+  - `/notes` ➔ `NotesPage`
+  - `/journal` ➔ `JournalPage`
+  - `/todo` ➔ `TodoPage`
+  - `/editor` ➔ `MarkdownEditorPage`
+  - `/settings` ➔ `SettingsPage`
+
+✅ Todo el sistema de navegación ya está operativo y listo para conectar lógicas de frontend y backend.

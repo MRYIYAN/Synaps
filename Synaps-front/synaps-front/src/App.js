@@ -1,5 +1,7 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ReactKeycloakProvider } from "@react-keycloak/web";
+import keycloak from "./keycloak";
 
 
 // ---------------------------------------------
@@ -21,28 +23,30 @@ import Settings       from "./pages/SettingsPage";
 function App() {
 
   return (
-    <BrowserRouter>
-      <Routes>
-        
-        {/* --------------------–--------------------–--------------------– */}
-        {/* Rutas de la parte de la Landing */}
-        {/* --------------------–--------------------–--------------------– */}
-        <Route path="/"                 element={<Landing         />} />
-        <Route path="/register"         element={<Register        />} />
-        <Route path="/login"            element={<Login           />} />
+    <ReactKeycloakProvider authClient={keycloak}>
+      <BrowserRouter>
+        <Routes>
+          
+          {/* --------------------–--------------------–--------------------– */}
+          {/* Rutas de la parte de la Landing */}
+          {/* --------------------–--------------------–--------------------– */}
+          <Route path="/"                 element={<Landing         />} />
+          <Route path="/register"         element={<Register        />} />
+          <Route path="/login"            element={<Login           />} />
 
-        {/* --------------------–--------------------–--------------------– */}
-        {/* Aplicación */}
-        {/* --------------------–--------------------–--------------------– */}
-        <Route path="/home"             element={<Home            />} />
-        <Route path="/notes"            element={<Notes           />} />
-        <Route path="/markdown-editor"  element={<MarkdownEditor  />} />
-        <Route path="/galaxy-view"      element={<GalaxyView      />} />
-        <Route path="/todo"             element={<Todo            />} />
-        <Route path="/journal"          element={<Journal         />} />
-        <Route path="/settings"         element={<Settings        />} />
-      </Routes>
-    </BrowserRouter>
+          {/* --------------------–--------------------–--------------------– */}
+          {/* Aplicación */}
+          {/* --------------------–--------------------–--------------------– */}
+          <Route path="/home"             element={<Home            />} />
+          <Route path="/notes"            element={<Notes           />} />
+          <Route path="/markdown-editor"  element={<MarkdownEditor  />} />
+          <Route path="/galaxy-view"      element={<GalaxyView      />} />
+          <Route path="/todo"             element={<Todo            />} />
+          <Route path="/journal"          element={<Journal         />} />
+          <Route path="/settings"         element={<Settings        />} />
+        </Routes>
+      </BrowserRouter>
+    </ReactKeycloakProvider>
   );
 
 }
