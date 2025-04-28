@@ -19,7 +19,7 @@
 //===========================================================================//
 import React from 'react';
 import { Link } from 'react-router-dom'; // Importamos Link para navegación interna
-import '../assets/styles/style_navbar.css';
+import '../assets/styles/NavbarLanding.css';
 
 //===========================================================================//
 //                          COMPONENTE Navbar_landing

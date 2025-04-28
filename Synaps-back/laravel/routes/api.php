@@ -33,4 +33,11 @@ Route::get('/hello', function (Request $request): \Illuminate\Http\JsonResponse 
  *
  * @see AuthController::login()
  */
-Route::post('/authenticate', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
+
+/**
+ * Maneja el registro de nuevos usuarios.
+ *
+ * @see AuthController::register()
+ */
+Route::post('/register', [AuthController::class, 'register']);

@@ -22,23 +22,27 @@ import Settings       from "./pages/SettingsPage";
 
 function App() {
   return (
+    
+    // Añadimos la capa del Keycloack con la configuración definida para evitar peticiones sin autentificar
     <ReactKeycloakProvider
       authClient={keycloak}
       initOptions={keycloakInitOptions}
     >
+
+      {/* Enrutador */}
       <BrowserRouter>
         <Routes>
           
-          {/* --------------------–--------------------–--------------------– */}
+          {/* --------------------------------------------------------------- */}
           {/* Rutas de la parte de la Landing */}
-          {/* --------------------–--------------------–--------------------– */}
+          {/* --------------------------------------------------------------- */}
           <Route path="/"                 element={<Landing         />} />
           <Route path="/register"         element={<Register        />} />
           <Route path="/login"            element={<Login           />} />
 
-          {/* --------------------–--------------------–--------------------– */}
+          {/* --------------------------------------------------------------- */}
           {/* Aplicación */}
-          {/* --------------------–--------------------–--------------------– */}
+          {/* --------------------------------------------------------------- */}
           <Route path="/home"             element={<Home            />} />
           <Route path="/notes"            element={<Notes           />} />
           <Route path="/markdown-editor"  element={<MarkdownEditor  />} />
