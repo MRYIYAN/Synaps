@@ -227,3 +227,90 @@ F --> A
   - `/settings` ➔ `SettingsPage`
 
 ✅ Todo el sistema de navegación ya está operativo y listo para conectar lógicas de frontend y backend.
+
+---
+# Synaps-IDP-Flask
+
+Microservicio Flask que actúa como **Identity Provider (IDP)** para autenticar usuarios directamente desde **MariaDB**, usado por **Keycloak** en el ecosistema Synaps.
+
+---
+
+## 📋 ¿Qué hace este servicio?
+
+- Expone un **servidor OpenID Connect falso**.
+- Responde al discovery URL: `/.well-known/openid-configuration`.
+- Responde a `/token` aceptando `grant_type=password`.
+- Verifica `email` y `password` contra una tabla `users` en MariaDB.
+- Genera y firma un **access_token JWT** si las credenciales son correctas.
+- Permite que **Keycloak** delegue la autenticación de usuarios a MariaDB vía este microservicio.
+
+---
+
+## 🚀 Flujo de Login del Sistema Completo
+
+1. **Frontend (React)**:  
+   - Envía `email/password` al endpoint de **Keycloak** (`/protocol/openid-connect/token`) usando `grant_type=password`.
+
+2. **Keycloak**:  
+   - Al recibir usuario/contraseña, delega la autenticación al **Flask IDP** configurado como Identity Provider externo.
+
+3. **Flask IDP (Este proyecto)**:  
+   - Recibe la petición de Keycloak.
+   - Consulta en **MariaDB** si existe el usuario.
+   - Si es correcto, responde un `access_token` válido.
+
+4. **Keycloak**:  
+   - Recibe la respuesta de Flask.
+   - Emite su propio `access_token` para el frontend.
+
+5. **React Frontend**:  
+   - Guarda el `access_token`.
+   - Usa el token para llamar APIs protegidas en **Laravel (Synaps-back)**.
+
+6. **Laravel**:  
+   - Verifica el `access_token` antes de responder a las peticiones.
+
+---
+## 🚀 Flujo de Login del Sistema Completo
+
+```mermaid
+flowchart TD
+    A[React Frontend Login] -->|POST grant_type=password| B(Keycloak)
+    B -->|Delegated Login| C(Flask IDP)
+    C -->|Query| D(MariaDB)
+    D -->|User Found| C
+    C -->|Login OK| B
+    B -->|Issue access_token| A
+    A -->|Request APIs with Bearer token| E(Laravel Backend)
+    E -->|Validate token via Keycloak public keys (or decoding)| E
+```
+---
+
+## 🛠️ Tecnologías usadas
+
+- Flask
+- PyMySQL
+- Python-Dotenv
+- PyJWT
+- Docker
+
+---
+
+## 📡 Endpoints del servicio
+
+| Método | Endpoint | Descripción |
+|:--|:--|:--|
+| `GET` | `/.well-known/openid-configuration` | Metadata OpenID Connect para Keycloak Discovery. |
+| `POST` | `/token` | Autenticación de usuario usando `grant_type=password`. |
+
+---
+
+## ⚙️ Variables de entorno (.env)
+
+```env
+DB_HOST=synaps-mariadb
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=rootpassword
+DB_NAME=synaps
+📝 _By IanP_

@@ -1,0 +1,4 @@
+flask
+pymysql
+python-dotenv
+pyjwt

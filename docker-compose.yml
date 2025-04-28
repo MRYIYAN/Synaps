@@ -85,19 +85,31 @@ services:
 
   # --------------------------------- KEYCLOAK --------------------------------- #
   synaps-keycloak:
-    image: quay.io/keycloak/keycloak:21.1.2
+    image: quay.io/keycloak/keycloak:23.0.0 
     container_name: synaps-keycloak
     ports:
       - "8085:8080"
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-    command: start-dev
+    command:
+      - start-dev
+      - --features=preview,admin-fine-grained-authz
     depends_on:
       - synaps-mariadb
     volumes:
       - synaps_keycloak_data:/opt/keycloak/data
-      - ./mariadb-java-client.jar:/opt/keycloak/providers/mariadb-java-client.jar 
+
+  # --------------------------------- IDP-FLASK --------------------------------- #
+  synaps-idp-flask:
+    build:
+      context: ./synaps-idp-flask
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./synaps-idp-flask/.env
+    depends_on:
+      - synaps-mariadb
 
 volumes:
   synaps_mariadb_data:

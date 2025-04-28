@@ -25,12 +25,12 @@ Route::get('/hello', function (Request $request): \Illuminate\Http\JsonResponse 
 });
 
 //---------------------------------------------------------------------------//
-//  Ruta para el inicio de sesión de usuarios.                               //
+//  Ruta para la autenticación de usuarios.                                  //
 //---------------------------------------------------------------------------//
 
 /**
- * Maneja el inicio de sesión de usuarios.
+ * Maneja la autenticación de usuarios.
  *
  * @see AuthController::login()
  */
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/authenticate', [AuthController::class, 'login']);
