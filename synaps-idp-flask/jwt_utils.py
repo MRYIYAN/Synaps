@@ -1,7 +1,7 @@
 import jwt
 import datetime
 
-SECRET_KEY = "SYNAPS_SUPER_SECRET"  # ⚡ Puedes cambiarlo si quieres
+SECRET_KEY = "SYNAPS_SUPER_SECRET"  
 
 def create_access_token(user_id, email, name):
     payload = {
