@@ -1,35 +1,12 @@
-//===========================================================================//
-//                             CARD.JSX                                      
-//===========================================================================//
-//                                                                            //
-//  Este componente muestra una tarjeta con título y contenido.              //
-//  El fondo y el texto se ajustan al tema usando variables CSS.             //
-//                                                                            //
-//===========================================================================//
-
-//===========================================================================//
-//                             IMPORTS                                        
-//===========================================================================//
-import React from "react";
-//import "./Card.css";
-
-//===========================================================================//
-//                           COMPONENTE CARD                                 
-//===========================================================================//
-//                                                                            //
-//  Recibe title y content para rellenar la tarjeta.                         //
-//                                                                            //
-//===========================================================================//
-const Card = ({ title, content }) => {
+// src/components/Card.jsx
+const Card = ({ title, children }) => {
     return (
-        <div className="card">
-            <h3 className="card-title">{title}</h3>
-            <p className="card-content">{content}</p>
-        </div>
+      <div className="bg-gluon_gray p-6 radius-lg space-y-3 text-snow w-64">
+        <h2 className="display-sm text-xl">{title}</h2>
+        <div className="text-md">{children}</div>
+      </div>
     );
-};
-
-//===========================================================================//
-//                             EXPORTACIÓN                                   
-//===========================================================================//
-export default Card;
+  };
+  
+  export default Card;
+  

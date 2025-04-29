@@ -1,35 +1,14 @@
-//===========================================================================//
-//                             BUTTON.JSX                                    
-//===========================================================================//
-//                                                                            //
-//  Este componente renderiza un botón estilizado que responde al tema claro/ //
-//  oscuro. Recibe children y cualquier otra prop para personalizar su uso.  //
-//                                                                            //
-//===========================================================================//
-
-//===========================================================================//
-//                             IMPORTS                                        
-//===========================================================================//
-import React from "react";
-//import "./Button.css";
-
-//===========================================================================//
-//                          COMPONENTE BUTTON                                
-//===========================================================================//
-//                                                                            //
-//  Renderiza un <button> con la clase "btn", aprovechando variables CSS para //
-//  adaptarse al tema.                                                       //
-//                                                                            //
-//===========================================================================//
-const Button = ({ children, ...props }) => {
+// src/components/Button.jsx
+const Button = ({ children, onClick }) => {
     return (
-        <button className="btn" {...props}>
-            {children}
-        </button>
+      <button
+        onClick={onClick}
+        className="bg-liquid_lava text-snow p-3 radius-md medium hover:bg-gluon_gray transition-all"
+      >
+        {children}
+      </button>
     );
-};
-
-//===========================================================================//
-//                             EXPORTACIÓN                                   
-//===========================================================================//
-export default Button;
+  };
+  
+  export default Button;
+  

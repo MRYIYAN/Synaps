@@ -20,6 +20,13 @@ import Todo           from "./pages/TodoPage";
 import Journal        from "./pages/JournalPage";
 import Settings       from "./pages/SettingsPage";
 
+// ---------------------------------------------
+// Importamos el css global de la aplicación
+// ---------------------------------------------
+import './assets/styles/global.css';
+// ---------------------------------------------
+
+
 function App() {
   return (
     <ReactKeycloakProvider
