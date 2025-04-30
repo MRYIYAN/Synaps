@@ -50,6 +50,7 @@ function App() {
           <Route path="/todo"             element={<Todo            />} />
           <Route path="/journal"          element={<Journal         />} />
           <Route path="/settings"         element={<Settings        />} />
+          
         </Routes>
       </BrowserRouter>
     </ReactKeycloakProvider>

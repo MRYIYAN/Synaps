@@ -5,7 +5,7 @@
 
 export async function http_post( url, body, headers, credentials = 'include' ) {
 
-  // Inicializamos el valor a devolver
+  // Inicializamos los valores a devolver
   let result    = 0;
   let message   = '';
   let value     = [];
@@ -29,30 +29,79 @@ export async function http_post( url, body, headers, credentials = 'include' ) {
       , credentials: credentials
     } );
 
-    console.log( http_response );
+    // Capturamos los datos de la petición
+    http_data = await http_response.json();
 
     // Si la petición ha sido incorrecta, salimos del flujo
     if( !http_response.ok )
-      throw new Error( 'Error' );
+      message = http_data.message || http_response.statusText || 'Error';
 
-    // Capturamos los datos de la petición
-    http_data = await http_response.json();
+    // Caso de éxito
+    else {
+      result  = 1;
+      message = http_data.message || 'OK';
+    }
 
   } catch( error ) {
 
     // Mensaje de error
-    message = error;
+    message = error.message || 'Network error';
   }
   finally
   {
     // Calculamos el array a devolver
-    value = {
-        'result'   : result
-      , 'message'  : message
-      , 'http_data': http_data
-    };
-
+    value = { result, message, http_data };
     return value;
   }
 
+}
+
+// Helper para GET con Bearer
+export async function http_get( url, headers, credentials = 'include' ) {
+
+  // Inicializamos el valor a devolver
+  let result    = 0;
+  let message   = '';
+  let http_data = [];
+
+  try {
+
+    // Si no se han especificado cabeceras, insertamos las de JSON por defecto
+    if( !headers ) {
+      headers = {
+        Accept: 'application/json'
+      };
+    }
+
+    // Ejecutamos la solicitud GET a la ruta backend especificada
+    let http_response = await fetch( url, {
+        method     : 'GET'
+      , headers    : headers
+      , credentials: credentials
+    } );
+
+    // Capturamos los datos de la respuesta
+    http_data = await http_response.json();
+
+    // Si la petición ha sido incorrecta, registramos el mensaje de error
+    if( !http_response.ok )
+      message = http_data.message || http_response.statusText || 'Error';
+    
+    // Caso de éxito
+    else {
+      result = 1;
+      message = http_data.message || 'OK';
+    }
+
+  } catch( error ) {
+
+    // Mensaje de error de red u otra excepción
+    message = error.message || 'Network error';
+
+  } finally {
+    
+    // Calculamos el objeto a devolver
+    return { result, message, http_data };
+    
+  }
 }

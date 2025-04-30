@@ -8,7 +8,6 @@ import { http_post } from '../lib/http.js';
 
 // import '../assets/styles/RegisterForm.css';
 
-
 const RegisterForm = () => {
 
   // Inicializamos las variables para manejar los datos del POST y los errores

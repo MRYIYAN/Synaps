@@ -105,7 +105,7 @@ services:
     build:
       context: ./synaps-idp-flask
     ports:
-      - "5000:5000"
+      - "5005:5005"
     env_file:
       - ./synaps-idp-flask/.env
     depends_on:

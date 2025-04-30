@@ -12,6 +12,7 @@
 //                             IMPORTS                                       
 //===========================================================================//
 import React, { useState } from "react";
+import { http_post } from '../lib/http.js';
 // import '../assets/styles/LoginForm.css';
 //===========================================================================//
 
@@ -24,52 +25,46 @@ const LoginForm = () => {
   //---------------------------------------------------------------------------//
   //  Estados para manejar los datos del formulario y los mensajes de error.   //
   //---------------------------------------------------------------------------//
-  const [email, set_email]          = useState("");
-  const [password, set_password]    = useState("");
-  const [error_msg, set_error_msg]  = useState("");
+  const [email, set_email]          = useState( '' );
+  const [password, set_password]    = useState( '' );
+  const [error_msg, set_error_msg]  = useState( '' );
 
   //---------------------------------------------------------------------------//
   //  Función para manejar el envío del formulario. Realiza una solicitud      //
   //  POST al backend con las credenciales del usuario.                        //
   //---------------------------------------------------------------------------//
-  const handle_submit = async (e) => {
+  const handle_submit = async ( e ) => {
+
     e.preventDefault();
+    e.stopPropagation();
 
     try {
-      //------------------------------------------------------------------------//
-      //  Realiza la solicitud al backend para autenticar al usuario.           //
-      //------------------------------------------------------------------------//
-      const res = await fetch("http://localhost:8010/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-        credentials: "include",
-      });
 
-      //------------------------------------------------------------------------//
-      //  Verifica si la respuesta del servidor es exitosa.                     //
-      //------------------------------------------------------------------------//
-      if (!res.ok) {
-        throw new Error("Login fallido");
+      // Preparamos los datos para el post
+      let url   = 'http://localhost:8010/api/login';
+      let body  = {
+          email
+        , password
+      };
+
+      // Realizamos la solicitud para autenticar al usuario.
+      const { result, message, http_data } = await http_post( url, body );
+
+      // Si la consulta ha sido incorrecta, hacemos saltar una alerta
+      if( http_data.result === 0 ) {
+
+        // Calculamos el mensaje de error y lo lanzamos
+        const error_message = ( http_data && http_data.message ) || message || 'Unknown error';
+        throw new Error( error_message );
       }
 
-      //------------------------------------------------------------------------//
-      //  Procesa la respuesta del servidor y muestra un mensaje en la consola. //
-      //------------------------------------------------------------------------//
-      const data = await res.json();
-      console.log("Login exitoso:", data);
-    } catch (err) {
-      //------------------------------------------------------------------------//
-      //  Maneja errores y actualiza el mensaje de error en la interfaz.        //
-      //------------------------------------------------------------------------//
-      set_error_msg("Correo o contraseña incorrectos.");
-      console.error(err);
+      // Si la consulta ha sido correcta, guardamos el access_token
+      localStorage.setItem( 'access_token', http_data.access_token );
+
+    } catch( error ) {
+
+      // Manejamos los errores del servidor
+      set_error_msg( error.message );
     }
   };
 

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 class Kernel extends HttpKernel
 {
     /**
-     * Los middleware globales de la aplicación.
+     * Middlewares globales de la aplicación.
      *
      * @var array
      */
@@ -21,7 +21,7 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * Los grupos de middleware de ruta.
+     * Grupos de Middlewares de rutas.
      *
      * @var array
      */
@@ -42,20 +42,27 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * Los middleware de ruta individuales.
+     * Middleware de rutas individuales.
      *
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+            'auth'              => \App\Http\Middleware\Authenticate::class
+        ,   'guest'             => \App\Http\Middleware\RedirectIfAuthenticated::class
+
+        // Auth
+        ,   'auth.basic'        => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class
+        ,   'can'               => \Illuminate\Auth\Middleware\Authorize::class
+        ,   'password.confirm'  => \Illuminate\Auth\Middleware\RequirePassword::class
+        ,   'verified'          => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class
+
+        // Routing
+        ,   'bindings'          => \Illuminate\Routing\Middleware\SubstituteBindings::class
+        ,   'signed'            => \Illuminate\Routing\Middleware\ValidateSignature::class
+        ,   'throttle'          => \Illuminate\Routing\Middleware\ThrottleRequests::class
+
+        // HTTP
+        ,   'cache.headers'     => \Illuminate\Http\Middleware\SetCacheHeaders::class
+        
     ];
 }
