@@ -11,6 +11,8 @@ import LoginForm  from "../components/LoginForm";
 import Modal      from "../components/Modal";
 */
 
+import SidebarPanel from "../components/SidebarPanel";
+
 // ------------------------------------------------------------
 // APP
 // ------------------------------------------------------------
@@ -20,7 +22,7 @@ const Home = function() {
   // HTML del formulario
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>Home</h1>
+      <SidebarPanel />
     </div>
   );
 }
