@@ -1,20 +1,9 @@
-//---------------------------------------------------------------------------------------------//
-// Importamos React, useState para manejar el estado
-//---------------------------------------------------------------------------------------------//
 import React, { useState } from "react";
-
-//-----------------------------------------------------------------------//
-// Importamos nuestros iconos SVG.
-//-----------------------------------------------------------------------//
 import { ReactComponent as SearchIcon } from "../assets/icons/search.svg";
 import { ReactComponent as FoldersIcon } from "../assets/icons/folders.svg";
 import { ReactComponent as GalaxyViewIcon } from "../assets/icons/waypoints.svg";
 import { ReactComponent as ListTodoIcon } from "../assets/icons/list-todo.svg";
 import { ReactComponent as SecretNotesIcon } from "../assets/icons/lock.svg";
-
-//-----------------------------------------------------------------------//
-// Importamos el CSS para el componente.
-//-----------------------------------------------------------------------//
 import "../assets/styles/SidebarPanel.css";
 
 // Definimos la configuración de los enlaces de navegación
@@ -26,12 +15,12 @@ const navigationItems = [
   { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
 ];
 
-// Componentes para el panel derecho según el ítem seleccionado
-const SearchPanel = () => <div className="options-panel-content"><h3>Opciones de Búsqueda</h3><p>Aquí irían las opciones de búsqueda</p></div>;
-const FoldersPanel = () => <div className="options-panel-content"><h3>Mis Carpetas</h3><p>Aquí irían las opciones de carpetas</p></div>;
-const GalaxyViewPanel = () => <div className="options-panel-content"><h3>Vista de Galaxia</h3><p>Aquí irían las opciones de vista de galaxia</p></div>;
-const ListTodoPanel = () => <div className="options-panel-content"><h3>Lista de Tareas</h3><p>Aquí irían las opciones de tareas</p></div>;
-const SecretNotesPanel = () => <div className="options-panel-content"><h3>Notas Secretas</h3><p>Aquí irían las opciones de notas secretas</p></div>;
+// Componentes para el panel derecho - ahora completamente vacíos
+const SearchPanel = () => <div className="options-panel-content"></div>;
+const FoldersPanel = () => <div className="options-panel-content"></div>;
+const GalaxyViewPanel = () => <div className="options-panel-content"></div>;
+const ListTodoPanel = () => <div className="options-panel-content"></div>;
+const SecretNotesPanel = () => <div className="options-panel-content"></div>;
 
 // Mapeo de componentes de panel por ID
 const panelComponents = {
@@ -43,37 +32,45 @@ const panelComponents = {
 };
 
 const SidebarPanel = () => {
-  //---------------------------------------------------------------------------//
-  //  Estado para manejar la visibilidad y el contenido del panel derecho      //
-  //---------------------------------------------------------------------------//
-  const [rightPanelOpen, setRightPanelOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [rightPanelOpen, setRightPanelOpen] = useState(false); // Inicialmente cerrado
+  const [selectedItem, setSelectedItem] = useState(null); // Inicialmente no hay selección
   const [indicatorPosition, setIndicatorPosition] = useState(0);
+  const [isClosing, setIsClosing] = useState(false);
   
-  //---------------------------------------------------------------------------//
-  //  Función para manejar la selección de iconos                              //
-  //---------------------------------------------------------------------------//
+  // Función para manejar la selección de iconos
   const handleIconClick = (itemId, index) => {
-    // Si hacemos clic en el mismo icono ya seleccionado, alternamos la visibilidad del panel
     if (selectedItem === itemId) {
-      setRightPanelOpen(!rightPanelOpen);
+      if (rightPanelOpen) {
+        handleCloseSidebar();
+      } else {
+        // Si está cerrado pero es el mismo icono, lo abrimos
+        setRightPanelOpen(true);
+      }
     } else {
-      // Si seleccionamos un icono diferente, lo establecemos como seleccionado y abrimos el panel
+      // Si seleccionamos un icono diferente, lo abrimos
       setSelectedItem(itemId);
       setRightPanelOpen(true);
     }
-    // Actualizamos la posición del indicador
-    setIndicatorPosition(index * 48); // 48px es la altura de cada elemento li
+    
+    setIndicatorPosition(index * 48);
   };
 
-  // Obtener el componente correspondiente al ítem seleccionado
+  const handleCloseSidebar = () => {
+    setIsClosing(true);
+    
+    setTimeout(() => {
+      setRightPanelOpen(false);
+      setIsClosing(false);
+    }, 290);
+  };
+  
   const CurrentPanelComponent = selectedItem ? panelComponents[selectedItem] : null;
+  const currentItem = navigationItems.find(item => item.id === selectedItem) || {};
 
   return (
     <div className="app-container">
       {/* Activity Bar - barra vertical con iconos */}
       <aside className="sidebar-panel" role="navigation">
-        {/* Indicador de selección animado */}
         {selectedItem && (
           <div 
             className="active-indicator" 
@@ -101,16 +98,16 @@ const SidebarPanel = () => {
         </ul>
       </aside>
 
-      {/* Side Bar - panel que aparece a la derecha de Activity Bar */}
-      {rightPanelOpen && CurrentPanelComponent && (
-        <div className="right-options-panel">
-          <button 
-            className="close-panel-button" 
-            onClick={() => setRightPanelOpen(false)}
-            aria-label="Cerrar panel de opciones"
-          >
-            ×
-          </button>
+      {/* Side Bar - panel que aparece a la derecha de Activity Bar con separación de 8px */}
+      {(rightPanelOpen || isClosing) && CurrentPanelComponent && (
+        <div className={`right-options-panel ${isClosing ? 'closing' : ''}`}>
+          {/* Header flotante con gap de 8px */}
+          <header className="sidebar-header">
+            <div className="panel-title">
+              <h3>{currentItem.label}</h3>
+            </div>
+          </header>
+          
           <CurrentPanelComponent />
         </div>
       )}
