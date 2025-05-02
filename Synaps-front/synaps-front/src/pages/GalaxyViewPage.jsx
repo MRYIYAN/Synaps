@@ -12,7 +12,7 @@ import GalaxyGrao from "../components/GalaxyGraph";
 
 const GalaxyView = function() {
 
-  // Datos de ejemplo para tu grafo: 50 nodos temáticos y conexiones selectivas.
+  // Datos de ejemplo: 50 nodos temáticos y conexiones selectivas.
   const graphData = {
     nodes: [
       { id: 'node1',  name: 'AI Overview',                 group: 1 },

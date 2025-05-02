@@ -7,7 +7,7 @@ import ForceGraph2D from 'react-force-graph-2d';
 
 /**
  * GalaxyGraph
- * Componente para mostrar un grafo interactivo con estilo Obsidian.
+ * Componente para mostrar un gráfico interactivo con estilo Obsidian.
  *
  * @param {{ data: { nodes: Node[], links: Link[] } } } props - Datos de nodos y enlaces.
  * @returns {JSX.Element}
