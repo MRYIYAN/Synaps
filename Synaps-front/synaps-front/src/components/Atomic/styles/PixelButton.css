@@ -1,0 +1,38 @@
+.sidebar_button {
+  position: relative; /* Necesario para posicionar el pixel-canvas */
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid #878787;
+  border-radius: 4px;
+  color: #d4d4d4;
+  font-size: 28px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Oculta el pixel-canvas fuera del botón */
+  transition: border-color 0.3s, stroke 0.3s;
+}
+
+.sidebar_button pixel-canvas {
+  position: absolute;
+  inset: 0; /* Ocupa todo el botón */
+  z-index: 0; /* Detrás del ícono */
+  pointer-events: none; /* No interfiere con los clics */
+}
+
+.sidebar_button .icon {
+  position: relative;
+  z-index: 1; /* Encima del pixel-canvas */
+  stroke: #d4d4d4; /* Color inicial del ícono */
+  transition: stroke 0.3s;
+}
+
+.sidebar_button:hover {
+  border-color: #F56E0F; /* Cambia el borde a Liquid Lava */
+}
+
+.sidebar_button:hover .icon {
+  stroke: #ffffff; /* Cambia el color del ícono a blanco */
+}

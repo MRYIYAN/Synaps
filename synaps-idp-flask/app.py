@@ -13,9 +13,9 @@ app = Flask(__name__)
 @app.route('/.well-known/openid-configuration', methods=['GET'])
 def openid_configuration():
     return jsonify({
-        "issuer": "http://localhost:5000",
-        "token_endpoint": "http://localhost:5000/token",
-        "authorization_endpoint": "http://localhost:5000/token",
+        "issuer": "http://localhost:5005",
+        "token_endpoint": "http://localhost:5005/token",
+        "authorization_endpoint": "http://localhost:5005/token",
         "grant_types_supported": ["password"],
         "response_types_supported": ["token"],
         "subject_types_supported": ["public"],
@@ -27,11 +27,13 @@ def openid_configuration():
 #---------------------------------------------------#
 @app.route('/token', methods=['POST'])
 def token():
-    grant_type = request.form.get('grant_type')
-    username = request.form.get('username')
-    password = request.form.get('password')
-    client_id = request.form.get('client_id')  # Ignorado
-    client_secret = request.form.get('client_secret')  # Ignorado
+    
+    # Capturamos los datos del POST
+    grant_type      = request.form.get('grant_type')
+    username        = request.form.get('username')
+    password        = request.form.get('password')
+    client_id       = request.form.get('client_id')     # Ignorado
+    client_secret   = request.form.get('client_secret') # Ignorado
 
     # Aquí simplemente ignoramos client_id y client_secret, no hacemos nada
 
@@ -55,4 +57,4 @@ def token():
 #======# Ejecutar la aplicación Flask #======#
 #--------------------------------------------------------#
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5005)
