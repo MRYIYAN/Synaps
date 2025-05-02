@@ -1,56 +1,440 @@
-.sidebar_container {
-    width: 4rem;
-    height: 100vh;
-    background-color: #1e1e1e;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem 0;
-    border-radius: 4px;
-    overflow: hidden;
+/* Variables de color al estilo VS Code */
+:root {
+  --vscode-background: #1e1e1e;
+  --vscode-foreground: #d4d4d4;
+  --vscode-activityBar-background: #333333;
+  --vscode-activityBar-foreground: #ffffff;
+  --vscode-activityBar-inactiveForeground: #ffffff80;
+  --vscode-activityBar-activeBorder: #F56E0F;
+  --vscode-activityBar-activeFocusBorder: #F56E0F;
+  --vscode-sideBar-background: #252526;
+  --vscode-sideBar-foreground: #cccccc;
+  --vscode-sideBarTitle-foreground: #bbbbbb;
+  --vscode-sideBarSectionHeader-background: #252526;
+  --vscode-sideBarSectionHeader-foreground: #cccccc;
+  --vscode-sideBarSectionHeader-border: #303031;
+  --vscode-button-background: #F56E0F;
+  --vscode-button-foreground: #ffffff;
+  --vscode-button-hoverBackground: #ff8534;
+  --vscode-focusBorder: #F56E0F;
+  
+  /* Color naranja personalizado */
+  --liquid-lava: #F56E0F;
+  
+  /* Anchos fijos */
+  --activity-bar-width: 48px;
+  --side-bar-width: 225px;
 }
 
-.sidebar_static {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+/* Contenedor principal */
+.app-container {
+  display: flex;
+  height: 100vh;
+  background-color: var(--vscode-background);
+  color: var(--vscode-foreground);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow: hidden;
 }
 
-.sidebar_button {
-    position: relative; /* Necesario para posicionar el pixel-canvas */
-    width: 36px;
-    height: 36px;
-    background: none;
-    border: 1px solid #878787;
-    border-radius: 4px;
-    color: #d4d4d4;
-    font-size: 28px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden; /* Oculta el pixel-canvas fuera del botón */
-    transition: border-color 0.3s, stroke 0.3s;
+/* Activity Bar - barra vertical con iconos */
+.sidebar-panel {
+  width: var(--activity-bar-width);
+  height: 100vh;
+  background-color: var(--vscode-activityBar-background);
+  z-index: 10;
+  position: fixed;
+  left: 0;
+  top: 0;
 }
 
-.sidebar_button pixel-canvas {
+/* Estilos para el header del sidebar */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+  background-color: var(--vscode-sideBarSectionHeader-background);
+  border-bottom: 1px solid rgba(204, 204, 204, 0.1);
+}
+
+.panel-title {
+  flex: 1;
+}
+
+.panel-title h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vscode-sideBarSectionHeader-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-logo {
+  width: auto;
+  height: 28px;
+  object-fit: contain;
+  margin-right: 40px;
+  max-width: calc(100% - 60px);
+}
+
+/* Lista de elementos de navegación */
+.sidebar-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+/* Ajustamos la lista para que empiece después del header */
+.sidebar-panel ul {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Elementos de navegación */
+.sidebar-panel li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  width: 100%;
+  color: var(--vscode-activityBar-inactiveForeground);
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
+  position: relative;
+}
+
+.sidebar-panel li:hover {
+  color: var(--vscode-activityBar-foreground);
+}
+
+/* Elemento activo */
+.sidebar-panel li.active {
+  color: var(--vscode-activityBar-foreground);
+}
+
+/* Estilos para los SVG cuando el ítem está activo */
+.sidebar-panel li.active svg {
+  color: var(--liquid-lava);
+  fill: transparent;
+  stroke: var(--liquid-lava);
+  stroke-width: 1.5px;
+  filter: drop-shadow(0 0 2px rgba(245, 110, 15, 0.3));
+}
+
+/* SVG Icons - estilos base */
+.sidebar-panel li svg {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  color: var(--vscode-activityBar-inactiveForeground);
+  transition: color 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
+}
+
+.sidebar-panel li:hover svg {
+  color: var(--vscode-activityBar-foreground);
+}
+
+/* Indicador activo deslizante */
+.sidebar-panel .active-indicator {
+  position: absolute;
+  left: 0;
+  width: 2px;
+  height: 48px;
+  background-color: var(--vscode-activityBar-activeBorder);
+  transition: top 0.3s ease-in-out;
+  z-index: 2;
+}
+
+/* Side Bar - panel que aparece a la derecha de la Activity Bar */
+.right-options-panel {
+  width: var(--side-bar-width);
+  height: 100vh;
+  background-color: var(--vscode-sideBar-background);
+  color: var(--vscode-sideBar-foreground);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: fixed;
+  top: 0;
+  left: var(--activity-bar-width);
+  z-index: 5;
+  border-right: 1px solid #1a1a1a;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: transform 200ms ease-out;
+
+  /* Animación de entrada y salida */
+  animation: slideInPanel 0.3s ease-out forwards;
+  transform-origin: left center;
+}
+
+/* Clase para la animación de salida */
+.right-options-panel.closing {
+  animation: slideOutPanel 0.3s ease-out forwards;
+}
+
+/* Keyframes para la animación de entrada */
+@keyframes slideInPanel {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Keyframes para la animación de salida */
+@keyframes slideOutPanel {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+}
+
+/* Ajustes al panel derecho para acomodar el botón flotante */
+.right-options-panel {
+  position: fixed;
+  left: var(--activity-bar-width);
+  top: 0;
+  height: 100vh;
+  width: var(--side-bar-width);
+  background-color: var(--vscode-sideBar-background);
+  z-index: 5;
+  overflow-y: auto;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Header para el panel derecho */
+.right-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  height: 60px;
+  background-color: var(--vscode-sideBarSectionHeader-background);
+  border-bottom: 1px solid rgba(204, 204, 204, 0.1);
+  position: relative;
+}
+
+/* Título del panel - ahora sin el container adicional */
+.panel-title {
+  margin: 0;
+}
+
+.panel-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--vscode-sideBar-foreground);
+}
+
+/* Botón toggle para abrir/cerrar */
+.sidebar-toggle-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--liquid-lava);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: #ff8534;
+}
+
+/* Aseguramos que el icono de toggle se vea bien */
+.toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+}
+
+/* Estilo para cuando el sidebar está cerrado */
+.compact-sidebar-header {
+  position: fixed;
+  left: var(--activity-bar-width);
+  top: 16px;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: var(--vscode-sideBar-background);
+  border-radius: 4px;
+  z-index: 5;
+}
+
+/* Botón para cerrar el panel de opciones */
+.close-panel-button {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 24px;
+  height: 24px;
+  background-color: var(--liquid-lava);
+  border: none;
+  color: white;
+  border-radius: 4px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  overflow: visible;
+  transform: none;
+  padding: 0;
+}
+
+.close-panel-button:hover {
+  background-color: #ff8534;
+}
+
+/* Botón para cerrar el panel de opciones - versión flotante */
+.close-panel-button.floating-close {
+  position: absolute;
+  right: -15px;
+  top: 30px;
+  width: 32px;
+  height: 32px;
+  background-color: #F56E0F;
+  border: none;
+  color: white;
+  border-radius: 0;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  transition: background-color 0.2s ease;
+  padding: 0;
+}
+
+.close-panel-button.floating-close:hover {
+  background-color: #ff8534;
+}
+
+.close-panel-button .close-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+  font-size: 24px;
+}
+
+/* Este span debe mostrar el símbolo X */
+.close-icon, 
+.close-panel-button span {
+  display: inline-block;
+  line-height: 1;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Contenido del panel de opciones */
+.options-panel-content {
+  padding: 16px;
+}
+
+.options-panel-content h3 {
+  margin-top: 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--vscode-sideBarSectionHeader-foreground);
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+/* Animación para transiciones suaves */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.options-panel-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Foco y accesibilidad */
+.sidebar-panel li:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: -1px;
+}
+
+/* Scrollbar estilo VS Code */
+.right-options-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.right-options-panel::-webkit-scrollbar-track {
+  background: var(--vscode-sideBar-background);
+}
+
+.right-options-panel::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 5px;
+}
+
+.right-options-panel::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Animacion Active Indicator en efecto de deslizamiento */
+@keyframes slideIn {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+  
+  .active-indicator {
     position: absolute;
-    inset: 0; /* Ocupa todo el botón */
-    z-index: 0; /* Detrás del ícono */
-    pointer-events: none; /* No interfiere con los clics */
-}
+    left: 0;
+    height: 100%;
+    width: 2px;
+    background-color: var(--vscode-activityBar-activeBorder);
+    animation: slideIn 0.3s ease-in-out;
+  }
+  
 
-.sidebar_button .icon {
-    position: relative;
-    z-index: 1; /* Encima del pixel-canvas */
-    stroke: #d4d4d4; /* Color inicial del ícono */
-    transition: stroke 0.3s;
-}
-
-.sidebar_button:hover {
-    border-color: #F56E0F; /* Cambia el borde a Liquid Lava */
-}
-
-.sidebar_button:hover .icon {
-    stroke: #ffffff; /* Cambia el color del ícono a blanco */
+/* Responsive para móvil */
+@media (max-width: 768px) {
+  .right-options-panel {
+    transform: translateX(-100%);
+    width: calc(100% - var(--activity-bar-width));
+  }
+  
+  .right-options-panel.visible {
+    transform: translateX(0);
+  }
 }
