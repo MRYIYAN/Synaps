@@ -19,7 +19,7 @@ def get_user_by_email(email):
     try:
         #------# Ejecutar consulta SQL #------#
         with connection.cursor(pymysql.cursors.DictCursor) as cursor:
-            sql = "SELECT id, email, password, name FROM users WHERE email = %s"
+            sql = "SELECT user_id AS id, user_email AS email, user_password AS password, user_name AS name FROM users WHERE user_email = %s"
             cursor.execute(sql, (email,))
             user = cursor.fetchone()
             return user

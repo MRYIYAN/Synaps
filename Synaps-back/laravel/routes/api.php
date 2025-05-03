@@ -19,21 +19,19 @@ use Illuminate\Session\Middleware\StartSession;
  * @param Request $request La solicitud HTTP.
  * @return \Illuminate\Http\JsonResponse Respuesta JSON con el mensaje de bienvenida.
  */
-Route::get( '/hello', function( Request $request ): \Illuminate\Http\JsonResponse {
-    return response()->json( [
+Route::get('/hello', function (Request $request): \Illuminate\Http\JsonResponse {
+    return response()->json([
         'message' => 'Hola desde Laravel y Bienvenido a Synaps, el back esta funcionando',
-    ] );
-} );
+    ]);
+});
 
 //---------------------------------------------------------------------------//
-// Ejecución del Middleware para la autorización del usuario                 //
+//  Rutas protegidas con el middleware auth.bearer                           //
 //---------------------------------------------------------------------------//
 
-Route::middleware( ['api', 'keycloak.jwt'] )->group( function() {
-
-    // Login-check: authvalida el token y devuelve datos del usuario
-    Route::get( '/login-check', [AuthController::class, 'loginCheck'] );
-} );
+Route::middleware(['auth.bearer'])->group(function () {
+    Route::get('/api/login-check', [AuthController::class, 'loginCheck']);
+});
 
 //---------------------------------------------------------------------------//
 //  Ruta para la autenticación de usuarios.                                  //
@@ -44,12 +42,12 @@ Route::middleware( ['api', 'keycloak.jwt'] )->group( function() {
  *
  * @see AuthController::login()
  */
-Route::post( '/login', [AuthController::class, 'login'] )
-    ->middleware( ['api', StartSession::class] );
+Route::post('/login', [AuthController::class, 'login'])
+    ->middleware(['api', StartSession::class]);
 
 /**
  * Maneja el registro de nuevos usuarios.
  *
  * @see AuthController::register()
  */
-Route::post( '/register', [AuthController::class, 'register'] );
+Route::post('/register', [AuthController::class, 'register']);

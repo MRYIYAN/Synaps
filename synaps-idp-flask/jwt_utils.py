@@ -13,9 +13,9 @@ def create_access_token( user_id, email, name ):
         'iat': datetime.datetime.utcnow(),
         'exp': datetime.datetime.utcnow() + datetime.timedelta( minutes = 60 ),
         'iss': 'http://localhost:5005',  # Flask URL
-        'aud': 'account'  # Keycloak expects 'account' as audience
+        'aud': 'account'  # Keycloak 'account' URL
     }
 
     # Generamos el token
-    token = jwt.encode( payload, config.SECRET_KEY, algorithm = 'HS256' )
+    token = jwt.encode( payload, config.HS256_KEY, algorithm = 'HS256' )
     return token

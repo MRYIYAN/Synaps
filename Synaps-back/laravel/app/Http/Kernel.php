@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
 
         // HTTP
         ,   'cache.headers'     => \Illuminate\Http\Middleware\SetCacheHeaders::class
+        ,   'auth.bearer'       => \App\Http\Middleware\AuthenticateWithBearerToken::class
         
     ];
 }

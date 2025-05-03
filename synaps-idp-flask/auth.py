@@ -1,14 +1,21 @@
 from db import get_user_by_email
 from jwt_utils import create_access_token
-from werkzeug.security import check_password_hash
+import bcrypt
 
 def authenticate_user(email, password):
     user = get_user_by_email(email)
+    print("DEBUG USER:", user)  # Log temporal para depurar datos del usuario
     if not user:
         return None
 
-    # Validar contraseña
-    if not check_password_hash(user['password'], password):
+    hashed = user['password'].encode()
+
+    # Compatibilidad con hash bcrypt $2y$
+    if hashed.startswith(b"$2y$"):
+        hashed = b"$2b$" + hashed[4:]
+
+    # Verificar la contraseña
+    if not bcrypt.checkpw(password.encode(), hashed):
         return None
 
     # Generar token JWT

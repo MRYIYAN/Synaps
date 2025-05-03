@@ -29,39 +29,13 @@ class AuthController extends Controller
      */
     public function loginCheck( Request $request )
     {
-        // Inicializamos la respuesta a devolver al Front
-        $result     = 0;
-        $message    = '';
-        $user       = [];
-        $http_code  = 401;
+        $user = $request->attributes->get('token_data', []);
 
-        try
-        {
-            // Extraemos los datos del JWT
-            $data = $request->attributes->get( 'token_data', [] );
-
-            // Si llegamos hasta aquí, está todo OK
-            $result     = 1;
-            $http_code  = 200;
-        }
-        catch( Exception $e )
-        {
-            // Mensaje de error
-            $message = $e->getMessage();
-        }
-        finally
-        {
-            // Calculamos la respuesta JSON a devolver
-            $value = response()->json( [
-                    'result'    => $result
-                ,   'user'      => $user
-                ,   'message'   => $message
-                ,   'http_code' => $http_code                
-            ] );
-
-            // Retornamos la respuesta
-            return $value;
-        }
+        return response()->json([
+            'result' => 1,
+            'message' => 'Token válido',
+            'user' => $user
+        ]);
     }
 
 

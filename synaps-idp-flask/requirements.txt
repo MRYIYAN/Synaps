@@ -2,3 +2,4 @@ flask
 pymysql
 python-dotenv
 pyjwt
+bcrypt
