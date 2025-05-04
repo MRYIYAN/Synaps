@@ -1,14 +1,19 @@
 #=================================================#
-#======# Importar librerías necesarias #======#
+#======#   Importar librerías necesarias   #======#
 #=================================================#
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Habilitar CORS
 from auth import authenticate_user
 
+#=================================================#
+#======# Instanciar la aplicación Flask    #======#
+#=================================================#
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})  # Permitir explícitamente todos los orígenes
 
 #---------------------------------------------------#
-#======# Discovery Endpoint #======#
+#======#         Discovery Endpoint          #======#
 #---------------------------------------------------#
 @app.route('/.well-known/openid-configuration', methods=['GET'])
 def openid_configuration():
@@ -23,7 +28,7 @@ def openid_configuration():
     })
 
 #---------------------------------------------------#
-#======# Token Endpoint #======#
+#======#         Token Endpoint              #======#
 #---------------------------------------------------#
 @app.route('/token', methods=['POST'])
 def token():
@@ -54,7 +59,7 @@ def token():
     })
 
 #--------------------------------------------------------#
-#======# Ejecutar la aplicación Flask #======#
+#======#       Ejecutar la aplicación Flask       #======#
 #--------------------------------------------------------#
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5005)

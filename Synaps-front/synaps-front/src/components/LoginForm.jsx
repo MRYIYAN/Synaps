@@ -12,7 +12,6 @@
 //                             IMPORTS                                       
 //===========================================================================//
 import React, { useState, useEffect } from "react";
-import { http_post } from '../lib/http.js';
 import '../assets/styles/global.css';
 import '../assets/js/pixelCanvas';
 //===========================================================================//
@@ -47,38 +46,50 @@ const LoginForm = () => {
   //  Función para manejar el envío del formulario. Realiza una solicitud      //
   //  POST al backend con las credenciales del usuario.                        //
   //---------------------------------------------------------------------------//
-  const handle_submit = async ( e ) => {
-
+  const handle_submit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     try {
+      // Actualizamos la URL para apuntar al endpoint /token
+      let url = 'http://localhost:5005/token';
 
-      // Preparamos los datos para el post
-      let url   = 'http://localhost:8010/api/login';
-      let body  = {
-          email
-        , password
-      };
+      // Ajustamos el formato del body para application/x-www-form-urlencoded
+      const body = new URLSearchParams({
+        grant_type: 'password',
+        username: email,
+        password: password
+      });
 
-      // Realizamos la solicitud para autenticar al usuario.
-      const { result, message, http_data } = await http_post( url, body );
+      // Realizamos la solicitud para autenticar al usuario usando fetch
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body
+      });
 
-      // Si la consulta ha sido incorrecta, hacemos saltar una alerta
-      if( http_data.result === 0 ) {
+      const http_data = await response.json();
 
-        // Calculamos el mensaje de error y lo lanzamos
-        const error_message = ( http_data && http_data.message ) || message || 'Unknown error';
-        throw new Error( error_message );
+      // Log temporal para inspeccionar la respuesta del servidor
+      console.log("LOGIN RESPONSE:", http_data);
+
+      // Si la consulta ha sido incorrecta, mostramos un mensaje más informativo
+      if (!response.ok) {
+        const error_message = http_data?.error || http_data?.message || 'Unknown error';
+        throw new Error(error_message);
       }
 
-      // Si la consulta ha sido correcta, guardamos el access_token
-      localStorage.setItem( 'access_token', http_data.access_token );
+      // Si la consulta ha sido correcta, guardamos el access_token y redirigimos
+      if (http_data.access_token) {
+        localStorage.setItem('access_token', http_data.access_token);
+        window.location.href = '/home'; // Redirigir a HomePage
+      }
 
-    } catch( error ) {
-
+    } catch (error) {
       // Manejamos los errores del servidor
-      set_error_msg( error.message );
+      set_error_msg(error.message);
     }
   };
 
