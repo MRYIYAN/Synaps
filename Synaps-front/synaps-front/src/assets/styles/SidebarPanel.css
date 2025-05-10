@@ -24,6 +24,56 @@
   /* Anchos fijos */
   --activity-bar-width: 48px;
   --side-bar-width: 225px;
+
+  /* Variables adicionales para el panel de búsqueda */
+  --vscode-input-background: #3c3c3c;
+  --vscode-input-foreground: #cccccc;
+  --vscode-input-placeholderForeground: #888888;
+  --vscode-input-border: #3c3c3c;
+  --vscode-editor-background: #1e1e1e;
+  --vscode-editor-foreground: #d4d4d4;
+  --vscode-symbolIcon-filesForeground: #d7ba7d;
+  --vscode-editorLineNumber-foreground: #858585;
+  --vscode-descriptionForeground: #8c8c8c;
+  --vscode-list-hoverBackground: #2a2d2e;
+  --vscode-progressBar-background: #F56E0F;
+}
+
+body,
+.app-container,
+.sidebar-panel,
+.sidebar-header,
+.panel-title,
+.panel-title h3,
+.right-options-panel,
+.options-panel-content,
+.options-panel-content h3,
+.search-panel,
+.search-input,
+.searching-indicator,
+.no-results,
+.result-item,
+.result-filename,
+.result-path,
+.result-line-number,
+.task-panel,
+.placeholder-container,
+.placeholder-description,
+.toolbar-button,
+.new-item-input,
+.modal-overlay,
+.modal-content,
+.modal-title,
+.modal-description,
+.modal-button,
+.modal-close-btn {
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.result-context,
+code,
+pre {
+  font-family: 'IBM Plex Mono', Consolas, 'Courier New', monospace;
 }
 
 /* Contenedor principal */
@@ -32,19 +82,113 @@
   height: 100vh;
   background-color: var(--vscode-background);
   color: var(--vscode-foreground);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   overflow: hidden;
 }
 
 /* Activity Bar - barra vertical con iconos */
 .sidebar-panel {
-  width: var(--activity-bar-width);
-  height: 100vh;
   background-color: var(--vscode-activityBar-background);
   z-index: 10;
   position: fixed;
   left: 0;
   top: 0;
+  height: 100vh; /* Altura completa de la ventana */
+  display: flex;
+  flex-direction: column; /* Para apilar los elementos verticalmente */
+  width: 48px; /* Ancho fijo para la barra de actividades */
+}
+
+/* Menú principal que contiene los iconos de navegación */
+.main-navigation {
+  flex: 1; /* Toma todo el espacio disponible */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Menú secundario que contiene acciones como logout */
+.secondary-navigation {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 16px; /* Espacio en la parte inferior */
+}
+
+/* Estilo común para todos los elementos de navegación */
+.sidebar-panel li {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar-panel li:hover {
+  opacity: 1;
+}
+
+.sidebar-panel li.active {
+  opacity: 1;
+}
+
+/* Estilo específico para el botón de logout */
+.logout-item {
+  color: var(--vscode-sideBar-foreground);
+  border-top: 1px solid var(--vscode-sideBarSectionHeader-border); /* Separador sutil */
+  margin-top: 8px; /* Espacio adicional para separar visualmente */
+  padding-top: 8px;
+}
+
+.logout-item svg {
+  width: 20px;
+  height: 20px;
+  color: inherit;
+  stroke: currentColor;
+  stroke-width: 1px;
+  fill: transparent;
+  transition: color 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
+}
+
+.logout-item:hover {
+  color: var(--liquid-lava); /* Color de acento al hacer hover */
+}
+
+.logout-item:hover svg {
+  color: var(--liquid-lava);
+  stroke: var(--liquid-lava);
+  stroke-width: 1.5px;
+  fill: transparent;
+  filter: drop-shadow(0 0 2px rgba(245, 110, 15, 0.3));
+  transform: scale(1.05); /* Ligero efecto de escala para enfatizar */
+}
+
+/* Estilo para el contenedor del logo - ajustado para centrado perfecto */
+.logo-container {
+  height: 48px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0; /* Eliminado el padding horizontal para evitar desplazamiento */
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+  background-color: var(--vscode-sideBar-background);
+  position: relative; /* Agregado para posicionamiento absoluto del logo */
+}
+
+/* Estilo para el logo - centrado absoluto */
+.header-logo {
+  height: 24px;
+  width: auto;
+  max-width: 70%; /* Reducido para asegurar que esté centrado visualmente */
+  object-fit: contain;
+  position: absolute; /* Posicionamiento absoluto para centrado perfecto */
+  left: 50%;
+  transform: translateX(-50%); /* Desplazamiento para compensar su propio ancho */
+  margin: 0; /* Eliminados los márgenes que podrían afectar el centrado */
 }
 
 /* Estilos para el header del sidebar */
@@ -438,3 +582,590 @@
     transform: translateX(0);
   }
 }
+
+/* * PANEL DE BUSQUEDA * */
+
+/* Estilos simplificados para el panel de búsqueda */
+
+/* Estilos comunes para barras de herramientas en todos los paneles */
+
+/* Estilos para la barra de herramientas */
+.toolbar-container {
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+  padding: 8px 0;
+  background-color: var(--vscode-sideBar-background);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.toolbar-buttons {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 12px;
+}
+
+/* Estilos para los botones de la barra de herramientas */
+.toolbar-button {
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--vscode-sideBar-foreground);
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.toolbar-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  opacity: 1;
+}
+
+/* Estilo cuando el botón está activo */
+.toolbar-button.active {
+  color: var(--liquid-lava);
+  opacity: 1;
+  background-color: rgba(245, 110, 15, 0.1);
+}
+
+/* Estilos para los iconos */
+.toolbar-icon {
+  width: 20px;
+  height: 20px;
+  color: inherit;
+  stroke: currentColor;
+  stroke-width: 1px;
+  fill: transparent;
+  transition: stroke 0.2s ease, color 0.2s ease, filter 0.2s ease;
+}
+
+/* Estilos específicos para el icono en estado activo */
+.toolbar-button.active .toolbar-icon {
+  color: var(--liquid-lava);
+  stroke: var(--liquid-lava);
+  stroke-width: 1.5px;
+  fill: transparent;
+  filter: drop-shadow(0 0 2px rgba(245, 110, 15, 0.3));
+}
+
+/* Efecto hover para los iconos */
+.toolbar-button:hover .toolbar-icon {
+  opacity: 1;
+}
+
+/* Estilos para el panel de búsqueda modificado */
+.search-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  color: var(--vscode-sideBar-foreground);
+}
+
+/* Formulario de búsqueda - ahora aparece con animación */
+.search-form {
+  padding: 12px 12px;
+  display: flex;
+  flex-direction: column;
+  animation: slideDown 0.3s ease forwards;
+  overflow: hidden;
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    max-height: 60px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    max-height: 60px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.search-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 8px;
+  width: 16px;
+  height: 16px;
+  color: var(--liquid-lava);
+  stroke: var(--liquid-lava);
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 8px 8px 30px;
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 3px;
+  font-size: 13px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--liquid-lava);
+  box-shadow: 0 0 0 1px rgba(245, 110, 15, 0.2);
+}
+
+/* Resultados de búsqueda - solo visibles después de buscar */
+.search-results-section {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Resultados de búsqueda */
+.search-results-section {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+  margin-top: 8px;
+}
+
+.searching-indicator {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  color: var(--vscode-descriptionForeground);
+  font-size: 13px;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--vscode-progressBar-background);
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.no-results {
+  padding: 12px;
+  color: var(--vscode-descriptionForeground);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.result-item:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.result-filename {
+  font-weight: 600;
+  margin-right: 6px;
+  color: var(--vscode-symbolIcon-filesForeground);
+}
+
+.result-path {
+  font-size: 11px;
+  opacity: 0.7;
+  color: var(--vscode-descriptionForeground);
+}
+
+.result-line-number {
+  font-size: 11px;
+  color: var(--vscode-editorLineNumber-foreground);
+  margin-bottom: 2px;
+}
+
+.result-context {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 12px;
+  background-color: var(--vscode-editor-background);
+  padding: 4px 6px;
+  border-radius: 2px;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0;
+}
+
+/* Estilos para los formularios desplegables */
+.new-item-form {
+  padding: 12px 12px;
+  display: flex;
+  flex-direction: column;
+  animation: slideDown 0.3s ease forwards;
+  overflow: hidden;
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+}
+
+/* Contenedor para los inputs de nuevo archivo/carpeta */
+.new-item-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.new-item-icon {
+  position: absolute;
+  left: 8px;
+  width: 16px;
+  height: 16px;
+  color: var(--vscode-input-placeholderForeground);
+}
+
+.new-item-input {
+  width: 100%;
+  padding: 8px 8px 8px 30px;
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 3px;
+  font-size: 13px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.new-item-input:focus {
+  outline: none;
+  border-color: var(--liquid-lava);
+  box-shadow: 0 0 0 1px rgba(245, 110, 15, 0.2);
+}
+
+/* Estilos para evitar que se superpongan múltiples inputs */
+.input-group-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Unificación de estilos para los placeholders */
+.placeholder-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--vscode-descriptionForeground);
+  font-size: 16px;
+  text-align: center;
+  padding: 20px;
+}
+
+.placeholder-description {
+  font-size: 14px;
+  margin-top: 12px;
+  opacity: 0.8;
+  line-height: 1.5;
+}
+
+/* Estilos mínimos para el panel de tareas (ListTodoPanel) */
+
+/* Contenedor principal del panel de tareas */
+.task-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Placeholder para contenido futuro */
+.task-panel-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--vscode-descriptionForeground);
+  font-size: 16px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Estilos para el modal de confirmación de cierre de sesión */
+
+/* Configuración general de la fuente para todos los modales */
+.modal-overlay,
+.modal-content,
+.modal-title,
+.modal-description,
+.modal-button,
+.modal-close-btn {
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+/* Animaciones simplificadas sin View Transition API */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scale-in {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes scale-out {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.8); opacity: 0; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Evitar scroll mientras el modal está abierto */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Overlay que cubre toda la pantalla */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  animation: fade-in 0.3s ease forwards;
+}
+
+/* Contenedor principal del modal */
+.modal-content {
+  background-color: var(--vscode-sideBar-background);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
+  animation: scale-in 0.3s ease forwards;
+}
+
+/* Botón para cerrar el modal */
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: var(--vscode-descriptionForeground);
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.modal-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--vscode-sideBar-foreground);
+}
+
+/* Contenedor del icono */
+.modal-icon-container {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(245, 110, 15, 0.1);
+  border-radius: 50%;
+  color: var(--liquid-lava);
+  animation: slide-up 0.3s ease forwards;
+}
+
+.modal-icon {
+  width: 32px;
+  height: 32px;
+  stroke: currentColor;
+  stroke-width: 1.5px;
+  fill: transparent;
+}
+
+/* Título del modal */
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 16px;
+  color: var(--vscode-sideBar-foreground);
+  animation: slide-up 0.3s ease forwards;
+  animation-delay: 0.05s;
+}
+
+/* Descripción del modal */
+.modal-description {
+  font-size: 14px;
+  text-align: center;
+  margin: 0 0 24px;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.5;
+  animation: slide-up 0.3s ease forwards;
+  animation-delay: 0.1s;
+}
+
+/* Contenedor de botones */
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  animation: slide-up 0.3s ease forwards;
+  animation-delay: 0.15s;
+}
+
+/* Estilos comunes para los botones */
+.modal-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  min-width: 100px;
+  border: none;
+  letter-spacing: 0.25px;
+}
+
+.modal-button:hover {
+  transform: translateY(-1px);
+}
+
+.modal-button:active {
+  transform: translateY(1px);
+}
+
+/* Botón principal (confirmar) */
+.modal-button.primary {
+  background-color: var(--liquid-lava);
+  color: white;
+}
+
+.modal-button.primary:hover {
+  background-color: #ff8534;
+}
+
+/* Botón secundario (cancelar) */
+.modal-button.secondary {
+  background-color: transparent;
+  color: var(--vscode-sideBar-foreground);
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
+}
+
+.modal-button.secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Estilos específicos para el modal de logout */
+.logout-modal {
+  text-align: center;
+}
+
+/* Estilos para diferentes tipos de modales */
+.modal-content.warning .modal-icon-container {
+  background-color: rgba(255, 180, 0, 0.1);
+  color: #ffb400;
+}
+
+.modal-content.error .modal-icon-container {
+  background-color: rgba(255, 70, 70, 0.1);
+  color: #ff4646;
+}
+
+.modal-content.success .modal-icon-container {
+  background-color: rgba(45, 210, 90, 0.1);
+  color: #2dd25a;
+}
+
+/* Ajustes de fuente para diferentes tamaños de pantalla */
+@media (max-width: 480px) {
+  .modal-content {
+    max-width: 320px;
+    padding: 20px;
+  }
+  
+  .modal-title {
+    font-size: 16px;
+  }
+  
+  .modal-description {
+    font-size: 13px;
+  }
+  
+  .modal-button {
+    font-size: 13px;
+    min-width: 90px;
+    padding: 6px 12px;
+  }
+}
+
