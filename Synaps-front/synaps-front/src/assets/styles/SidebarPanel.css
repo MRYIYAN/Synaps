@@ -663,7 +663,7 @@ pre {
 .search-panel {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: fit-content;
   overflow-y: auto;
   color: var(--vscode-sideBar-foreground);
 }
@@ -918,7 +918,6 @@ pre {
 .task-panel {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 /* Placeholder para contenido futuro */

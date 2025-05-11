@@ -23,7 +23,7 @@ const RegisterPage = function() {
 
   // HTML del formulario
   return (
-    <div style={{ padding: '2rem' }}>
+    <div>
       <h1>Frontend React</h1>
       <h2>Respuesta desde el backend para:</h2>
       <p>{message}</p>

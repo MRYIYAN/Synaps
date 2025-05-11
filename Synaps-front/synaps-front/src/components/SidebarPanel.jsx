@@ -27,13 +27,6 @@ const navigationItems = [
   { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
 ];
 
-// Componentes para el panel derecho - ahora completamente vacíos
-const SearchPanel       = () => <div className="options-panel-content"></div>;
-const FoldersPanel      = () => <div className="options-panel-content"></div>;
-const GalaxyViewPanel   = () => <div className="options-panel-content"></div>;
-const ListTodoPanel     = () => <div className="options-panel-content"></div>;
-const SecretNotesPanel  = () => <div className="options-panel-content"></div>;
-
 // Mapeo de componentes de panel por ID
 const panelComponents = {
   "search": SearchPanel,

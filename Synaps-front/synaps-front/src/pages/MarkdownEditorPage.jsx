@@ -11,6 +11,8 @@ import LoginForm  from "../components/LoginForm";
 import Modal      from "../components/Modal";
 */
 
+import SidebarPanel from "../components/SidebarPanel";
+
 // ------------------------------------------------------------
 // APP
 // ------------------------------------------------------------
@@ -19,8 +21,8 @@ const MarkdownEditor = function() {
 
   // HTML del formulario
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>MarkdownEditor</h1>
+    <div>
+      <SidebarPanel />
     </div>
   );
 }

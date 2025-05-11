@@ -6,7 +6,7 @@ const LandingPage = function() {
   return (
     <>
       <NavbarLanding />
-      <div style={{ padding: "2rem", marginTop: "70px" }}>
+      <div style={{ marginTop: "70px" }}>
         <h1>LandingPage</h1>
         <AuthButtons />
       </div>

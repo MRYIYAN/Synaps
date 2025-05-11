@@ -19,7 +19,7 @@ const Todo = function() {
 
   // HTML del formulario
   return (
-    <div style={{ padding: "2rem" }}>
+    <div>
       <h1>Todo</h1>
     </div>
   );

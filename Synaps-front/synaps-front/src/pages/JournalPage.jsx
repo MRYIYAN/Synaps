@@ -19,7 +19,7 @@ const Journal = function() {
 
   // HTML del formulario
   return (
-    <div style={{ padding: "2rem" }}>
+    <div>
       <h1>Journal</h1>
     </div>
   );

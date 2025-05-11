@@ -816,7 +816,7 @@ const GalaxyView = function() {// spiralGraphData.js
 
   // HTML del formulario
   return (
-    <div style={{ padding: "2rem" }}>
+    <div>
       <h1>Galaxy View</h1>
 
       <div style={{ width: '100vw', height: '100vh' }}>

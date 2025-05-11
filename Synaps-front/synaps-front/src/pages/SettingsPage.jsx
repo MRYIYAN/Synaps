@@ -19,7 +19,7 @@ const Settings = function() {
 
   // HTML del formulario
   return (
-    <div style={{ padding: "2rem" }}>
+    <div>
       <h1>Settings</h1>
     </div>
   );

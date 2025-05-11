@@ -21,7 +21,7 @@ const Home = function() {
 
   // HTML del formulario
   return (
-    <div style={{ padding: "2rem" }}>
+    <div>
       <SidebarPanel />
     </div>
   );

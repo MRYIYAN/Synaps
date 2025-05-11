@@ -19,7 +19,7 @@ const Notes = function() {
 
   // HTML del formulario
   return (
-    <div style={{ padding: "2rem" }}>
+    <div>
       <h1>Notes</h1>
     </div>
   );
