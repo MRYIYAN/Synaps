@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { ReactComponent as SearchIcon } from "../assets/icons/search.svg";
-import { ReactComponent as FoldersIcon } from "../assets/icons/folders.svg";
-import { ReactComponent as GalaxyViewIcon } from "../assets/icons/waypoints.svg";
-import { ReactComponent as ListTodoIcon } from "../assets/icons/list-todo.svg";
-import { ReactComponent as SecretNotesIcon } from "../assets/icons/lock.svg";
+import { ReactComponent as SearchIcon       } from "../assets/icons/search.svg";
+import { ReactComponent as FoldersIcon      } from "../assets/icons/folders.svg";
+import { ReactComponent as GalaxyViewIcon   } from "../assets/icons/waypoints.svg";
+import { ReactComponent as ListTodoIcon     } from "../assets/icons/list-todo.svg";
+import { ReactComponent as SecretNotesIcon  } from "../assets/icons/lock.svg";
 import "../assets/styles/SidebarPanel.css";
 
 // Definimos la configuración de los enlaces de navegación
@@ -16,11 +16,11 @@ const navigationItems = [
 ];
 
 // Componentes para el panel derecho - ahora completamente vacíos
-const SearchPanel = () => <div className="options-panel-content"></div>;
-const FoldersPanel = () => <div className="options-panel-content"></div>;
-const GalaxyViewPanel = () => <div className="options-panel-content"></div>;
-const ListTodoPanel = () => <div className="options-panel-content"></div>;
-const SecretNotesPanel = () => <div className="options-panel-content"></div>;
+const SearchPanel       = () => <div className="options-panel-content"></div>;
+const FoldersPanel      = () => <div className="options-panel-content"></div>;
+const GalaxyViewPanel   = () => <div className="options-panel-content"></div>;
+const ListTodoPanel     = () => <div className="options-panel-content"></div>;
+const SecretNotesPanel  = () => <div className="options-panel-content"></div>;
 
 // Mapeo de componentes de panel por ID
 const panelComponents = {
@@ -32,20 +32,25 @@ const panelComponents = {
 };
 
 const SidebarPanel = () => {
-  const [rightPanelOpen, setRightPanelOpen] = useState(false); // Inicialmente cerrado
-  const [selectedItem, setSelectedItem] = useState(null); // Inicialmente no hay selección
+  const [rightPanelOpen, setRightPanelOpen]       = useState(false); // Inicialmente cerrado
+  const [selectedItem, setSelectedItem]           = useState(null); // Inicialmente no hay selección
   const [indicatorPosition, setIndicatorPosition] = useState(0);
-  const [isClosing, setIsClosing] = useState(false);
+  const [isClosing, setIsClosing]                 = useState(false);
   
   // Función para manejar la selección de iconos
   const handleIconClick = (itemId, index) => {
-    if (selectedItem === itemId) {
-      if (rightPanelOpen) {
+
+    // Si seleccionamos el mismo item que ya estaba abierto, comprobamos su estado
+    if(selectedItem === itemId) {
+
+      // Cerramos
+      if( rightPanelOpen )
         handleCloseSidebar();
-      } else {
-        // Si está cerrado pero es el mismo icono, lo abrimos
+
+      // Abrimos el panel del item seleccionado
+      else
         setRightPanelOpen(true);
-      }
+      
     } else {
       // Si seleccionamos un icono diferente, lo abrimos
       setSelectedItem(itemId);
@@ -55,16 +60,23 @@ const SidebarPanel = () => {
     setIndicatorPosition(index * 48);
   };
 
+  // Cerramos el sidebar con una transición
   const handleCloseSidebar = () => {
     setIsClosing(true);
     
+    // Añadimos una transición
     setTimeout(() => {
       setRightPanelOpen(false);
       setIsClosing(false);
     }, 290);
   };
   
-  const CurrentPanelComponent = selectedItem ? panelComponents[selectedItem] : null;
+  // Determinamos qué componente mostrar en el panel basado en la selección actual
+  const CurrentPanelComponent = selectedItem
+    ? panelComponents[selectedItem]
+    : null;
+  
+  // Capturamos los datos del item seleccionado o un objeto vacío si no hay selección
   const currentItem = navigationItems.find(item => item.id === selectedItem) || {};
 
   return (
@@ -80,8 +92,10 @@ const SidebarPanel = () => {
         )}
         <ul>
           {navigationItems.map((item, index) => {
+
+            // Capturamos el icono y el estado del item
             const IconComponent = item.icon;
-            const isActive = selectedItem === item.id;
+            const isActive      = selectedItem === item.id;
             
             return (
               <li 
@@ -107,6 +121,10 @@ const SidebarPanel = () => {
               <h3>{currentItem.label}</h3>
             </div>
           </header>
+
+          <main>
+            <div className=""></div>
+          </main>
           
           <CurrentPanelComponent />
         </div>
