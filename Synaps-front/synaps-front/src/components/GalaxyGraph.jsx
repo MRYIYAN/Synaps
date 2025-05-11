@@ -77,6 +77,7 @@ const GalaxyGraph = ( { data } ) => {
     if( link.target in nodes_count )
       nodes_count[link.target]++;
   } );
+  console.log( nodes_count );
 
   // ------------------------------------------------------------------------------------------------
   // Ready | Efectos de repulsión y asignación de IDs a nodos
@@ -92,11 +93,11 @@ const GalaxyGraph = ( { data } ) => {
     if( graph ) {
 
       // Aplicamos la repulsión a los nodos
-      graph.d3Force( 'charge' ).strength( -100 );
+      graph.d3Force( 'charge' ).strength( -85 );
 
       // Definimos la longitud de los enlaces
       // Añadimos el id correspondiente a cada nodo
-      graph.d3Force( 'link' ).distance( 75 ).id( ( node ) => node.id );
+      graph.d3Force( 'link' ).distance( 180 ).id( ( node ) => node.id );
     }
   }, [] );
 
@@ -112,7 +113,7 @@ const GalaxyGraph = ( { data } ) => {
       nodeCanvasObject = { ( node, ctx, graph_scale ) => {
 
         // Creamos el nodo en forma de círculo con un SVG
-        const radius = 8 + ( nodes_count[node.id] * 3.5 );
+        const radius = 8 + ( nodes_count[node.id] * 4.5 );
         ctx.beginPath();
         ctx.arc( node.x, node.y, radius, 0, 2 * Math.PI, false );
         ctx.fillStyle = group_colors[node.group];
