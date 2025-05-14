@@ -1,0 +1,44 @@
+.node-tree,
+.node-branch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-x: hidden;
+}
+
+.node-branch {
+  overflow: hidden;
+  max-height: 300px;
+  transition: max-height 0.2s ease-out;
+}
+.node-branch.collapsed {
+  max-height: 0;
+}
+
+.node-branch.has-children:hover > .node-item {
+  background-color: var(--vscode-activityBar-background);
+}
+
+.node-item {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  padding-left: 8px;
+  gap: 0.25rem;
+  transition: all 0.3s ease-in-out;
+  font-size: 14px;
+}
+
+.node-item:hover {
+  background-color: var(--vscode-activityBar-background);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.node-tree-icon {
+  width: 18px;
+  height: 18px;
+  stroke: #565656;
+}

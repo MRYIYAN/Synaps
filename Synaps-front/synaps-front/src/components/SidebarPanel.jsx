@@ -13,16 +13,14 @@ import "../assets/styles/SidebarPanel.css";
 import LogoutConfirmModal from "./Atomic/Modal/LogoutConfirmModal";
 import CreateVaultModal from "./Atomic/Modal/CreateVaultModal";
 import UserProfileBar from "./Atomic/Panels/UserProfileBar";
-import SearchPanel from './Atomic/Panels/SearchPanel';
-import FoldersPanel from './Atomic/Panels/FoldersPanel';
-import GalaxyViewPanel from './Atomic/Panels/GalaxyViewPanel';
-import ListTodoPanel from './Atomic/Panels/ListTodoPanel';
+import FilesPanel      from './Atomic/Panels/FilesPanel';
+import GalaxyViewPanel  from './Atomic/Panels/GalaxyViewPanel';
+import ListTodoPanel    from './Atomic/Panels/ListTodoPanel';
 import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
 
 // Configuración de los elementos de navegación
 const navigationItems = [
-  { id: "search", label: "Buscar", icon: SearchIcon },
-  { id: "folders", label: "Mis carpetas", icon: FoldersIcon },
+  { id: "files", label: "Archivos", icon: FoldersIcon },
   { id: "galaxy-view", label: "Vista de galaxia", icon: GalaxyViewIcon },
   { id: "list-todo", label: "Lista de tareas", icon: ListTodoIcon },
   { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
@@ -30,8 +28,7 @@ const navigationItems = [
 
 // Mapeo de componentes de panel por ID
 const panelComponents = {
-  "search": SearchPanel,
-  "folders": FoldersPanel,
+  "files": FilesPanel,
   "galaxy-view": GalaxyViewPanel,
   "list-todo": ListTodoPanel,
   "secret-notes": SecretNotesPanel,

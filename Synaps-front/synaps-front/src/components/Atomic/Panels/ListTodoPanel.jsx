@@ -138,7 +138,7 @@ const ListTodoPanel = () => {
             <ViewModeIcon className="toolbar-icon" />
           </button>
           
-          {/* Botón de búsqueda - en la misma posición que en SearchPanel */}
+          {/* Botón de búsqueda - en la misma posición que en FilesPanel */}
           <button 
             className={`toolbar-button ${visibleInputs.search ? 'active' : ''}`}
             onClick={() => toggleInput('search')}
@@ -149,7 +149,7 @@ const ListTodoPanel = () => {
             <SearchIcon className="toolbar-icon" />
           </button>
           
-          {/* Botón de filtro - en la misma posición que en SearchPanel */}
+          {/* Botón de filtro - en la misma posición que en FilesPanel */}
           <button 
             className="toolbar-button"
             onClick={handleFilter}
