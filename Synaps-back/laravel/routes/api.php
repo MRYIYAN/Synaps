@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FolderNoteController;
+use App\Http\Controllers\NoteController;
 use Illuminate\Session\Middleware\StartSession;
 
 /**
@@ -19,19 +21,19 @@ use Illuminate\Session\Middleware\StartSession;
  * @param Request $request La solicitud HTTP.
  * @return \Illuminate\Http\JsonResponse Respuesta JSON con el mensaje de bienvenida.
  */
-Route::get('/hello', function (Request $request): \Illuminate\Http\JsonResponse {
+Route::get( '/hello', function (Request $request): \Illuminate\Http\JsonResponse {
     return response()->json([
         'message' => 'Hola desde Laravel y Bienvenido a Synaps, el back esta funcionando',
-    ]);
-});
+    ] );
+} );
 
 //---------------------------------------------------------------------------//
 //  Rutas protegidas con el middleware auth.bearer                           //
 //---------------------------------------------------------------------------//
 
-Route::middleware(['auth.bearer'])->group(function () {
-    Route::get('/api/login-check', [AuthController::class, 'loginCheck']);
-});
+Route::middleware( ['auth.bearer'] )->group( function () {
+    Route::get( '/api/login-check', [AuthController::class, 'loginCheck'] );
+} );
 
 //---------------------------------------------------------------------------//
 //  Ruta para la autenticación de usuarios.                                  //
@@ -42,12 +44,33 @@ Route::middleware(['auth.bearer'])->group(function () {
  *
  * @see AuthController::login()
  */
-Route::post('/login', [AuthController::class, 'login'])
-    ->middleware(['api', StartSession::class]);
+Route::post( '/login', [AuthController::class, 'login'] )
+    ->middleware( ['api', StartSession::class] );
 
 /**
  * Maneja el registro de nuevos usuarios.
  *
  * @see AuthController::register()
  */
-Route::post('/register', [AuthController::class, 'register']);
+Route::post( '/register', [AuthController::class, 'register'] );
+
+//---------------------------------------------------------------------------//
+//  Ruta para la gestión de notas y carpetas                                 //
+//---------------------------------------------------------------------------//
+
+/**
+ * Maneja la creación de nuevas notas.
+ *
+ * @see NoteController::addNote()
+ */
+Route::post( '/addNote', [NoteController::class, 'addNote'] );
+
+/**
+ * Maneja el registro de carpetas de notas.
+ *
+ * @see FolderNoteController::addFolder()
+ */
+Route::post( '/addFolder', [FolderNoteController::class, 'addFolder'] );
+
+// GET /api/getAllNotes
+Route::get( 'getAllNotes', [NoteController::class, 'getAllNotes'] );

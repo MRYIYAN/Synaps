@@ -10,21 +10,60 @@
 //===========================================================================//
 //                             IMPORTS                                       //
 //===========================================================================//
-import React, { useState } from "react";  // Importación de React y el hook useState
-import { ReactComponent as SearchIcon } from "../../../assets/icons/search.svg";      // Icono de búsqueda
-import { ReactComponent as NewNoteIcon } from "../../../assets/icons/new-file.svg";   // Icono para nuevas notas
-import { ReactComponent as NewFolderIcon } from "../../../assets/icons/new-folder.svg"; // Icono para nuevas carpetas
-import { ReactComponent as FilterIcon } from "../../../assets/icons/filter-sort.svg"; // Icono para filtrado/ordenación
+import React, { useEffect, useState } from "react";  // Importación de React y el hook useState
+import { ReactComponent as SearchIcon }     from "../../../assets/icons/search.svg";      // Icono de búsqueda
+import { ReactComponent as NewNoteIcon }    from "../../../assets/icons/new-file.svg";    // Icono para nuevas notas
+import { ReactComponent as NewFolderIcon }  from "../../../assets/icons/new-folder.svg";  // Icono para nuevas carpetas
+import { ReactComponent as FilterIcon }     from "../../../assets/icons/filter-sort.svg"; // Icono para filtrado/ordenación
+import NoteTree from "../../NoteTree/NoteTree.jsx";
+import { http_post, http_get } from '../../../lib/http.js';
 //===========================================================================//
 
 //===========================================================================//
-//                             COMPONENTE SEARCHPANEL                        //
+//                             COMPONENTE FILESPANEL                         //
 //===========================================================================//
-const SearchPanel = () => {
-  // Este componente implementa un panel de búsqueda interactivo con múltiples funciones
+
+// Este componente implementa un panel de búsqueda interactivo con múltiples funciones
+const FilesPanel = () => {
+
+  // Estado para almacenar las notas
+  const [notes, setNotes] = useState( [] );
+
+  // Función para obtener todas las notas desde la API
+  useEffect( () => {
+    const fetchAllNotes = async () => {
+
+      try {
+        // URL de la API
+        const url = 'http://localhost:8010/api/getAllNotes';
+
+        // Llamada GET usando tu helper http_get
+        const { result, http_data } = await http_get( url );
+        if ( result !== 1 )
+          throw new Error( 'Error al cargar notas' );
+            
+        // Calculamos el Notes
+        const notes = http_data.items.map( item => ( {
+            id2      : item.id2
+          , title    : item.title
+          , parent_id: item.parent_id ?? 0
+          , type     : item.type
+        } ) );
+
+        console.log( notes );
+        // Guardamos el array de notas en el estado
+        setNotes( notes );
+
+      } catch( error ) {
+        console.error( error );
+      }
+    }
+
+    fetchAllNotes();
+  }, [] );
 
   //---------------------------------------------------------------------------//
-  //  Estados para manejar la búsqueda y la interfaz                         //
+  //  Estados para manejar la búsqueda y la interfaz                           //
   //---------------------------------------------------------------------------//
   // Estado para el texto de búsqueda ingresado por el usuario
   // Se utiliza para capturar y actualizar lo que escribe el usuario en el campo de búsqueda
@@ -36,7 +75,7 @@ const SearchPanel = () => {
   
   // Estado para controlar el indicador de carga durante la búsqueda
   // True mientras se está realizando una búsqueda, false cuando termina
-  const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState( false);
 
   // Estado para controlar la visibilidad de los campos de entrada
   // Objeto que determina qué input está visible en cada momento
@@ -53,19 +92,20 @@ const SearchPanel = () => {
   const [newFolderName, setNewFolderName] = useState("");   // Nombre de nueva carpeta
 
   //---------------------------------------------------------------------------//
-  //  Handlers para manejar interacciones del usuario                         //
+  //  Handlers para manejar interacciones del usuario                          //
   //---------------------------------------------------------------------------//
+
   // Función que se ejecuta cuando el usuario escribe en el campo de búsqueda
   // Actualiza el estado searchQuery con el valor actual del input
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+  const handleSearchChange = ( e ) => {
+    setSearchQuery( e.target.value);
   };
 
   // Función que se ejecuta cuando se envía el formulario de búsqueda
   // Previene el comportamiento por defecto del formulario y ejecuta la búsqueda
-  const handleSearch = (e) => {
+  const handleSearch = ( e ) => {
     e.preventDefault();  // Previene la recarga de la página
-    if (!searchQuery.trim()) return;  // No hace nada si la búsqueda está vacía
+    if( !searchQuery.trim()) return;  // No hace nada si la búsqueda está vacía
     
     setIsSearching(true);  // Activa el indicador de carga
     
@@ -75,10 +115,10 @@ const SearchPanel = () => {
       // Resultados de ejemplo para demostración
       setSearchResults([
         { id: 1, fileName: "index.js", path: "/src", line: 24, context: "const searchQuery = useState('');" },
-        { id: 2, fileName: "SearchPanel.jsx", path: "/components", line: 10, context: "function handleSearch(query) {" },
+        { id: 2, fileName: "FilesPanel.jsx", path: "/components", line: 10, context: "function handleSearch(query) {" },
         { id: 3, fileName: "README.md", path: "/", line: 56, context: "## How to use the search functionality" },
       ]);
-      setIsSearching(false);  // Desactiva el indicador de carga al completar
+      setIsSearching( false);  // Desactiva el indicador de carga al completar
     }, 800);  // Retraso simulado de 800ms para simular tiempo de búsqueda
   };
 
@@ -104,31 +144,45 @@ const SearchPanel = () => {
     // Esto evita que al reabrir un input muestre valores antiguos
     
     // Si estamos cerrando el input de búsqueda, limpiamos query y resultados
-    if (visibleInputs.search && !newState.search) {
+    if( visibleInputs.search && !newState.search) {
       setSearchQuery("");
       setSearchResults([]);
     }
     
     // Si estamos cerrando el input de nueva nota, limpiamos su nombre
-    if (visibleInputs.newNote && !newState.newNote) {
+    if( visibleInputs.newNote && !newState.newNote) {
       setNewNoteName("");
     }
     
     // Si estamos cerrando el input de nueva carpeta, limpiamos su nombre
-    if (visibleInputs.newFolder && !newState.newFolder) {
+    if( visibleInputs.newFolder && !newState.newFolder) {
       setNewFolderName("");
     }
   };
 
   // Función para crear una nueva nota
   // Se ejecuta cuando el usuario envía el formulario de nueva nota
-  const handleNewNoteSubmit = (e) => {
+  const handleNewNoteSubmit = async ( e ) => {
     e.preventDefault();  // Previene la recarga de la página
-    if (!newNoteName.trim()) return;  // No hace nada si el nombre está vacío
-    
-    // TODO: Implementar funcionalidad para crear una nueva nota con el nombre ingresado
-    // Aquí se debería hacer una llamada a una API o servicio para crear la nota
-    console.log("Crear nota:", newNoteName);
+    if( !newNoteName.trim()) return;  // No hace nada si el nombre está vacío
+
+    // Preparamos los datos para el post
+    let url   = 'http://localhost:8010/api/addNote';
+    let body  = { newNoteName };
+
+    // Realizamos la llamada por fetch
+    let http_response = await http_post( url, body );
+
+    // Añadimos la nota recién creada al estado
+    setNotes( prev => [
+      ...prev,
+      {
+          id2      : http_response.http_data.note.note_id2
+        , title    : http_response.http_data.note.note_title
+        , parent_id: http_response.http_data.note.parent_id
+        , type     : 'note'
+      }
+    ] );
     
     // Limpiar el input y ocultarlo después de crear la nota
     setNewNoteName("");  // Reinicia el campo de nombre
@@ -137,13 +191,28 @@ const SearchPanel = () => {
 
   // Función para crear una nueva carpeta
   // Se ejecuta cuando el usuario envía el formulario de nueva carpeta
-  const handleNewFolderSubmit = (e) => {
+  const handleNewFolderSubmit = async ( e ) => {
     e.preventDefault();  // Previene la recarga de la página
-    if (!newFolderName.trim()) return;  // No hace nada si el nombre está vacío
+    if( !newFolderName.trim() ) return;  // No hace nada si el nombre está vacío
     
-    // TODO: Implementar funcionalidad para crear una nueva carpeta con el nombre ingresado
-    // Aquí se debería hacer una llamada a una API o servicio para crear la carpeta
-    console.log("Crear carpeta:", newFolderName);
+    // Preparamos los datos para el post
+    let url   = 'http://localhost:8010/api/addFolder';
+    let body  = { newFolderName };
+
+    // Realizamos la llamada por fetch
+    let http_response = await http_post( url, body );
+    console.log( http_response );
+
+    // Añadimos la nota recién creada al estado
+    setNotes( prev => [
+      ...prev,
+      {
+          id2      : http_response.http_data.folder.folder_id2
+        , title    : http_response.http_data.folder.folder_title
+        , parent_id: http_response.http_data.folder.parent_id
+        , type     : 'folder'
+      }
+    ] );
     
     // Limpiar el input y ocultarlo después de crear la carpeta
     setNewFolderName("");  // Reinicia el campo de nombre
@@ -160,7 +229,7 @@ const SearchPanel = () => {
   };
 
   //---------------------------------------------------------------------------//
-  //  Renderizado del componente SearchPanel                                  //
+  //  Renderizado del componente FilesPanel                                  //
   //---------------------------------------------------------------------------//
   return (
     <div className="search-panel">
@@ -227,7 +296,7 @@ const SearchPanel = () => {
               <input
                 type="text"
                 value={newNoteName}
-                onChange={(e) => setNewNoteName(e.target.value)}
+                onChange={( e ) => setNewNoteName( e.target.value)}
                 placeholder="Nombre de la nota"
                 className="new-item-input"
                 aria-label="Nombre de la nueva nota"
@@ -247,7 +316,7 @@ const SearchPanel = () => {
               <input
                 type="text"
                 value={newFolderName}
-                onChange={(e) => setNewFolderName(e.target.value)}
+                onChange={( e ) => setNewFolderName( e.target.value)}
                 placeholder="Nombre de la carpeta"
                 className="new-item-input"
                 aria-label="Nombre de la nueva carpeta"
@@ -267,7 +336,7 @@ const SearchPanel = () => {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={( e ) => setSearchQuery( e.target.value)}
                 placeholder="Buscar"
                 className="search-input"
                 aria-label="Buscar en archivos"
@@ -315,8 +384,14 @@ const SearchPanel = () => {
           )}
         </div>
       )}
+    
+      {/* Contenedor del árbol de archivos */}
+      {/* Agrupa todos los archivos/notas del usuario */}
+      <div className="search-panel-tree" style={{ marginTop: 12 }}>
+        <NoteTree nodes={notes} selectedId2={ notes[0]?.id2 || '' } />
+      </div>
     </div>
   );
 };
 
-export default SearchPanel;
+export default FilesPanel;
