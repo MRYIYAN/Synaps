@@ -1,0 +1,13 @@
+/* ArchiveIcon.css */
+rect {
+  transition: transform 0.2s ease-in;
+}
+
+.animate-rect {
+  transform: translateY(-2px);
+}
+
+.animate-path {
+  transform: translateY(2px);
+  transition: transform 0.2s ease-in;
+}

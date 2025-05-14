@@ -343,7 +343,7 @@ h1, h2, h3, h4, h5, h6 { margin: 0; }
 .pt-7  { padding-top: 1.75rem  !important; }  /* 28px */
 .pt-8  { padding-top: 2rem     !important; }  /* 32px */
 .pt-9  { padding-top: 2.25rem  !important; }  /* 36px */
-.pt-10 { padding-top: 2.5rem   !important; }  /* 40px */
+.pt-10 { padding-top: 2.5rem   !important; }  /* 40px }
 .pt-24 { padding-top: 5rem     !important; }  /* 96px */
 
 .pb-0  { padding-bottom: 0rem     !important; }
@@ -365,7 +365,7 @@ h1, h2, h3, h4, h5, h6 { margin: 0; }
 .pl-4  { padding-left: 1rem     !important; }  /* 16px */
 .pl-5  { padding-left: 1.25rem  !important; }  /* 20px */
 .pl-6  { padding-left: 1.5rem   !important; }  /* 24px */
-.pl-7  { padding-left: 1.75rem  !important; }  /* 28px */
+.pl-7  { padding-left: 1.75rem  !important; }  /* 28px }
 .pl-8  { padding-left: 2rem     !important; }  /* 32px */
 .pl-9  { padding-left: 2.25rem  !important; }  /* 36px */
 .pl-10 { padding-left: 2.5rem   !important; }  /* 40px */
@@ -374,13 +374,13 @@ h1, h2, h3, h4, h5, h6 { margin: 0; }
 .pr-1  { padding-right: 0.25rem  !important; }  /* 4px */
 .pr-2  { padding-right: 0.5rem   !important; }  /* 8px */
 .pr-3  { padding-right: 0.75rem  !important; }  /* 12px */
-.pr-4  { padding-right: 1rem     !important; }  /* 16px */
-.pr-5  { padding-right: 1.25rem  !important; }  /* 20px */
-.pr-6  { padding-right: 1.5rem   !important; }  /* 24px */
-.pr-7  { padding-right: 1.75rem  !important; }  /* 28px */
-.pr-8  { padding-right: 2rem     !important; }  /* 32px */
-.pr-9  { padding-right: 2.25rem  !important; }  /* 36px */
-.pr-10 { padding-right: 2.5rem   !important; }  /* 40px */
+.pr-4  { padding-right: 1rem     !important; }  /* 16px }
+.pr-5  { padding-right: 1.25rem  !important; }  /* 20px }
+.pr-6  { padding-right: 1.5rem   !important; }  /* 24px }
+.pr-7  { padding-right: 1.75rem  !important; }  /* 28px }
+.pr-8  { padding-right: 2rem     !important; }  /* 32px }
+.pr-9  { padding-right: 2.25rem  !important; }  /* 36px }
+.pr-10 { padding-right: 2.5rem   !important; }  /* 40px }
 
 
 @media (min-width: 768px) {
@@ -1319,5 +1319,41 @@ h1, h2, h3, h4, h5, h6 { margin: 0; }
 .pixel-card:where(:hover, :focus-within)::after {
   opacity: 1;
 }
+
+/*=======================*/
+/* BOTÓN DE ICONO VAULT */
+/*=======================*/
+.icon-button {
+  background-color: transparent !important;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+  transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1) rotate(-5deg);
+}
+/*--------------------------------------*/
+/* Para ArchiveIcon(Icono de boveda) */
+rect {
+  transition: transform 0.2s ease-in;
+}
+
+.animate-rect {
+  transform: translateY(-2px);
+}
+
+.animate-path {
+  transform: translateY(2px);
+  transition: transform 0.2s ease-in;
+}
+/*--------------------------------------*/
 
 /* === END LOGIN CLASSES === */

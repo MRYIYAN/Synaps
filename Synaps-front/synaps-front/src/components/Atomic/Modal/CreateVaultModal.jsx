@@ -1,7 +1,12 @@
+//====================================================================================//
+//                                COMPONENTES                                         //
+//====================================================================================//
 import React, { useState, useRef, useEffect } from 'react';
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close.svg";
 import { ReactComponent as VaultIcon } from "../../../assets/icons/vault.svg";
 import { ReactComponent as LockIcon } from "../../../assets/icons/lock.svg";
+import FolderPickerButton from '../Buttons/FolderPickerButton'; 
+//=====================================================================================//
 
 /**
  * Modal para crear una nueva vault con opción de privacidad
@@ -10,19 +15,30 @@ import { ReactComponent as LockIcon } from "../../../assets/icons/lock.svg";
  * @param {Function} onCreateVault - Función para crear una nueva vault
  */
 const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
-  // Estado del formulario
+  //-------------------------// 
+  // Estados del formulario 
+  //------------------------//
   const [vaultName, setVaultName] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [step, setStep] = useState(1); // Paso actual del formulario
   const [isCreating, setIsCreating] = useState(false);
-  
-  // Referencias para focus automático
+  const [selectedFolderPath, setSelectedFolderPath] = useState(''); // Ruta seleccionada
+
+  //-----------------------------------// 
+  // Referencias para focus automático 
+  //----------------------------------//
   const nameInputRef = useRef(null);
   const pinInputRef = useRef(null);
-  
-  // Focus en el input cuando se abre el modal
+
+  //====================================================================================//
+  //                                EFECTOS                                             //
+  //====================================================================================//
+
+  //-------------------------------------------// 
+  // Focus en el input cuando se abre el modal 
+  //------------------------------------------//
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
@@ -34,10 +50,15 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       }, 100);
     }
   }, [isOpen, step]);
-  
-  // Resetear el formulario al cerrarlo
+
+  //====================================================================================//
+  //                                FUNCIONES PRINCIPALES                               //
+  //====================================================================================//
+
+  //---------------------------------------//
+  //  Resetear el formulario al cerrarlo 
+  //---------------------------------------//
   const handleClose = () => {
-    // TODO: Implementar lógica de confirmación si hay datos no guardados
     setVaultName('');
     setIsPrivate(false);
     setPin('');
@@ -45,58 +66,55 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     setStep(1);
     onClose();
   };
-  
+
+  //---------------------------------// 
   // Manejar el cambio de paso
+  //---------------------------------//
   const handleNextStep = () => {
-    // TODO: Implementar validación del nombre antes de avanzar
     if (step === 1) {
       setStep(2);
     }
   };
-  
+
+  //-----------------------------// 
   // Volver al paso anterior
+  //-----------------------------//
   const handlePrevStep = () => {
     setStep(1);
   };
-  
-  // Validación de datos
-  const validateForm = () => {
-    // TODO: Implementar validación completa de los datos del formulario
-    return true;
-  };
-  
-  // Crear la vault
+
+  //--------------------------// 
+  // Crear la vault 
+  //--------------------------//
   const handleCreateVault = async () => {
-    // TODO: Implementar validación completa antes de crear la vault
-    
     setIsCreating(true);
-    
+
     try {
       if (step === 1 && !isPrivate) {
-        // Crear vault normal
         await onCreateVault({
           name: vaultName.trim(),
-          isPrivate: false
+          isPrivate: false,
+          folderPath: selectedFolderPath
         });
       } else if (step === 2) {
-        // Crear vault privada
         await onCreateVault({
           name: vaultName.trim(),
           isPrivate: true,
-          pin: pin
+          pin: pin,
+          folderPath: selectedFolderPath
         });
       }
-      
       handleClose();
     } catch (error) {
-      // TODO: Implementar manejo de errores durante la creación
       console.error('Error al crear la vault:', error);
     } finally {
       setIsCreating(false);
     }
   };
-  
-  // Cerrar modal al presionar Escape
+
+  //------------------------------------//
+  //  Cerrar modal al presionar Escape 
+  //-----------------------------------//
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {
       handleClose();
@@ -110,7 +128,11 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       }
     }
   };
-  
+
+  //====================================================================================//
+  //                                RENDERIZADO                                         //
+  //====================================================================================//
+
   if (!isOpen) return null;
 
   return (
@@ -132,7 +154,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
           </button>
         </div>
         
-        <div className="modal-content">
+        <div className="modal-content"> 
           {step === 1 && (
             <>
               <p className="modal-description">
@@ -143,18 +165,30 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
                 <label htmlFor="vault-name" className="input-label">
                   Nombre de la vault
                 </label>
-                <input
-                  ref={nameInputRef}
-                  id="vault-name"
-                  type="text"
-                  className="input-field"
-                  placeholder="Ej: Trabajo, Personal, Proyectos..."
-                  value={vaultName}
-                  onChange={(e) => setVaultName(e.target.value)}
-                  disabled={isCreating}
-                  maxLength={50}
-                  autoComplete="off"
-                />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <input
+                    ref={nameInputRef}
+                    id="vault-name"
+                    type="text"
+                    className="input-field"
+                    placeholder="Ej: Trabajo, Personal, Proyectos..."
+                    value={vaultName}
+                    onChange={(e) => setVaultName(e.target.value)}
+                    disabled={isCreating}
+                    maxLength={50}
+                    autoComplete="off"
+                    style={{ flex: 1 }}
+                  />
+                  <FolderPickerButton 
+                    onFolderSelected={setSelectedFolderPath} 
+                    disabled={isCreating} 
+                  />
+                </div>
+                {selectedFolderPath && (
+                  <span style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.25rem", display: "block" }}>
+                    {selectedFolderPath}
+                  </span>
+                )}
               </div>
               
               <div className="checkbox-group">
@@ -273,5 +307,9 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     </div>
   );
 };
+
+//====================================================================================//
+//                                EXPORTACIÓN                                         //
+//====================================================================================//
 
 export default CreateVaultModal;
