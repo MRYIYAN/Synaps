@@ -1,24 +1,25 @@
-import React, { useState } from "react";
-import { ReactComponent as SearchIcon       } from "../assets/icons/search.svg";
-import { ReactComponent as FoldersIcon      } from "../assets/icons/folders.svg";
-import { ReactComponent as GalaxyViewIcon   } from "../assets/icons/waypoints.svg";
-import { ReactComponent as ListTodoIcon     } from "../assets/icons/list-todo.svg";
-import { ReactComponent as SecretNotesIcon  } from "../assets/icons/lock.svg";
-import { ReactComponent as LogoutIcon } from "../assets/icons/logout.svg"; // Icono para cerrar sesión
-import logo_header from "../assets/icons/logo_header_sidebar.svg"; // Asegúrate de que la ruta sea correcta
+import React, { useState, useEffect } from "react";
+import { ReactComponent as SearchIcon } from "../assets/icons/search.svg";
+import { ReactComponent as FoldersIcon } from "../assets/icons/folders.svg";
+import { ReactComponent as GalaxyViewIcon } from "../assets/icons/waypoints.svg";
+import { ReactComponent as ListTodoIcon } from "../assets/icons/list-todo.svg";
+import { ReactComponent as SecretNotesIcon } from "../assets/icons/lock.svg";
+import { ReactComponent as LogoutIcon } from "../assets/icons/logout.svg";
+
+import logo_header from "../assets/icons/logo_header_sidebar.svg";
 import "../assets/styles/SidebarPanel.css";
 
-// Importamos el componente del modal de confirmación
+// Importaciones de componentes
 import LogoutConfirmModal from "./Atomic/Modal/LogoutConfirmModal";
-
-// Importaciones directas de cada subcomponente
+import CreateVaultModal from "./Atomic/Modal/CreateVaultModal";
+import UserProfileBar from "./Atomic/Panels/UserProfileBar";
 import SearchPanel from './Atomic/Panels/SearchPanel';
 import FoldersPanel from './Atomic/Panels/FoldersPanel';
 import GalaxyViewPanel from './Atomic/Panels/GalaxyViewPanel';
 import ListTodoPanel from './Atomic/Panels/ListTodoPanel';
 import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
 
-// Definimos la configuración de los enlaces de navegación
+// Configuración de los elementos de navegación
 const navigationItems = [
   { id: "search", label: "Buscar", icon: SearchIcon },
   { id: "folders", label: "Mis carpetas", icon: FoldersIcon },
@@ -37,30 +38,47 @@ const panelComponents = {
 };
 
 const SidebarPanel = () => {
-  const [rightPanelOpen, setRightPanelOpen]       = useState(false);
-  const [selectedItem, setSelectedItem]           = useState(null);
+  // Estados para la interfaz de usuario
+  const [rightPanelOpen, setRightPanelOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [indicatorPosition, setIndicatorPosition] = useState(0);
-  const [isClosing, setIsClosing]                 = useState(false);
-  
-  // Estado para controlar la visibilidad del modal de confirmación de cierre de sesión
+  const [isClosing, setIsClosing] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  
-  // Función para manejar la selección de iconos
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [showCreateVaultModal, setShowCreateVaultModal] = useState(false);
+
+  // Estados para los datos del usuario y las vaults
+  // TODO: Reemplazar con datos reales de la API
+  const [currentUser, setCurrentUser] = useState({
+    name: "",
+    avatar: null
+  });
+
+  const [vaults, setVaults] = useState([]);
+  const [currentVault, setCurrentVault] = useState(null);
+
+  // Cargar datos iniciales
+  useEffect(() => {
+    // TODO: Implementar carga de datos del usuario y vaults desde la API
+    // Carga simulada para desarrollo
+    setCurrentUser({
+      name: "Usuario",
+      avatar: null
+    });
+    
+    setVaults([]);
+    setCurrentVault(null);
+  }, []);
+
+  // Manejo de clics en la barra de navegación
   const handleIconClick = (itemId, index) => {
-
-    // Si seleccionamos el mismo item que ya estaba abierto, comprobamos su estado
-    if(selectedItem === itemId) {
-
-      // Cerramos
-      if( rightPanelOpen )
+    if (selectedItem === itemId) {
+      if (rightPanelOpen) {
         handleCloseSidebar();
-
-      // Abrimos el panel del item seleccionado
-      else
+      } else {
         setRightPanelOpen(true);
-      
+      }
     } else {
-      // Si seleccionamos un icono diferente, lo abrimos
       setSelectedItem(itemId);
       setRightPanelOpen(true);
     }
@@ -68,11 +86,10 @@ const SidebarPanel = () => {
     setIndicatorPosition(index * 48);
   };
 
-  // Cerramos el sidebar con una transición
+  // Cerrar el sidebar con una transición
   const handleCloseSidebar = () => {
     setIsClosing(true);
     
-    // Añadimos una transición
     setTimeout(() => {
       setRightPanelOpen(false);
       setIsClosing(false);
@@ -101,12 +118,53 @@ const SidebarPanel = () => {
     setShowLogoutModal(false);
   };
   
+  // Función para manejar el selector de vaults
+  const handleVaultSelect = (vault) => {
+    // TODO: Implementar lógica para cargar contenido de la vault seleccionada
+    setCurrentVault(vault);
+  };
+  
+  // Nueva función para manejar el menú de configuración
+  const handleSettingsClick = () => {
+    setShowSettingsMenu(!showSettingsMenu);
+    // TODO: Implementar el menú de configuración
+  };
+  
+  // Función para manejar la creación de nuevas vaults
+  const handleCreateVault = async (vaultData) => {
+    // TODO: Implementar llamada a la API para crear la vault
+    return new Promise((resolve, reject) => {
+      try {
+        // TODO: Validar datos antes de enviar a la API
+        
+        // TODO: Enviar datos a la API y recibir respuesta
+        
+        // Actualizar estado local (temporal hasta implementación real)
+        const newVault = {
+          id: Date.now(), // Temporal, la API generará el ID real
+          name: vaultData.name,
+          isPrivate: vaultData.isPrivate || false,
+        };
+        
+        setVaults([...vaults, newVault]);
+        setCurrentVault(newVault);
+        
+        resolve(newVault);
+      } catch (error) {
+        reject(new Error('Error al crear la vault. Inténtalo de nuevo.'));
+      }
+    });
+  };
+
+  // Función para abrir el modal de creación de vault
+  const openCreateVaultModal = () => {
+    setShowCreateVaultModal(true);
+  };
+  
   // Determinamos qué componente mostrar en el panel basado en la selección actual
   const CurrentPanelComponent = selectedItem
     ? panelComponents[selectedItem]
     : null;
-  
-  // Capturamos los datos del item seleccionado o un objeto vacío si no hay selección
 
   return (
     <div className="app-container">
@@ -123,10 +181,8 @@ const SidebarPanel = () => {
         {/* Menú principal de navegación */}
         <ul className="main-navigation">
           {navigationItems.map((item, index) => {
-
-            // Capturamos el icono y el estado del item
             const IconComponent = item.icon;
-            const isActive      = selectedItem === item.id;
+            const isActive = selectedItem === item.id;
             
             return (
               <li 
@@ -146,7 +202,7 @@ const SidebarPanel = () => {
         <ul className="secondary-navigation">
           <li 
             className="logout-item"
-            onClick={handleLogoutClick}  // Cambiado para mostrar el modal
+            onClick={handleLogoutClick}
             role="menuitem"
             aria-label="Cerrar sesión"
             title="Cerrar sesión"
@@ -156,10 +212,10 @@ const SidebarPanel = () => {
         </ul>
       </aside>
 
-      {/* Side Bar - panel que aparece a la derecha de Activity Bar con separación de 8px */}
+      {/* Side Bar - panel que aparece a la derecha de Activity Bar */}
       {(rightPanelOpen || isClosing) && CurrentPanelComponent && (
         <div className={`right-options-panel ${isClosing ? 'closing' : ''}`}>
-          {/* Reemplazamos el placeholder con el logo real */}
+          {/* Logo en la parte superior */}
           <div className="logo-container">
             <img 
               src={logo_header} 
@@ -167,12 +223,21 @@ const SidebarPanel = () => {
               className="header-logo"
             />
           </div>
-
-          <main>
-            <div className=""></div>
-          </main>
           
-          <CurrentPanelComponent />
+          {/* Componente del panel seleccionado */}
+          <div className="panel-content">
+            <CurrentPanelComponent />
+          </div>
+          
+          {/* Componente de perfil de usuario en la parte inferior */}
+          <UserProfileBar 
+            currentUser={currentUser}
+            vaults={vaults}
+            currentVault={currentVault}
+            onVaultSelect={handleVaultSelect}
+            onSettingsClick={handleSettingsClick}
+            onCreateVault={openCreateVaultModal}
+          />
         </div>
       )}
       
@@ -181,6 +246,13 @@ const SidebarPanel = () => {
         isOpen={showLogoutModal}
         onClose={cancelLogout}
         onConfirm={confirmLogout}
+      />
+
+      {/* Modal para crear nueva vault */}
+      <CreateVaultModal 
+        isOpen={showCreateVaultModal}
+        onClose={() => setShowCreateVaultModal(false)}
+        onCreateVault={handleCreateVault}
       />
     </div>
   );
