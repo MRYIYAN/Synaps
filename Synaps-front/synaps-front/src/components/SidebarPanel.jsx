@@ -127,29 +127,61 @@ const SidebarPanel = () => {
     // TODO: Implementar el menú de configuración
   };
   
-  // Función para manejar la creación de nuevas vaults
+  // Función para manejar la creación de nuevas vaults con comentarios sobre la animación
   const handleCreateVault = async (vaultData) => {
-    // TODO: Implementar llamada a la API para crear la vault
+    // Retornamos Promise para poder usar async/await desde el modal
     return new Promise((resolve, reject) => {
-      try {
-        // TODO: Validar datos antes de enviar a la API
-        
-        // TODO: Enviar datos a la API y recibir respuesta
-        
-        // Actualizar estado local (temporal hasta implementación real)
-        const newVault = {
-          id: Date.now(), // Temporal, la API generará el ID real
-          name: vaultData.name,
-          isPrivate: vaultData.isPrivate || false,
-        };
-        
-        setVaults([...vaults, newVault]);
-        setCurrentVault(newVault);
-        
-        resolve(newVault);
-      } catch (error) {
-        reject(new Error('Error al crear la vault. Inténtalo de nuevo.'));
-      }
+      // Simular un retraso para ver la animación de carga
+      // La duración de 1.5s da tiempo suficiente para apreciar la animación del spinner
+      setTimeout(() => {
+        try {
+          // Validaciones - Simulan errores reales del backend
+
+          // 1. Caso especial para demostración: "Error" provoca error
+          if (vaultData.name.toLowerCase() === "error") {
+            reject(new Error('Ya existe una vault con ese nombre.'));
+            return;
+          }
+          
+          // 2. Verificar nombres duplicados (validación real)
+          if (vaults.some(v => v.name.toLowerCase() === vaultData.name.toLowerCase())) {
+            reject(new Error('Ya existe una vault con ese nombre.'));
+            return;
+          }
+          
+          // 3. Validar PIN en vaults privadas
+          if (vaultData.isPrivate && (!vaultData.pin || vaultData.pin.length < 4)) {
+            reject(new Error('El PIN debe tener al menos 4 dígitos.'));
+            return;
+          }
+          
+          // Crear un nuevo ID único (en producción esto vendría del backend)
+          // Manejamos el caso de array vacío con el operador de propagación y Math.max
+          const newId = vaults.length > 0 
+            ? Math.max(...vaults.map(v => v.id)) + 1 
+            : 1;
+          
+          // Crear el nuevo objeto vault
+          const newVault = {
+            id: newId,
+            name: vaultData.name,
+            isPrivate: vaultData.isPrivate || false,
+            // Otros datos que agregaríamos en una implementación real
+            createdAt: new Date().toISOString(),
+          };
+          
+          // Actualizar el estado con la nueva vault
+          setVaults(prevVaults => [...prevVaults, newVault]);
+          setCurrentVault(newVault);
+          
+          // Resolvemos la promesa para que se muestre la animación de éxito
+          resolve(newVault);
+        } catch (error) {
+          // Si ocurre cualquier error inesperado, rechazamos la promesa
+          // para que se muestre la animación de error
+          reject(error);
+        }
+      }, 1500); // Duración ajustada para una experiencia visual óptima
     });
   };
 

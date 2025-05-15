@@ -6,7 +6,11 @@ import { ReactComponent as CloseIcon } from "../../../assets/icons/close.svg";
 import { ReactComponent as VaultIcon } from "../../../assets/icons/vault.svg";
 import { ReactComponent as LockIcon } from "../../../assets/icons/lock.svg";
 import FolderPickerButton from '../Buttons/FolderPickerButton'; 
-//=====================================================================================//
+import VaultStatusPopup, { STATUS } from "../PopUp/VaultStatusPopup";
+
+//====================================================================================//
+//                                COMPONENTE                                          //
+//====================================================================================//
 
 /**
  * Modal para crear una nueva vault con opción de privacidad
@@ -22,9 +26,13 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   const [isPrivate, setIsPrivate] = useState(false);
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
-  const [step, setStep] = useState(1); // Paso actual del formulario
+  const [step, setStep] = useState(1);
   const [isCreating, setIsCreating] = useState(false);
-  const [selectedFolderPath, setSelectedFolderPath] = useState(''); // Ruta seleccionada
+  const [selectedFolderPath, setSelectedFolderPath] = useState('');
+
+  const [statusPopup, setStatusPopup] = useState(null);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   //-----------------------------------// 
   // Referencias para focus automático 
@@ -36,9 +44,6 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   //                                EFECTOS                                             //
   //====================================================================================//
 
-  //-------------------------------------------// 
-  // Focus en el input cuando se abre el modal 
-  //------------------------------------------//
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
@@ -55,41 +60,52 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   //                                FUNCIONES PRINCIPALES                               //
   //====================================================================================//
 
-  //---------------------------------------//
-  //  Resetear el formulario al cerrarlo 
-  //---------------------------------------//
   const handleClose = () => {
     setVaultName('');
     setIsPrivate(false);
     setPin('');
     setConfirmPin('');
     setStep(1);
+    setSelectedFolderPath('');
+    setStatusPopup(null);
+    setStatusMessage('');
+    setErrorMessage('');
     onClose();
   };
 
-  //---------------------------------// 
-  // Manejar el cambio de paso
-  //---------------------------------//
   const handleNextStep = () => {
-    if (step === 1) {
-      setStep(2);
-    }
+    if (step === 1) setStep(2);
   };
 
-  //-----------------------------// 
-  // Volver al paso anterior
-  //-----------------------------//
   const handlePrevStep = () => {
     setStep(1);
   };
 
-  //--------------------------// 
-  // Crear la vault 
-  //--------------------------//
   const handleCreateVault = async () => {
+    if (isCreating) return;
+
+    if (step === 2) {
+      if (pin !== confirmPin) {
+        setStatusPopup(STATUS.ERROR);
+        setStatusMessage('Los PINs no coinciden');
+        setErrorMessage('Verifica que ambos PINs sean iguales');
+        return;
+      }
+      if (pin.length < 4) {
+        setStatusPopup(STATUS.ERROR);
+        setStatusMessage('PIN demasiado corto');
+        setErrorMessage('El PIN debe tener al menos 4 dígitos');
+        return;
+      }
+    }
+
     setIsCreating(true);
+    setStatusPopup(STATUS.LOADING);
+    setStatusMessage('Creando vault...');
 
     try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
       if (step === 1 && !isPrivate) {
         await onCreateVault({
           name: vaultName.trim(),
@@ -104,17 +120,26 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
           folderPath: selectedFolderPath
         });
       }
-      handleClose();
+
+      setStatusPopup(STATUS.SUCCESS);
+      setStatusMessage('¡Vault creada con éxito!');
     } catch (error) {
-      console.error('Error al crear la vault:', error);
+      setStatusPopup(STATUS.ERROR);
+      setStatusMessage('Error al crear la vault');
+      setErrorMessage(error.message || 'Ya existe una vault con ese nombre.');
     } finally {
       setIsCreating(false);
     }
   };
 
-  //------------------------------------//
-  //  Cerrar modal al presionar Escape 
-  //-----------------------------------//
+  const handleStatusComplete = () => {
+    if (statusPopup === STATUS.SUCCESS) {
+      handleClose();
+    } else {
+      setStatusPopup(null);
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {
       handleClose();
@@ -145,22 +170,27 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
               {step === 1 ? "Nueva Vault" : "Configurar Vault Privada"}
             </h2>
           </div>
-          <button 
-            className="modal-close-button" 
-            onClick={handleClose}
-            aria-label="Cerrar"
-          >
+          <button className="modal-close-button" onClick={handleClose} aria-label="Cerrar">
             <CloseIcon />
           </button>
         </div>
-        
-        <div className="modal-content"> 
+
+        <div className="modal-content">
+          {statusPopup && (
+            <VaultStatusPopup
+              status={statusPopup}
+              message={statusMessage}
+              errorMessage={errorMessage}
+              onComplete={handleStatusComplete}
+              autoCloseDelay={statusPopup === STATUS.SUCCESS ? 2000 : 0}
+            />
+          )}
+
           {step === 1 && (
             <>
               <p className="modal-description">
                 Las vaults te permiten organizar tus datos en diferentes espacios de trabajo.
               </p>
-              
               <div className="input-group">
                 <label htmlFor="vault-name" className="input-label">
                   Nombre de la vault
@@ -190,7 +220,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
                   </span>
                 )}
               </div>
-              
+
               <div className="checkbox-group">
                 <label className="checkbox-container">
                   <input
@@ -211,13 +241,12 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
               </div>
             </>
           )}
-          
+
           {step === 2 && (
             <>
               <p className="modal-description">
                 Establece un PIN para proteger tu vault. Necesitarás ingresarlo cada vez que quieras acceder a esta vault.
               </p>
-              
               <div className="input-group">
                 <label htmlFor="vault-pin" className="input-label">
                   PIN de acceso
@@ -237,7 +266,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
                   autoComplete="new-password"
                 />
               </div>
-              
+
               <div className="input-group">
                 <label htmlFor="vault-pin-confirm" className="input-label">
                   Confirmar PIN
@@ -256,22 +285,18 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
                   autoComplete="new-password"
                 />
               </div>
-              
+
               <p className="security-note">
                 <strong>Nota de seguridad:</strong> No podrás recuperar el contenido de esta vault si olvidas el PIN.
               </p>
             </>
           )}
         </div>
-        
+
         <div className="modal-footer">
           {step === 1 && (
             <>
-              <button 
-                className="modal-button secondary" 
-                onClick={handleClose}
-                disabled={isCreating}
-              >
+              <button className="modal-button secondary" onClick={handleClose} disabled={isCreating}>
                 Cancelar
               </button>
               <button 
@@ -283,14 +308,10 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
               </button>
             </>
           )}
-          
+
           {step === 2 && (
             <>
-              <button 
-                className="modal-button secondary" 
-                onClick={handlePrevStep}
-                disabled={isCreating}
-              >
+              <button className="modal-button secondary" onClick={handlePrevStep} disabled={isCreating}>
                 Volver
               </button>
               <button 
