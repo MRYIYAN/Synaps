@@ -82,20 +82,22 @@ pre {
   height: 100vh;
   background-color: var(--vscode-background);
   color: var(--vscode-foreground);
-  overflow: hidden;
 }
 
 /* Activity Bar - barra vertical con iconos */
 .sidebar-panel {
   background-color: var(--vscode-activityBar-background);
   z-index: 10;
-  position: fixed;
+  /* 
+  position: fixed; 
   left: 0;
   top: 0;
+  */
+
   height: 100vh; /* Altura completa de la ventana */
   display: flex;
   flex-direction: column; /* Para apilar los elementos verticalmente */
-  width: 48px; /* Ancho fijo para la barra de actividades */
+  min-width: 48px; /* Ancho fijo para la barra de actividades */
 }
 
 /* Menú principal que contiene los iconos de navegación */
@@ -301,9 +303,12 @@ pre {
   color: var(--vscode-sideBar-foreground);
   overflow-y: auto;
   overflow-x: hidden;
+
+  /*
   position: fixed;
   top: 0;
   left: var(--activity-bar-width);
+  */
   z-index: 5;
   border-right: 1px solid #1a1a1a;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
@@ -347,11 +352,13 @@ pre {
 
 /* Ajustes al panel derecho para acomodar el botón flotante */
 .right-options-panel {
+  /*
   position: fixed;
   left: var(--activity-bar-width);
   top: 0;
+  */
   height: 100vh;
-  width: var(--side-bar-width);
+  min-width: var(--side-bar-width);
   background-color: var(--vscode-sideBar-background);
   z-index: 5;
   overflow-y: auto;
