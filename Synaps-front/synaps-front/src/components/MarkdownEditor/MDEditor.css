@@ -1,0 +1,100 @@
+.layout-markdown-editor {
+  display: flex;
+  height: 100vh;
+  background: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground)
+}
+
+.layout-markdown-editor>.sidebar-panel {
+  flex: 0 0 var(--side-bar-width)
+}
+
+.md-editor-wrapper {
+  flex: 1;
+  overflow: hidden
+}
+
+.mdxeditor {
+  height: 100%;
+}
+
+.mdxeditor-toolbar,
+.mdx-editor__toolbar {
+  background: var(--vscode-activityBar-background);
+  color: var(--vscode-activityBar-foreground);
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 0;
+}
+
+.mdxeditor-toolbar button,
+.mdx-editor__toolbar button {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  color: inherit
+}
+
+.mdxeditor-toolbar button:hover,
+.mdx-editor__toolbar button:hover {
+  background: rgba(255, 255, 255, 0.1)
+}
+
+.mdxeditor-toolbar button:active,
+.mdx-editor__toolbar button:active {
+  background: rgba(245, 110, 15, 0.2)
+}
+
+.mdxeditor-content,
+.mdx-editor__content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  background: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground)
+}
+
+.md-editor-container {
+  background: var(--vscode-editor-background);
+  color: white;
+  --cm-text-color: white
+}
+
+.md-editor-container .mdxeditor-root-contenteditable,
+._contentEditable_sects_380 {
+  color: white !important
+}
+
+._rootContentEditableWrapper_sects_1114.mdxeditor-root-contenteditable {
+  & {
+    margin: 4vh 12vw;
+    height: 100%;
+  }
+
+  &>div,
+  &>div>div {
+    height: 100%;
+  }
+}
+
+._codeMirrorToolbar_sects_409 {
+  display: none !important;
+}
+
+.ͼo, .cm-activeLineGutter {
+  background: transparent !important;
+  color: white;
+}
+
+.ͼo .cm-gutters {
+  color: rgb(135, 135, 135);;
+}
+
+.md-editor-wrapper a {
+  color: var(--liquid_lava);
+  cursor: pointer;
+}

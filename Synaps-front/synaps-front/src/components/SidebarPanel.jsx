@@ -245,6 +245,8 @@ const SidebarPanel = () => {
       {(rightPanelOpen || isClosing) && CurrentPanelComponent && (
         <div className={`right-options-panel ${isClosing ? 'closing' : ''}`}>
           {/* Logo en la parte superior */}
+
+          {/*
           <div className="logo-container">
             <img 
               src={logo_header} 
@@ -252,6 +254,7 @@ const SidebarPanel = () => {
               className="header-logo"
             />
           </div>
+          */}
           
           {/* Componente del panel seleccionado */}
           <div className="panel-content">

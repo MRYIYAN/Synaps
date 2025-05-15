@@ -1,0 +1,20 @@
+/* Palette oscura y tipografía monoespaciada estilo Obsidian */
+.mdx-obsidian {
+  --mdxe-surface: #1e1e1e;
+  --mdxe-surface-dark: #2a2a2a;
+  --mdxe-on-surface: #e2e2e2;
+  --mdxe-accent: #7c3aed;
+  font-family: var(--font-mono);
+}
+
+/* Controles flotantes de tabla -> hidden hasta hover */
+.mdx-obsidian .mdxeditor-table-toolbar {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s;
+}
+
+.mdx-obsidian table:hover .mdxeditor-table-toolbar {
+  opacity: 1;
+  pointer-events: auto;
+}

@@ -12,17 +12,19 @@ import Modal      from "../components/Modal";
 */
 
 import SidebarPanel from "../components/SidebarPanel";
+import MDEditor from "../components/MarkdownEditor/MDEditor";
 
 // ------------------------------------------------------------
 // APP
 // ------------------------------------------------------------
 
 const MarkdownEditor = function() {
-
-  // HTML del formulario
   return (
-    <div>
+    <div className="layout-markdown-editor">
       <SidebarPanel />
+      <div className="md-editor-wrapper">
+        <MDEditor />
+      </div>
     </div>
   );
 }
