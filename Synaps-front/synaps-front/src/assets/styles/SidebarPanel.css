@@ -1581,9 +1581,9 @@ body.modal-open {
 
 /* Icono en el modal */
 .modal-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 12px;
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
   color: var(--liquid-lava);
 }
 
