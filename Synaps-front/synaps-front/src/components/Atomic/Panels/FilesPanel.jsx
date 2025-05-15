@@ -237,6 +237,10 @@ const FilesPanel = () => {
     setNotes( prev => {
       const updated = [...prev, note];
       window.currentNotes = updated;
+
+      // Marcamos como seleccionado el nuevo item
+      setSelectedItemId( data.note_id );
+      setSelectedItemId2( data.note_id2 );
       return updated;
     } );
     
@@ -275,6 +279,10 @@ const FilesPanel = () => {
     setNotes( prev => {
       const updated = [...prev, folder];
       window.currentNotes = updated;
+
+      // Marcamos como seleccionado el nuevo item
+      setSelectedItemId( data.folder_id );
+      setSelectedItemId2( data.folder_id2 );
       return updated;
     } );
     

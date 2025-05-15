@@ -20,7 +20,7 @@ class NoteService
    * @param int $user_id Identificador del usuario
    * @return Collection
    */
-  public static function GetAllNotes( int $user_id ) : Collection
+  public static function GetNotes( int $user_id, int $parent_id ) : Collection
   {
     // Inicializamos las conexiones de DB
     $user_db  = tenant( $user_id );
@@ -30,6 +30,7 @@ class NoteService
     // NoteEachOwn - Recorre cada nota y añade el atributo source = 'own'
     $own_notes = Note::on( $user_db )
       ->get()
+      ->where( 'parent_id', '=', $parent_id )
       ->each( fn( $note ) => $note->setAttribute( 'source', 'own' ) );
 
     // Inicializamos una consulta sobre note_shares en la DB central
@@ -53,6 +54,7 @@ class NoteService
       // Buscamos las notas del propietario
       $notes = Note::on( $owner_db )
         ->whereIn( 'note_id2', $note_ids )
+        ->where( 'parent_id', '=', $parent_id )
         ->get()
         ->each( fn( $note ) => $note->setAttribute( 'source', 'shared' ) );
 

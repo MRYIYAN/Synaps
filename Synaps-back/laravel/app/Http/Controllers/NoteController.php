@@ -27,7 +27,7 @@ class NoteController extends Controller
    * @param  Request      $request     Datos de la nota: newNoteName
    * @return JsonResponse              Resultado de la operación
    */
-  public function addNote( Request $request ): JsonResponse|string
+  public function addNote( Request $request ): JsonResponse
   {
     // Inicializamos los valores a devolver
     $result  = 0;
@@ -56,8 +56,21 @@ class NoteController extends Controller
           ->where( 'folder_id2', $data['parent_id2'] )
           ->firstOrFail();
 
-        // Capturamos el id
-        $parent_id = ( int ) $parent->folder_id;
+        // En caso de que no exista el registro en esa tabla, buscamos si es una nota y capturamos el padre
+        if( $parent )
+          $parent_id = ( int ) $parent->folder_id;
+        
+        else
+        {
+          // Si no hay carpeta, intentamos encontrar una nota con ese id2
+          $note = Note::on( $user_db )
+            ->where( 'note_id2', $data['parent_id2'] )
+            ->first();
+
+          // Si la encontramos, guardamos el ID2 del padre
+          if( $note )
+            $parent_id = ( int ) $note->parent_id;
+        }
       }
 
       // Devuelve si existen una nota en el mismo nivel y con el mismo nombre
@@ -103,32 +116,39 @@ class NoteController extends Controller
   }
 
   /**
-   * GET /api/getAllNotes
+   * GET /api/getNotes
    *
    * @param  Request      $request
    * @return JsonResponse              Resultado y lista plana de notas
    */
-  public function getAllNotes( Request $request ): JsonResponse
+  public function getNotes( Request $request ): JsonResponse
   {
+    // Validamos los datos recibidos
+    $data = $request->validate( [
+      'parent_id' => 'nullable|integer'
+    ] );
+
     // Identificador del usuario autenticado
     // $user_id = ( int ) $request->user()->id;
     $user_id = 1;
     $user_db = tenant( $user_id );
 
     // Obtenemos todas las notas (propias + compartidas)
-    $notes = NoteService::GetAllNotes( $user_id );
+    $notes = NoteService::GetNotes( $user_id, $data['parent_id'] );
 
     // Obtenemos todas las carpetas del usuario
     $folders = FolderNote::on( $user_db )
-      ->select( [ 'folder_id2', 'folder_title', 'parent_id' ] )
+      ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id' ] )
+      ->where( 'parent_id', '=', $data['parent_id'] )
       ->get();
 
     // Mapeamos notas al formato común { id2, title, parent_id }
     $notesArray = $notes
       ->map( fn( $note ) => [
-          'id2'       => $note->note_id2
+          'id'        => $note->note_id
+        , 'id2'       => $note->note_id2
         , 'title'     => $note->note_title
-        , 'parent_id' => $note->folder_id
+        , 'parent_id' => $note->parent_id
         , 'type'      => 'note'
       ] )
       ->toArray();
@@ -136,7 +156,8 @@ class NoteController extends Controller
     // Mapeamos carpetas al mismo formato
     $foldersArray = $folders
       ->map( fn( $folder ) => [
-          'id2'       => $folder->folder_id2
+          'id'        => $folder->folder_id
+        , 'id2'       => $folder->folder_id2
         , 'title'     => $folder->folder_title
         , 'parent_id' => $folder->parent_id
         , 'type'      => 'folder'

@@ -72,5 +72,5 @@ Route::post( '/addNote', [NoteController::class, 'addNote'] );
  */
 Route::post( '/addFolder', [FolderNoteController::class, 'addFolder'] );
 
-// GET /api/getAllNotes
-Route::get( 'getAllNotes', [NoteController::class, 'getAllNotes'] );
+// GET /api/getNotes
+Route::get( 'getNotes', [NoteController::class, 'getNotes'] );
