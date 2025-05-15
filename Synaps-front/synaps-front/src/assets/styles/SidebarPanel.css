@@ -1726,37 +1726,211 @@ body.modal-open {
   color: #707070;
 }
 
-/* TODO: Implementar estilos para errores de validación en el futuro */
-/* 
-.input-field.input-error {
-  border-color: #e63946;
-  box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.2);
+/* Estilos mejorados para el checkbox con icono SVG circular */
+.checkbox-group {
+  margin: 20px 0;
 }
 
-.error-message {
-  color: #e63946;
-  font-size: 12px;
-  margin-top: 6px;
-} 
-*/
-
-/* .input-field.input-error {
-  border-color: #e63946;
-  box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.2);
+/* Contenedor del checkbox personalizado */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 8px;
+  position: relative;
 }
 
-.error-message {
-  color: #e63946;
-  font-size: 12px;
-  margin-top: 6px;
+/* Ocultamos el checkbox nativo pero mantenemos su funcionalidad */
+.checkbox-container input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
 }
 
-/* Mensaje de error */
-/* .error-message {
-  color: #e63946;
+/* Creamos nuestro checkbox personalizado circular */
+.custom-checkbox {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Estilo cuando el cursor está encima */
+.checkbox-container:hover .custom-checkbox {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* El icono SVG dentro del checkbox - inicialmente oculto */
+.custom-checkbox svg {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animación con rebote */
+  width: 20px;
+  height: 20px;
+}
+
+/* Estilo cuando está marcado - cambio de color de fondo */
+.checkbox-container input:checked ~ .custom-checkbox {
+  background-color: rgba(245, 110, 15, 0.1);
+  border-color: var(--liquid-lava);
+}
+
+/* Mostramos el icono SVG cuando está marcado con animación */
+.checkbox-container input:checked ~ .custom-checkbox svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Estilos para cuando el checkbox está deshabilitado */
+.checkbox-container input:disabled ~ .custom-checkbox {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Estilos mejorados para el checkbox */
+.checkbox-group {
+  margin: 20px 0;
+}
+
+/* Contenedor del checkbox personalizado */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+/* Ocultamos el checkbox nativo pero mantenemos su funcionalidad */
+.checkbox-container input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Creamos nuestro checkbox personalizado */
+.custom-checkbox {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+}
+
+/* Estilo cuando el cursor está encima */
+.checkbox-container:hover .custom-checkbox {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Estilo cuando está marcado */
+.checkbox-container input:checked ~ .custom-checkbox {
+  background-color: var(--liquid-lava);
+  border-color: var(--liquid-lava);
+}
+
+/* Creamos el indicador de marca (✓) */
+.custom-checkbox:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Mostramos el indicador cuando está marcado */
+.checkbox-container input:checked ~ .custom-checkbox:after {
+  display: block;
+}
+
+/* Estilo para el checkbox deshabilitado */
+.checkbox-container input:disabled ~ .custom-checkbox {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkbox-container input:disabled ~ .checkbox-label {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Estilo del texto del checkbox */
+.checkbox-label {
+  font-size: 14px;
+  color: #c0c0c0;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+/* Efecto de hover para el texto */
+.checkbox-container:hover .checkbox-label {
+  color: #e0e0e0;
+}
+
+/* Estilo para el icono dentro del label */
+.checkbox-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  color: #c0c0c0;
+  stroke: currentColor;
+  stroke-width: 1.5px;
+  fill: transparent;
+  transition: color 0.2s;
+}
+
+/* Cuando el checkbox está marcado, cambiamos el color del icono */
+.checkbox-container input:checked ~ .checkbox-label .checkbox-icon {
+  color: var(--liquid-lava);
+}
+
+/* Descripción de la opción seleccionada */
+.checkbox-description {
   font-size: 12px;
-  margin-top: 6px;
-} */
+  color: #a0a0a0;
+  margin-top: 4px;
+  margin-left: 28px; /* Ajustado para alinear con el nuevo checkbox */
+  font-style: italic;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* Estilos para el checkbox en el modal de crear vault */
 .checkbox-group {
@@ -1853,3 +2027,22 @@ body.modal-open {
   }
 }
 
+/* Estilos para campos con error */
+.input-field.error {
+  border-color: #f56e6e;
+  background-color: rgba(245, 110, 110, 0.05);
+}
+
+.input-error {
+  color: #f56e6e;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Deshabilitar el botón de avanzar */
+.modal-button.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
