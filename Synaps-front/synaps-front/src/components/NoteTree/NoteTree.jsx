@@ -23,12 +23,12 @@ function buildTree( items, parent_id = 0 ) {
     .filter( item => item.parent_id === parent_id )
     .map( item => ( {
       ...item,
-      children: buildTree( items, item.id2 )
+      children: item.type === 'folder' ? buildTree( items, item.id ) : []
     } ) );
 }
 
 
-export default function NoteTree( { nodes = [], selectedId2 = null } ) {
+export default function NoteTree( { nodes = [] } ) {
   const treeData = buildTree( nodes, 0 );
 
   return (
@@ -38,7 +38,6 @@ export default function NoteTree( { nodes = [], selectedId2 = null } ) {
           key={item.id2}
           node={item}
           depth={1}
-          selectedId2={selectedId2}
         />
       ) ) }
     </div>

@@ -57,7 +57,7 @@ export async function http_post( url, body, headers, credentials = 'include' ) {
 }
 
 // Helper para GET con Bearer
-export async function http_get( url, headers, credentials = 'include' ) {
+export async function http_get( url, body = {}, headers = {}, credentials = 'include' ) {
 
   // Inicializamos el valor a devolver
   let result    = 0;
@@ -72,6 +72,11 @@ export async function http_get( url, headers, credentials = 'include' ) {
         Accept: 'application/json'
       };
     }
+
+    // Calculamos la URL final
+    const params = new URLSearchParams( body ).toString();
+    if( params.length > 0 )
+      url += '?' + params;
 
     // Ejecutamos la solicitud GET a la ruta backend especificada
     let http_response = await fetch( url, {

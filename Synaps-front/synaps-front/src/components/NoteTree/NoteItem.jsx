@@ -12,12 +12,13 @@
  * @param {Function} props.onToggle    Función para expandir/colapsar
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./NoteTree.css";
 import { ReactComponent as FolderIcon } from "../../assets/icons/folder.svg";
 import { ReactComponent as FileIcon }   from "../../assets/icons/file.svg";
 
 export default function NoteItem( {
+  id,
   id2,
   title,
   depth,
@@ -26,6 +27,33 @@ export default function NoteItem( {
   selected,
   onToggle,
 } ) {
+
+  // Función para manejar los eventos de los items
+  function handleClick() {
+
+    // Seleccionamos el item
+    window.setSelectedItemId( id );
+    window.setSelectedItemId2( id2 );
+
+    // Solo si es una carpeta, recargamos las notas filtradas por ese folder_id
+    if( hasChildren && typeof window.getNotesForFolder === 'function' ) {
+
+      // Recuperamos el item completo desde el árbol si es necesario
+      const item = { id2, title, type: hasChildren ? 'folder' : 'note' }; // o lo pasas como prop
+
+      if( item.type === 'folder' ) {
+
+        // Necesitamos pasar el `id` real, no el id2
+        const currentItem = window.currentNotes?.find( i => i.id2 === id2 );
+        if( currentItem && currentItem.id)
+          window.getNotesForFolder( currentItem.id );
+      }
+    }
+
+    // Toggle de expansión si es folder
+    if( hasChildren && typeof onToggle === 'function' )
+      onToggle();
+  }
 
   // Sangrado según la profundidad
   const indentStyle = { paddingLeft: `${depth * 16}px` };
@@ -37,7 +65,7 @@ export default function NoteItem( {
       aria-expanded={hasChildren ? !collapsed : undefined}
       aria-selected={selected}
       id={id2}
-      onClick={hasChildren ? onToggle : undefined}
+      onClick={handleClick}
       style={indentStyle}
     >
       {/* Muestra icono de carpeta si tiene hijos, de archivo si no */}

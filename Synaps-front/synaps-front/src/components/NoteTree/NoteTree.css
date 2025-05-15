@@ -31,7 +31,7 @@
   font-size: 14px;
 }
 
-.node-item:hover {
+.node-item.selected, .node-item:hover {
   background-color: var(--vscode-activityBar-background);
   overflow: hidden;
   cursor: pointer;

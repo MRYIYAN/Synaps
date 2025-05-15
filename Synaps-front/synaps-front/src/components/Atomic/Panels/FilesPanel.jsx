@@ -26,40 +26,83 @@ import { http_post, http_get } from '../../../lib/http.js';
 // Este componente implementa un panel de búsqueda interactivo con múltiples funciones
 const FilesPanel = () => {
 
+  // -----------------------------------------------------------------
+  // Selected Item
+  // -----------------------------------------------------------------
+
+  // Inicializamos el item seleccionado
+  const [selectedItemId, _setSelectedItemId]    = useState( 0 );
+  const [selectedItemId2, _setSelectedItemId2]  = useState( '' );
+
+  // setter extendido que también guarda en window
+  const setSelectedItemId2 = ( value ) => {
+    _setSelectedItemId2( value );
+    window.selectedItemId2 = value;
+  };
+
+  // setter extendido que también guarda en window
+  const setSelectedItemId = ( value ) => {
+    _setSelectedItemId( value );
+    window.selectedItemId = value;
+  };
+
+  useEffect( () => {
+    window.setSelectedItemId  = setSelectedItemId;
+    window.setSelectedItemId2 = setSelectedItemId2;
+  }, [] );
+
+  // -----------------------------------------------------------------
+  // Notes
+  // -----------------------------------------------------------------
+
   // Estado para almacenar las notas
   const [notes, setNotes] = useState( [] );
 
   // Función para obtener todas las notas desde la API
-  useEffect( () => {
-    const fetchAllNotes = async () => {
+  const getNotes = async( parent_id = 0 ) => {
 
-      try {
-        // URL de la API
-        const url = 'http://localhost:8010/api/getAllNotes';
+    try {
 
-        // Llamada GET usando tu helper http_get
-        const { result, http_data } = await http_get( url );
-        if ( result !== 1 )
-          throw new Error( 'Error al cargar notas' );
-            
-        // Calculamos el Notes
-        const notes = http_data.items.map( item => ( {
-            id2      : item.id2
-          , title    : item.title
-          , parent_id: item.parent_id ?? 0
-          , type     : item.type
-        } ) );
+      // URL de la API y parámetros
+      const url = 'http://localhost:8010/api/getNotes';
+      let body  = { parent_id: parent_id };
 
-        console.log( notes );
-        // Guardamos el array de notas en el estado
-        setNotes( notes );
+      // Llamada GET usando tu helper http_get
+      const { result, http_data } = await http_get( url, body );
+      if ( result !== 1 )
+        throw new Error( 'Error al cargar notas' );
+      
+      // Actualizamos los items
+      const newItems = http_data.items.map( item => ( {
+          id       : item.id
+        , id2      : item.id2
+        , title    : item.title
+        , parent_id: item.parent_id
+        , type     : item.type
+      } ) );
 
-      } catch( error ) {
-        console.error( error );
-      }
+      // Actualizamos el estado de notas y la variable global en paralelo
+      setNotes( prev => {
+        const filtered = prev.filter( item => item.parent_id !== parent_id );
+        const updated = [...filtered, ...newItems];
+        window.currentNotes = updated;
+        return updated;
+      } );
+
+    } catch( error ) {
+      console.error( error );
     }
+  }
 
-    fetchAllNotes();
+  useEffect( () => {
+    window.setSelectedItemId  = setSelectedItemId;
+    window.setSelectedItemId2 = setSelectedItemId2;
+    
+    // Exponemos la función getNotes a nivel global
+    window.getNotesForFolder = getNotes;
+
+    // Carga inicial
+    getNotes();
   }, [] );
 
   //---------------------------------------------------------------------------//
@@ -105,7 +148,7 @@ const FilesPanel = () => {
   // Previene el comportamiento por defecto del formulario y ejecuta la búsqueda
   const handleSearch = ( e ) => {
     e.preventDefault();  // Previene la recarga de la página
-    if( !searchQuery.trim()) return;  // No hace nada si la búsqueda está vacía
+    if( !searchQuery.trim() ) return;  // No hace nada si la búsqueda está vacía
     
     setIsSearching(true);  // Activa el indicador de carga
     
@@ -162,27 +205,40 @@ const FilesPanel = () => {
 
   // Función para crear una nueva nota
   // Se ejecuta cuando el usuario envía el formulario de nueva nota
-  const handleNewNoteSubmit = async ( e ) => {
-    e.preventDefault();  // Previene la recarga de la página
-    if( !newNoteName.trim()) return;  // No hace nada si el nombre está vacío
+  const handleNewNoteSubmit = async( e ) => {
+
+    // Previene la recarga de la página
+    e.preventDefault();
+
+    // No hace nada si el nombre está vacío
+    if( !newNoteName.trim() ) return;
 
     // Preparamos los datos para el post
     let url   = 'http://localhost:8010/api/addNote';
-    let body  = { newNoteName };
+    let body = {
+      newNoteName: newNoteName,
+      parent_id2: window.selectedItemId2
+    };
 
     // Realizamos la llamada por fetch
     let http_response = await http_post( url, body );
 
-    // Añadimos la nota recién creada al estado
-    setNotes( prev => [
-      ...prev,
-      {
-          id2      : http_response.http_data.note.note_id2
-        , title    : http_response.http_data.note.note_title
-        , parent_id: http_response.http_data.note.parent_id
-        , type     : 'note'
-      }
-    ] );
+    // Añadimos el nuevo item al array
+    let data = http_response.http_data.note;
+    let note = {
+        id       : data.note_id
+      , id2      : data.note_id2
+      , title    : data.note_title
+      , parent_id: data.parent_id
+      , type     : 'note'
+    };
+
+    // Actualizamos el estado de notas y la variable global en paralelo
+    setNotes( prev => {
+      const updated = [...prev, note];
+      window.currentNotes = updated;
+      return updated;
+    } );
     
     // Limpiar el input y ocultarlo después de crear la nota
     setNewNoteName("");  // Reinicia el campo de nombre
@@ -191,28 +247,36 @@ const FilesPanel = () => {
 
   // Función para crear una nueva carpeta
   // Se ejecuta cuando el usuario envía el formulario de nueva carpeta
-  const handleNewFolderSubmit = async ( e ) => {
+  const handleNewFolderSubmit = async( e ) => {
     e.preventDefault();  // Previene la recarga de la página
     if( !newFolderName.trim() ) return;  // No hace nada si el nombre está vacío
     
     // Preparamos los datos para el post
     let url   = 'http://localhost:8010/api/addFolder';
-    let body  = { newFolderName };
+    let body = {
+      newFolderName: newFolderName,
+      parent_id2: window.selectedItemId2
+    };
 
     // Realizamos la llamada por fetch
     let http_response = await http_post( url, body );
-    console.log( http_response );
 
-    // Añadimos la nota recién creada al estado
-    setNotes( prev => [
-      ...prev,
-      {
-          id2      : http_response.http_data.folder.folder_id2
-        , title    : http_response.http_data.folder.folder_title
-        , parent_id: http_response.http_data.folder.parent_id
-        , type     : 'folder'
-      }
-    ] );
+    // Añadimos el nuevo item al array
+    let data = http_response.http_data.folder;
+    let folder = {
+        id       : data.folder_id
+      , id2      : data.folder_id2
+      , title    : data.folder_title
+      , parent_id: data.parent_id
+      , type     : 'folder'
+    };
+
+    // Actualizamos el estado de notas y la variable global en paralelo
+    setNotes( prev => {
+      const updated = [...prev, folder];
+      window.currentNotes = updated;
+      return updated;
+    } );
     
     // Limpiar el input y ocultarlo después de crear la carpeta
     setNewFolderName("");  // Reinicia el campo de nombre
@@ -388,7 +452,7 @@ const FilesPanel = () => {
       {/* Contenedor del árbol de archivos */}
       {/* Agrupa todos los archivos/notas del usuario */}
       <div className="search-panel-tree" style={{ marginTop: 12 }}>
-        <NoteTree nodes={notes} selectedId2={ notes[0]?.id2 || '' } />
+        <NoteTree nodes={window.currentNotes} />
       </div>
     </div>
   );

@@ -20,26 +20,20 @@ export default function NoteBranch({ node, depth, selectedId2 }) {
   // Comprueba si este nodo tiene hijos
   const hasChildren = ( node.type === 'folder' );
 
-  // Alterna colapso/expansión únicamente si hay hijos
-  const handleToggle = e => {
-    e.stopPropagation();
-    hasChildren && setCollapsed( prev => !prev );
-  };
-
   return (
     <div className="node-branch" role="group" aria-labelledby={node.id2}>
       <NoteItem
+        id={node.id}
         id2={node.id2}
         title={node.title}
         depth={depth}
         hasChildren={hasChildren}
         collapsed={collapsed}
-        selected={node.id2 === selectedId2}
-        onToggle={handleToggle}
+        selected={node.id2 === window.selectedItemId2}
       />  
 
       {/* Si no está colapsado y tiene hijos, renderiza recursivamente */}
-      {hasChildren === false ? (
+      {hasChildren && !collapsed && node.children.length > 0 && (
         <div className={`node-branch ${collapsed ? 'collapsed' : ''}`}>
           {node.children.map( ( child ) => (
             <NoteBranch
@@ -47,11 +41,10 @@ export default function NoteBranch({ node, depth, selectedId2 }) {
               key={child.id2}
               node={child}
               depth={depth + 1.25}
-              selectedId2={selectedId2}
             />
           ) )}
         </div>
-      ) : '' }
+      )}
     </div>
   );
 }
