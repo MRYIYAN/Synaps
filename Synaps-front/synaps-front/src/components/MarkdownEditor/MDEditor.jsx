@@ -14,7 +14,7 @@
  * - Requiere los estilos de '@mdxeditor/editor' y un CSS propio opcional.
  */
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   MDXEditor,
   headingsPlugin,
@@ -24,7 +24,6 @@ import {
   tablePlugin,
   codeBlockPlugin,
   codeMirrorPlugin,
-  frontmatterPlugin,
   markdownShortcutPlugin,
   toolbarPlugin,
   BoldItalicUnderlineToggles,
@@ -39,45 +38,47 @@ import '@mdxeditor/editor/style.css'
 import './MDEditor.css'
 import './obsidian.css'
 
-  const initialMarkdown =
-`
-# Título principal
-
-## Subtítulo
-
-- Ítem de lista
-- [ ] Tarea pendiente
-- [x] Tarea completada
-
-| Col1 | Col2 |
-|------|------|
-| A    | B    |
-
-\`\`\`js
-// Bloque de código
-console.log('Hola mundo')
-\`\`\`
-
-**negrita** _cursiva_ ~~tachado~~
-
-> Esto es una cita.
-
-[Enlace externo](https://obsidian.md)
-
----
-
-![Imagen de ejemplo](https://placekitten.com/200/300)
-`
-
 export default function MDEditor () {
 
-  const [markdown, setMarkdown] = useState(initialMarkdown);
+  // markdown -> Contenido visible en el editor
+  // noteKey -> Clave única. Al cambiarla fuerza a React a desmontar y montar de nuevo el componente MDXEditor
+  const [markdown, setMarkdown] = useState( '' );
+  const [noteKey, setNoteKey]   = useState( 0 );
+
+  useEffect( () => {
+    // Cargar una nota completa.
+    // - Guarda una copia en window.markdown
+    // - Actualiza el estado local
+    // - Incrementa noteKey para obligar al remount del editor
+    window.loadMarkdown = content => {
+
+      // Guardamos la copia
+      const safe = typeof content === 'string' ? content : '';
+      window.markdown = safe;
+      setMarkdown( safe );
+
+      // Remount de MDEditor
+      setNoteKey( k => k + 1 );
+    };
+
+    // Actualizar mientras el usuario escribe.
+    // Igual que arriba pero SIN modificar noteKey, de modo que el editor no se desmonta en cada pulsación.
+    window.updateMarkdown = content => {
+      const safe = typeof content === 'string' ? content : '';
+      window.markdown = safe;
+      setMarkdown( safe );
+    };
+
+    // Valor inicial accesible globalmente
+    window.markdown = markdown;
+  }, [] );
 
   return (
     <div className='mdx-obsidian dark h-full w-full'>
       <MDXEditor
-        markdown={markdown}
-        onChange={setMarkdown}
+        key={noteKey}
+        markdown={markdown ?? ''}
+        onChange={window.updateMarkdown}
         className='obsidian-theme'
         plugins={[
           headingsPlugin({ allowedHeadingLevels: [1, 2, 3, 4, 5, 6] }),

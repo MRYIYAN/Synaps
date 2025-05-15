@@ -105,6 +105,36 @@ const FilesPanel = () => {
     getNotes();
   }, [] );
 
+  // -----------------------------------------------------------------
+  // Leer una nota concreta
+  // -----------------------------------------------------------------
+  const readNote = async (
+      note_id   = window.selectedItemId
+    , note_id2  = window.selectedItemId2
+  ) => {
+    try {
+      // ENDPOINT (GET) - /api/readNote?note_id=..?note_id2=..
+      const url  = 'http://localhost:8010/api/readNote';
+      const body = { note_id, note_id2 };
+
+      // Realizamos la petición
+      const { result, http_data } = await http_get( url, body );
+      if( result !== 1 )
+        throw new Error( 'Error al leer la nota' );
+
+      // Actualizamos el estado de notas y la variable global en paralelo
+      window.loadMarkdown( http_data.note.markdown );
+
+    } catch ( error ) {
+      console.log( error );
+    }
+  };
+
+  useEffect( () => {
+    // Exponemos la función a nivel global
+    window.readNote = readNote;
+  }, [] );
+
   //---------------------------------------------------------------------------//
   //  Estados para manejar la búsqueda y la interfaz                           //
   //---------------------------------------------------------------------------//
@@ -146,23 +176,39 @@ const FilesPanel = () => {
 
   // Función que se ejecuta cuando se envía el formulario de búsqueda
   // Previene el comportamiento por defecto del formulario y ejecuta la búsqueda
-  const handleSearch = ( e ) => {
-    e.preventDefault();  // Previene la recarga de la página
-    if( !searchQuery.trim() ) return;  // No hace nada si la búsqueda está vacía
+  const handleSearch = async( e ) => {
     
-    setIsSearching(true);  // Activa el indicador de carga
+    // Previene la recarga de la página
+    e.preventDefault();
+
+    // No hace nada si la búsqueda está vacía
+    if( !searchQuery.trim() )
+      return;
     
-    // Simulación de búsqueda - reemplazar con llamada real a API
-    // En una implementación real, aquí iría una llamada a una API o servicio de búsqueda
-    setTimeout(() => {
+    // Activa el indicador de carga
+    setIsSearching( true );
+
+    // Realizamos la búsqueda
+    // Preparamos los datos para el post
+    let url  = 'http://localhost:8010/api/searchNotes';
+    let body = { searchQuery: searchQuery };
+
+    // Realizamos la llamada por fetch
+    let http_response = await http_post( url, body );
+
+    // Añadimos el nuevo item al array
+    let data = http_response.http_data;
+
+    setTimeout( () => {
+
       // Resultados de ejemplo para demostración
       setSearchResults([
         { id: 1, fileName: "index.js", path: "/src", line: 24, context: "const searchQuery = useState('');" },
         { id: 2, fileName: "FilesPanel.jsx", path: "/components", line: 10, context: "function handleSearch(query) {" },
         { id: 3, fileName: "README.md", path: "/", line: 56, context: "## How to use the search functionality" },
       ]);
-      setIsSearching( false);  // Desactiva el indicador de carga al completar
-    }, 800);  // Retraso simulado de 800ms para simular tiempo de búsqueda
+      setIsSearching( false );  // Desactiva el indicador de carga al completar
+    }, 800 );  // Retraso simulado de 800ms para simular tiempo de búsqueda
   };
 
   // Función para mostrar/ocultar un campo de entrada específico

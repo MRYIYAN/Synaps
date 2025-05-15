@@ -8,6 +8,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 use App\Models\FolderNote;
 use Exception;
@@ -42,7 +44,8 @@ class FolderNoteController extends Controller
     {
       // Obtenemos el identificador del usuario autenticado
       // $user_id = ( int ) $request->user()->id;
-      $user_id = 1;
+      $user_id  = 1;
+      $user_id2 = 'F7D8S9FG78F9DG78D9F7G89DF789FDGU';
 
       // Inicializamos las conexiones de DB
       $user_db  = tenant( $user_id );
@@ -54,7 +57,7 @@ class FolderNoteController extends Controller
         // Buscamos la carpeta según el parent_id2
         $parent = FolderNote::on( $user_db )
           ->where( 'folder_id2', $data['parent_id2'] )
-          ->firstOrFail();
+          ->first();
 
         // Capturamos el id
         $parent_id = ( int ) $parent->folder_id;
@@ -77,10 +80,16 @@ class FolderNoteController extends Controller
       // Creamos la nueva carpeta en la base de datos del usuario
       $folder = FolderNote::on( $user_db )
         ->create( [
-          'folder_title'   => $data['newFolderName']
-        , 'parent_id'      => $parent_id
-        , 'children_count' => 0
-      ] );
+            'folder_id2'     => Str::random( 32 )
+          , 'folder_title'   => $data['newFolderName']
+          , 'parent_id'      => $parent_id
+          , 'children_count' => 0
+        ] );
+
+      // Creamos la carpeta en el Vault
+      $folder_id_f = str_pad( $folder->folder_id, 4, '0', STR_PAD_LEFT );
+      $folder_name = $folder_id_f . '_' . $folder->folder_id2;
+      Storage::disk( 'app_contents' )->makeDirectory( $folder_name );
 
       // Determinamos si la operación fue exitosa
       $result = $folder ? 1 : 0;

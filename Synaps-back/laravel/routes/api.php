@@ -74,3 +74,17 @@ Route::post( '/addFolder', [FolderNoteController::class, 'addFolder'] );
 
 // GET /api/getNotes
 Route::get( 'getNotes', [NoteController::class, 'getNotes'] );
+
+/**
+ * Maneja el registro de carpetas de notas.
+ *
+ * @see FolderNoteController::searchNotes()
+ */
+Route::post( '/searchNotes', [NoteController::class, 'searchNotes'] );
+
+/**
+ * Lee una nota concreta.
+ *
+ * @see NoteController::readNote()
+ */
+Route::get( '/readNote', [NoteController::class, 'readNote'] );
