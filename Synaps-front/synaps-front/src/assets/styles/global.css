@@ -1340,6 +1340,7 @@ h1, h2, h3, h4, h5, h6 { margin: 0; }
   background-color: rgba(255, 255, 255, 0.1);
   transform: scale(1.1) rotate(-5deg);
 }
+
 /*--------------------------------------*/
 /* Para ArchiveIcon(Icono de boveda) */
 rect {
@@ -1354,6 +1355,8 @@ rect {
   transform: translateY(2px);
   transition: transform 0.2s ease-in;
 }
+
+
 /*--------------------------------------*/
 
 /* === END LOGIN CLASSES === */
