@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close.svg";
 import { ReactComponent as VaultIcon } from "../../../assets/icons/vault.svg";
 import { ReactComponent as LockIcon } from "../../../assets/icons/lock.svg";
+import VaultStatusPopup, { STATUS } from "../PopUp/VaultStatusPopup";
 
 /**
  * Modal para crear una nueva vault con opción de privacidad
@@ -17,11 +18,16 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   const [confirmPin, setConfirmPin] = useState('');
   const [step, setStep] = useState(1); // Paso actual del formulario
   const [isCreating, setIsCreating] = useState(false);
-  
+
+  // Estado del popup
+  const [statusPopup, setStatusPopup] = useState(null);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
   // Referencias para focus automático
   const nameInputRef = useRef(null);
   const pinInputRef = useRef(null);
-  
+
   // Focus en el input cuando se abre el modal
   useEffect(() => {
     if (isOpen) {
@@ -34,7 +40,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       }, 100);
     }
   }, [isOpen, step]);
-  
+
   // Resetear el formulario al cerrarlo
   const handleClose = () => {
     // TODO: Implementar lógica de confirmación si hay datos no guardados
@@ -43,9 +49,12 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     setPin('');
     setConfirmPin('');
     setStep(1);
+    setStatusPopup(null);
+    setStatusMessage('');
+    setErrorMessage('');
     onClose();
   };
-  
+
   // Manejar el cambio de paso
   const handleNextStep = () => {
     // TODO: Implementar validación del nombre antes de avanzar
@@ -53,25 +62,48 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       setStep(2);
     }
   };
-  
+
   // Volver al paso anterior
   const handlePrevStep = () => {
     setStep(1);
   };
-  
+
   // Validación de datos
   const validateForm = () => {
     // TODO: Implementar validación completa de los datos del formulario
     return true;
   };
-  
-  // Crear la vault
+
+  // Modificamos handleCreateVault para mejorar la experiencia con la animación
   const handleCreateVault = async () => {
-    // TODO: Implementar validación completa antes de crear la vault
+    // Evitar múltiples envíos
+    if (isCreating) return;
+    
+    // Validar el PIN si estamos en el paso 2
+    if (step === 2) {
+      if (pin !== confirmPin) {
+        setStatusPopup(STATUS.ERROR);
+        setStatusMessage('Los PINs no coinciden');
+        setErrorMessage('Verifica que ambos PINs sean iguales');
+        return;
+      }
+      
+      if (pin.length < 4) {
+        setStatusPopup(STATUS.ERROR);
+        setStatusMessage('PIN demasiado corto');
+        setErrorMessage('El PIN debe tener al menos 4 dígitos');
+        return;
+      }
+    }
     
     setIsCreating(true);
+    setStatusPopup(STATUS.LOADING);
+    setStatusMessage('Creando vault...');
     
     try {
+      // Simular delay para ver la animación
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
       if (step === 1 && !isPrivate) {
         // Crear vault normal
         await onCreateVault({
@@ -87,15 +119,32 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
         });
       }
       
-      handleClose();
+      // Mostrar estado de éxito
+      setStatusPopup(STATUS.SUCCESS);
+      setStatusMessage('¡Vault creada con éxito!');
+      
+      // El modal se cerrará automáticamente
     } catch (error) {
-      // TODO: Implementar manejo de errores durante la creación
-      console.error('Error al crear la vault:', error);
+      // Mostrar estado de error
+      setStatusPopup(STATUS.ERROR);
+      setStatusMessage('Error al crear la vault');
+      setErrorMessage(error.message || 'Ya existe una vault con ese nombre.');
     } finally {
       setIsCreating(false);
     }
   };
-  
+
+  // Manejar la finalización del estado del popup
+  const handleStatusComplete = () => {
+    // Cuando el estado es SUCCESS, cerramos todo el modal
+    if (statusPopup === STATUS.SUCCESS) {
+      handleClose();
+    } else {
+      // Para estados de ERROR o cualquier otro, solo quitamos el popup
+      setStatusPopup(null);
+    }
+  };
+
   // Cerrar modal al presionar Escape
   const handleKeyDown = (e) => {
     if (e.key === 'Escape') {
@@ -110,7 +159,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       }
     }
   };
-  
+
   if (!isOpen) return null;
 
   return (
@@ -133,6 +182,17 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
         </div>
         
         <div className="modal-content">
+          {/* Popup de estado */}
+          {statusPopup && (
+            <VaultStatusPopup
+              status={statusPopup}
+              message={statusMessage}
+              errorMessage={errorMessage}
+              onComplete={handleStatusComplete}
+              autoCloseDelay={statusPopup === STATUS.SUCCESS ? 2000 : 0}
+            />
+          )}
+
           {step === 1 && (
             <>
               <p className="modal-description">

@@ -1,0 +1,201 @@
+/* Contenedor principal del popup de estado */
+.vault-status-popup {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 3px solid;
+  /* Animación de entrada con rebote sutil */
+  animation: fadeInDown 0.4s cubic-bezier(0.18, 1.25, 0.4, 1);
+  /* Preparamos para animación de transición */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Animación de salida - se aplica cuando el popup está por cerrarse */
+.vault-status-popup.exiting {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none; /* Evita clics mientras se desvanece */
+}
+
+/* Variantes de estado con colores y transiciones específicas */
+.vault-status-popup.loading {
+  background-color: rgba(80, 80, 80, 0.15);
+  border-color: #808080;
+}
+
+.vault-status-popup.success {
+  background-color: rgba(40, 167, 69, 0.1);
+  border-color: #28a745;
+  /* Efecto sutil de brillo en caso de éxito */
+  box-shadow: 0 0 0 1px rgba(40, 167, 69, 0.05);
+}
+
+.vault-status-popup.error {
+  background-color: rgba(220, 53, 69, 0.1);
+  border-color: #dc3545;
+  /* Efecto sutil de brillo en caso de error */
+  box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.05);
+}
+
+/* Contenedor del icono con efecto de fondo según el estado */
+.status-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  /* Transición suave entre estados */
+  transition: background-color 0.3s ease;
+}
+
+/* Backgrounds circulares para cada estado */
+.vault-status-popup.loading .status-icon-wrapper {
+  background-color: rgba(128, 128, 128, 0.1);
+}
+
+.vault-status-popup.success .status-icon-wrapper {
+  background-color: rgba(40, 167, 69, 0.1);
+}
+
+.vault-status-popup.error .status-icon-wrapper {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* Iconos de estado con efecto de entrada secuencial */
+.status-icon {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2px;
+  /* Entrada con pequeño retraso respecto al contenedor */
+  animation: popIn 0.3s ease 0.1s both;
+}
+
+.status-icon.loading {
+  color: #808080;
+}
+
+.status-icon.success {
+  color: #28a745; /* Color verde para el icono de éxito */
+  stroke: #28a745; /* Aseguramos que el trazo también sea verde */
+  fill: transparent;
+}
+
+.status-icon.error {
+  color: #dc3545; /* Color rojo para el icono de error */
+  stroke: #dc3545; /* Aseguramos que el trazo también sea rojo */
+  fill: transparent;
+}
+
+/* Animación de rotación para el spinner con suavizado en los bordes */
+.animate-spin {
+  animation: spin 1.4s linear infinite;
+  /* Evitar escalones en la animación */
+  transform-origin: center;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Contenido del mensaje con entrada secuencial */
+.status-content {
+  flex: 1;
+  /* Retraso mayor que el icono para efecto escalonado */
+  animation: fadeInRight 0.3s ease 0.15s both;
+}
+
+/* Mensaje principal con transición suave entre estados */
+.status-message {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #e0e0e0;
+  /* Transición para cambios de texto */
+  transition: color 0.3s ease;
+}
+
+/* Estilo específico para mensaje de éxito */
+.vault-status-popup.success .status-message {
+  color: #eee;
+}
+
+/* Estilo específico para mensaje de error */
+.vault-status-popup.error .status-message {
+  color: #eee;
+}
+
+/* Detalle del error con animación de entrada */
+.status-error-detail {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #dc3545;
+  font-style: italic;
+  /* Entrada con fundido */
+  animation: fadeIn 0.3s ease 0.25s both;
+}
+
+/* Animaciones */
+
+/* Entrada del popup desde arriba con rebote sutil */
+@keyframes fadeInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  70% {
+    transform: translateY(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Entrada del contenido desde la derecha */
+@keyframes fadeInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Efecto de pop para iconos */
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  70% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Entrada simple con fundido */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
