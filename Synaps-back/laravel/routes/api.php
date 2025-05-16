@@ -88,3 +88,10 @@ Route::post( '/searchNotes', [NoteController::class, 'searchNotes'] );
  * @see NoteController::readNote()
  */
 Route::get( '/readNote', [NoteController::class, 'readNote'] );
+
+/**
+ * Actualización por Redis de la nota.
+ *
+ * @see NoteController::saveNote()
+ */
+Route::patch( '/notes/{note_id2}', [NoteController::class, 'saveNote'] );

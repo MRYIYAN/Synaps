@@ -12,18 +12,24 @@ import Modal      from "../components/Modal";
 */
 
 import SidebarPanel from "../components/SidebarPanel";
-import MDEditor from "../components/MarkdownEditor/MDEditor";
+import MDEditorWS from "../components/MarkdownEditor/MDEditorWS";
 
 // ------------------------------------------------------------
 // APP
 // ------------------------------------------------------------
 
 const MarkdownEditor = function() {
+
+  const note_id2 = 'wxQurJHajctZKfJbssDRueOm9BP9ENwR';
+
   return (
     <div className="layout-markdown-editor">
       <SidebarPanel />
       <div className="md-editor-wrapper">
-        <MDEditor />
+        {note_id2
+          ? <MDEditorWS note_id2={note_id2} />
+          : <p style={{ padding: 20 }}>Selecciona una nota para editar</p>
+        }
       </div>
     </div>
   );

@@ -12,10 +12,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
+use Carbon\Carbon;
 use App\Models\Note;
 use App\Models\FolderNote;
 use App\Services\NoteService;
 use App\Services\VaultService;
+use App\Events\NoteUpdated;
 use function App\Helpers\tenant;
 
 /**
@@ -236,7 +238,8 @@ class NoteController extends Controller
       // Buscamos la nota según note_id o note_id2
       $query = Note::on( $user_db )
         ->where( 'note_id', $data['note_id'] )
-        ->where( 'note_id2', $data['note_id2'] );
+        ->where( 'note_id2', $data['note_id2'] )
+        ->firstOrFail();
 
       // Capturamos el primer registro
       $row = $query->first();
@@ -268,7 +271,7 @@ class NoteController extends Controller
         , 'last_update_date' => $row->last_update_date
       ];
 
-      // Marcamos el resultado como exitoso
+      // Si llegamos hasta aquí está todo OK
       $result = 1;
     }
     catch( Exception $e )
@@ -282,6 +285,90 @@ class NoteController extends Controller
           'result'  => $result
         , 'message' => $message
         , 'note'    => $note
+      ], $result ? 200 : 500 );
+    }
+  }
+
+  /**
+   * PATCH /api/notes/{note_id2}
+   *
+   * @param  Request $request   markdown, updated_at
+   * @param  string  $note_id2      Identificador público de la nota
+   * @return JsonResponse
+   */
+  public function saveNote( Request $request, string $note_id2 ): JsonResponse
+  {
+    // Inicializamos los valores a devolver
+    $result   = 0;
+    $conflict = false;
+    $message  = '';
+    $note     = [];
+
+    // Datos de ejemplo del Vault
+    $vault['vault_id']  = 1;
+    $vault['vault_id2'] = 'F7D8FDG78D9SF789G789D7S89F7S';
+
+    // Obtenemos el identificador del usuario autenticado
+    // $user_id = ( int ) $request->user()->id;
+    $user_id = 1;
+    $user_id2 = 'HG8F90HG89H0J8F90GD890FG890B8FDD';
+
+    $user_db = tenant( $user_id );
+    
+    // Validamos los datos mandados por Redis
+    $data = $request->validate( [
+        'markdown'   => 'required|string'
+      , 'updated_at' => 'required|date'
+    ] );
+
+    try
+    {
+      // Buscamos la nota pedida por Redis
+      $note = Note::on( $user_db )
+        ->where( 'note_id2', $note_id2 )
+        ->firstOrFail();
+
+      // Colisión: otro usuario guardó después de mi timestamp
+      if( $note->last_update_date->gt( Carbon::make( $data['updated_at']) ) )
+      {
+        $conflict = true;
+        throw new Exception( 'Conflicto detectado' );
+      }
+
+      // Guardamos en la DB los cambios realizados
+      $note->markdown         = $data['markdown'];
+      $note->last_update_date = now();
+      $note->save();
+
+      // Guardamos el fichero actualizado
+      $note_id_f  = str_pad( $note->note_id, 4, '0', STR_PAD_LEFT );
+      $note_name  = $note_id_f . '_' . $note->note_id2;
+      $vault_path = ( new VaultService )->GetVaultStoragePath(
+          $vault['vault_id']
+        , $vault['vault_id2']
+        , $user_id
+        , $user_id2
+        , $note_name
+      ) . '.md';
+
+      // Broadcast global
+      event( new NoteUpdated( $note, $user_id ) );
+
+      // Si llegamos hasta aquí está todo OK
+      $result = 1;
+    }
+    catch( Exception $e )
+    {
+      $message = $e->getMessage();
+    }
+    finally
+    {
+      // Devolvemos la respuesta con resultado, mensaje y datos de la nota
+      return response()->json( [
+          'result'    => $result
+        , 'conflict'  => $conflict
+        , 'message'   => $message
+        , 'note'      => $note
       ], $result ? 200 : 500 );
     }
   }

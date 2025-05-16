@@ -40,28 +40,19 @@ export default function NoteItem( {
     window.setSelectedItemId( id );
     window.setSelectedItemId2( id2 );
 
-    // Solo si es una carpeta, recargamos las notas filtradas por ese folder_id
-    if(
-      typeof window.getNotesForFolder === 'function' &&
-      typeof window.readNote          === 'function'
-    ) {
+    if( hasChildren ) {
 
-      // Recuperamos el item completo desde el árbol si es necesario
-      const item = { id2, title, type: hasChildren ? 'folder' : 'note' }; // o lo pasas como prop
-
-      // Busca el elemento con id2 y extrae su id numérico
-      const id = window.currentNotes?.find( i => i.id2 === id2 )?.id;
-
-      // Si existe, llama a getNotesForFolder(id) para carpetas o readNote(id) para notas
-      if( id ) ( item.type === 'folder'
-        ? window.getNotesForFolder
-        : window.readNote 
-      )( id );
+      // Si es carpeta, recarga su contenido y expande/colapsa
+      if( typeof window.getNotesForFolder === 'function' )
+        window.getNotesForFolder( id );
+        
+      if( typeof onToggle === 'function' )
+        onToggle();
+    } else {
+      // Si es nota, carga el Markdown en el editor
+      if( typeof window.readNote === 'function' )
+        window.readNote( id, id2 );
     }
-
-    // Toggle de expansión si es folder
-    if( hasChildren && typeof onToggle === 'function' )
-      onToggle();
   }
 
   // Menú contextual: muestra con click derecho
