@@ -37,6 +37,7 @@ class Note extends Model
     protected $fillable = [
             'note_id2'
         ,   'note_title'
+        ,   'note_markdown'
         ,   'insert_date'
         ,   'last_update_date'
         ,   'parent_id'

@@ -22,7 +22,7 @@ import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
 // Configuración de los elementos de navegación
 const navigationItems = [
   { id: "files", label: "Archivos", icon: FoldersIcon },
-  { id: "galaxy-view", label: "Vista de galaxia", icon: GalaxyViewIcon },
+  { id: "galaxy-view", label: "Vista de galaxia", icon: GalaxyViewIcon, url: 'galaxy-view' },
   { id: "list-todo", label: "Lista de tareas", icon: ListTodoIcon },
   { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
 ];
@@ -73,7 +73,7 @@ const SidebarPanel = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (response.ok) {
+        if(response.ok) {
           const { data } = await response.json();
           console.log(" Vaults cargados de la DB:", data);
           const formattedVaults = Array.isArray(data)
@@ -99,12 +99,11 @@ const SidebarPanel = () => {
 
   // Manejo de clics en la barra de navegación
   const handleIconClick = (itemId, index) => {
-    if (selectedItem === itemId) {
-      if (rightPanelOpen) {
+    if(selectedItem === itemId) {
+      if(rightPanelOpen)
         handleCloseSidebar();
-      } else {
+      else
         setRightPanelOpen(true);
-      }
     } else {
       setSelectedItem(itemId);
       setRightPanelOpen(true);
@@ -171,19 +170,19 @@ const handleCreateVault = async (vaultData) => {
     setTimeout(async () => {
       try {
         // 1. Caso especial para demostración: "Error" provoca error
-        if (vaultData.name && vaultData.name.toLowerCase() === "error") {
+        if(vaultData.name && vaultData.name.toLowerCase() === "error") {
           reject(new Error('Ya existe una vault con ese nombre.'));
           return;
         }
 
         // 2. Verificar nombres duplicados (validación real, solo frontend)
-        if (vaults.some(v => v.name.toLowerCase() === vaultData.name.toLowerCase())) {
+        if(vaults.some(v => v.name.toLowerCase() === vaultData.name.toLowerCase())) {
           reject(new Error('Ya existe una vault con ese nombre.'));
           return;
         }
 
         // 3. Validar PIN en vaults privadas
-        if (vaultData.isPrivate && (!vaultData.pin || vaultData.pin.length < 4)) {
+        if(vaultData.isPrivate && (!vaultData.pin || vaultData.pin.length < 4)) {
           reject(new Error('El PIN debe tener al menos 4 dígitos.'));
           return;
         }
@@ -202,7 +201,7 @@ const handleCreateVault = async (vaultData) => {
         });
 
         // Verificar si la respuesta es exitosa
-        if (!response.ok) {
+        if(!response.ok) {
           const errorData = await response.json();
           reject(new Error(errorData.message || "Error al crear la vault."));
           return;
@@ -267,6 +266,7 @@ const handleVaultCreated = (vault) => {
           {navigationItems.map((item, index) => {
             const IconComponent = item.icon;
             const isActive = selectedItem === item.id;
+            const hasUrl   = 'url' in item && item.url;
             
             return (
               <li 
@@ -276,7 +276,19 @@ const handleVaultCreated = (vault) => {
                 role="menuitem"
                 aria-current={isActive ? "page" : undefined}
               >
-                <IconComponent aria-hidden="true" />
+                {/* Si tiene una URl vinculada, creamos un link */}
+                {hasUrl ? (
+                  <a 
+                    href={item.url}
+                    tabIndex={0}
+                    className="nav-link"
+                    aria-label={item.title || item.id}
+                  >
+                    <IconComponent aria-hidden="true" />
+                  </a>
+                ) : (
+                  <IconComponent aria-hidden="true" />
+                )}
               </li>
             );
           })}

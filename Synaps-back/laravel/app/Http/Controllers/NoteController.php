@@ -105,26 +105,11 @@ class NoteController extends Controller
         ->create( [
             'note_id2'         => Str::random( 32 )
           , 'note_title'       => $data['newNoteName']
+          , 'note_markdown'    => '# ' . ucfirst( $data['newNoteName'] )
           , 'insert_date'      => now()
           , 'last_update_date' => now()
           , 'parent_id'        => $parent_id
         ] );
-
-      // Creamos el fichero en el Vault
-      $note_id_f = str_pad( $note['note_id'], 4, '0', STR_PAD_LEFT );
-      $note_name = $note_id_f . '_' . $note['note_id2'];
-
-      // Calculamos la ruta y añadimos el fichero
-      $vault_path = ( new VaultService )->GetVaultStoragePath( 
-          $vault['vault_id']
-        , $vault['vault_id2']
-        , $user_id
-        , $user_id2
-        , $note_name
-      ) . '.md';
-      
-      // Añadimos el fichero
-      Storage::disk( 'app_contents' )->put( $vault_path, '# ' . ucfirst( $note->note_title ) );
 
       // Marcamos el resultado según el éxito de la operación
       $result = $note ? 1 : 0;
@@ -152,55 +137,77 @@ class NoteController extends Controller
    */
   public function getNotes( Request $request ): JsonResponse
   {
-    // Validamos los datos recibidos
-    $data = $request->validate( [
-      'parent_id' => 'nullable|integer'
-    ] );
+    // Inicializamos los valores a devolver
+    $result  = 0;
+    $message = '';
+    $items   = [];
 
-    // Identificador del usuario autenticado
-    // $user_id = ( int ) $request->user()->id;
-    $user_id = 1;
-    $user_db = tenant( $user_id );
+    try
+    {
+      // Validamos los datos recibidos
+      $data = $request->validate( [
+        'parent_id' => 'nullable|integer'
+      ] );
 
-    // Obtenemos todas las notas (propias + compartidas)
-    $notes = NoteService::GetNotes( $user_id, '', $data['parent_id'] );
+      // Identificador del usuario autenticado
+      // $user_id = ( int ) $request->user()->id;
+      $user_id = 1;
+      $user_db = tenant( $user_id );
 
-    // Obtenemos todas las carpetas del usuario
-    $folders = FolderNote::on( $user_db )
-      ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id'] )
-      ->where( 'parent_id', '=', $data['parent_id'] )
-      ->get();
+      // Obtenemos todas las notas (propias + compartidas)
+      $notes = NoteService::GetNotes( $user_id, '', $data['parent_id'] );
 
-    // Mapeamos notas al formato común { id, id2, title, parent_id }
-    $notesArray = $notes
-      ->map( fn( $note ) => [
-          'id'        => $note->note_id
-        , 'id2'       => $note->note_id2
-        , 'title'     => $note->note_title
-        , 'parent_id' => $note->parent_id
-        , 'type'      => 'note'
-      ] )
-      ->toArray();
+      // Obtenemos todas las carpetas del usuario
+      $folders = FolderNote::on( $user_db )
+        ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id'] )
+        ->where( 'parent_id', '=', $data['parent_id'] )
+        ->get();
 
-    // Mapeamos carpetas al mismo formato
-    $foldersArray = $folders
-      ->map( fn( $folder ) => [
-          'id'        => $folder->folder_id
-        , 'id2'       => $folder->folder_id2
-        , 'title'     => $folder->folder_title
-        , 'parent_id' => $folder->parent_id
-        , 'type'      => 'folder'
-      ] )
-      ->toArray();
+      // Si no hay notas, saltamos una excepción
+      if( empty( $notes ) )
+      {
+        $result = 1;
+        throw new Exception( 'Notas no encontradas' );
+      }
 
-    // Unimos ambos arrays
-    $items = array_merge( $foldersArray, $notesArray );
+      // Mapeamos notas al formato común { id, id2, title, parent_id y type }
+      $notesArray = $notes
+        ->map( fn( $note ) => [
+            'id'        => $note->note_id
+          , 'id2'       => $note->note_id2
+          , 'title'     => $note->note_title
+          , 'parent_id' => $note->parent_id
+          , 'type'      => 'note'
+        ] )
+        ->toArray();
 
-    // Devolvemos resultado y datos
-    return response()->json( [
-        'result'  => 1
-      , 'items'   => $items
-    ] );
+      // Mapeamos carpetas al mismo formato
+      $foldersArray = $folders
+        ->map( fn( $folder ) => [
+            'id'        => $folder->folder_id
+          , 'id2'       => $folder->folder_id2
+          , 'title'     => $folder->folder_title
+          , 'parent_id' => $folder->parent_id
+          , 'type'      => 'folder'
+        ] )
+        ->toArray();
+
+      // Unimos ambos arrays
+      $items = array_merge( $foldersArray, $notesArray );
+    }
+    catch( Exception $e )
+    {
+      $message = $e->getMessage();
+    }
+    finally
+    {
+      // Devolvemos resultado y datos
+      return response()->json( [
+          'result'  => $result
+        , 'message' => $message
+        , 'items'   => $items
+      ] );
+    }
   }
 
   /**
@@ -216,14 +223,9 @@ class NoteController extends Controller
     $message = '';
     $note    = [];
 
-    // Datos de ejemplo del Vault
-    $vault['vault_id']  = 1;
-    $vault['vault_id2'] = 'F7D8FDG78D9SF789G789D7S89F7S';
-
     // Obtenemos el identificador del usuario autenticado
     // $user_id = ( int ) $request->user()->id;
     $user_id  = 1;
-    $user_id2 = 'HG8F90HG89H0J8F90GD890FG890B8FDD';
 
     try
     {
@@ -293,15 +295,9 @@ class NoteController extends Controller
     $message  = '';
     $note     = [];
 
-    // Datos de ejemplo del Vault
-    $vault['vault_id']  = 1;
-    $vault['vault_id2'] = 'F7D8FDG78D9SF789G789D7S89F7S';
-
     // Obtenemos el identificador del usuario autenticado
     // $user_id = ( int ) $request->user()->id;
     $user_id = 1;
-    $user_id2 = 'HG8F90HG89H0J8F90GD890FG890B8FDD';
-
     $user_db = tenant( $user_id );
     
     // Validamos los datos mandados por Redis
@@ -328,17 +324,6 @@ class NoteController extends Controller
       $note->markdown         = $data['markdown'];
       $note->last_update_date = now();
       $note->save();
-
-      // Guardamos el fichero actualizado
-      $note_id_f  = str_pad( $note->note_id, 4, '0', STR_PAD_LEFT );
-      $note_name  = $note_id_f . '_' . $note->note_id2;
-      $vault_path = ( new VaultService )->GetVaultStoragePath(
-          $vault['vault_id']
-        , $vault['vault_id2']
-        , $user_id
-        , $user_id2
-        , $note_name
-      ) . '.md';
 
       // Broadcast global
       event( new NoteUpdated( $note, $user_id ) );
@@ -370,55 +355,70 @@ class NoteController extends Controller
    */
   public function searchNotes( Request $request ): JsonResponse
   {
-    // Validamos los datos recibidos
-    $data = $request->validate( [
-      'searchQuery' => 'required|string|max:255'
-    ] );
+    // Inicializamos los valores a devolver
+    $result  = 0;
+    $message = '';
+    $note    = [];
 
-    // Identificador del usuario autenticado
-    // $user_id = ( int ) $request->user()->id;
-    $user_id = 1;
-    $user_db = tenant( $user_id );
+    try
+    {
+      // Validamos los datos recibidos
+      $data = $request->validate( [
+        'searchQuery' => 'required|string|max:255'
+      ] );
 
-    // Obtenemos todas las notas (propias + compartidas)
-    $notes = NoteService::GetNotes( $user_id, $data['searchQuery'] );
+      // Identificador del usuario autenticado
+      // $user_id = ( int ) $request->user()->id;
+      $user_id = 1;
+      $user_db = tenant( $user_id );
 
-    // Obtenemos todas las carpetas del usuario
-    $folders = FolderNote::on( $user_db )
-      ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id'] )
-      ->where( 'folder_title', '=', $data['searchQuery'] )
-      ->get();
+      // Obtenemos todas las notas (propias + compartidas)
+      $notes = NoteService::GetNotes( $user_id, $data['searchQuery'] );
 
-    // Mapeamos notas al formato común { id, id2, title, parent_id }
-    $notesArray = $notes
-      ->map( fn( $note ) => [
-          'id'        => $note->note_id
-        , 'id2'       => $note->note_id2
-        , 'title'     => $note->note_title
-        , 'parent_id' => $note->parent_id
-        , 'type'      => 'note'
-      ] )
-      ->toArray();
+      // Obtenemos todas las carpetas del usuario
+      $folders = FolderNote::on( $user_db )
+        ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id'] )
+        ->where( 'folder_title', '=', $data['searchQuery'] )
+        ->get();
 
-    // Mapeamos carpetas al mismo formato
-    $foldersArray = $folders
-      ->map( fn( $folder ) => [
-          'id'        => $folder->folder_id
-        , 'id2'       => $folder->folder_id2
-        , 'title'     => $folder->folder_title
-        , 'parent_id' => $folder->parent_id
-        , 'type'      => 'folder'
-      ] )
-      ->toArray();
+      // Mapeamos notas al formato común { id, id2, title, parent_id }
+      $notesArray = $notes
+        ->map( fn( $note ) => [
+            'id'        => $note->note_id
+          , 'id2'       => $note->note_id2
+          , 'title'     => $note->note_title
+          , 'parent_id' => $note->parent_id
+          , 'type'      => 'note'
+        ] )
+        ->toArray();
 
-    // Unimos ambos arrays
-    $items = array_merge( $foldersArray, $notesArray );
+      // Mapeamos carpetas al mismo formato
+      $foldersArray = $folders
+        ->map( fn( $folder ) => [
+            'id'        => $folder->folder_id
+          , 'id2'       => $folder->folder_id2
+          , 'title'     => $folder->folder_title
+          , 'parent_id' => $folder->parent_id
+          , 'type'      => 'folder'
+        ] )
+        ->toArray();
 
-    // Devolvemos resultado y datos
-    return response()->json( [
-        'result'  => 1
-      , 'items'   => $items
-    ] );
+      // Unimos ambos arrays
+      $items = array_merge( $foldersArray, $notesArray );
+    }
+    catch( Exception $e )
+    {
+      $message = $e->getMessage();
+    }
+    finally
+    {
+      // Devolvemos la respuesta con resultado
+      return response()->json( [
+          'result'  => $result
+        , 'message' => $message
+        , 'items'   => $items
+      ], $result ? 200 : 500 );
+    }
   }
 
   /**
@@ -432,112 +432,131 @@ class NoteController extends Controller
    */
   public function galaxyGraph( Request $request ): JsonResponse
   {
-    // Identificador del usuario autenticado
-    // $user_id = ( int ) $request->user()->id;
-    $user_id = 1;
-    $user_db = tenant( $user_id );
+    // Inicializamos los valores a devolver
+    $result  = 0;
+    $message = '';
+    $note    = [];
 
-    // Obtenemos todas las notas (propias + compartidas)
-    $notes = NoteService::GetNotes( $user_id );
-
-    // Obtenemos todas las carpetas del usuario (que coincidan con el searchQuery)
-    $folders = FolderNote::on( $user_db )
-      ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id' ] )
-      ->get();
-
-    // Mapeamos notas al formato común { id, id2, title, parent_id }
-    $notesArray = $notes
-      ->map( fn( $note ) => [
-          'id'        => $note->note_id
-        , 'id2'       => $note->note_id2
-        , 'title'     => $note->note_title
-        , 'parent_id' => $note->parent_id
-        , 'type'      => 'note'
-      ] )
-      ->toArray();
-
-    // Mapeamos carpetas al mismo formato
-    $foldersArray = $folders
-      ->map( fn( $folder ) => [
-          'id'        => $folder->folder_id
-        , 'id2'       => $folder->folder_id2
-        , 'title'     => $folder->folder_title
-        , 'parent_id' => $folder->parent_id
-        , 'type'      => 'folder'
-      ] )
-      ->toArray();
-
-    // Unimos ambos arrays
-    $items = array_merge( $foldersArray, $notesArray );
-
-    // ---------------------------------------------------------------------------
-    // GalaxyGraph: nodos y enlaces agrupados por carpeta-tema (estilo kodalizado)
-    // ---------------------------------------------------------------------------
-
-    $nodes         = [];
-    $links         = [];
-    $group_count   = 1;
-    $folder_groups = []; // folder_id2 => group
-
-    // Añadimos carpetas como nodos-tema
-    foreach( $items as $item )
+    try
     {
-      if( $item['type'] === 'folder' )
+      // Identificador del usuario autenticado
+      // $user_id = ( int ) $request->user()->id;
+      $user_id = 1;
+      $user_db = tenant( $user_id );
+
+      // Obtenemos todas las notas (propias + compartidas)
+      $notes = NoteService::GetNotes( $user_id );
+
+      // Obtenemos todas las carpetas del usuario (que coincidan con el searchQuery)
+      $folders = FolderNote::on( $user_db )
+        ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id' ] )
+        ->get();
+
+      // Mapeamos notas al formato común { id, id2, title, parent_id }
+      $notesArray = $notes
+        ->map( fn( $note ) => [
+            'id'        => $note->note_id
+          , 'id2'       => $note->note_id2
+          , 'title'     => $note->note_title
+          , 'parent_id' => $note->parent_id
+          , 'type'      => 'note'
+        ] )
+        ->toArray();
+
+      // Mapeamos carpetas al mismo formato
+      $foldersArray = $folders
+        ->map( fn( $folder ) => [
+            'id'        => $folder->folder_id
+          , 'id2'       => $folder->folder_id2
+          , 'title'     => $folder->folder_title
+          , 'parent_id' => $folder->parent_id
+          , 'type'      => 'folder'
+        ] )
+        ->toArray();
+
+      // Unimos ambos arrays
+      $items = array_merge( $foldersArray, $notesArray );
+
+      // ---------------------------------------------------------------------------
+      // GalaxyGraph: nodos y enlaces agrupados por carpeta-tema
+      // ---------------------------------------------------------------------------
+
+      $nodes         = [];  // Nodos: incluye tanto carpetas como notas
+      $links         = [];  // Enlaces: conexiones entre carpetas y notas
+      $group_count   = 1;   // Grupo incremental para las carpetas
+      $folder_groups = [];  // Mapa carpeta_id2 => group asignado
+
+      // Añadimos las carpetas como nodos-tema y registramos su grupo
+      foreach( $items as $item )
       {
-        $group = $group_count++;
-        $nodes[] = [
+        // Si es una nota, la saltamos
+        if( $item['type'] !== 'folder' )
+          continue;
+
+        // Añadimos al array de nodos la carpeta y el índice del grupo
+        $group    = $group_count++;
+        $nodes[]  = [
             'id'    => $item['id2']
           , 'name'  => $item['title']
           , 'type'  => 'folder'
           , 'group' => $group
         ];
+
+        // Añadimos el grupo a la lista de grupos
         $folder_groups[ $item['id2'] ] = $group;
       }
-    }
 
-    // Añadimos notas como nodos y enlaces a su carpeta-tema
-    foreach( $items as $item )
-    {
-      if( $item['type'] !== 'note' )
-        continue;
-
-      // Buscamos el grupo (tema) de la carpeta padre
-      $group = 0;
-      if( isset( $item['parent_id'] ) )
+      // Añadimos las notas como nodos y, si tienen carpeta, enlazamos y asignamos grupo
+      foreach( $items as $item )
       {
-        foreach( $items as $folder )
-        {
-          if( $folder['type'] === 'folder' && $folder['id'] == $item['parent_id'] )
-          {
-            $group = $folder_groups[ $folder['id2'] ] ?? 0;
+        // Si es una carpeta, la saltamos
+        if( $item['type'] !== 'note' )
+          continue;
 
-            // Enlace: nota --> carpeta
-            $links[] = [
-                'source' => $folder['id2']
-              , 'target' => $item['id2']
-            ];
-            break;
+        // Por defecto, notas sin carpeta quedan en grupo 0
+        $group = 0; 
+        if( isset( $item['parent_id'] ) )
+        {
+          // Buscamos el grupo al que está relacionado esta nota
+          foreach( $items as $folder )
+          {
+            if( $folder['type'] === 'folder' && $folder['id'] == $item['parent_id'] )
+            {
+              // Si existe el grupo, añadimos la relación
+              $group    = $folder_groups[ $folder['id2'] ] ?? 0;
+              $links[]  = [
+                  'source' => $folder['id2']
+                , 'target' => $item['id2']
+              ];
+
+              break;
+            }
           }
         }
+
+        // Añadimos todas las notas
+        $nodes[] = [
+            'id'    => $item['id2']
+          , 'name'  => $item['title']
+          , 'type'  => 'note'
+          , 'group' => $group
+        ];
       }
 
-      // Añadimos el nodo de la nota
-      $nodes[] = [
-          'id'    => $item['id2']
-        , 'name'  => $item['title']
-        , 'type'  => 'note'
-        , 'group' => $group
-      ];
+      $result = 1;
     }
-
-    // ---------------------------------------------------------------------------
-    // Respuesta final con el formato para GalaxyGraph (mismo estilo kodalizado)
-    // ---------------------------------------------------------------------------
-
-    return response()->json( [
-        'result' => 1
-      , 'nodes'  => $nodes
-      , 'links'  => $links
-    ] );
+    catch( Exception $e )
+    {
+      print $e->getMessage();
+    }
+    finally
+    {
+      // Devolvemos la respuesta con resultado
+      return response()->json( [
+          'result' => $result
+        , 'nodes'  => $nodes
+        , 'links'  => $links
+      ], $result ? 200 : 500 );
+    }
   }
 }

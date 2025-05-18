@@ -77,7 +77,6 @@ const GalaxyGraph = ( { data } ) => {
     if( link.target in nodes_count )
       nodes_count[link.target]++;
   } );
-  console.log( nodes_count );
 
   // ------------------------------------------------------------------------------------------------
   // Ready | Efectos de repulsión y asignación de IDs a nodos
