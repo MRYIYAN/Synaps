@@ -109,11 +109,11 @@ const GalaxyGraph = ( { data } ) => {
     <ForceGraph2D
       ref              = {graph_pointer}  // Vinculamos el puntero del gráfico
       graphData        = {data}           // Datos del gráfico
-      backgroundColor  = '#fff'           // Fondo oscuro estilo Obsidian
+      backgroundColor  = 'rgb(28,28,28)'           // Fondo oscuro estilo Obsidian
       nodeCanvasObject = { ( node, ctx, graph_scale ) => {
 
         // Creamos el nodo en forma de círculo con un SVG
-        const radius = 8 + ( nodes_count[node.id] * 4.5 );
+        const radius = 17 + ( nodes_count[node.id] * 4.5 );
         ctx.beginPath();
         ctx.arc( node.x, node.y, radius, 0, 2 * Math.PI, false );
         ctx.fillStyle = group_colors[node.group];
@@ -134,7 +134,7 @@ const GalaxyGraph = ( { data } ) => {
         }
       } }
 
-      linkColor       = '#dcdcdc' // Color tenue para enlaces
+      linkColor={ () => "#dcdcdc" }
       linkWidth       = {1}       // Grosor de los enlaces
       nodeLabel       = 'name'    // Muestra nombre al pasar el ratón
       nodeAutoColorBy = 'group'   // Color automático según grupo

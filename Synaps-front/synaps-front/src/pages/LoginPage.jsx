@@ -22,26 +22,6 @@ import '../assets/styles/global.css';
 const LoginPage = () => {
 
   //---------------------------------------------------------------------------//
-  //  Estado para manejar el mensaje de conexión con el servidor.             //
-  //---------------------------------------------------------------------------//
-  const [message, set_message] = useState('Cargando...');
-
-  // Efecto para verificar la conexión con el servidor al cargar la página
-  useEffect(() => {
-    fetch("http://localhost:8010/api/hello", { method: "GET" })
-      .then(res => {
-        if (!res.ok) throw new Error("Error al cargar mensaje");
-        return res.json();
-      })
-      .then(data => {
-        set_message(data.message || "Sin mensaje");
-      })
-      .catch(() => {
-        set_message("No se pudo conectar al servidor");
-      });
-  }, []);
-
-  //---------------------------------------------------------------------------//
   //  Renderizado de la página de login con el formulario correspondiente.     //
   //---------------------------------------------------------------------------//
   return (

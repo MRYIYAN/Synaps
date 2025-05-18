@@ -1,4 +1,5 @@
 .layout-markdown-editor {
+  position: relative;
   display: flex;
   height: 100vh;
   background: var(--vscode-editor-background);
@@ -16,6 +17,7 @@
 
 .mdxeditor {
   height: 100%;
+  overflow-y: auto;
 }
 
 .mdxeditor-toolbar,
@@ -25,7 +27,7 @@
   display: flex;
   justify-content: center;
   gap: 4px;
-  padding: 4px;
+  padding: 7px 4px;
   border-radius: 0;
 }
 

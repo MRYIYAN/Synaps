@@ -106,6 +106,28 @@ sea completamente legible por el tema oscuro de la aplicación.
     --snow:        #FBFBFB !important;
 }
 
+/* ===== Scrollbar CSS ===== */
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #545454 #333333;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 16px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #333333;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #545454;
+  border-radius: 10px;
+  border: 3px solid #000000;
+}
+
 /* Clases para colores de texto */
 .text-dark_void { color: var(--dark_void) !important; }
 .text-liquid_lava { color: var(--liquid_lava) !important; }
@@ -1360,3 +1382,42 @@ rect {
 /*--------------------------------------*/
 
 /* === END LOGIN CLASSES === */
+
+.loading-icon-container {
+
+  & {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+  
+  & .status-icon {
+    width: 50px;
+    height: 50px;
+    stroke-width: 2px;
+    /* Entrada con pequeño retraso respecto al contenedor */
+    animation: popIn 0.3s ease 0.1s both;
+  }
+
+  & .status-icon.loading {
+    color: #808080;
+  }
+
+  /* Animación de rotación para el spinner con suavizado en los bordes */
+  & .animate-spin {
+    animation: spin 1.4s linear infinite;
+    /* Evitar escalones en la animación */
+    transform-origin: center;
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

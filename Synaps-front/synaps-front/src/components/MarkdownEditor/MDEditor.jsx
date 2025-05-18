@@ -14,7 +14,6 @@
  * - Requiere los estilos de '@mdxeditor/editor' y un CSS propio opcional.
  */
 
-import React, { useState } from 'react'
 import {
   MDXEditor,
   headingsPlugin,
@@ -24,7 +23,6 @@ import {
   tablePlugin,
   codeBlockPlugin,
   codeMirrorPlugin,
-  frontmatterPlugin,
   markdownShortcutPlugin,
   toolbarPlugin,
   BoldItalicUnderlineToggles,
@@ -39,45 +37,13 @@ import '@mdxeditor/editor/style.css'
 import './MDEditor.css'
 import './obsidian.css'
 
-  const initialMarkdown =
-`
-# Título principal
-
-## Subtítulo
-
-- Ítem de lista
-- [ ] Tarea pendiente
-- [x] Tarea completada
-
-| Col1 | Col2 |
-|------|------|
-| A    | B    |
-
-\`\`\`js
-// Bloque de código
-console.log('Hola mundo')
-\`\`\`
-
-**negrita** _cursiva_ ~~tachado~~
-
-> Esto es una cita.
-
-[Enlace externo](https://obsidian.md)
-
----
-
-![Imagen de ejemplo](https://placekitten.com/200/300)
-`
-
-export default function MDEditor () {
-
-  const [markdown, setMarkdown] = useState(initialMarkdown);
+export default function MDEditor ( { markdown, onChange } ) {
 
   return (
     <div className='mdx-obsidian dark h-full w-full'>
       <MDXEditor
-        markdown={markdown}
-        onChange={setMarkdown}
+        markdown={ markdown ?? '' }
+        onChange={ onChange }
         className='obsidian-theme'
         plugins={[
           headingsPlugin({ allowedHeadingLevels: [1, 2, 3, 4, 5, 6] }),

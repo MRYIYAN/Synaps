@@ -17,20 +17,23 @@ class NoteService
   /**
    * Devuelve todas las notas (propias + compartidas) de un usuario
    *
-   * @param int $user_id Identificador del usuario
+   * @param int     $user_id Identificador del usuario
+   * @param int     $user_id Identificador del folder padre
+   * @param string  $query Consulta de búsqueda
    * @return Collection
    */
-  public static function GetNotes( int $user_id, int $parent_id ) : Collection
+  public static function GetNotes( int $user_id, string $query = '', int $parent_id = 0 ) : Collection
   {
     // Inicializamos las conexiones de DB
     $user_db  = tenant( $user_id );
     $main_db  = tenant();
 
     // Inicializamos la consulta filtrando por las notas del usuario
-    // NoteEachOwn - Recorre cada nota y añade el atributo source = 'own'
+    // Recorremos cada nota y añade el atributo source = 'own'
     $own_notes = Note::on( $user_db )
       ->get()
-      ->where( 'parent_id', '=', $parent_id )
+      ->when( !empty( $query ), fn( $q ) => $q->where( 'note_title', 'LIKE', "$query" ) )
+      ->when( $parent_id != 0, fn( $q ) => $q->where( 'parent_id', '=', $parent_id ) )
       ->each( fn( $note ) => $note->setAttribute( 'source', 'own' ) );
 
     // Inicializamos una consulta sobre note_shares en la DB central
@@ -53,8 +56,9 @@ class NoteService
 
       // Buscamos las notas del propietario
       $notes = Note::on( $owner_db )
+        ->when( !empty( $query ), fn( $q ) => $q->where( 'note_title', 'LIKE', "$query" ) )
         ->whereIn( 'note_id2', $note_ids )
-        ->where( 'parent_id', '=', $parent_id )
+        ->when( $parent_id != 0, fn( $q ) => $q->where( 'parent_id', '=', $parent_id ) )
         ->get()
         ->each( fn( $note ) => $note->setAttribute( 'source', 'shared' ) );
 

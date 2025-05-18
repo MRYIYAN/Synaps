@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AuthenticateWithBearerToken
 {
+
     /**
      * Manejar una solicitud entrante.
      *
@@ -31,27 +32,30 @@ class AuthenticateWithBearerToken
         //  Obtener el header Authorization                                          //
         //---------------------------------------------------------------------------//
         $authorizationHeader = $request->header('Authorization');
+        // Inicializamos el resultado y mensaje
+        $result  = 0;
+        $message = '';
 
-        if (!$authorizationHeader || !str_starts_with($authorizationHeader, 'Bearer ')) {
-            return response()->json(['message' => 'Unauthorized: No Bearer Token'], Response::HTTP_UNAUTHORIZED);
-        }
-
-        //---------------------------------------------------------------------------//
-        //  Extraer el token                                                        //
-        //---------------------------------------------------------------------------//
-        $token = substr($authorizationHeader, 7);
 
         try {
+            // Comprobamos si existe el header y es tipo Bearer
+            if (!$authorizationHeader || !str_starts_with($authorizationHeader, 'Bearer ')) {
+                throw new Exception('Unauthorized: No Bearer Token');
+            }
+
+            // Extraemos el token eliminando 'Bearer '
+            $token = substr($authorizationHeader, 7);
+
             $secretKey = env('HS256_KEY') ?? env('FLASK_SECRET_KEY', 'SYNAPS_SUPER_SECRET');
             \Log::debug('TOKEN:', [$token]);
             \Log::debug('HS256_KEY:', [$secretKey]);
-            // Envuelve el decode en try-catch para respuesta JSON clara
+
             try {
                 $payload = JWT::decode($token, new Key($secretKey, 'HS256'));
 
                 // Setear el usuario autenticado en Laravel
                 $user = new \App\Models\User();
-                $user->user_id = intval($payload->sub ?? 0); //  usa el ID numérico del token
+                $user->user_id = intval($payload->sub ?? 0); // usa el ID numérico del token
                 $user->user_email = $payload->email ?? null;
                 $user->user_name = $payload->name ?? null;
 
@@ -60,12 +64,15 @@ class AuthenticateWithBearerToken
                     'token_data' => (array) $payload
                 ]);
                 // Setear el user_id correcto en los atributos de la request
-                $request->attributes->set('user_id', intval($payload->sub ?? 0)); 
+                $request->attributes->set('user_id', intval($payload->sub ?? 0));
                 // Setear el usuario autenticado en el request
                 $request->setUserResolver(function () use ($payload) {
                     return (array) $payload;
                 });
                 auth()->setUser($user); // necesario para que auth funcione correctamente
+
+                // Pasamos al siguiente middleware/controlador
+                return $next($request);
 
             } catch (\Exception $e) {
                 return response()->json([
@@ -75,15 +82,12 @@ class AuthenticateWithBearerToken
             }
 
         } catch (Exception $e) {
-            //---------------------------------------------------------------------------//
-            //  Manejar errores de decodificación del token                             //
-            //---------------------------------------------------------------------------//
+            // Manejar errores de decodificación del token
             return response()->json([
                 'message' => 'Token inválido',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'result'  => $result,
             ], Response::HTTP_UNAUTHORIZED);
         }
-
-        return $next($request);
     }
 }

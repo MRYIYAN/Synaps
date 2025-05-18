@@ -31,7 +31,6 @@ const FilesPanel = () => {
   // -----------------------------------------------------------------
 
   // Inicializamos el item seleccionado
-  const [selectedItemId, _setSelectedItemId]    = useState( 0 );
   const [selectedItemId2, _setSelectedItemId2]  = useState( '' );
 
   // setter extendido que también guarda en window
@@ -40,14 +39,7 @@ const FilesPanel = () => {
     window.selectedItemId2 = value;
   };
 
-  // setter extendido que también guarda en window
-  const setSelectedItemId = ( value ) => {
-    _setSelectedItemId( value );
-    window.selectedItemId = value;
-  };
-
   useEffect( () => {
-    window.setSelectedItemId  = setSelectedItemId;
     window.setSelectedItemId2 = setSelectedItemId2;
   }, [] );
 
@@ -95,14 +87,36 @@ const FilesPanel = () => {
   }
 
   useEffect( () => {
-    window.setSelectedItemId  = setSelectedItemId;
-    window.setSelectedItemId2 = setSelectedItemId2;
-    
-    // Exponemos la función getNotes a nivel global
     window.getNotesForFolder = getNotes;
-
-    // Carga inicial
     getNotes();
+  }, [] );
+
+
+  // -----------------------------------------------------------------
+  // Leer una nota concreta
+  // -----------------------------------------------------------------
+  const readNote = async( note_id2 ) => {
+    try {
+      const url  = 'http://localhost:8010/api/readNote';
+      const body = { note_id2 };
+
+      // Realizamos la petición
+      const { result, http_data } = await http_get( url, body );
+      if( result !== 1 )
+        throw new Error( 'Error al leer la nota' );
+
+      window.set_markdown( http_data.note.markdown );
+      
+      // Forzamos la recarga del MarkdownEditor
+      window.setKey( k => k + 1 );
+
+    } catch ( error ) {
+      console.log( error );
+    }
+  };
+
+  useEffect( () => {
+    window.readNote = readNote;
   }, [] );
 
   //---------------------------------------------------------------------------//
@@ -110,29 +124,29 @@ const FilesPanel = () => {
   //---------------------------------------------------------------------------//
   // Estado para el texto de búsqueda ingresado por el usuario
   // Se utiliza para capturar y actualizar lo que escribe el usuario en el campo de búsqueda
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState( "" );
   
   // Estado para almacenar los resultados de la búsqueda
   // Guarda un array de objetos que representan los resultados encontrados
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState( [] );
   
   // Estado para controlar el indicador de carga durante la búsqueda
   // True mientras se está realizando una búsqueda, false cuando termina
-  const [isSearching, setIsSearching] = useState( false);
+  const [isSearching, setIsSearching] = useState( false );
 
   // Estado para controlar la visibilidad de los campos de entrada
   // Objeto que determina qué input está visible en cada momento
   // Solo puede haber un input visible a la vez
-  const [visibleInputs, setVisibleInputs] = useState({
+  const [visibleInputs, setVisibleInputs] = useState( {
     search: false,    // Campo de búsqueda
     newNote: false,   // Input para crear nueva nota
     newFolder: false  // Input para crear nueva carpeta
-  });
+  } );
 
   // Estados para los valores de los inputs de nueva nota y carpeta
   // Almacenan los nombres ingresados por el usuario para nuevas notas y carpetas
-  const [newNoteName, setNewNoteName] = useState("");       // Nombre de nueva nota
-  const [newFolderName, setNewFolderName] = useState("");   // Nombre de nueva carpeta
+  const [newNoteName, setNewNoteName] = useState( "" );       // Nombre de nueva nota
+  const [newFolderName, setNewFolderName] = useState( "" );   // Nombre de nueva carpeta
 
   //---------------------------------------------------------------------------//
   //  Handlers para manejar interacciones del usuario                          //
@@ -141,33 +155,49 @@ const FilesPanel = () => {
   // Función que se ejecuta cuando el usuario escribe en el campo de búsqueda
   // Actualiza el estado searchQuery con el valor actual del input
   const handleSearchChange = ( e ) => {
-    setSearchQuery( e.target.value);
+    setSearchQuery( e.target.value );
   };
 
   // Función que se ejecuta cuando se envía el formulario de búsqueda
   // Previene el comportamiento por defecto del formulario y ejecuta la búsqueda
-  const handleSearch = ( e ) => {
-    e.preventDefault();  // Previene la recarga de la página
-    if( !searchQuery.trim() ) return;  // No hace nada si la búsqueda está vacía
+  const handleSearch = async( e ) => {
     
-    setIsSearching(true);  // Activa el indicador de carga
+    // Previene la recarga de la página
+    e.preventDefault();
+
+    // No hace nada si la búsqueda está vacía
+    if( !searchQuery.trim() )
+      return;
     
-    // Simulación de búsqueda - reemplazar con llamada real a API
-    // En una implementación real, aquí iría una llamada a una API o servicio de búsqueda
-    setTimeout(() => {
+    // Activa el indicador de carga
+    setIsSearching( true );
+
+    // Realizamos la búsqueda
+    // Preparamos los datos para el post
+    let url  = 'http://localhost:8010/api/searchNotes';
+    let body = { searchQuery: searchQuery };
+
+    // Realizamos la llamada por fetch
+    let http_response = await http_post( url, body );
+
+    // Añadimos el nuevo item al array
+    let data = http_response.http_data;
+
+    setTimeout( () => {
+
       // Resultados de ejemplo para demostración
       setSearchResults([
         { id: 1, fileName: "index.js", path: "/src", line: 24, context: "const searchQuery = useState('');" },
         { id: 2, fileName: "FilesPanel.jsx", path: "/components", line: 10, context: "function handleSearch(query) {" },
         { id: 3, fileName: "README.md", path: "/", line: 56, context: "## How to use the search functionality" },
       ]);
-      setIsSearching( false);  // Desactiva el indicador de carga al completar
-    }, 800);  // Retraso simulado de 800ms para simular tiempo de búsqueda
+      setIsSearching( false );  // Desactiva el indicador de carga al completar
+    }, 800 );  // Retraso simulado de 800ms para simular tiempo de búsqueda
   };
 
   // Función para mostrar/ocultar un campo de entrada específico
   // Esta función gestiona qué input está visible en cada momento
-  const toggleInput = (inputType) => {
+  const toggleInput = (inputType ) => {
     // Cerrar todos los demás inputs primero
     // Creamos un objeto con todos los inputs ocultos
     const newState = {
@@ -181,25 +211,25 @@ const FilesPanel = () => {
     newState[inputType] = !visibleInputs[inputType];
     
     // Actualizar el estado con la nueva configuración
-    setVisibleInputs(newState);
+    setVisibleInputs(newState );
     
     // Limpiar los valores de los inputs que se están ocultando
     // Esto evita que al reabrir un input muestre valores antiguos
     
     // Si estamos cerrando el input de búsqueda, limpiamos query y resultados
     if( visibleInputs.search && !newState.search) {
-      setSearchQuery("");
-      setSearchResults([]);
+      setSearchQuery( "" );
+      setSearchResults( [] );
     }
     
     // Si estamos cerrando el input de nueva nota, limpiamos su nombre
-    if( visibleInputs.newNote && !newState.newNote) {
-      setNewNoteName("");
+    if( visibleInputs.newNote && !newState.newNote ) {
+      setNewNoteName( "" );
     }
     
     // Si estamos cerrando el input de nueva carpeta, limpiamos su nombre
     if( visibleInputs.newFolder && !newState.newFolder) {
-      setNewFolderName("");
+      setNewFolderName( "" );
     }
   };
 
@@ -239,14 +269,13 @@ const FilesPanel = () => {
       window.currentNotes = updated;
 
       // Marcamos como seleccionado el nuevo item
-      setSelectedItemId( data.note_id );
       setSelectedItemId2( data.note_id2 );
       return updated;
     } );
     
     // Limpiar el input y ocultarlo después de crear la nota
-    setNewNoteName("");  // Reinicia el campo de nombre
-    setVisibleInputs(prev => ({...prev, newNote: false}));  // Oculta el formulario
+    setNewNoteName( "" );  // Reinicia el campo de nombre
+    setVisibleInputs(prev => ( {...prev, newNote: false} ));  // Oculta el formulario
   };
 
   // Función para crear una nueva carpeta
@@ -281,14 +310,13 @@ const FilesPanel = () => {
       window.currentNotes = updated;
 
       // Marcamos como seleccionado el nuevo item
-      setSelectedItemId( data.folder_id );
       setSelectedItemId2( data.folder_id2 );
       return updated;
     } );
     
     // Limpiar el input y ocultarlo después de crear la carpeta
-    setNewFolderName("");  // Reinicia el campo de nombre
-    setVisibleInputs(prev => ({...prev, newFolder: false}));  // Oculta el formulario
+    setNewFolderName( "" );  // Reinicia el campo de nombre
+    setVisibleInputs(prev => ( {...prev, newFolder: false} ));  // Oculta el formulario
   };
 
   // Función para filtrar
@@ -296,7 +324,7 @@ const FilesPanel = () => {
   const handleFilter = () => {
     // TODO: Implementar funcionalidad para filtrar/ordenar
     // Esta función debería mostrar opciones de filtrado o ejecutar algún tipo de ordenación
-    console.log("Abrir filtros de ordenación");
+    console.log( "Abrir filtros de ordenación" );
     // En una implementación completa, aquí se podría mostrar un modal o panel de filtros
   };
 
@@ -368,7 +396,7 @@ const FilesPanel = () => {
               <input
                 type="text"
                 value={newNoteName}
-                onChange={( e ) => setNewNoteName( e.target.value)}
+                onChange={( e ) => setNewNoteName( e.target.value )}
                 placeholder="Nombre de la nota"
                 className="new-item-input"
                 aria-label="Nombre de la nueva nota"
@@ -388,7 +416,7 @@ const FilesPanel = () => {
               <input
                 type="text"
                 value={newFolderName}
-                onChange={( e ) => setNewFolderName( e.target.value)}
+                onChange={( e ) => setNewFolderName( e.target.value )}
                 placeholder="Nombre de la carpeta"
                 className="new-item-input"
                 aria-label="Nombre de la nueva carpeta"
@@ -408,7 +436,7 @@ const FilesPanel = () => {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={( e ) => setSearchQuery( e.target.value)}
+                onChange={( e ) => setSearchQuery( e.target.value )}
                 placeholder="Buscar"
                 className="search-input"
                 aria-label="Buscar en archivos"

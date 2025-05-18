@@ -80,4 +80,33 @@ Route::post('/addNote', [NoteController::class, 'addNote']);
 Route::post('/addFolder', [FolderNoteController::class, 'addFolder']);
 
 // GET /api/getNotes
-Route::get('/getNotes', [NoteController::class, 'getNotes']);
+Route::get( 'getNotes', [NoteController::class, 'getNotes'] );
+
+/**
+ * Maneja el registro de carpetas de notas.
+ *
+ * @see FolderNoteController::searchNotes()
+ */
+Route::post( '/searchNotes', [NoteController::class, 'searchNotes'] );
+
+/**
+ * Lee una nota concreta.
+ *
+ * @see NoteController::readNote()
+ */
+Route::get( '/readNote', [NoteController::class, 'readNote'] );
+
+/**
+ * Actualización por Redis de la nota.
+ *
+ * @see NoteController::saveNote()
+ */
+Route::patch( '/notes/{note_id2}', [NoteController::class, 'saveNote'] );
+
+/**
+ * Datos de la Vista de Galaxia.
+ *
+ * @see NoteController::galaxyGraph()
+ */
+Route::get( '/galaxyGraph', [NoteController::class, 'galaxyGraph'] );
+

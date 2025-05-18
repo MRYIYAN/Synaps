@@ -11,12 +11,12 @@ use Illuminate\Database\Eloquent\Model;
  *
  * Modelo Eloquent para notas, con validación de unicidad por carpeta.
  *
- * @property int        $note_id
- * @property string     $note_id2
- * @property string     $note_title
- * @property string     $insert_date
- * @property string     $last_update_date
- * @property int        $parent_id
+ * @property int                $note_id
+ * @property string             $note_id2
+ * @property string             $note_title
+ * @property \Carbon\Carbon     $insert_date
+ * @property \Carbon\Carbon     $last_update_date
+ * @property int                $parent_id
  */
 class Note extends Model
 {
@@ -40,5 +40,11 @@ class Note extends Model
         ,   'insert_date'
         ,   'last_update_date'
         ,   'parent_id'
+    ];
+
+    // Casts de campos a tipos nativos
+    protected $casts = [
+            'insert_date'      => 'datetime'
+        ,   'last_update_date' => 'datetime'
     ];
 }

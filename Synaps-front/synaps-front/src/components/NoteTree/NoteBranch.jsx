@@ -20,6 +20,11 @@ export default function NoteBranch({ node, depth, selectedId2 }) {
   // Comprueba si este nodo tiene hijos
   const hasChildren = ( node.type === 'folder' );
 
+  // Callback para alternar estado colapsado (se pasa al hijo)
+  function handleToggle() {
+    setCollapsed( ( collapsed ) => !collapsed );
+  }
+
   return (
     <div className="node-branch" role="group" aria-labelledby={node.id2}>
       <NoteItem
@@ -30,6 +35,7 @@ export default function NoteBranch({ node, depth, selectedId2 }) {
         hasChildren={hasChildren}
         collapsed={collapsed}
         selected={node.id2 === window.selectedItemId2}
+        onToggle={handleToggle}
       />  
 
       {/* Si no está colapsado y tiene hijos, renderiza recursivamente */}

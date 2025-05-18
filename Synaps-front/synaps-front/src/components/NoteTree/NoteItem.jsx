@@ -9,11 +9,11 @@
  * @param {boolean}  props.hasChildren Indica si el nodo tiene hijos
  * @param {boolean}  props.collapsed   Indica si el nodo está colapsado
  * @param {boolean}  props.selected    Indica si el nodo está seleccionado
- * @param {Function} props.onToggle    Función para expandir/colapsar
  */
 
-import React, { useEffect } from "react";
+import React, { useState, useRef } from "react";
 import styles from "./NoteTree.css";
+import ContextMenu from "../Atomic/Menu/ContextMenu";
 import { ReactComponent as FolderIcon } from "../../assets/icons/folder.svg";
 import { ReactComponent as FileIcon }   from "../../assets/icons/file.svg";
 
@@ -25,34 +25,55 @@ export default function NoteItem( {
   hasChildren,
   collapsed,
   selected,
-  onToggle,
+  onToggle
 } ) {
+
+  // Estado para menú contextual
+  const [menuPos, setMenuPos] = useState( { x: null, y: null } );
+  const [menuOptions, setMenuOptions] = useState( [] );
 
   // Función para manejar los eventos de los items
   function handleClick() {
 
     // Seleccionamos el item
-    window.setSelectedItemId( id );
     window.setSelectedItemId2( id2 );
 
-    // Solo si es una carpeta, recargamos las notas filtradas por ese folder_id
-    if( hasChildren && typeof window.getNotesForFolder === 'function' ) {
+    if( hasChildren ) {
 
-      // Recuperamos el item completo desde el árbol si es necesario
-      const item = { id2, title, type: hasChildren ? 'folder' : 'note' }; // o lo pasas como prop
+      // Si es carpeta, recarga su contenido y expande/colapsa
+      if( collapsed && typeof window.getNotesForFolder === 'function' )
+        window.getNotesForFolder( id );
+        
+      // Toggle
+      if( typeof onToggle === 'function' )
+        onToggle();
+    } else {
 
-      if( item.type === 'folder' ) {
-
-        // Necesitamos pasar el `id` real, no el id2
-        const currentItem = window.currentNotes?.find( i => i.id2 === id2 );
-        if( currentItem && currentItem.id)
-          window.getNotesForFolder( currentItem.id );
-      }
+      // Si es nota, carga el Markdown en el editor
+      if( typeof window.readNote === 'function' )
+        window.readNote( id2 );
     }
+  }
 
-    // Toggle de expansión si es folder
-    if( hasChildren && typeof onToggle === 'function' )
-      onToggle();
+  // Menú contextual: muestra con click derecho
+  function handleContextMenu( e ) {
+    e.preventDefault();
+
+    setMenuOptions( [
+      { label: 'Eliminar', onClick: () => alert( 'Eliminar: ' + title ) },
+
+      /*
+      { label: 'Renombrar', onClick: () => alert('Renombrar: ' + title) },
+      { divider: true },
+      { label: hasChildren ? 'Nueva nota' : 'Duplicar', onClick: () => alert('Acción especial sobre: ' + title) },
+      */
+    ] );
+
+    setMenuPos( { x: e.clientX, y: e.clientY } );
+  }
+
+  function closeMenu() {
+    setMenuPos( { x: null, y: null } );
   }
 
   // Sangrado según la profundidad
@@ -66,6 +87,7 @@ export default function NoteItem( {
       aria-selected={selected}
       id={id2}
       onClick={handleClick}
+      onContextMenu={handleContextMenu}
       style={indentStyle}
     >
       {/* Muestra icono de carpeta si tiene hijos, de archivo si no */}
@@ -76,6 +98,12 @@ export default function NoteItem( {
 
       {/* Título de la nota */}
       <span className={styles.title}>{title}</span>
+      <ContextMenu
+        options={menuOptions}
+        x={menuPos.x - 50}
+        y={menuPos.y}
+        onClose={closeMenu}
+      />
     </div>
   );
 }
