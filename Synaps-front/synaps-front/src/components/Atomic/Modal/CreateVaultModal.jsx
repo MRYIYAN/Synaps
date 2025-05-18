@@ -328,7 +328,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       });
 
     } catch (error) {
-      console.error("❌ Error al crear vault:", error);
+      console.error(" Error al crear vault:", error);
       setStatusPopup(STATUS.ERROR);
       setStatusMessage('Error al crear la vault');
       setErrorMessage(error.message || 'Error desconocido');
