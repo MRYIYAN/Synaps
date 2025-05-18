@@ -9,7 +9,6 @@
  * @param {boolean}  props.hasChildren Indica si el nodo tiene hijos
  * @param {boolean}  props.collapsed   Indica si el nodo está colapsado
  * @param {boolean}  props.selected    Indica si el nodo está seleccionado
- * @param {Function} props.onToggle    Función para expandir/colapsar
  */
 
 import React, { useState, useRef } from "react";
@@ -26,32 +25,33 @@ export default function NoteItem( {
   hasChildren,
   collapsed,
   selected,
-  onToggle,
+  onToggle
 } ) {
 
   // Estado para menú contextual
-  const [menuPos, setMenuPos] = useState({ x: null, y: null });
-  const [menuOptions, setMenuOptions] = useState([]);
+  const [menuPos, setMenuPos] = useState( { x: null, y: null } );
+  const [menuOptions, setMenuOptions] = useState( [] );
 
   // Función para manejar los eventos de los items
   function handleClick() {
 
     // Seleccionamos el item
-    window.setSelectedItemId( id );
     window.setSelectedItemId2( id2 );
 
     if( hasChildren ) {
 
       // Si es carpeta, recarga su contenido y expande/colapsa
-      if( typeof window.getNotesForFolder === 'function' )
+      if( collapsed && typeof window.getNotesForFolder === 'function' )
         window.getNotesForFolder( id );
         
+      // Toggle
       if( typeof onToggle === 'function' )
         onToggle();
     } else {
+
       // Si es nota, carga el Markdown en el editor
       if( typeof window.readNote === 'function' )
-        window.readNote( id, id2 );
+        window.readNote( id2 );
     }
   }
 

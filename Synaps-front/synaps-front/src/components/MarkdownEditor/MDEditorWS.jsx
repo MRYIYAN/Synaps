@@ -18,7 +18,7 @@ const WS_PORT = 8082;
  */
 export default function MDEditorWS( { note_id2 } )
 {
-  const [markdown, set_markdown]  = useState('');
+  const [markdown, set_markdown]  = useState( '' );
   const [key, setKey]             = useState(0);
   const ws_ref                    = useRef( null );
 
@@ -31,19 +31,22 @@ export default function MDEditorWS( { note_id2 } )
   // -------------------------------------------------------------------------
   useEffect( () =>
   {
-    http_get('/api/readNote', { note_id2 })
-      .then( response => {
-        if( response.result === 1 && response.http_data.note )
-          set_markdown( response.http_data.note.markdown );
-        else
-          console.error( 'Error al leer la nota', response );
-      } )
-      .catch( error => {
-        console.log( error );
-      } );
-    
-    // Forzamos la recarga del MarkdownEditor
-    setKey( k => k + 1 );
+    const fetchNote = async () => {
+      const url  = 'http://localhost:8010/api/readNote';
+      const body = { first: 1 };
+
+      // Realizamos la petición
+      const { result, http_data } = await http_get( url, body );
+      if( result !== 1 )
+        throw new Error( 'Error al leer la nota' );
+
+      set_markdown( http_data.note.markdown );
+      
+      // Forzamos la recarga del MarkdownEditor
+      setKey( k => k + 1 );
+    };
+
+    fetchNote();
   }, [ note_id2 ] );
 
   // -------------------------------------------------------------------------
@@ -107,7 +110,7 @@ export default function MDEditorWS( { note_id2 } )
   // -------------------------------------------------------------------------
   return (
     <MDEditor
-      key={key}
+      key={ key }
       markdown={ markdown }
       onChange={ handle_change }
     />

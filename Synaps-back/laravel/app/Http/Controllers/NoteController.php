@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 use Carbon\Carbon;
 use App\Models\Note;
@@ -162,7 +163,7 @@ class NoteController extends Controller
     $user_db = tenant( $user_id );
 
     // Obtenemos todas las notas (propias + compartidas)
-    $notes = NoteService::GetNotes( $user_id, $data['parent_id'] );
+    $notes = NoteService::GetNotes( $user_id, '', $data['parent_id'] );
 
     // Obtenemos todas las carpetas del usuario
     $folders = FolderNote::on( $user_db )
@@ -205,7 +206,7 @@ class NoteController extends Controller
   /**
    * GET /api/readNote
    *
-   * @param  Request      $request     Datos de la nota: note_id | note_id2
+   * @param  Request      $request     Datos de la nota: note_id2
    * @return JsonResponse              Resultado y datos de la nota
    */
   public function readNote( Request $request ): JsonResponse
@@ -224,31 +225,33 @@ class NoteController extends Controller
     $user_id  = 1;
     $user_id2 = 'HG8F90HG89H0J8F90GD890FG890B8FDD';
 
-    // Validamos los datos recibidos
-    $data = $request->validate( [
-        'note_id'  => 'required|integer'
-      , 'note_id2' => 'required|string'
-    ] );
-
     try
     {
+      // Validamos los datos recibidos
+      $data = $request->validate( [
+          'note_id2' => 'nullable|string'
+        , 'first'    => 'nullable|bool'
+      ] );
+
       // Inicializamos la conexión de DB
       $user_db = tenant( $user_id );
 
-      // Buscamos la nota según note_id o note_id2
-      $query = Note::on( $user_db )
-        ->where( 'note_id', $data['note_id'] )
+      // Si pedimos el primer registro, lo buscamos
+      if( !empty( $data['first'] ) && $data['first'] == true )
+      {
+        $data['note_id2'] = Note::on( $user_db )
+          ->orderBy( 'note_title', 'asc' ) // Ordenamos alfabéticamente por el campo 'note_title'
+          ->value( 'note_id2' );
+      }
+
+      // Buscamos la nota según note_id2
+      $note_row = Note::on( $user_db )
         ->where( 'note_id2', $data['note_id2'] )
         ->firstOrFail();
 
-      // Capturamos el primer registro
-      $row = $query->first();
-      if( !$row )
-        throw new Exception( 'Nota no encontrada' );
-
       // Calculamos el nombre del fichero 0001_<note_id2>
-      $note_id_f = str_pad( $row->note_id, 4, '0', STR_PAD_LEFT );
-      $note_name = $note_id_f . '_' . $row->note_id2;
+      $note_id_f = str_pad( $note_row->note_id, 4, '0', STR_PAD_LEFT );
+      $note_name = $note_id_f . '_' . $note_row->note_id2;
 
       // Calculamos la ruta dentro del Vault
       $vault_path = ( new VaultService )->GetVaultStoragePath(
@@ -266,9 +269,9 @@ class NoteController extends Controller
 
       // Preparamos los datos de la nota
       $note = [
-          'title'            => $row->note_title
+          'title'            => $note_row->note_title
         , 'markdown'         => $markdown
-        , 'last_update_date' => $row->last_update_date
+        , 'last_update_date' => $note_row->last_update_date
       ];
 
       // Si llegamos hasta aquí está todo OK
@@ -277,6 +280,7 @@ class NoteController extends Controller
     catch( Exception $e )
     {
       $message = $e->getMessage();
+      throw $e;
     }
     finally
     {
@@ -298,6 +302,8 @@ class NoteController extends Controller
    */
   public function saveNote( Request $request, string $note_id2 ): JsonResponse
   {
+    Log::info( '📢 Disparando NoteUpdated para: ' . $note_id2 );
+
     // Inicializamos los valores a devolver
     $result   = 0;
     $conflict = false;

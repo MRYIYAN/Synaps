@@ -56,7 +56,7 @@ class NoteUpdated implements ShouldBroadcastNow
   public function broadcastWith(): array
   {
       return [
-          'uuid'       => $this->note->note_id2
+          'note_id2'   => $this->note->note_id2
         , 'markdown'   => $this->note->markdown
         , 'updated_at' => $this->note->last_update_date->toISOString()
         , 'user_id'    => $this->user_id

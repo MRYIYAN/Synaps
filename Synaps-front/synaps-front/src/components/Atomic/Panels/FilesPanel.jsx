@@ -31,7 +31,6 @@ const FilesPanel = () => {
   // -----------------------------------------------------------------
 
   // Inicializamos el item seleccionado
-  const [selectedItemId, _setSelectedItemId]    = useState( 0 );
   const [selectedItemId2, _setSelectedItemId2]  = useState( '' );
 
   // setter extendido que también guarda en window
@@ -40,14 +39,7 @@ const FilesPanel = () => {
     window.selectedItemId2 = value;
   };
 
-  // setter extendido que también guarda en window
-  const setSelectedItemId = ( value ) => {
-    _setSelectedItemId( value );
-    window.selectedItemId = value;
-  };
-
   useEffect( () => {
-    window.setSelectedItemId  = setSelectedItemId;
     window.setSelectedItemId2 = setSelectedItemId2;
   }, [] );
 
@@ -103,14 +95,10 @@ const FilesPanel = () => {
   // -----------------------------------------------------------------
   // Leer una nota concreta
   // -----------------------------------------------------------------
-  const readNote = async (
-      note_id   = window.selectedItemId
-    , note_id2  = window.selectedItemId2
-  ) => {
+  const readNote = async( note_id2 ) => {
     try {
-      // ENDPOINT (GET) - /api/readNote?note_id=..?note_id2=..
       const url  = 'http://localhost:8010/api/readNote';
-      const body = { note_id, note_id2 };
+      const body = { note_id2 };
 
       // Realizamos la petición
       const { result, http_data } = await http_get( url, body );
@@ -278,7 +266,6 @@ const FilesPanel = () => {
       window.currentNotes = updated;
 
       // Marcamos como seleccionado el nuevo item
-      setSelectedItemId( data.note_id );
       setSelectedItemId2( data.note_id2 );
       return updated;
     } );
@@ -320,7 +307,6 @@ const FilesPanel = () => {
       window.currentNotes = updated;
 
       // Marcamos como seleccionado el nuevo item
-      setSelectedItemId( data.folder_id );
       setSelectedItemId2( data.folder_id2 );
       return updated;
     } );
@@ -499,18 +485,7 @@ const FilesPanel = () => {
       {/* Contenedor del árbol de archivos */}
       {/* Agrupa todos los archivos/notas del usuario */}
       <div className="search-panel-tree" style={{ marginTop: 12 }}>
-        <NoteTree
-          nodes={window.currentNotes}
-          onNodeClick={ item => {
-
-            // Guarda la selección (ya expuesto en window)
-            setSelectedItemId( item.id );
-            setSelectedItemId2( item.id2 );
-
-            // Y dispara la carga en el editor
-            window.readNote( item.id, item.id2 );
-          } }
-        />
+        <NoteTree nodes={window.currentNotes} />
       </div>
     </div>
   );

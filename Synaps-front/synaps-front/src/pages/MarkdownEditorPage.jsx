@@ -20,7 +20,7 @@ import MDEditorWS from "../components/MarkdownEditor/MDEditorWS";
 
 const MarkdownEditor = function() {
 
-  const note_id2 = 'wxQurJHajctZKfJbssDRueOm9BP9ENwR';
+  const note_id2  = 'wxQurJHajctZKfJbssDRueOm9BP9ENwR';
 
   return (
     <div className="layout-markdown-editor">
