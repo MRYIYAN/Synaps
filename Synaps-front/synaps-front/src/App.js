@@ -52,8 +52,8 @@ function App() {
           {/* --------------------------------------------------------------- */}
           <Route path="/home"             element={<Home            />} />
           <Route path="/notes"            element={<Notes           />} />
-          <Route path="/markdown-editor"  element={<MarkdownEditor  />} />
-          <Route path="/galaxy-view"      element={<GalaxyView      />} />
+          <Route path="/markdowneditor"   element={<MarkdownEditor  />} />
+          <Route path="/galaxyview"       element={<GalaxyView      />} />
           <Route path="/todo"             element={<Todo            />} />
           <Route path="/journal"          element={<Journal         />} />
           <Route path="/settings"         element={<Settings        />} />

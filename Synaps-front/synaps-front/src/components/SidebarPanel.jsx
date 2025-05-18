@@ -6,6 +6,7 @@ import { ReactComponent as ListTodoIcon } from "../assets/icons/list-todo.svg";
 import { ReactComponent as SecretNotesIcon } from "../assets/icons/lock.svg";
 import { ReactComponent as LogoutIcon } from "../assets/icons/logout.svg";
 
+
 import logo_header from "../assets/icons/logo_header_sidebar.svg";
 import "../assets/styles/SidebarPanel.css";
 
@@ -21,7 +22,7 @@ import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
 // Configuración de los elementos de navegación
 const navigationItems = [
   { id: "files", label: "Archivos", icon: FoldersIcon },
-  { id: "galaxy-view", label: "Vista de galaxia", icon: GalaxyViewIcon },
+  { id: "galaxyview", label: "Vista de galaxia", icon: GalaxyViewIcon, url: 'galaxyview' },
   { id: "list-todo", label: "Lista de tareas", icon: ListTodoIcon },
   { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
 ];
@@ -29,7 +30,7 @@ const navigationItems = [
 // Mapeo de componentes de panel por ID
 const panelComponents = {
   "files": FilesPanel,
-  "galaxy-view": GalaxyViewPanel,
+  "galaxyview": GalaxyViewPanel,
   "list-todo": ListTodoPanel,
   "secret-notes": SecretNotesPanel,
 };
@@ -56,25 +57,53 @@ const SidebarPanel = () => {
 
   // Cargar datos iniciales
   useEffect(() => {
-    // TODO: Implementar carga de datos del usuario y vaults desde la API
-    // Carga simulada para desarrollo
+    // Cargar datos del usuario (simulado)
     setCurrentUser({
       name: "Usuario",
       avatar: null
     });
-    
-    setVaults([]);
+
+    // Cargar vaults reales desde la API
+    const fetchVaults = async () => {
+      try {
+        console.log(" Solicitando vaults desde la API...");
+        const token = localStorage.getItem('access_token');
+        const response = await fetch('http://localhost:8010/api/vaults', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if(response.ok) {
+          const { data } = await response.json();
+          console.log(" Vaults cargados de la DB:", data);
+          const formattedVaults = Array.isArray(data)
+            ? data.map(v => ({
+                ...v,
+                name: v.vault_title,
+                id: v.vault_id2
+              }))
+            : [];
+          setVaults(formattedVaults);
+        } else {
+          setVaults([]);
+        }
+      } catch (e) {
+        console.error(" Error al cargar vaults:", e);
+        setVaults([]);
+      }
+    };
+
+    fetchVaults();
     setCurrentVault(null);
   }, []);
 
   // Manejo de clics en la barra de navegación
   const handleIconClick = (itemId, index) => {
-    if (selectedItem === itemId) {
-      if (rightPanelOpen) {
+    if(selectedItem === itemId) {
+      if(rightPanelOpen)
         handleCloseSidebar();
-      } else {
+      else
         setRightPanelOpen(true);
-      }
     } else {
       setSelectedItem(itemId);
       setRightPanelOpen(true);
@@ -119,6 +148,8 @@ const SidebarPanel = () => {
   const handleVaultSelect = (vault) => {
     // TODO: Implementar lógica para cargar contenido de la vault seleccionada
     setCurrentVault(vault);
+    // Protección para evitar error si vault o vault.name es undefined
+    const name = (vault?.name || '').toLowerCase();
   };
   
   // Nueva función para manejar el menú de configuración
@@ -127,63 +158,86 @@ const SidebarPanel = () => {
     // TODO: Implementar el menú de configuración
   };
   
-  // Función para manejar la creación de nuevas vaults con comentarios sobre la animación
-  const handleCreateVault = async (vaultData) => {
-    // Retornamos Promise para poder usar async/await desde el modal
-    return new Promise((resolve, reject) => {
-      // Simular un retraso para ver la animación de carga
-      // La duración de 1.5s da tiempo suficiente para apreciar la animación del spinner
-      setTimeout(() => {
-        try {
-          // Validaciones - Simulan errores reales del backend
-
-          // 1. Caso especial para demostración: "Error" provoca error
-          if (vaultData.name.toLowerCase() === "error") {
-            reject(new Error('Ya existe una vault con ese nombre.'));
-            return;
-          }
-          
-          // 2. Verificar nombres duplicados (validación real)
-          if (vaults.some(v => v.name.toLowerCase() === vaultData.name.toLowerCase())) {
-            reject(new Error('Ya existe una vault con ese nombre.'));
-            return;
-          }
-          
-          // 3. Validar PIN en vaults privadas
-          if (vaultData.isPrivate && (!vaultData.pin || vaultData.pin.length < 4)) {
-            reject(new Error('El PIN debe tener al menos 4 dígitos.'));
-            return;
-          }
-          
-          // Crear un nuevo ID único (en producción esto vendría del backend)
-          // Manejamos el caso de array vacío con el operador de propagación y Math.max
-          const newId = vaults.length > 0 
-            ? Math.max(...vaults.map(v => v.id)) + 1 
-            : 1;
-          
-          // Crear el nuevo objeto vault
-          const newVault = {
-            id: newId,
-            name: vaultData.name,
-            isPrivate: vaultData.isPrivate || false,
-            // Otros datos que agregaríamos en una implementación real
-            createdAt: new Date().toISOString(),
-          };
-          
-          // Actualizar el estado con la nueva vault
-          setVaults(prevVaults => [...prevVaults, newVault]);
-          setCurrentVault(newVault);
-          
-          // Resolvemos la promesa para que se muestre la animación de éxito
-          resolve(newVault);
-        } catch (error) {
-          // Si ocurre cualquier error inesperado, rechazamos la promesa
-          // para que se muestre la animación de error
-          reject(error);
+  /**
+ * Función para manejar la creación de nuevas vaults con animación.
+ * Realiza validaciones frontend y luego llama al backend usando fetch.
+ * Retorna una Promise para que el modal pueda usar async/await y mostrar animaciones.
+ */
+const handleCreateVault = async (vaultData) => {
+  // Retornamos Promise para poder usar async/await desde el modal
+  return new Promise(async (resolve, reject) => {
+    // Simular un retraso para ver la animación de carga
+    setTimeout(async () => {
+      try {
+        // 1. Caso especial para demostración: "Error" provoca error
+        if(vaultData.name && vaultData.name.toLowerCase() === "error") {
+          reject(new Error('Ya existe una vault con ese nombre.'));
+          return;
         }
-      }, 1500); // Duración ajustada para una experiencia visual óptima
-    });
-  };
+
+        // 2. Verificar nombres duplicados (validación real, solo frontend)
+        if(vaults.some(v => v.name.toLowerCase() === vaultData.name.toLowerCase())) {
+          reject(new Error('Ya existe una vault con ese nombre.'));
+          return;
+        }
+
+        // 3. Validar PIN en vaults privadas
+        if(vaultData.isPrivate && (!vaultData.pin || vaultData.pin.length < 4)) {
+          reject(new Error('El PIN debe tener al menos 4 dígitos.'));
+          return;
+        }
+
+        // Obtener el token de autenticación desde localStorage
+        const token = localStorage.getItem("access_token"); //Token de Keycloak
+
+        // Realizar la solicitud POST al backend usando fetch
+        const response = await fetch("http://localhost:8010/api/vaults", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // El token de Keycloak se envía aquí
+          },
+          body: JSON.stringify(vaultData),
+        });
+
+        // Verificar si la respuesta es exitosa
+        if(!response.ok) {
+          const errorData = await response.json();
+          reject(new Error(errorData.message || "Error al crear la vault."));
+          return;
+        }
+
+        // Obtener la vault creada desde la respuesta
+        const responseData = await response.json();
+        console.log(" Vault creado en:", responseData.data.real_path); 
+        const newVault = {
+          ...responseData.data,
+          name: responseData.data.vault_title,
+          id: responseData.data.vault_id2
+        };
+
+        // Actualizar el estado con la nueva vault
+        setVaults((prevVaults) => [...prevVaults, newVault]);
+        setCurrentVault(newVault);
+
+        // Resolvemos la promesa para que se muestre la animación de éxito
+        resolve(newVault);
+      } catch (error) {
+        // Manejar errores y rechazar la promesa
+        console.error("Error al crear la vault:", error.message);
+        reject(new Error(error.message || "Error al crear la vault."));
+      }
+    }, 1500); // Duración ajustada para una experiencia visual óptima
+  });
+};
+
+// evitar duplicados al crear una vault
+const handleVaultCreated = (vault) => {
+  setVaults((prev) => {
+    const exists = prev.some(v => v.id === vault.id);
+    return exists ? prev : [...prev, vault];
+  });
+};
 
   // Función para abrir el modal de creación de vault
   const openCreateVaultModal = () => {
@@ -212,6 +266,7 @@ const SidebarPanel = () => {
           {navigationItems.map((item, index) => {
             const IconComponent = item.icon;
             const isActive = selectedItem === item.id;
+            const hasUrl   = 'url' in item && item.url;
             
             return (
               <li 
@@ -221,7 +276,19 @@ const SidebarPanel = () => {
                 role="menuitem"
                 aria-current={isActive ? "page" : undefined}
               >
-                <IconComponent aria-hidden="true" />
+                {/* Si tiene una URl vinculada, creamos un link */}
+                {hasUrl ? (
+                  <a 
+                    href={item.url}
+                    tabIndex={0}
+                    className="nav-link"
+                    aria-label={item.title || item.id}
+                  >
+                    <IconComponent aria-hidden="true" />
+                  </a>
+                ) : (
+                  <IconComponent aria-hidden="true" />
+                )}
               </li>
             );
           })}
@@ -284,7 +351,7 @@ const SidebarPanel = () => {
       <CreateVaultModal 
         isOpen={showCreateVaultModal}
         onClose={() => setShowCreateVaultModal(false)}
-        onCreateVault={handleCreateVault}
+        onCreateVault={handleVaultCreated}
       />
     </div>
   );

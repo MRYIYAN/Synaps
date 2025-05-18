@@ -9,7 +9,6 @@
  * @param {boolean}  props.hasChildren Indica si el nodo tiene hijos
  * @param {boolean}  props.collapsed   Indica si el nodo está colapsado
  * @param {boolean}  props.selected    Indica si el nodo está seleccionado
- * @param {Function} props.onToggle    Función para expandir/colapsar
  */
 
 import React, { useState, useRef } from "react";
@@ -26,42 +25,34 @@ export default function NoteItem( {
   hasChildren,
   collapsed,
   selected,
-  onToggle,
+  onToggle
 } ) {
 
   // Estado para menú contextual
-  const [menuPos, setMenuPos] = useState({ x: null, y: null });
-  const [menuOptions, setMenuOptions] = useState([]);
+  const [menuPos, setMenuPos] = useState( { x: null, y: null } );
+  const [menuOptions, setMenuOptions] = useState( [] );
 
   // Función para manejar los eventos de los items
   function handleClick() {
 
     // Seleccionamos el item
-    window.setSelectedItemId( id );
     window.setSelectedItemId2( id2 );
 
-    // Solo si es una carpeta, recargamos las notas filtradas por ese folder_id
-    if(
-      typeof window.getNotesForFolder === 'function' &&
-      typeof window.readNote          === 'function'
-    ) {
+    if( hasChildren ) {
 
-      // Recuperamos el item completo desde el árbol si es necesario
-      const item = { id2, title, type: hasChildren ? 'folder' : 'note' }; // o lo pasas como prop
+      // Si es carpeta, recarga su contenido y expande/colapsa
+      if( collapsed && typeof window.getNotesForFolder === 'function' )
+        window.getNotesForFolder( id );
+        
+      // Toggle
+      if( typeof onToggle === 'function' )
+        onToggle();
+    } else {
 
-      // Busca el elemento con id2 y extrae su id numérico
-      const id = window.currentNotes?.find( i => i.id2 === id2 )?.id;
-
-      // Si existe, llama a getNotesForFolder(id) para carpetas o readNote(id) para notas
-      if( id ) ( item.type === 'folder'
-        ? window.getNotesForFolder
-        : window.readNote 
-      )( id );
+      // Si es nota, carga el Markdown en el editor
+      if( typeof window.readNote === 'function' )
+        window.readNote( id2 );
     }
-
-    // Toggle de expansión si es folder
-    if( hasChildren && typeof onToggle === 'function' )
-      onToggle();
   }
 
   // Menú contextual: muestra con click derecho

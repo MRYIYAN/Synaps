@@ -14,7 +14,6 @@
  * - Requiere los estilos de '@mdxeditor/editor' y un CSS propio opcional.
  */
 
-import React, { useState, useEffect } from 'react'
 import {
   MDXEditor,
   headingsPlugin,
@@ -38,47 +37,13 @@ import '@mdxeditor/editor/style.css'
 import './MDEditor.css'
 import './obsidian.css'
 
-export default function MDEditor () {
-
-  // markdown -> Contenido visible en el editor
-  // noteKey -> Clave única. Al cambiarla fuerza a React a desmontar y montar de nuevo el componente MDXEditor
-  const [markdown, setMarkdown] = useState( '' );
-  const [noteKey, setNoteKey]   = useState( 0 );
-
-  useEffect( () => {
-    // Cargar una nota completa.
-    // - Guarda una copia en window.markdown
-    // - Actualiza el estado local
-    // - Incrementa noteKey para obligar al remount del editor
-    window.loadMarkdown = content => {
-
-      // Guardamos la copia
-      const safe = typeof content === 'string' ? content : '';
-      window.markdown = safe;
-      setMarkdown( safe );
-
-      // Remount de MDEditor
-      setNoteKey( k => k + 1 );
-    };
-
-    // Actualizar mientras el usuario escribe.
-    // Igual que arriba pero SIN modificar noteKey, de modo que el editor no se desmonta en cada pulsación.
-    window.updateMarkdown = content => {
-      const safe = typeof content === 'string' ? content : '';
-      window.markdown = safe;
-      setMarkdown( safe );
-    };
-
-    // Valor inicial accesible globalmente
-    window.markdown = markdown;
-  }, [] );
+export default function MDEditor ( { markdown, onChange } ) {
 
   return (
     <div className='mdx-obsidian dark h-full w-full'>
       <MDXEditor
-        key={noteKey}
-        markdown={markdown ?? ''}
-        onChange={window.updateMarkdown}
+        markdown={ markdown ?? '' }
+        onChange={ onChange }
         className='obsidian-theme'
         plugins={[
           headingsPlugin({ allowedHeadingLevels: [1, 2, 3, 4, 5, 6] }),

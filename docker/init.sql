@@ -28,8 +28,10 @@ USE synaps_0001;
 CREATE TABLE IF NOT EXISTS notes (
   note_id INT AUTO_INCREMENT PRIMARY KEY,
   note_id2 VARCHAR(32) NOT NULL,
+  parent_id INT NOT NULL,
   note_title VARCHAR(255) NOT NULL,
-  insert_date DATETIME NOT NULL
+  insert_date DATETIME NOT NULL,
+  last_update_date DATETIME NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS docs (
@@ -51,4 +53,23 @@ CREATE TABLE IF NOT EXISTS log (
   log_id2 VARCHAR(32) NOT NULL,
   log_message VARCHAR(255) NOT NULL,
   insert_date DATETIME NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS folders_notes (
+  folder_id INT AUTO_INCREMENT PRIMARY KEY,
+  folder_id2 VARCHAR(32) NOT NULL,
+  folder_title VARCHAR(255) NOT NULL,
+  parent_id INT NOT NULL,
+  children_count INT NOT NULL
+);
+
+-- NUEVA TABLA VAULTS
+CREATE TABLE IF NOT EXISTS vaults (
+  vault_id INT AUTO_INCREMENT PRIMARY KEY,
+  vault_id2 CHAR(50) NOT NULL,
+  vault_title VARCHAR(255) NOT NULL,
+  user_id INT NOT NULL,
+  logical_path VARCHAR(255) NOT NULL,
+  is_private BOOLEAN DEFAULT FALSE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
