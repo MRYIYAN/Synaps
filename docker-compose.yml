@@ -21,6 +21,8 @@ services:
       - ./Synaps-back/laravel/resources:/var/www/html/resources
       - ./Synaps-back/laravel/public:/var/www/html/public
       - ./Synaps-back/laravel/.env:/var/www/html/.env 
+      - /c/Users:/windows-users:rw  
+    command: bash -c "composer require firebase/php-jwt && apache2-foreground"
     depends_on:
       - synaps-mariadb
     environment:
@@ -34,6 +36,7 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: rootpassword
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: "0"
+      USERNAME: ${USERNAME}
 
   # --------------------------------- REDIS --------------------------------- #
   synaps-redis:

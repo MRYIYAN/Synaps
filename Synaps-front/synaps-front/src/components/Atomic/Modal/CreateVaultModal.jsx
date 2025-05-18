@@ -21,6 +21,7 @@ import { ReactComponent as VaultIcon } from "../../../assets/icons/vault.svg";
 import { ReactComponent as LockIcon } from "../../../assets/icons/lock.svg";
 import { ReactComponent as FolderIcon } from "../../../assets/icons/folder.svg";
 import { ReactComponent as CheckIcon } from "../../../assets/icons/check.svg";
+import ArchiveIcon from '../Icons/ArchiveIcon';
 
 // Componentes personalizados para funcionalidades específicas
 import FolderPickerButton from '../Buttons/FolderPickerButton'; 
@@ -42,41 +43,38 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   // Estados del formulario 
   //------------------------//
   // Estados principales para los campos del formulario
-  const [vaultName, setVaultName] = useState('');              // Nombre de la vault
+  const [vaultName, setVaultName] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);           // Si es una vault privada con PIN
   const [pin, setPin] = useState('');                          // PIN de acceso para vault privada
   const [confirmPin, setConfirmPin] = useState('');            // Confirmación del PIN
   const [step, setStep] = useState(1);                         // Paso actual del proceso (1: info básica, 2: configurar PIN)
   const [isCreating, setIsCreating] = useState(false);         // Si está en proceso de creación
-  const [selectedFolderPath, setSelectedFolderPath] = useState(''); // Ruta del directorio seleccionado
+  const [logicalPath, setLogicalPath] = useState('');          // Ruta lógica
 
   // Estados para el popup de estado (éxito, error, cargando)
-  const [statusPopup, setStatusPopup] = useState(null);        // Tipo de popup (null, loading, success, error)
-  const [statusMessage, setStatusMessage] = useState('');      // Mensaje principal del popup
-  const [errorMessage, setErrorMessage] = useState('');        // Mensaje de error detallado
+  const [statusPopup, setStatusPopup] = useState(null);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Estados para los mensajes de error de validación
-  const [nameError, setNameError] = useState('');              // Error del nombre de la vault
-  const [folderPathError, setFolderPathError] = useState('');  // Error de la ruta del directorio
-  const [pinError, setPinError] = useState('');                // Error del PIN
-  const [confirmPinError, setConfirmPinError] = useState('');  // Error de la confirmación del PIN
+  const [nameError, setNameError] = useState('');
+  const [folderPathError, setFolderPathError] = useState('');
+  const [pinError, setPinError] = useState('');
+  const [confirmPinError, setConfirmPinError] = useState('');
 
-  //-----------------------------------// 
-  // Referencias para focus automático 
-  //----------------------------------//
   // Referencias para enfocar automáticamente ciertos campos
-  const nameInputRef = useRef(null);          // Referencia al input de nombre
-  const folderPathInputRef = useRef(null);    // Referencia al input de ruta
-  const pinInputRef = useRef(null);           // Referencia al input de PIN
+  const nameInputRef = useRef(null);
+  const folderPathInputRef = useRef(null);
+  const pinInputRef = useRef(null);
 
   //====================================================================================//
   //                                EFECTOS                                             //
   //====================================================================================//
 
-  /**
-   * Efecto para manejar el enfoque automático en los campos según el paso actual
-   * Cuando el modal se abre, enfoca el campo de nombre en el paso 1 o el PIN en el paso 2
-   */
+  //----------------------------------------------------------------------------------//
+   // Efecto para manejar el enfoque automático en los campos según el paso actual
+   // Cuando el modal se abre, enfoca el campo de nombre en el paso 1 o el PIN en el paso 2
+  //----------------------------------------------------------------------------------//
   useEffect(() => {
     if (isOpen) {
       // Pequeño timeout para asegurar que los elementos ya estén renderizados
@@ -187,7 +185,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   const validateForm = () => {
     // Validar campos comunes para ambos pasos
     const nameValidation = validateVaultName(vaultName);
-    const folderValidation = validateFolderPath(selectedFolderPath);
+    const folderValidation = validateFolderPath(logicalPath);
 
     // Actualizar estados de error
     setNameError(nameValidation.errorMessage);
@@ -219,13 +217,12 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    * Cierra el modal y resetea todos los estados a sus valores iniciales
    */
   const handleClose = () => {
-    // Resetear todos los campos y estados
     setVaultName('');
     setIsPrivate(false);
     setPin('');
     setConfirmPin('');
     setStep(1);
-    setSelectedFolderPath('');
+    setLogicalPath('');
     setStatusPopup(null);
     setStatusMessage('');
     setErrorMessage('');
@@ -233,20 +230,17 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     setFolderPathError('');
     setPinError('');
     setConfirmPinError('');
-    
-    // Llamar a la función de cierre proporcionada por el componente padre
     onClose();
   };
 
-  /**
-   * Avanza al siguiente paso del formulario después de validar
-   * los campos del paso actual
-   */
+  //----------------------------------------------------------------------------------//
+   // Avanza al siguiente paso del formulario después de validar los campos del paso actual
+  //----------------------------------------------------------------------------------//
   const handleNextStep = () => {
     if (step === 1) {
       // Validar los campos del paso 1
       const nameValidation = validateVaultName(vaultName);
-      const folderValidation = validateFolderPath(selectedFolderPath);
+      const folderValidation = validateFolderPath(logicalPath);
 
       // Actualizar estados de error
       setNameError(nameValidation.errorMessage);
@@ -264,75 +258,88 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     }
   };
 
-  /**
-   * Regresa al paso anterior del formulario
-   */
+  //----------------------------------------------------------------------------------//
+   // Regresa al paso anterior del formulario
+  //----------------------------------------------------------------------------------//
   const handlePrevStep = () => {
     setStep(1); // Volver al paso de información básica
   };
 
-  /**
-   * Inicia el proceso de creación de vault después de validar
-   * todos los campos necesarios
-   */
+  //----------------------------------------------------------------------------------//
+  // Inicia el proceso de creación de vault después de validar  todos los campos necesarios
+  //----------------------------------------------------------------------------------//
   const handleCreateVault = async () => {
-    // Prevenir múltiples envíos si ya está en proceso
     if (isCreating) return;
+    setIsCreating(true); // <- Bloquea de inmediato para evitar doble click
 
-    // Validar todo el formulario antes de iniciar la creación
     if (!validateForm()) {
-      // Mostrar mensaje de error si hay campos inválidos
       setStatusPopup(STATUS.ERROR);
       setStatusMessage('Error en el formulario');
       setErrorMessage('Por favor corrige los errores antes de continuar');
+      setIsCreating(false); // <- Libera si hay error de validación
       return;
     }
 
-    // Iniciar proceso de creación
-    setIsCreating(true);
     setStatusPopup(STATUS.LOADING);
     setStatusMessage('Creando vault...');
 
     try {
-      // Simulación de tiempo de creación
-      // TODO: Reemplazar con la llamada real a la API de creación
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log(" Enviando petición para crear vault:", {
+        vault_title: vaultName.trim(),
+        logical_path: logicalPath.trim(),
+        is_private: isPrivate
+      });
 
-      // Crear vault según el tipo (normal o privada)
-      if (step === 1 && !isPrivate) {
-        // Crear vault normal
-        await onCreateVault({
-          name: vaultName.trim(),
-          isPrivate: false,
-          folderPath: selectedFolderPath
-        });
-      } else if (step === 2) {
-        // Crear vault privada con PIN
-        await onCreateVault({
-          name: vaultName.trim(),
-          isPrivate: true,
-          pin: pin,
-          folderPath: selectedFolderPath
-        });
+      const response = await fetch('http://localhost:8010/api/vaults', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: JSON.stringify({
+          vault_title: vaultName.trim(),
+          logical_path: logicalPath.trim(),
+          is_private: isPrivate
+        }),
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Error desconocido al crear vault');
       }
 
-      // Mostrar mensaje de éxito
+      // Muestra el popup de éxito inmediatamente
       setStatusPopup(STATUS.SUCCESS);
       setStatusMessage('¡Vault creada con éxito!');
+
+      // Espera 2 segundos antes de cerrar el popup (ya tienes autoCloseDelay)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      console.log(" Vault creada correctamente:", result.data);
+
+      // Llama al callback para actualizar el sidebar
+      onCreateVault({
+        ...result.data,
+        name: result.data.vault_title,
+        id: result.data.vault_id2
+      });
+
     } catch (error) {
-      // Mostrar mensaje de error si falla la creación
+      console.error("❌ Error al crear vault:", error);
       setStatusPopup(STATUS.ERROR);
       setStatusMessage('Error al crear la vault');
-      setErrorMessage(error.message || 'Ya existe una vault con ese nombre.');
+      setErrorMessage(error.message || 'Error desconocido');
     } finally {
-      // Finalizar estado de creación
       setIsCreating(false);
     }
   };
 
-  /**
-   * Maneja la finalización del mensaje de estado (éxito o error)
-   */
+  //----------------------------------------------------------------------------------//
+   // Maneja la finalización del mensaje de estado (éxito o error)
+  //----------------------------------------------------------------------------------//
   const handleStatusComplete = () => {
     if (statusPopup === STATUS.SUCCESS) {
       // Si fue exitoso, cerrar el modal
@@ -352,13 +359,14 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       // Cerrar modal con Escape
       handleClose();
     } else if (e.key === 'Enter' && !isCreating) {
-      // Acciones según el paso actual al presionar Enter
+      e.preventDefault(); // Previene un submit doble
       if (step === 1 && !isPrivate) {
-        handleCreateVault(); // Crear vault normal
+       
+        // Solo se crea desde el botón
       } else if (step === 1 && isPrivate) {
-        handleNextStep();    // Ir al paso de configuración de PIN
+        handleNextStep();
       } else if (step === 2) {
-        handleCreateVault(); // Crear vault privada
+        handleCreateVault();
       }
     }
   };
@@ -388,7 +396,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    */
   const handleFolderPathChange = (e) => {
     const newPath = e.target.value;
-    setSelectedFolderPath(newPath);
+    setLogicalPath(newPath);
 
     // Validar ruta y actualizar estado de error
     const { isValid, errorMessage } = validateFolderPath(newPath);
@@ -400,11 +408,8 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    * @param {string} folderPath - Ruta del directorio seleccionado
    */
   const handleFolderSelected = (folderPath) => {
-    setSelectedFolderPath(folderPath);
-    // Limpiar error al seleccionar una nueva ruta
+    setLogicalPath(folderPath);
     setFolderPathError('');
-    
-    // TODO: Implementar validación real de existencia de directorio al seleccionarlo
   };
 
   /**
@@ -461,9 +466,9 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   //                  MANEJADORES DE EVENTOS BLUR (PÉRDIDA DE FOCO)                    //
   //====================================================================================//
 
-  /**
-   * Valida el nombre cuando el campo pierde el foco
-   */
+  //----------------------------------------------------------------------------------//
+  // Valida el nombre cuando el campo pierde el foco
+  //----------------------------------------------------------------------------------//
   const handleNameBlur = () => {
     const { isValid, errorMessage } = validateVaultName(vaultName);
     setNameError(isValid ? '' : errorMessage);
@@ -473,7 +478,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    * Valida la ruta cuando el campo pierde el foco
    */
   const handleFolderPathBlur = () => {
-    const { isValid, errorMessage } = validateFolderPath(selectedFolderPath);
+    const { isValid, errorMessage } = validateFolderPath(logicalPath);
     setFolderPathError(isValid ? '' : errorMessage);
   };
 
@@ -553,7 +558,15 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
                   className={`input-field ${nameError ? 'error' : ''}`}
                   placeholder="Ej: Trabajo, Personal, Proyectos..."
                   value={vaultName}
-                  onChange={handleNameChange}
+                  onChange={(e) => {
+                    const newName = e.target.value;
+                    setVaultName(newName);
+
+                    // Si la ruta lógica empieza por /SynapsVaults/, actualízala dinámicamente
+                    if (logicalPath.startsWith('/SynapsVaults/')) {
+                      setLogicalPath(`/SynapsVaults/${newName}`);
+                    }
+                  }}
                   onBlur={handleNameBlur}
                   disabled={isCreating}
                   maxLength={50}
@@ -565,55 +578,36 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
                 )}
               </div>
               
-              {/* Campo para la ruta del directorio */}
+              {/* Campo para la ruta lógica */}
               <div className="input-group">
-                <label htmlFor="folder-path" className="input-label">
-                  Directorio de la vault
-                </label>
-                <div style={{ position: 'relative', width: '100%' }}>
-                  {/* Input de directorio */}
+                <label className="input-label">Ruta lógica</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <input
-                    ref={folderPathInputRef}
-                    id="folder-path"
                     type="text"
-                    className={`input-field ${folderPathError ? 'error' : ''}`}
-                    placeholder="Escribe o selecciona la ubicación de la vault..."
-                    value={selectedFolderPath}
-                    onChange={handleFolderPathChange}
-                    onBlur={handleFolderPathBlur}
-                    disabled={isCreating}
-                    style={{ 
-                      paddingLeft: '32px',
-                      paddingRight: '35px', // Espacio para el icono de selección de carpeta
-                      width: '100%'
+                    placeholder="Ej: /Trabajo/2025"
+                    value={logicalPath}
+                    onChange={(e) => setLogicalPath(e.target.value)}
+                    className="input-field"
+                  />
+                  <button
+                    type="button"
+                    className="icon-button"
+                    onClick={() => {
+                      const name = vaultName.trim() || '';
+                      setLogicalPath(`/SynapsVaults/${name}`);
                     }}
-                  />
-                  {/* Icono de carpeta (izquierda) */}
-                  <FolderIcon 
-                    style={{ 
-                      position: 'absolute', 
-                      left: '10px', 
-                      top: '50%', 
-                      transform: 'translateY(-50%)',
-                      width: '16px',
-                      height: '16px',
-                      color: folderPathError ? '#f56e6e' : '#888'
-                    }} 
-                  />
-                  {/* Botón de selección de carpeta (derecha) */}
-                  <FolderPickerButton 
-                    onFolderSelected={handleFolderSelected} 
-                    disabled={isCreating} 
-                  />
+                  >
+                    <ArchiveIcon size={20} />
+                  </button>
                 </div>
                 {/* Mensaje de error o ayuda */}
                 {folderPathError ? (
                   <span className="input-error">{folderPathError}</span>
                 ) : (
                   <span style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.25rem", display: "block" }}>
-                    {selectedFolderPath ? 
+                    {logicalPath ? 
                       "Ubicación seleccionada." : 
-                      "Selecciona un directorio para guardar los archivos de la vault."}
+                      "Selecciona una ruta lógica para guardar los archivos de la vault."}
                   </span>
                 )}
               </div>
@@ -721,7 +715,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
               <button 
                 className="modal-button primary" 
                 onClick={isPrivate ? handleNextStep : handleCreateVault}
-                disabled={isCreating || !vaultName.trim() || nameError || !selectedFolderPath.trim() || folderPathError}
+                disabled={isCreating || !vaultName.trim() || nameError || !logicalPath.trim() || folderPathError}
               >
                 {isPrivate ? "Siguiente" : (isCreating ? "Creando..." : "Crear Vault")}
               </button>
@@ -748,6 +742,23 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     </div>
   );
 };
+
+//=====================================================================================//
+//                          FUNCIÓN PARA OBTENER NOMBRE DE USUARIO                     //
+//=====================================================================================//
+const getUsernameFromEmail = () => {
+  const token = localStorage.getItem('token');
+  if (!token) return 'usuario';
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const email = payload.email || payload.preferred_username || '';
+    return email.split('@')[0] || 'usuario';
+  } catch {
+    return 'usuario';
+  }
+};
+
 
 //====================================================================================//
 //                                EXPORTACIÓN                                         //

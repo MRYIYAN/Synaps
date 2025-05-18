@@ -99,12 +99,12 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
             ) : (
               vaults.map((vault, index) => (
                 <li 
-                  key={vault.id}
-                  className={`vault-item ${currentVault && vault.id === currentVault.id ? 'active' : ''}`}
+                  key={vault.vault_id2 || index}
+                  className={`vault-item ${currentVault && (vault.id === currentVault.id) ? 'active' : ''}`}
                   onClick={() => selectVault(vault)}
                   style={{"--item-index": index}}
                 >
-                  {vault.name}
+                  {vault.name || vault.vault_title || 'Sin nombre'}
                 </li>
               ))
             )}
