@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Config;
  * @param int|null $tenant_id ID numérico del tenant (null = conexión default)
  * @return string             Nombre de la conexión configurada
  */
-function tenant( ?int $tenant_id = null ) : string
+function tenant( ?int $tenant_id = null ): string
 {
   // Si es global, devolvemos la conexión por defecto
   if( $tenant_id === null )
@@ -26,7 +26,7 @@ function tenant( ?int $tenant_id = null ) : string
   // Nombre único para esta conexión
   $conn_name = 'tenant_' . $tenant_id;
 
-  // Construimos el nombre de la base de datos: synaps_0001, synaps_0002, …
+  // Construimos el nombre de la base de datos: synaps_0001, synaps_0002, ...
   $db_name = 'synaps_' . str_pad( (string)$tenant_id, 4, '0', STR_PAD_LEFT );
 
   // Clonamos la configuración mysql y cambiamos la base de datos

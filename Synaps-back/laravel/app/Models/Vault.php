@@ -16,12 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 class Vault extends Model
 {
     /**
-     * Conexión de base de datos personalizada.
-     * @var string
-     */
-    protected $connection = 'synaps_0001';
-
-    /**
      * Nombre de la tabla asociada.
      * @var string
      */

@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
+use Exception;
 use App\Http\Controllers\Controller;
+use App\Models\Vault;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\Vault;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Illuminate\Support\Facades\DB;
+use function App\Helpers\tenant;
 
 //===========================================================================//
 //                                CONTROLADOR VAULT                          //
@@ -28,39 +33,52 @@ class VaultController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse Respuesta JSON con la lista de vaults.
      */
-    public function index(Request $request)
+    public function index( Request $request )
     {
-        try {
-            // Obtener el usuario autenticado correctamente
-            $user = $request->user(); // ← ahora sí funciona siempre
+        // Inicializamos variables de respuesta
+        $result   = 0;
+        $message  = '';
+        $vault    = [];
+        
+        try
+        {
+            // Capturamos los datos del usuario de la sesión
+            $user    = $request->user();
+            $user_id = $user['user_id'];
+            $user_db = tenant( $user_id );
 
-            if (!$user || !isset($user['email'])) {
-                return response()->json(['message' => 'Usuario no autenticado'], 401);
-            }
-
+            // Si no se han enviado los datos obligatorios, hacemos saltar una excepción
+            if( empty( $user ) || $user_id === 0 )
+                throw new Exception( 'Usuario no autenticado' );
+            
             // Buscar su user_id en la tabla 'users' de la base 'synaps'
-            $userRecord = \DB::connection('mysql')
-                ->table('users')
-                ->where('user_email', $user['email'])
+            $user_row = DB::on( tenant() )
+                ->table( 'users' )
+                ->where( 'user_email', $user['email'] )
                 ->first();
 
-            if (!$userRecord) {
-                return response()->json(['message' => 'Usuario no encontrado'], 404);
-            }
+            // Si no existe este usuario en la DB, hacemos saltar una excepción
+            if( !$user_row )
+                throw new Exception( 'Usuario no encontrado' );
 
-            // Buscar las vaults por user_id en synaps_0001
-            $vaults = \DB::connection('synaps_0001')
-                ->table('vaults')
-                ->where('user_id', $userRecord->user_id)
+            // Buscar las vaults por user_id 
+            $vaults = DB::on( $user_db )
+                ->table( 'vaults' )
+                ->where( 'user_id', $user_row->user_id )
                 ->get();
-
-            return response()->json([
-                'message' => 'Vaults encontradas',
-                'data' => $vaults
-            ]);
-        } catch (\Exception $e) {
-            \Log::error("Error al obtener vaults: " . $e->getMessage());
-            return response()->json(['message' => 'Error interno'], 500);
+        }
+        catch( Exception $e )
+        {
+            $message = $e->getMessage();
+        }
+        finally
+        {
+            // Respuesta JSON
+            return response()->json( [
+                    'result'  => $result
+                ,   'message' => $message
+                ,   'vault'   => $vault
+            ], $result ? 201 : 500 );
         }
     }
 
@@ -71,38 +89,67 @@ class VaultController extends Controller
     /**
      * Crear un nuevo vault.
      *
-     * @param Request $request La solicitud HTTP con los datos del vault.
-     * @return \Illuminate\Http\JsonResponse Respuesta JSON con los detalles del vault creado.
+     * @param  Request $request   La solicitud HTTP con los datos del vault.
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store( Request $request )
     {
-        $user_id = $request->get('user_id');
+        // Inicializamos variables de respuesta
+        $result   = 0;
+        $message  = '';
+        $vault    = [];
 
-        \Log::debug('user_id usado:', [$user_id]);
+        try
+        {
+            // Obtenemos el identificador del usuario
+            $user_id = $request->get( 'user_id' );
+            Log::debug( 'user_id usado:', [ $user_id ] );
 
-        if (!$user_id) {
-            \Log::error(" Usuario no autenticado");
-            return response()->json(['error' => 'Usuario no autenticado'], 401);
+            $user_db = tenant( $user_id );
+
+            // Validamos que exista el usuario
+            if( !$user_id )
+                throw new Exception( 'Usuario no autenticado' );
+
+            // Validamos los datos del vault
+            $validated = $request->validate( [
+                    'vault_title'   => 'required|string|max:255'
+                ,   'logical_path'  => 'required|string|max:255'
+                ,   'is_private'    => 'boolean'
+            ] );
+
+            // ------------------------------------------------------------
+            // Creación del Vault
+            // ------------------------------------------------------------
+
+            // Creamos el vault en la base de datos
+            $vault = Vault::on( $user_db )
+                ->create( [
+                        'vault_id2'     => Str::uuid()->toString()
+                    ,   'vault_title'   => $validated['vault_title']
+                    ,   'user_id'       => $user_id
+                    ,   'logical_path'  => $validated['logical_path']
+                    ,   'is_private'    => $validated['is_private'] ?? false
+                    ,   'created_at'    => now()
+                ] );
+
+            // Si llegamos hasta aquí está todo OK
+            $result = 1;
         }
-
-        $validated = $request->validate([
-            'vault_title'   => 'required|string|max:255',
-            'logical_path'  => 'required|string|max:255',
-            'is_private'    => 'boolean'
-        ]);
-
-        $vault = Vault::create([
-            'vault_id2'     => Str::uuid()->toString(),
-            'vault_title'   => $validated['vault_title'],
-            'user_id'       => $user_id,
-            'logical_path'  => $validated['logical_path'],
-            'is_private'    => $validated['is_private'] ?? false,
-            'created_at'    => now(),
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'data' => $vault
-        ]);
+        catch( Exception $e )
+        {
+            // Guardamos mensaje de error
+            $message = $e->getMessage();
+            Log::error( $message );
+        }
+        finally
+        {
+            // Respuesta JSON
+            return response()->json( [
+                    'result'  => $result
+                ,   'message' => $message
+                ,   'vault'   => $vault
+            ], $result ? 201 : 500 );
+        }
     }
 }
