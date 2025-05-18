@@ -22,7 +22,7 @@ import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
 // Configuración de los elementos de navegación
 const navigationItems = [
   { id: "files", label: "Archivos", icon: FoldersIcon },
-  { id: "galaxy-view", label: "Vista de galaxia", icon: GalaxyViewIcon, url: 'galaxy-view' },
+  { id: "galaxyview", label: "Vista de galaxia", icon: GalaxyViewIcon, url: 'galaxyview' },
   { id: "list-todo", label: "Lista de tareas", icon: ListTodoIcon },
   { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
 ];
@@ -30,7 +30,7 @@ const navigationItems = [
 // Mapeo de componentes de panel por ID
 const panelComponents = {
   "files": FilesPanel,
-  "galaxy-view": GalaxyViewPanel,
+  "galaxyview": GalaxyViewPanel,
   "list-todo": ListTodoPanel,
   "secret-notes": SecretNotesPanel,
 };
