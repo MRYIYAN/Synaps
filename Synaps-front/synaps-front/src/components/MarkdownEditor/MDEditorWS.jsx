@@ -26,6 +26,10 @@ export default function MDEditorWS( { note_id2 } )
     window.set_markdown = set_markdown;
   }, [] );
 
+  useEffect( () => {
+    window.setKey = setKey;
+  }, [] );
+
   // -------------------------------------------------------------------------
   // Carga inicial de la nota vía HTTP
   // -------------------------------------------------------------------------

@@ -227,6 +227,7 @@ class NoteController extends Controller
 
     try
     {
+
       // Validamos los datos recibidos
       $data = $request->validate( [
           'note_id2' => 'nullable|string'
@@ -240,7 +241,7 @@ class NoteController extends Controller
       if( !empty( $data['first'] ) && $data['first'] == true )
       {
         $data['note_id2'] = Note::on( $user_db )
-          ->orderBy( 'note_title', 'asc' ) // Ordenamos alfabéticamente por el campo 'note_title'
+          ->orderBy( 'note_id', 'asc' ) // Ordenamos alfabéticamente por el campo 'note_title'
           ->value( 'note_id2' );
       }
 
@@ -249,28 +250,10 @@ class NoteController extends Controller
         ->where( 'note_id2', $data['note_id2'] )
         ->firstOrFail();
 
-      // Calculamos el nombre del fichero 0001_<note_id2>
-      $note_id_f = str_pad( $note_row->note_id, 4, '0', STR_PAD_LEFT );
-      $note_name = $note_id_f . '_' . $note_row->note_id2;
-
-      // Calculamos la ruta dentro del Vault
-      $vault_path = ( new VaultService )->GetVaultStoragePath(
-          $vault['vault_id']
-        , $vault['vault_id2']
-        , $user_id
-        , $user_id2
-        , $note_name
-      );
-
-      // Leemos el contenido del fichero (vacío si no existe)
-      $markdown = Storage::disk( 'app_contents' )->exists( $vault_path )
-        ? Storage::disk( 'app_contents' )->get( $vault_path )
-        : '';
-
       // Preparamos los datos de la nota
       $note = [
           'title'            => $note_row->note_title
-        , 'markdown'         => $markdown
+        , 'markdown'         => $note_row->note_markdown
         , 'last_update_date' => $note_row->last_update_date
       ];
 
@@ -302,7 +285,7 @@ class NoteController extends Controller
    */
   public function saveNote( Request $request, string $note_id2 ): JsonResponse
   {
-    Log::info( '📢 Disparando NoteUpdated para: ' . $note_id2 );
+    Log::info( 'Ejecutando NoteUpdated para: ' . $note_id2 );
 
     // Inicializamos los valores a devolver
     $result   = 0;
@@ -435,6 +418,126 @@ class NoteController extends Controller
     return response()->json( [
         'result'  => 1
       , 'items'   => $items
+    ] );
+  }
+
+  /**
+   * GET /api/galaxyGraph
+   *
+   * Devuelve el array 'nodes' y 'links' para GalaxyGraph
+   * a partir del resultado de búsqueda.
+   *
+   * @param  Request $request
+   * @return JsonResponse
+   */
+  public function galaxyGraph( Request $request ): JsonResponse
+  {
+    // Identificador del usuario autenticado
+    // $user_id = ( int ) $request->user()->id;
+    $user_id = 1;
+    $user_db = tenant( $user_id );
+
+    // Obtenemos todas las notas (propias + compartidas)
+    $notes = NoteService::GetNotes( $user_id );
+
+    // Obtenemos todas las carpetas del usuario (que coincidan con el searchQuery)
+    $folders = FolderNote::on( $user_db )
+      ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id' ] )
+      ->get();
+
+    // Mapeamos notas al formato común { id, id2, title, parent_id }
+    $notesArray = $notes
+      ->map( fn( $note ) => [
+          'id'        => $note->note_id
+        , 'id2'       => $note->note_id2
+        , 'title'     => $note->note_title
+        , 'parent_id' => $note->parent_id
+        , 'type'      => 'note'
+      ] )
+      ->toArray();
+
+    // Mapeamos carpetas al mismo formato
+    $foldersArray = $folders
+      ->map( fn( $folder ) => [
+          'id'        => $folder->folder_id
+        , 'id2'       => $folder->folder_id2
+        , 'title'     => $folder->folder_title
+        , 'parent_id' => $folder->parent_id
+        , 'type'      => 'folder'
+      ] )
+      ->toArray();
+
+    // Unimos ambos arrays
+    $items = array_merge( $foldersArray, $notesArray );
+
+    // ---------------------------------------------------------------------------
+    // GalaxyGraph: nodos y enlaces agrupados por carpeta-tema (estilo kodalizado)
+    // ---------------------------------------------------------------------------
+
+    $nodes         = [];
+    $links         = [];
+    $group_count   = 1;
+    $folder_groups = []; // folder_id2 => group
+
+    // Añadimos carpetas como nodos-tema
+    foreach( $items as $item )
+    {
+      if( $item['type'] === 'folder' )
+      {
+        $group = $group_count++;
+        $nodes[] = [
+            'id'    => $item['id2']
+          , 'name'  => $item['title']
+          , 'type'  => 'folder'
+          , 'group' => $group
+        ];
+        $folder_groups[ $item['id2'] ] = $group;
+      }
+    }
+
+    // Añadimos notas como nodos y enlaces a su carpeta-tema
+    foreach( $items as $item )
+    {
+      if( $item['type'] !== 'note' )
+        continue;
+
+      // Buscamos el grupo (tema) de la carpeta padre
+      $group = 0;
+      if( isset( $item['parent_id'] ) )
+      {
+        foreach( $items as $folder )
+        {
+          if( $folder['type'] === 'folder' && $folder['id'] == $item['parent_id'] )
+          {
+            $group = $folder_groups[ $folder['id2'] ] ?? 0;
+
+            // Enlace: nota --> carpeta
+            $links[] = [
+                'source' => $folder['id2']
+              , 'target' => $item['id2']
+            ];
+            break;
+          }
+        }
+      }
+
+      // Añadimos el nodo de la nota
+      $nodes[] = [
+          'id'    => $item['id2']
+        , 'name'  => $item['title']
+        , 'type'  => 'note'
+        , 'group' => $group
+      ];
+    }
+
+    // ---------------------------------------------------------------------------
+    // Respuesta final con el formato para GalaxyGraph (mismo estilo kodalizado)
+    // ---------------------------------------------------------------------------
+
+    return response()->json( [
+        'result' => 1
+      , 'nodes'  => $nodes
+      , 'links'  => $links
     ] );
   }
 }

@@ -106,6 +106,9 @@ const FilesPanel = () => {
         throw new Error( 'Error al leer la nota' );
 
       window.set_markdown( http_data.note.markdown );
+      
+      // Forzamos la recarga del MarkdownEditor
+      window.setKey( k => k + 1 );
 
     } catch ( error ) {
       console.log( error );

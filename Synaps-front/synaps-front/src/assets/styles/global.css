@@ -1382,3 +1382,42 @@ rect {
 /*--------------------------------------*/
 
 /* === END LOGIN CLASSES === */
+
+.loading-icon-container {
+
+  & {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
+  
+  & .status-icon {
+    width: 50px;
+    height: 50px;
+    stroke-width: 2px;
+    /* Entrada con pequeño retraso respecto al contenedor */
+    animation: popIn 0.3s ease 0.1s both;
+  }
+
+  & .status-icon.loading {
+    color: #808080;
+  }
+
+  /* Animación de rotación para el spinner con suavizado en los bordes */
+  & .animate-spin {
+    animation: spin 1.4s linear infinite;
+    /* Evitar escalones en la animación */
+    transform-origin: center;
+    backface-visibility: hidden;
+    will-change: transform;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

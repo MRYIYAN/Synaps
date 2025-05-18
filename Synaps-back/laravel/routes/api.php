@@ -95,3 +95,10 @@ Route::get( '/readNote', [NoteController::class, 'readNote'] );
  * @see NoteController::saveNote()
  */
 Route::patch( '/notes/{note_id2}', [NoteController::class, 'saveNote'] );
+
+/**
+ * Datos de la Vista de Galaxia.
+ *
+ * @see NoteController::galaxyGraph()
+ */
+Route::get( '/galaxyGraph', [NoteController::class, 'galaxyGraph'] );
