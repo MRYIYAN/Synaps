@@ -77,6 +77,12 @@
     height: 100%;
   }
 
+  &>div>div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
   &>div,
   &>div>div {
     height: 100%;

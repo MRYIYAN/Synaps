@@ -11,8 +11,7 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Clase que representa a los usuarios del sistema.
@@ -22,10 +21,8 @@ use Illuminate\Notifications\Notifiable;
  * @property string $user_name
  * @property string $user_password
  */
-class User extends Authenticatable
+class User extends Model
 {
-    use Notifiable;
-
     //---------------------------------------------------------------------------//
     //  Define la tabla asociada al modelo y la clave primaria.                  //
     //---------------------------------------------------------------------------//

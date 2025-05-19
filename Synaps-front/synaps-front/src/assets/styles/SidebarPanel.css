@@ -363,7 +363,7 @@ pre {
   z-index: 5;
   overflow-y: auto;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-  overflow: visible;
+  overflow: scroll;
 }
 
 /* Header para el panel derecho */
@@ -1231,10 +1231,12 @@ body.modal-open {
   margin-top: auto;
   padding: 8px;
   padding-right: 0; /* Eliminado padding derecho */
-  position: relative;
   box-sizing: border-box;
   margin-right: 0; /* Asegurar que no haya margen derecho */
   border-right: none; /* Eliminar posible borde */
+
+  position: sticky;
+  bottom: 0;
 }
 
 /* Ajustar padding para elementos internos */

@@ -97,7 +97,7 @@ export default function NoteItem( {
       }
 
       {/* Título de la nota */}
-      <span className={styles.title}>{title}</span>
+      <span title={title} className={styles.title}>{title}</span>
       <ContextMenu
         options={menuOptions}
         x={menuPos.x - 50}

@@ -243,20 +243,20 @@ class NoteController extends Controller
       if( !empty( $data['first'] ) && $data['first'] == true )
       {
         $data['note_id2'] = Note::on( $user_db )
-          ->orderBy( 'note_id', 'asc' ) // Ordenamos alfabéticamente por el campo 'note_title'
+          ->orderBy( 'note_id', 'asc' ) // Ordenamos alfabéticamente por el campo 'note_id'
           ->value( 'note_id2' );
       }
 
       // Buscamos la nota según note_id2
       $note_row = Note::on( $user_db )
         ->where( 'note_id2', $data['note_id2'] )
-        ->firstOrFail();
+        ->first();
 
       // Preparamos los datos de la nota
       $note = [
-          'title'            => $note_row->note_title
-        , 'markdown'         => $note_row->note_markdown
-        , 'last_update_date' => $note_row->last_update_date
+          'title'            => $note_row->note_title       ?? ''
+        , 'markdown'         => $note_row->note_markdown    ?? ''
+        , 'last_update_date' => $note_row->last_update_date ?? ''
       ];
 
       // Si llegamos hasta aquí está todo OK

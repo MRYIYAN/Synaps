@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use Exception;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Vault;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 use Firebase\JWT\JWT;
@@ -37,6 +37,7 @@ class VaultController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+<<<<<<< HEAD
         //======================//
         // LOGS DE DEPURACIÓN   //
         //======================//
@@ -53,6 +54,57 @@ class VaultController extends Controller
                 'auth_user_id' => $user_id,
                 'auth_user_email' => $user?->email,
             ]);
+=======
+        // Inicializamos variables de respuesta
+        $result   = 0;
+        $message  = '';
+        $vaults   = [];
+        
+        try
+        {
+            // Capturamos el TOKEN de la petición
+            // $jwt = $request->bearerToken();
+            $jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwibmFtZSI6IlVzdWFyaW8gZGUgcHJ1ZWJhIiwicHJlZmVycmVkX3VzZXJuYW1lIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTc0NzU5OTUzMiwiZXhwIjoxNzQ3NjAzMTMyLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDUiLCJhdWQiOiJhY2NvdW50In0.Ioxv4Sov_CnDKIP1fNjKGcgUEAW3Q2T83ceJ7MFMS8s';
+
+            // Decodificamos el token para capturar sus datos
+            $jwt_data = JWT::decode( $jwt, new Key( env( 'FLASK_SECRET_KEY' ), 'HS256' ) );
+
+            /*
+                Array | jwt_data
+                [
+                    [sub] => 1,
+                    [email] => test@example.com,
+                    [name] => Usuario de prueba,
+                    [preferred_username] => test@example.com,
+                    [iat] => 1747597332,
+                    [exp] => 1747600932,
+                    [iss] => http://localhost:5005/,
+                    [aud] => account
+                ]
+            */
+
+            // Capturamos los datos del JWT
+            if( empty( $jwt_data->sub ) || empty( $jwt_data->email ) )
+                throw new Exception( 'JWT inválido' );
+            else
+            {
+                $user_id    = $jwt_data->sub;
+                $user_email = $jwt_data->email;
+            }
+
+            // Inicializamos la sesión en MySQL para capturar los Vaults
+            $user_db    = tenant( $user_id );
+            $user_main  = tenant();
+
+            // Si no se han enviado los datos obligatorios, hacemos saltar una excepción
+            if( $user_id === 0 )
+                throw new Exception( 'Usuario no autenticado' );
+            
+            // Buscar su user_id en la tabla 'users' de la base 'synaps'
+            $user_row = User::on( $user_main )
+                ->where( 'user_email', $user_email )
+                ->firstOrFail();
+>>>>>>> 9c98304 ([FEATURE] GVista de Galaxia conectada con la DB)
 
             //========================//
             // VALIDACIÓN DE USUARIO  //
@@ -64,6 +116,7 @@ class VaultController extends Controller
                 ], 401);
             }
 
+<<<<<<< HEAD
             //==============================//
             // CONEXIÓN DINÁMICA AL TENANT  //
             //==============================//
@@ -93,6 +146,27 @@ class VaultController extends Controller
                 'error' => 'Fallo en VaultController@index',
                 'message' => $e->getMessage()
             ], 401);
+=======
+            // Buscar las vaults por user_id 
+            $vaults = Vault::on( $user_db )
+                ->where( 'user_id', $user_row->user_id )
+                ->get();
+
+            $result = 1;
+        }
+        catch( Exception $e )
+        {
+            $message = $e->getMessage();
+        }
+        finally
+        {
+            // Respuesta JSON
+            return response()->json( [
+                    'result'  => $result
+                ,   'message' => $message
+                ,   'vaults'   => $vaults
+            ], $result ? 201 : 500 );
+>>>>>>> 9c98304 ([FEATURE] GVista de Galaxia conectada con la DB)
         }
     }
 

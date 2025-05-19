@@ -86,11 +86,6 @@ class FolderNoteController extends Controller
           , 'children_count' => 0
         ] );
 
-      // Creamos la carpeta en el Vault
-      $folder_id_f = str_pad( $folder->folder_id, 4, '0', STR_PAD_LEFT );
-      $folder_name = $folder_id_f . '_' . $folder->folder_id2;
-      Storage::disk( 'app_contents' )->makeDirectory( $folder_name );
-
       // Determinamos si la operación fue exitosa
       $result = $folder ? 1 : 0;
     }

@@ -332,7 +332,9 @@ const FilesPanel = () => {
   //  Renderizado del componente FilesPanel                                  //
   //---------------------------------------------------------------------------//
   return (
-    <div className="search-panel">
+
+    <div>
+
       {/* Barra de herramientas horizontal con botones */}
       {/* Esta barra contiene los botones principales para las diferentes acciones */}
       <div className="toolbar-container">
@@ -383,112 +385,115 @@ const FilesPanel = () => {
         </div>
       </div>
 
-      {/* Contenedor para los formularios desplegables */}
-      {/* Agrupa todos los formularios que se muestran u ocultan según la interacción */}
-      <div className="input-group-container">
-        {/* Formulario para crear una nueva nota - visible solo cuando se activa */}
-        {visibleInputs.newNote && (
-          <form onSubmit={handleNewNoteSubmit} className="new-item-form">
-            <div className="new-item-input-container">
-              {/* Icono indicador del tipo de elemento a crear */}
-              <NewNoteIcon className="new-item-icon" />
-              {/* Campo para ingresar el nombre de la nueva nota */}
-              <input
-                type="text"
-                value={newNoteName}
-                onChange={( e ) => setNewNoteName( e.target.value )}
-                placeholder="Nombre de la nota"
-                className="new-item-input"
-                aria-label="Nombre de la nueva nota"
-                autoFocus  // Enfoca automáticamente este campo al aparecer
-              />
-            </div>
-          </form>
-        )}
+      <div className="search-panel">
 
-        {/* Formulario para crear una nueva carpeta - visible solo cuando se activa */}
-        {visibleInputs.newFolder && (
-          <form onSubmit={handleNewFolderSubmit} className="new-item-form">
-            <div className="new-item-input-container">
-              {/* Icono indicador del tipo de elemento a crear */}
-              <NewFolderIcon className="new-item-icon" />
-              {/* Campo para ingresar el nombre de la nueva carpeta */}
-              <input
-                type="text"
-                value={newFolderName}
-                onChange={( e ) => setNewFolderName( e.target.value )}
-                placeholder="Nombre de la carpeta"
-                className="new-item-input"
-                aria-label="Nombre de la nueva carpeta"
-                autoFocus  // Enfoca automáticamente este campo al aparecer
-              />
-            </div>
-          </form>
-        )}
+        {/* Contenedor para los formularios desplegables */}
+        {/* Agrupa todos los formularios que se muestran u ocultan según la interacción */}
+        <div className="input-group-container">
+          {/* Formulario para crear una nueva nota - visible solo cuando se activa */}
+          {visibleInputs.newNote && (
+            <form onSubmit={handleNewNoteSubmit} className="new-item-form">
+              <div className="new-item-input-container">
+                {/* Icono indicador del tipo de elemento a crear */}
+                <NewNoteIcon className="new-item-icon" />
+                {/* Campo para ingresar el nombre de la nueva nota */}
+                <input
+                  type="text"
+                  value={newNoteName}
+                  onChange={( e ) => setNewNoteName( e.target.value )}
+                  placeholder="Nombre de la nota"
+                  className="new-item-input"
+                  aria-label="Nombre de la nueva nota"
+                  autoFocus  // Enfoca automáticamente este campo al aparecer
+                />
+              </div>
+            </form>
+          )}
 
-        {/* Campo de búsqueda desplegable - visible solo cuando se activa */}
-        {visibleInputs.search && (
-          <form onSubmit={handleSearch} className="search-form">
-            <div className="search-input-container">
-              {/* Icono de búsqueda dentro del campo */}
-              <SearchIcon className="search-icon" />
-              {/* Campo para ingresar la consulta de búsqueda */}
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={( e ) => setSearchQuery( e.target.value )}
-                placeholder="Buscar"
-                className="search-input"
-                aria-label="Buscar en archivos"
-                autoFocus  // Enfoca automáticamente este campo al aparecer
-              />
-            </div>
-          </form>
-        )}
-      </div>
+          {/* Formulario para crear una nueva carpeta - visible solo cuando se activa */}
+          {visibleInputs.newFolder && (
+            <form onSubmit={handleNewFolderSubmit} className="new-item-form">
+              <div className="new-item-input-container">
+                {/* Icono indicador del tipo de elemento a crear */}
+                <NewFolderIcon className="new-item-icon" />
+                {/* Campo para ingresar el nombre de la nueva carpeta */}
+                <input
+                  type="text"
+                  value={newFolderName}
+                  onChange={( e ) => setNewFolderName( e.target.value )}
+                  placeholder="Nombre de la carpeta"
+                  className="new-item-input"
+                  aria-label="Nombre de la nueva carpeta"
+                  autoFocus  // Enfoca automáticamente este campo al aparecer
+                />
+              </div>
+            </form>
+          )}
 
-      {/* Sección de resultados de búsqueda (visible solo cuando hay búsqueda) */}
-      {/* Esta sección muestra los resultados, un indicador de carga o un mensaje de no resultados */}
-      {visibleInputs.search && (
-        <div className="search-results-section">
-          {/* Indicador de búsqueda en progreso - visible durante la búsqueda */}
-          {isSearching ? (
-            <div className="searching-indicator">
-              {/* Spinner animado para indicar carga */}
-              <span className="spinner"></span>
-              <span>Buscando...</span>
-            </div>
-          ) : searchQuery && searchResults.length === 0 ? (
-            /* Mensaje cuando no hay resultados pero se ha hecho una búsqueda */
-            <div className="no-results">
-              No se encontraron resultados para "{searchQuery}"
-            </div>
-          ) : searchResults.length > 0 && (
-            /* Lista de resultados de búsqueda - visible cuando hay resultados */
-            <div className="results-list">
-              {/* Mapeo de cada resultado a un elemento visual en la lista */}
-              {searchResults.map(result => (
-                <div key={result.id} className="result-item">
-                  {/* Cabecera del resultado con nombre y ruta del archivo */}
-                  <div className="result-header">
-                    <span className="result-filename">{result.fileName}</span>
-                    <span className="result-path">{result.path}</span>
-                  </div>
-                  {/* Información de la línea donde se encontró la coincidencia */}
-                  <div className="result-line-number">Línea: {result.line}</div>
-                  {/* Contexto del código con la coincidencia - muestra parte del archivo */}
-                  <pre className="result-context">{result.context}</pre>
-                </div>
-              ))}
-            </div>
+          {/* Campo de búsqueda desplegable - visible solo cuando se activa */}
+          {visibleInputs.search && (
+            <form onSubmit={handleSearch} className="search-form">
+              <div className="search-input-container">
+                {/* Icono de búsqueda dentro del campo */}
+                <SearchIcon className="search-icon" />
+                {/* Campo para ingresar la consulta de búsqueda */}
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={( e ) => setSearchQuery( e.target.value )}
+                  placeholder="Buscar"
+                  className="search-input"
+                  aria-label="Buscar en archivos"
+                  autoFocus  // Enfoca automáticamente este campo al aparecer
+                />
+              </div>
+            </form>
           )}
         </div>
-      )}
-    
-      {/* Contenedor del árbol de archivos */}
-      {/* Agrupa todos los archivos/notas del usuario */}
-      <div className="search-panel-tree" style={{ marginTop: 12 }}>
-        <NoteTree nodes={window.currentNotes} />
+
+        {/* Sección de resultados de búsqueda (visible solo cuando hay búsqueda) */}
+        {/* Esta sección muestra los resultados, un indicador de carga o un mensaje de no resultados */}
+        {visibleInputs.search && (
+          <div className="search-results-section">
+            {/* Indicador de búsqueda en progreso - visible durante la búsqueda */}
+            {isSearching ? (
+              <div className="searching-indicator">
+                {/* Spinner animado para indicar carga */}
+                <span className="spinner"></span>
+                <span>Buscando...</span>
+              </div>
+            ) : searchQuery && searchResults.length === 0 ? (
+              /* Mensaje cuando no hay resultados pero se ha hecho una búsqueda */
+              <div className="no-results">
+                No se encontraron resultados para "{searchQuery}"
+              </div>
+            ) : searchResults.length > 0 && (
+              /* Lista de resultados de búsqueda - visible cuando hay resultados */
+              <div className="results-list">
+                {/* Mapeo de cada resultado a un elemento visual en la lista */}
+                {searchResults.map(result => (
+                  <div key={result.id} className="result-item">
+                    {/* Cabecera del resultado con nombre y ruta del archivo */}
+                    <div className="result-header">
+                      <span className="result-filename">{result.fileName}</span>
+                      <span className="result-path">{result.path}</span>
+                    </div>
+                    {/* Información de la línea donde se encontró la coincidencia */}
+                    <div className="result-line-number">Línea: {result.line}</div>
+                    {/* Contexto del código con la coincidencia - muestra parte del archivo */}
+                    <pre className="result-context">{result.context}</pre>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      
+        {/* Contenedor del árbol de archivos */}
+        {/* Agrupa todos los archivos/notas del usuario */}
+        <div className="search-panel-tree" style={{ marginTop: 12, marginBottom: 12 }}>
+          <NoteTree nodes={window.currentNotes} />
+        </div>
       </div>
     </div>
   );

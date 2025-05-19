@@ -32,7 +32,7 @@ const GalaxyGraph = ( { data } ) => {
     ];
 
     // Saturación 70%, luminosidad 80% garantizan tonos pastel
-    return `hsl(${hue}, 70%, 80%)`;
+    return `hsl(${hue}, 70%, 75%)`;
   };
 
   /*
@@ -68,6 +68,7 @@ const GalaxyGraph = ( { data } ) => {
       group_colors[node.group] = generate_random_color();
   } );
 
+  console.log( data );
   // Calculamos el número de conexiones que tiene cada nodo
   let nodes_count = {};
   data.nodes.forEach( ( node ) => { nodes_count[node.id] = 0 } );
@@ -120,11 +121,11 @@ const GalaxyGraph = ( { data } ) => {
 
         // Solo mostramos el texto cuando haya suficiente zoom
         // Ajusta el valor 4 según la sensibilidad que quieras
-        if( graph_scale > 0.75 ) {
+        if( graph_scale > 0.50 ) {
 
           // Tamaño de la fuente
-          ctx.font      = `${14 / graph_scale}px Sans`;
-          ctx.fillStyle = '#7e7e7e';
+          ctx.font      = `${12 / graph_scale}px Arial, Sans, sans-serif`;
+          ctx.fillStyle = '#919090';
           ctx.fillText(
             node.name,                // Texto a mostrar
             node.x + radius + 2,      // Posición horizontal (x)
