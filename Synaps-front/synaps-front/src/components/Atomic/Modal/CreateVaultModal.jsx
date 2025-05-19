@@ -284,6 +284,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     setStatusMessage('Creando vault...');
 
     try {
+      const access_token = localStorage.getItem('access_token');
       console.log(" Enviando petición para crear vault:", {
         vault_title: vaultName.trim(),
         logical_path: logicalPath.trim(),
@@ -293,8 +294,8 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       const response = await fetch('http://localhost:8010/api/vaults', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          'Authorization': `Bearer ${access_token}`,   //  obligatorio SIEMPRE RECORDAR CHICOS
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           vault_title: vaultName.trim(),

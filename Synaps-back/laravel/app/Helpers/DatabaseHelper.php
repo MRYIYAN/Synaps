@@ -1,40 +1,46 @@
 <?php
 
-/**
- * @file DatabaseHelper.php
- * @description Helper para cambiar la base de datos activa de la conexión mysql en tiempo de ejecución.
- *
- * @package App\Helpers
- */
+//===========================================================================//
+//                            HELPER DATABASE                                //
+//===========================================================================//
+//  Helper para cambiar la base de datos activa de la conexión mysql         //
+//  en tiempo de ejecución según el tenant (usuario).                        //
+//===========================================================================//
 
 namespace App\Helpers;
 
-use Illuminate\Support\Facades\Config;
-
 /**
- * Devuelve el nombre de la conexión para un tenant dado.
- *
- * @param int|null $tenant_id ID numérico del tenant (null = conexión default)
- * @return string             Nombre de la conexión configurada
+ * Clase de utilidad para gestionar conexiones dinámicas a bases de datos tenant.
  */
-function tenant( ?int $tenant_id = null ): string
+class DatabaseHelper
 {
-  // Si es global, devolvemos la conexión por defecto
-  if( $tenant_id === null )
-    return config( 'database.default' );
+    /**
+     * Cambia la conexión activa a la base de datos del tenant correspondiente.
+     *
+     * @param int $tenant_id  ID numérico del tenant (usuario)
+     * @return string         Nombre de la conexión configurada ('tenant')
+     */
+    public static function connect(int $tenant_id): string
+    {
+        // Construye el nombre de la base de datos: synaps_0001, synaps_0002, ...
+        $databaseName = 'synaps_' . str_pad((string)$tenant_id, 4, '0', STR_PAD_LEFT);
 
-  // Nombre único para esta conexión
-  $conn_name = 'tenant_' . $tenant_id;
+        // Inyecta la nueva conexión en runtime con el nombre 'tenant'
+        config([
+            "database.connections.tenant" => [
+                "driver" => "mysql",
+                "host" => env("DB_HOST", "127.0.0.1"),
+                "port" => env("DB_PORT", "3306"),
+                "database" => $databaseName,
+                "username" => env("DB_USERNAME", "root"),
+                "password" => env("DB_PASSWORD", ""),
+                "charset" => "utf8mb4",
+                "collation" => "utf8mb4_unicode_ci",
+                "prefix" => "",
+                "prefix_indexes" => true,
+            ]
+        ]);
 
-  // Construimos el nombre de la base de datos: synaps_0001, synaps_0002, ...
-  $db_name = 'synaps_' . str_pad( (string)$tenant_id, 4, '0', STR_PAD_LEFT );
-
-  // Clonamos la configuración mysql y cambiamos la base de datos
-  $base = config( 'database.connections.mysql' );
-  $base['database'] = $db_name;
-
-  // Inyectamos la nueva conexión en runtime
-  Config::set( "database.connections.{$conn_name}", $base );
-
-  return $conn_name;
+        return 'tenant';
+    }
 }

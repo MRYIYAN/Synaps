@@ -95,18 +95,14 @@ class User extends Authenticatable
         return $this->user_password;
     }
 
-    //---------------------------------------------------------------------------//
-    //  Obtiene el identificador del usuario para la autenticación.              //
-    //---------------------------------------------------------------------------//
-
-    /**
-     * Devuelve el nombre del campo usado como identificador único.
-     *
-     * @return string
-     */
-    public function getAuthIdentifierName(): string
+    public function getAuthIdentifier()
     {
-        return 'user_email';
+        return $this->user_id; // ID del usuario
+    }
+
+    public function getAuthIdentifierName()
+    {
+        return 'user_id';
     }
 }
 //===========================================================================//

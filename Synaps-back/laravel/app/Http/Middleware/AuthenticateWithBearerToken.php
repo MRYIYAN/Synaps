@@ -3,91 +3,68 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-//===========================================================================//
-//                                MIDDLEWARE                                 //
-//===========================================================================//
+use App\Models\User; //  NECESARIO
 
 /**
- * Middleware para autenticar solicitudes usando un token Bearer.
+ * Middleware para autenticar solicitudes usando un token Bearer JWT.
+ *
+ * Extrae el token del header Authorization, lo decodifica y
+ * establece el usuario autenticado en el contexto de Laravel.
+ *
+ * @package App\Http\Middleware
  */
 class AuthenticateWithBearerToken
 {
-
     /**
-     * Manejar una solicitud entrante.
+     * Maneja una solicitud entrante y autentica usando JWT Bearer.
      *
-     * @param Request $request La solicitud HTTP.
-     * @param Closure $next La siguiente acción en la cadena de middleware.
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
     {
-        //---------------------------------------------------------------------------//
-        //  Obtener el header Authorization                                          //
-        //---------------------------------------------------------------------------//
-        $authorizationHeader = $request->header('Authorization');
-        // Inicializamos el resultado y mensaje
-        $result  = 0;
-        $message = '';
+        $token = null;
 
+        if ($request->hasHeader('Authorization')) {
+            $authHeader = $request->header('Authorization');
+            if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+                $token = $matches[1];
+            }
+        }
+
+        if (!$token) {
+            return response()->json(['error' => 'Token no proporcionado'], 401);
+        }
+
+        $key = env('FLASK_SECRET_KEY');
+        Log::debug('TOKEN:', [$token]);
+        Log::debug('HS256_KEY:', [$key]);
 
         try {
-            // Comprobamos si existe el header y es tipo Bearer
-            if (!$authorizationHeader || !str_starts_with($authorizationHeader, 'Bearer ')) {
-                throw new Exception('Unauthorized: No Bearer Token');
+            $payload = JWT::decode($token, new Key($key, 'HS256'));
+            $payload = (array)$payload;
+
+            $user_id = $payload['sub'] ?? null;
+            if (!$user_id) {
+                return response()->json(['error' => 'Token inválido: sin ID'], 401);
             }
 
-            // Extraemos el token eliminando 'Bearer '
-            $token = substr($authorizationHeader, 7);
+            $user = User::find($user_id); //  Este sí es Authenticatable
 
-            $secretKey = env('HS256_KEY') ?? env('FLASK_SECRET_KEY', 'SYNAPS_SUPER_SECRET');
-            \Log::debug('TOKEN:', [$token]);
-            \Log::debug('HS256_KEY:', [$secretKey]);
-
-            try {
-                $payload = JWT::decode($token, new Key($secretKey, 'HS256'));
-
-                // Setear el usuario autenticado en Laravel
-                $user = new \App\Models\User();
-                $user->user_id = intval($payload->sub ?? 0); // usa el ID numérico del token
-                $user->user_email = $payload->email ?? null;
-                $user->user_name = $payload->name ?? null;
-
-                // Inyectar el payload decodificado como array
-                $request->attributes->add([
-                    'token_data' => (array) $payload
-                ]);
-                // Setear el user_id correcto en los atributos de la request
-                $request->attributes->set('user_id', intval($payload->sub ?? 0));
-                // Setear el usuario autenticado en el request
-                $request->setUserResolver(function () use ($payload) {
-                    return (array) $payload;
-                });
-                auth()->setUser($user); // necesario para que auth funcione correctamente
-
-                // Pasamos al siguiente middleware/controlador
-                return $next($request);
-
-            } catch (\Exception $e) {
-                return response()->json([
-                    'error' => 'Token inválido o expirado',
-                    'message' => $e->getMessage()
-                ], 401);
+            if (!$user) {
+                return response()->json(['error' => 'Usuario no encontrado'], 401);
             }
 
-        } catch (Exception $e) {
-            // Manejar errores de decodificación del token
-            return response()->json([
-                'message' => 'Token inválido',
-                'error' => $e->getMessage(),
-                'result'  => $result,
-            ], Response::HTTP_UNAUTHORIZED);
+            auth()->setUser($user); //  Debe funcionar
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Token inválido o expirado'], 401);
         }
+
+        return $next($request);
     }
 }

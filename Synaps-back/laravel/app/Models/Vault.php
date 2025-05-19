@@ -34,6 +34,12 @@ class Vault extends Model
     public $timestamps = false;
 
     /**
+     * Conexión personalizada para el modelo.
+     * @var string
+     */
+    protected $connection = 'tenant'; // IMPORTANTE CAMBIAR A tenant SJAKHDSJAKD
+
+    /**
      * Campos que pueden ser asignados masivamente.
      * @var array
      */

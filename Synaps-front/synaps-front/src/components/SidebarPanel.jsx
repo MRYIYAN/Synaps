@@ -67,26 +67,16 @@ const SidebarPanel = () => {
     const fetchVaults = async () => {
       try {
         console.log(" Solicitando vaults desde la API...");
-        const token = localStorage.getItem('access_token');
+
+        const accessToken = localStorage.getItem('access_token');
         const response = await fetch('http://localhost:8010/api/vaults', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
-        if(response.ok) {
-          const { data } = await response.json();
-          console.log(" Vaults cargados de la DB:", data);
-          const formattedVaults = Array.isArray(data)
-            ? data.map(v => ({
-                ...v,
-                name: v.vault_title,
-                id: v.vault_id2
-              }))
-            : [];
-          setVaults(formattedVaults);
-        } else {
-          setVaults([]);
-        }
+        const vaults = await response.json();
+        console.log(' Vaults cargados de la DB:', vaults);
+        setVaults(vaults);
       } catch (e) {
         console.error(" Error al cargar vaults:", e);
         setVaults([]);
