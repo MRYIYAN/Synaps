@@ -156,7 +156,7 @@ class VaultController extends Controller
 
             Log::debug( 'Datos a insertar:', [$insertData] );
 
-            DB::connection( 'tenant' )->table( 'vaults' )->insert( $insertData); //  Aquí se hace la inserci ón
+            DB::connection( 'tenant' )->table( 'vaults' )->insert( $insertData ); //  Aquí se hace la inserci ón
 
             Log::debug( 'Insert OK' ); //  LUEGO DE INSERTAR
 
