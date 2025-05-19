@@ -11,7 +11,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Clase que representa a los usuarios del sistema.
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $user_name
  * @property string $user_password
  */
-class User extends Model
+class User extends Authenticatable
 {
     //---------------------------------------------------------------------------//
     //  Define la tabla asociada al modelo y la clave primaria.                  //

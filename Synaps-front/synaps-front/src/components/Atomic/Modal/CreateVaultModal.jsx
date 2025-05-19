@@ -308,9 +308,8 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
 
       const result = await response.json();
 
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || 'Error desconocido al crear vault');
-      }
+      if( result.result !== 1 )
+        throw new Error( result.message || 'Error desconocido al crear vault' );
 
       // Muestra el popup de éxito inmediatamente
       setStatusPopup(STATUS.SUCCESS);
