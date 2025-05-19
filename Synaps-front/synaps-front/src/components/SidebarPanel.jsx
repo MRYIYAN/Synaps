@@ -24,7 +24,7 @@ const navigationItems = [
   { id: "files", label: "Archivos", icon: FoldersIcon },
   { id: "galaxyview", label: "Vista de galaxia", icon: GalaxyViewIcon, url: 'galaxyview' },
   { id: "list-todo", label: "Lista de tareas", icon: ListTodoIcon },
-  { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
+  // { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
 ];
 
 // Mapeo de componentes de panel por ID
@@ -32,7 +32,7 @@ const panelComponents = {
   "files": FilesPanel,
   "galaxyview": GalaxyViewPanel,
   "list-todo": ListTodoPanel,
-  "secret-notes": SecretNotesPanel,
+  // "secret-notes": SecretNotesPanel,
 };
 
 const SidebarPanel = () => {

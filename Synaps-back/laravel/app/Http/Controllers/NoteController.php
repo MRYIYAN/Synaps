@@ -19,7 +19,8 @@ use App\Models\FolderNote;
 use App\Services\NoteService;
 use App\Services\VaultService;
 use App\Events\NoteUpdated;
-use function App\Helpers\tenant;
+
+use App\Helpers\DatabaseHelper;
 
 /**
  * Controlador para crear notas y carpetas en Synaps.
@@ -58,7 +59,7 @@ class NoteController extends Controller
       // Obtenemos el identificador del usuario autenticado
       // $user_id = ( int ) $request->user()->id;
       $user_id = 1;
-      $user_db = tenant( $user_id );
+      $user_db = DatabaseHelper::connect( $user_id );
 
       // Calculamos el parent_id (0 = root)
       $parent_id = 0;
@@ -70,8 +71,8 @@ class NoteController extends Controller
           ->first();
 
         // En caso de que no exista el registro en esa tabla, buscamos si es una nota y capturamos el padre
-        if( $parent )
-          $parent_id = ( int ) $parent->folder_id;
+        if( $parent && $parent->folder_id )
+          $parent_id = ( int ) $parent->folder_id;         
         
         else
         {
@@ -89,15 +90,15 @@ class NoteController extends Controller
       // Devuelve si existen una nota en el mismo nivel y con el mismo nombre
       $exists = Note::on( $user_db )
         ->where( 'parent_id', $parent_id )
-        ->where( 'note_title', $data['newNoteName'] )
-        ->exists(); // bool
+        ->whereRaw( 'BINARY note_title = ?', [$data['newNoteName']] )
+        ->exists();
 
       // Si existe una nota en el mismo nivel y con el mismo nombre, mostramos una alerta
       if( $exists == true )
         throw new Exception( 'Esta nota ya existe' );
 
       // Si no es Root, incrementamos el número de hijos del padre
-      if( $parent_id !== 0 )
+      if( $parent_id !== 0 && $parent )
         $parent->incrementChildrenCount();
 
       // Creamos la nueva nota en la base de datos del usuario
@@ -152,7 +153,7 @@ class NoteController extends Controller
       // Identificador del usuario autenticado
       // $user_id = ( int ) $request->user()->id;
       $user_id = 1;
-      $user_db = tenant( $user_id );
+      $user_db = DatabaseHelper::connect( $user_id );
 
       // Obtenemos todas las notas (propias + compartidas)
       $notes = NoteService::GetNotes( $user_id, '', $data['parent_id'] );
@@ -229,7 +230,6 @@ class NoteController extends Controller
 
     try
     {
-
       // Validamos los datos recibidos
       $data = $request->validate( [
           'note_id2' => 'nullable|string'
@@ -237,7 +237,8 @@ class NoteController extends Controller
       ] );
 
       // Inicializamos la conexión de DB
-      $user_db = tenant( $user_id );
+      $user_db    = DatabaseHelper::connect( $user_id );
+      $connection = DatabaseHelper::connect( $user_id );
 
       // Si pedimos el primer registro, lo buscamos
       if( !empty( $data['first'] ) && $data['first'] == true )
@@ -298,7 +299,7 @@ class NoteController extends Controller
     // Obtenemos el identificador del usuario autenticado
     // $user_id = ( int ) $request->user()->id;
     $user_id = 1;
-    $user_db = tenant( $user_id );
+    $user_db = DatabaseHelper::connect( $user_id );
     
     // Validamos los datos mandados por Redis
     $data = $request->validate( [
@@ -370,7 +371,7 @@ class NoteController extends Controller
       // Identificador del usuario autenticado
       // $user_id = ( int ) $request->user()->id;
       $user_id = 1;
-      $user_db = tenant( $user_id );
+      $user_db = DatabaseHelper::connect( $user_id );
 
       // Obtenemos todas las notas (propias + compartidas)
       $notes = NoteService::GetNotes( $user_id, $data['searchQuery'] );
@@ -442,7 +443,7 @@ class NoteController extends Controller
       // Identificador del usuario autenticado
       // $user_id = ( int ) $request->user()->id;
       $user_id = 1;
-      $user_db = tenant( $user_id );
+      $user_db = DatabaseHelper::connect( $user_id );
 
       // Obtenemos todas las notas (propias + compartidas)
       $notes = NoteService::GetNotes( $user_id );

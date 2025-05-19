@@ -29,13 +29,13 @@ class AuthController extends Controller
      */
     public function loginCheck( Request $request )
     {
-        $user = $request->attributes->get('token_data', []);
+        $user = $request->attributes->get( 'token_data', [] );
 
         return response()->json([
             'result' => 1,
             'message' => 'Token válido',
             'user' => $user
-        ]);
+        ] );
     }
 
 

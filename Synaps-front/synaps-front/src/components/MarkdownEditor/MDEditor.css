@@ -3,7 +3,8 @@
   display: flex;
   height: 100vh;
   background: var(--vscode-editor-background);
-  color: var(--vscode-editor-foreground)
+  color: var(--vscode-editor-foreground);
+  overflow: hidden;
 }
 
 .layout-markdown-editor>.sidebar-panel {

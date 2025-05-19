@@ -244,7 +244,7 @@ const FilesPanel = () => {
     if( !newNoteName.trim() ) return;
 
     // Preparamos los datos para el post
-    let url   = 'http://localhost:8010/api/addNote';
+    let url  = 'http://localhost:8010/api/addNote';
     let body = {
       newNoteName: newNoteName,
       parent_id2: window.selectedItemId2
@@ -270,6 +270,7 @@ const FilesPanel = () => {
 
       // Marcamos como seleccionado el nuevo item
       setSelectedItemId2( data.note_id2 );
+      window.readNote( data.note_id2 );
       return updated;
     } );
     
@@ -285,7 +286,7 @@ const FilesPanel = () => {
     if( !newFolderName.trim() ) return;  // No hace nada si el nombre está vacío
     
     // Preparamos los datos para el post
-    let url   = 'http://localhost:8010/api/addFolder';
+    let url  = 'http://localhost:8010/api/addFolder';
     let body = {
       newFolderName: newFolderName,
       parent_id2: window.selectedItemId2

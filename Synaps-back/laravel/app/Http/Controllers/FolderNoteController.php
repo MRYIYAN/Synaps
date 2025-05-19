@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 use App\Models\FolderNote;
 use Exception;
 
-use function App\Helpers\tenant;
+use App\Helpers\DatabaseHelper;
 
 /**
  * Controlador para crear carpetas en Synaps.
@@ -48,7 +48,7 @@ class FolderNoteController extends Controller
       $user_id2 = 'F7D8S9FG78F9DG78D9F7G89DF789FDGU';
 
       // Inicializamos las conexiones de DB
-      $user_db  = tenant( $user_id );
+      $user_db = DatabaseHelper::connect( $user_id );
 
       // Calculamos el parent_id (0 = root)
       $parent_id = 0;
@@ -60,14 +60,15 @@ class FolderNoteController extends Controller
           ->first();
 
         // Capturamos el id
-        $parent_id = ( int ) $parent->folder_id;
+        if( $parent && $parent->folder_id )
+          $parent_id = ( int ) $parent->folder_id;
       }
 
       // Devuelve si existen una carpeta en el mismo nivel y con el mismo nombre
       $exists = FolderNote::on( $user_db )
         ->where( 'parent_id', $parent_id )
-        ->where( 'folder_title', $data['newFolderName'] )
-        ->exists(); // bool
+        ->whereRaw( 'BINARY folder_title = ?', [$data['newFolderName']] )
+        ->exists();
 
       // Si existe una carpeta en el mismo nivel y con el mismo nombre, mostramos una alerta
       if( $exists == true )

@@ -1,16 +1,17 @@
 <?php
+
 /**
  * @file NoteService.php
  * @description Servicio para obtener notas propias y compartidas de un usuario
  */
-declare( strict_types=1 );
 
 namespace App\Services;
 
 use App\Models\Note;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use function App\Helpers\tenant;
+
+use App\Helpers\DatabaseHelper;
 
 class NoteService
 {
@@ -25,8 +26,8 @@ class NoteService
   public static function GetNotes( int $user_id, string $query = '', int $parent_id = 0 ) : Collection
   {
     // Inicializamos las conexiones de DB
-    $user_db  = tenant( $user_id );
-    $main_db  = tenant();
+    $user_db = DatabaseHelper::connect( $user_id );
+    $main_db = DatabaseHelper::connect();
 
     // Inicializamos la consulta filtrando por las notas del usuario
     // Recorremos cada nota y añade el atributo source = 'own'
@@ -49,7 +50,7 @@ class NoteService
     // Iteramos cada relación y la buscamos en la DB del owner
     foreach( $relations as $owner_id => $group )
     {
-      $owner_db = tenant( $owner_id );
+      $owner_db = DatabaseHelper::connect( $owner_id );
 
       // Capturamos el array de note_id2 del grupo de relaciones
       $note_ids = $group->pluck( 'note_id2' )->all();
