@@ -44,6 +44,7 @@ function App() {
           {/* Rutas de la parte de la Landing */}
           {/* --------------------------------------------------------------- */}
           <Route path="/"                 element={<Landing         />} />
+          <Route path="/landing"          element={<Landing         />} /> 
           <Route path="/register"         element={<Register        />} />
           <Route path="/login"            element={<Login           />} />
 

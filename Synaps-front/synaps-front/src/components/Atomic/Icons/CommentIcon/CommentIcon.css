@@ -1,0 +1,47 @@
+.message-square-more-icon {
+  overflow: visible;
+}
+
+.dot {
+  opacity: 1;
+  transition: opacity 0.1s ease;
+}
+
+.message-square-more-icon.animate .dot {
+  animation: dotAnimation 1.5s infinite;
+}
+
+.message-square-more-icon.animate .dot1 {
+  animation-delay: 0s;
+}
+
+.message-square-more-icon.animate .dot2 {
+  animation-delay: 0.1s;
+}
+
+.message-square-more-icon.animate .dot3 {
+  animation-delay: 0.2s;
+}
+
+@keyframes dotAnimation {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  10%,
+  20% {
+    opacity: 0;
+  }
+  30%,
+  50% {
+    opacity: 1;
+  }
+  60%,
+  70% {
+    opacity: 0;
+  }
+  80%,
+  90% {
+    opacity: 1;
+  }
+}

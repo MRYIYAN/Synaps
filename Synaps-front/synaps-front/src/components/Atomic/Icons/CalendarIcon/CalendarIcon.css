@@ -1,0 +1,20 @@
+.dot {
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+.dot.animate {
+  animation: pulse 0.8s;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}

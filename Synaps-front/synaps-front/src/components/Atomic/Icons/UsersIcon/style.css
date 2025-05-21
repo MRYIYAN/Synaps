@@ -1,0 +1,16 @@
+.users-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent; /* Aseguramos que no haya fondo */
+}
+
+.users-icon {
+  overflow: visible;
+  background-color: transparent; /* Aseguramos que el SVG no tenga fondo */
+}
+
+.users-icon path,
+.users-icon circle {
+  transition: all 0.3s ease;
+}

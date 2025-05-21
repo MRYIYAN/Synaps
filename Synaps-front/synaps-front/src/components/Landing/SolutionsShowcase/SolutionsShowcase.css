@@ -1,0 +1,303 @@
+/*===========================================================================*/
+/*                   ESTILOS DE LA SECCIÓN DE SOLUCIONES                     */
+/*===========================================================================*/
+/* Este archivo contiene los estilos para el componente SolutionsShowcase que  */
+/* presenta las principales soluciones de Synaps. Incluye estilos para títulos */
+/* con tipografía personalizada, layout de dos columnas, tarjetas interactivas */
+/* y animaciones para los iconos SVG que representan cada solución.            */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/* Importación de fuente especial para título de sección                     */
+/*---------------------------------------------------------------------------*/
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor principal de la sección                                        */
+/*---------------------------------------------------------------------------*/
+.solutions-section {
+  padding: 100px 0;                        /* Espaciado vertical generoso */
+  background-color: var(--dark_void);      /* Fondo oscuro consistente */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Título principal de la sección (estilo base)                              */
+/*---------------------------------------------------------------------------*/
+.solutions-title {
+  text-align: center;                      /* Centrado horizontal */
+  margin-bottom: 60px;                     /* Espacio inferior generoso */
+  text-transform: uppercase;               /* Todo en mayúsculas para destacar */
+  font-size: 2.5rem;                       /* Tamaño grande */
+  letter-spacing: 1px;                     /* Espaciado entre letras */
+  color: var(--snow);                      /* Color blanco */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Título con fuente especial "Dune Rise" y efecto de gradiente              */
+/*---------------------------------------------------------------------------*/
+.solutions-title.dune-rise-font {
+  font-family: 'Dune Rise', 'Orbitron', sans-serif; /* Fallback a Orbitron */
+  text-align: center;                      /* Centrado horizontal */
+  margin-bottom: 60px;                     /* Espacio inferior generoso */
+  text-transform: uppercase;               /* Todo en mayúsculas para destacar */
+  font-size: 2.5rem;                       /* Tamaño grande */
+  letter-spacing: 2px;                     /* Mayor espaciado entre letras para este estilo */
+  font-weight: 700;                        /* Negrita para mayor impacto */
+  background: linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,1), rgba(255,255,255,0.8)); /* Gradiente sutil */
+  -webkit-background-clip: text;           /* Aplica gradiente solo al texto (webkit) */
+  background-clip: text;                   /* Aplica gradiente solo al texto (estándar) */
+  color: transparent;                      /* Hace el texto transparente para ver el gradiente */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Layout principal de dos columnas                                          */
+/*---------------------------------------------------------------------------*/
+.solutions-layout {
+  display: flex;                           /* Layout flexible */
+  gap: 40px;                               /* Espacio entre columnas */
+  align-items: flex-start;                 /* Alineación superior */
+  justify-content: space-between;          /* Distribución uniforme del espacio */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Columna izquierda: Vista previa                                           */
+/*---------------------------------------------------------------------------*/
+.solutions-preview {
+  flex: 1;                                 /* Ocupa una proporción del espacio disponible */
+  position: relative;                      /* Para posicionamiento de elementos internos */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor de la vista previa                                             */
+/*---------------------------------------------------------------------------*/
+.preview-container {
+  background-color: rgba(255, 255, 255, 0.05); /* Fondo claro semitransparente */
+  border-radius: 12px;                     /* Bordes redondeados */
+  min-height: 400px;                       /* Altura mínima */
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  justify-content: center;                 /* Centrado horizontal */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Texto temporal de la vista previa                                         */
+/*---------------------------------------------------------------------------*/
+.preview-text {
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  font-size: 1.2rem;                       /* Tamaño moderadamente grande */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Columna derecha: Lista de soluciones                                      */
+/*---------------------------------------------------------------------------*/
+.solutions-list {
+  flex: 1;                                 /* Ocupa una proporción del espacio disponible */
+  display: flex;                           /* Layout flexible */
+  flex-direction: column;                  /* Elementos apilados verticalmente */
+  gap: 24px;                               /* Espacio entre elementos */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Tarjeta individual de cada solución                                       */
+/*---------------------------------------------------------------------------*/
+.solution-item {
+  display: flex;                           /* Layout flexible horizontal */
+  background-color: var(--gluon_gray);     /* Fondo gris oscuro */
+  border-radius: 12px;                     /* Bordes redondeados */
+  padding: 20px;                           /* Espaciado interno */
+  border: 1px solid rgba(255, 255, 255, 0.05); /* Borde sutil */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease; /* Transiciones suaves */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Efectos al pasar el cursor sobre la tarjeta                               */
+/*---------------------------------------------------------------------------*/
+.solution-item:hover {
+  transform: translateX(-8px);             /* Desplazamiento horizontal a la izquierda */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra para efecto de elevación */
+  border: 1px solid rgba(245, 110, 15, 0.2); /* Borde naranja sutil */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor del icono de la solución                                       */
+/*---------------------------------------------------------------------------*/
+.solution-icon {
+  margin-right: 20px;                      /* Espacio a la derecha */
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  justify-content: center;                 /* Centrado horizontal */
+  width: 60px;                             /* Ancho fijo */
+  height: 60px;                            /* Alto fijo (forma circular) */
+  min-width: 50px;                         /* Ancho mínimo para consistencia */
+  background: rgba(245, 110, 15, 0.1);     /* Fondo naranja semitransparente */
+  border-radius: 50%;                      /* Forma circular */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor del texto de la solución                                       */
+/*---------------------------------------------------------------------------*/
+.solution-content {
+  flex: 1;                                 /* Ocupa el espacio restante */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Título de la solución                                                     */
+/*---------------------------------------------------------------------------*/
+.solution-title {
+  font-size: 1.2rem;                       /* Tamaño moderadamente grande */
+  margin-bottom: 8px;                      /* Espacio inferior */
+  color: var(--liquid_lava);               /* Color naranja destacado */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Descripción de la solución                                                */
+/*---------------------------------------------------------------------------*/
+.solution-description {
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  font-size: 0.95rem;                      /* Tamaño ligeramente reducido */
+  line-height: 1.4;                        /* Altura de línea para legibilidad */
+}
+
+/*---------------------------------------------------------------------------*/
+/* ANIMACIONES PARA LOS ICONOS                                               */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/* Animación para el icono de reloj                                          */
+/*---------------------------------------------------------------------------*/
+.inline-clock-icon .minute-hand,
+.inline-clock-icon .hour-hand {
+  transform-origin: center;                /* Punto de origen para rotación */
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Transición suave con curva de aceleración */
+}
+
+/* Efecto al pasar el cursor: rotación completa de la manecilla de minutos */
+.solution-icon:hover .inline-clock-icon .minute-hand {
+  transform: rotate(360deg);               /* Rotación completa */
+}
+
+/* Efecto al pasar el cursor: rotación parcial de la manecilla de horas */
+.solution-icon:hover .inline-clock-icon .hour-hand {
+  transform: rotate(27deg);                /* Rotación parcial */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Animación para el icono de comentarios                                    */
+/*---------------------------------------------------------------------------*/
+/* Animación parpadeante para los puntos del comentario */
+.solution-icon:hover .inline-comment-icon .dot {
+  animation: dotAnimation 1.5s infinite;   /* Animación continua al pasar el cursor */
+}
+
+/* Diferentes retardos para crear efecto de cascada */
+.solution-icon:hover .inline-comment-icon .dot1 {
+  animation-delay: 0s;                     /* Sin retardo para el primer punto */
+}
+
+.solution-icon:hover .inline-comment-icon .dot2 {
+  animation-delay: 0.1s;                   /* Pequeño retardo para el segundo punto */
+}
+
+.solution-icon:hover .inline-comment-icon .dot3 {
+  animation-delay: 0.2s;                   /* Mayor retardo para el tercer punto */
+}
+
+/* Definición de la animación de parpadeo para los puntos */
+@keyframes dotAnimation {
+  0%,
+  100% {
+    opacity: 1;                            /* Completamente visible */
+  }
+  10%,
+  20% {
+    opacity: 0;                            /* Invisible */
+  }
+  30%,
+  50% {
+    opacity: 1;                            /* Visible */
+  }
+  60%,
+  70% {
+    opacity: 0;                            /* Invisible */
+  }
+  80%,
+  90% {
+    opacity: 1;                            /* Visible */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* Animación para el icono de calendario                                     */
+/*---------------------------------------------------------------------------*/
+/* Efecto pulsante para los puntos del calendario */
+.solution-icon:hover .inline-calendar-icon .dot {
+  animation: pulse 0.8s;                   /* Animación simple al pasar el cursor */
+}
+
+/* Diferentes retardos para cada punto para crear efecto de onda */
+.solution-icon:hover .inline-calendar-icon .dot:nth-of-type(1) {
+  animation-delay: 0s;                     /* Sin retardo para el primer punto */
+}
+.solution-icon:hover .inline-calendar-icon .dot:nth-of-type(2) {
+  animation-delay: 0.17s;                  /* Retardo para el segundo punto */
+}
+.solution-icon:hover .inline-calendar-icon .dot:nth-of-type(3) {
+  animation-delay: 0.34s;                  /* Retardo para el tercer punto */
+}
+.solution-icon:hover .inline-calendar-icon .dot:nth-of-type(4) {
+  animation-delay: 0.51s;                  /* Retardo para el cuarto punto */
+}
+.solution-icon:hover .inline-calendar-icon .dot:nth-of-type(5) {
+  animation-delay: 0.68s;                  /* Retardo para el quinto punto */
+}
+.solution-icon:hover .inline-calendar-icon .dot:nth-of-type(6) {
+  animation-delay: 0.85s;                  /* Retardo para el sexto punto */
+}
+
+/* Definición de la animación de pulso */
+@keyframes pulse {
+  0% {
+    opacity: 1;                            /* Completamente visible */
+  }
+  50% {
+    opacity: 0.3;                          /* Parcialmente visible */
+  }
+  100% {
+    opacity: 1;                            /* Completamente visible de nuevo */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* AJUSTES RESPONSIVOS                                                       */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/* Pantallas medianas (tablets, laptops pequeñas)                            */
+/*---------------------------------------------------------------------------*/
+@media (max-width: 992px) {
+  .solutions-layout {
+    flex-direction: column;                /* Cambio a layout vertical */
+  }
+  
+  .solutions-preview {
+    margin-bottom: 40px;                   /* Espacio inferior para separación */
+  }
+  
+  .preview-container {
+    min-height: 300px;                     /* Altura reducida */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* Pantallas pequeñas (móviles)                                              */
+/*---------------------------------------------------------------------------*/
+@media (max-width: 768px) {
+  .solutions-title {
+    font-size: 2rem;                       /* Tamaño de título reducido */
+  }
+  
+  .solution-item {
+    padding: 16px;                         /* Padding reducido */
+  }
+}

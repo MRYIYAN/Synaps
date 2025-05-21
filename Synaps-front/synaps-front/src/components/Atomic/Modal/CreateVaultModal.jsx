@@ -304,7 +304,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
         }),
       });
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       const result = await response.json();
 
@@ -316,7 +316,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       setStatusMessage('¡Vault creada con éxito!');
 
       // Espera 2 segundos antes de cerrar el popup (ya tienes autoCloseDelay)
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       console.log(" Vault creada correctamente:", result.data);
 
@@ -535,7 +535,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
               message={statusMessage}
               errorMessage={errorMessage}
               onComplete={handleStatusComplete}
-              autoCloseDelay={statusPopup === STATUS.SUCCESS ? 2000 : 0}
+              autoCloseDelay={statusPopup === STATUS.SUCCESS ? 1000 : 0}
             />
           )}
 

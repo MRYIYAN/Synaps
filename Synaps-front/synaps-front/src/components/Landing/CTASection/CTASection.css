@@ -1,0 +1,178 @@
+/*===========================================================================*/
+/*                    ESTILOS DE LA SECCIÓN CTA                             */
+/*===========================================================================*/
+/* Este archivo contiene los estilos para el componente CTASection que       */
+/* presenta una llamada a la acción destacada para unirse a la comunidad     */
+/* de Synaps, con botones principales, características y efectos visuales.   */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor principal de la sección CTA                                    */
+/*---------------------------------------------------------------------------*/
+.cta-section {
+  padding: 8rem 0;                         /* Espaciado vertical generoso */
+  position: relative;                      /* Para elementos posicionados internos */
+  overflow: hidden;                        /* Previene desbordamiento de contenido */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor interno con ancho máximo                                       */
+/*---------------------------------------------------------------------------*/
+.cta-container {
+  max-width: 1200px;                       /* Ancho máximo del contenido */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Fondo estilizado con gradiente y efectos visuales                         */
+/*---------------------------------------------------------------------------*/
+.cta-background {
+  background: linear-gradient(135deg, rgba(40, 40, 45, 0.9), rgba(30, 30, 35, 0.95)); /* Gradiente diagonal */
+  border-radius: 24px;                     /* Bordes muy redondeados */
+  position: relative;                      /* Para posicionar elementos internos */
+  overflow: hidden;                        /* Contiene efectos visuales internos */
+  border: 1px solid rgba(245, 110, 15, 0.3); /* Borde naranja sutil */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); /* Sombra profunda */
+  padding: 64px 32px;                      /* Espaciado interno generoso */
+}
+
+/* Efecto de resplandor radial en la esquina superior derecha */
+.cta-background::before {
+  content: '';                             /* Elemento generado */
+  position: absolute;                      /* Posicionamiento absoluto */
+  top: 0;                                  /* Alineado con la parte superior */
+  left: 0;                                 /* Alineado con la parte izquierda */
+  right: 0;                                /* Extendido hasta la derecha */
+  bottom: 0;                               /* Extendido hasta abajo */
+  background: radial-gradient(circle at top right, rgba(255, 100, 0, 0.2), transparent 60%); /* Gradiente radial */
+  z-index: 0;                              /* Debajo del contenido */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor del contenido principal                                        */
+/*---------------------------------------------------------------------------*/
+.cta-content {
+  position: relative;                      /* Para z-index */
+  z-index: 1;                              /* Por encima del fondo */
+  text-align: center;                      /* Texto centrado */
+  max-width: 800px;                        /* Ancho máximo para legibilidad */
+  margin: 0 auto;                          /* Centrado horizontal */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Título principal con efecto de gradiente                                  */
+/*---------------------------------------------------------------------------*/
+.cta-title {
+  margin-bottom: 24px;                     /* Espacio inferior */
+  background: linear-gradient(90deg, #ffffff, #f0f0f0); /* Gradiente sutil blanco */
+  background-clip: text;                   /* Aplica gradiente solo al texto */
+  -webkit-background-clip: text;           /* Soporte para navegadores webkit */
+  color: transparent;                      /* Hace el texto transparente para mostrar gradiente */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Descripción textual de la sección                                         */
+/*---------------------------------------------------------------------------*/
+.cta-description {
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  margin-bottom: 40px;                     /* Espacio inferior amplio */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor de botones de acción                                           */
+/*---------------------------------------------------------------------------*/
+.cta-buttons {
+  display: flex;                           /* Layout flexible */
+  gap: 20px;                               /* Espacio entre botones */
+  justify-content: center;                 /* Centrado horizontal */
+  margin-bottom: 24px;                     /* Espacio inferior */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilo individual de los botones CTA                                      */
+/*---------------------------------------------------------------------------*/
+.cta-btn {
+  min-width: 180px;                        /* Ancho mínimo para consistencia */
+  padding: 14px 28px;                      /* Espaciado interno generoso */
+  font-size: 1.1rem;                       /* Tamaño de texto mayor */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor de características destacadas                                  */
+/*---------------------------------------------------------------------------*/
+.cta-features {
+  display: flex;                           /* Layout flexible */
+  flex-wrap: wrap;                         /* Permite multilínea */
+  justify-content: center;                 /* Centrado horizontal */
+  gap: 24px;                               /* Espacio entre elementos */
+  margin-top: 32px;                        /* Espacio superior */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Elemento individual de característica                                     */
+/*---------------------------------------------------------------------------*/
+.cta-feature {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  margin-bottom: 14px;                     /* Espacio inferior */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor del icono de característica                                    */
+/*---------------------------------------------------------------------------*/
+.cta-feature-icon {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  justify-content: center;                 /* Centrado horizontal */
+  margin-right: 12px;                      /* Espacio a la derecha */
+  min-width: 28px;                         /* Ancho mínimo para consistencia */
+  min-height: 28px;                        /* Alto mínimo para consistencia */
+  background-color: transparent;           /* Fondo transparente */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Texto descriptivo de la característica                                    */
+/*---------------------------------------------------------------------------*/
+.cta-feature-text {
+  font-size: 1.1rem;                       /* Tamaño de texto ligeramente mayor */
+  color: var(--snow);                      /* Color claro para mejor legibilidad */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilos responsivos para pantallas medianas                               */
+/*---------------------------------------------------------------------------*/
+@media (max-width: 768px) {
+  .cta-section {
+    padding: 4rem 0;                       /* Reduce el espaciado vertical */
+  }
+  
+  .cta-background {
+    padding: 40px 24px;                    /* Reduce el espaciado interno */
+    border-radius: 16px;                   /* Bordes menos redondeados */
+  }
+  
+  .cta-buttons {
+    flex-direction: column;                /* Cambia a layout vertical */
+    gap: 16px;                             /* Reduce el espacio entre botones */
+  }
+  
+  .cta-btn {
+    width: 100%;                           /* Ocupa todo el ancho disponible */
+  }
+  
+  .cta-features {
+    flex-direction: column;                /* Cambia a layout vertical */
+    align-items: center;                   /* Centrado horizontal */
+    gap: 16px;                             /* Reduce el espacio entre características */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* Animaciones para efectos visuales (si se agregan posteriormente)          */
+/*---------------------------------------------------------------------------*/
+/* Ejemplo de animación keyframe que podría agregarse:
+@keyframes cta-glow {
+  0% { box-shadow: 0 0 5px rgba(255, 77, 0, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(255, 77, 0, 0.5); }
+  100% { box-shadow: 0 0 5px rgba(255, 77, 0, 0.3); }
+}
+*/

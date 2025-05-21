@@ -1,0 +1,551 @@
+/*===========================================================================*/
+/*                    ESTILOS DE LA SECCIÓN DE COMUNIDAD                     */
+/*===========================================================================*/
+/* Este archivo contiene todos los estilos para el componente CommunitySection */
+/* que muestra información sobre la comunidad de Synaps, estadísticas,        */
+/* beneficios y opciones para contribuir al proyecto.                         */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/* Estilos principales del contenedor de la sección                          */
+/*---------------------------------------------------------------------------*/
+.community-section {
+  background-color: rgba(27, 27, 30, 0.5); /* Fondo oscuro semitransparente */
+  position: relative;                      /* Para posicionamiento de elementos internos */
+  overflow: hidden;                        /* Evita desbordamiento de contenido */
+  padding: 8rem 0;                         /* Espaciado vertical generoso */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilos para el título principal de la sección                            */
+/*---------------------------------------------------------------------------*/
+.community-title {
+  text-align: center;                      /* Centra el título horizontalmente */
+  margin-bottom: 64px;                     /* Espacio después del título */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor de estadísticas de la comunidad                                */
+/*---------------------------------------------------------------------------*/
+.community-stats {
+  display: flex;                           /* Layout flexible para las estadísticas */
+  justify-content: center;                 /* Centrado horizontal */
+  gap: 80px;                               /* Espacio entre elementos estadísticos */
+  margin-bottom: 80px;                     /* Margen inferior para separación */
+  flex-wrap: wrap;                         /* Permite el ajuste en pantallas pequeñas */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Elementos individuales de estadísticas                                    */
+/*---------------------------------------------------------------------------*/
+.community-stat-item {
+  text-align: center;                      /* Alinea el texto al centro */
+}
+
+/* Números destacados en las estadísticas con efecto de gradiente animado */
+.stat-number {
+  font-size: 3.5rem;                       /* Tamaño grande para destacar */
+  font-weight: 700;                        /* Negrita para mayor impacto visual */
+  margin-bottom: 8px;                      /* Espaciado bajo el número */
+  background: linear-gradient(90deg, #ff4d00, #ff8700, #ff4d00); /* Gradiente naranja */
+  background-clip: text;                   /* Aplica el gradiente solo al texto */
+  -webkit-background-clip: text;           /* Soporte para navegadores webkit */
+  color: transparent;                      /* Hace el texto transparente para ver el gradiente */
+  animation: liquid-lava 1.5s linear infinite; /* Animación del gradiente de "lava líquida" */
+}
+
+/* Etiquetas descriptivas de las estadísticas */
+.stat-label {
+  font-size: 1.1rem;                       /* Tamaño moderado para la etiqueta */
+  color: var(--dusty_gray);                /* Color gris para contrastar con el número */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenido principal de la sección de comunidad                            */
+/*---------------------------------------------------------------------------*/
+.community-content {
+  display: flex;                           /* Disposición flexible para el contenido */
+  gap: 64px;                               /* Espacio entre columnas */
+  align-items: center;                     /* Alineación vertical centrada */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Columna de información sobre la comunidad                                 */
+/*---------------------------------------------------------------------------*/
+.community-info {
+  flex: 1;                                 /* Ocupa el espacio disponible */
+}
+
+/* Subtítulo de la sección de información */
+.community-subtitle {
+  margin-bottom: 24px;                     /* Espaciado inferior */
+}
+
+/* Descripción textual de la comunidad */
+.community-description {
+  margin-bottom: 32px;                     /* Espaciado inferior */
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Lista de beneficios de la comunidad                                       */
+/*---------------------------------------------------------------------------*/
+.community-benefits {
+  list-style: none;                        /* Elimina los bullets de la lista */
+  padding: 0;                              /* Elimina el padding predeterminado */
+  margin: 0;                               /* Elimina el margen predeterminado */
+}
+
+/* Elementos individuales de la lista de beneficios */
+.community-benefits li {
+  display: flex;                           /* Disposición flexible para icono y texto */
+  align-items: flex-start;                 /* Alinea elementos al inicio */
+  margin-bottom: 20px;                     /* Espaciado entre elementos */
+}
+
+/* Contenedor del icono de beneficio */
+.benefit-icon {
+  margin-right: 16px;                      /* Espacio entre icono y texto */
+  min-width: 24px;                         /* Ancho mínimo para consistencia */
+  display: flex;                           /* Disposición flexible */
+  align-items: center;                     /* Centrado vertical */
+  justify-content: center;                 /* Centrado horizontal */
+  width: 32px;                             /* Ancho fijo */
+  height: 32px;                            /* Alto fijo */
+}
+
+/* Ajusta el tamaño del SVG dentro del contenedor de icono */
+.benefit-icon svg {
+  width: 100%;                             /* Ocupa todo el ancho disponible */
+  height: 100%;                            /* Ocupa todo el alto disponible */
+}
+
+/* Texto descriptivo de cada beneficio */
+.benefit-text {
+  font-size: 1.05rem;                      /* Tamaño legible */
+  color: var(--snow);                      /* Color claro para mejor legibilidad */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilos mejorados para iconos SVG inline                                  */
+/*---------------------------------------------------------------------------*/
+.inline-icon {
+  overflow: visible;                       /* Permite que partes del SVG excedan sus límites */
+  vertical-align: middle;                  /* Alineación vertical con el texto */
+  margin-right: 10px;                      /* Espacio a la derecha */
+}
+
+/* Transición suave para iconos de beneficios */
+.inline-refresh-icon,
+.inline-briefcase-icon,
+.inline-brain-icon {
+  transition: transform 0.3s ease;         /* Transición suave para transformaciones */
+}
+
+/* Estilos base para elementos dentro de los iconos SVG */
+.inline-refresh-icon path,
+.inline-briefcase-icon rect, 
+.inline-briefcase-icon path,
+.inline-brain-icon path,
+.inline-brain-icon circle,
+.inline-brain-icon line {
+  fill: none;                              /* Sin relleno para aplicar gradiente */
+  filter: url(#glow);                      /* Filtro de brillo definido en el SVG principal */
+  animation: pulse-glow 4s ease-in-out infinite; /* Animación pulsante de brillo */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Animaciones para los iconos y elementos visuales                          */
+/*---------------------------------------------------------------------------*/
+/* Animación pulsante de brillo para iconos SVG */
+@keyframes pulse-glow {
+  0% {
+    filter: url(#glow) brightness(1);      /* Brillo normal al inicio */
+  }
+  50% {
+    filter: url(#glow) brightness(1.2);    /* Aumento de brillo en el punto medio */
+  }
+  100% {
+    filter: url(#glow) brightness(1);      /* Retorno al brillo normal */
+  }
+}
+
+/* Efectos interactivos al pasar el cursor sobre cada tipo de icono */
+.benefit-item:hover .inline-refresh-icon {
+  transform: rotate(180deg);               /* Rotación completa para icono de refrescar */
+  transition: transform 0.8s ease;         /* Transición suave más lenta para la rotación */
+}
+
+.benefit-item:hover .inline-briefcase-icon {
+  transform: translateY(-3px);             /* Elevación ligera para icono de maletín */
+  transition: transform 0.3s ease;         /* Transición suave */
+}
+
+.benefit-item:hover .inline-brain-icon {
+  transform: scale(1.1);                   /* Aumento de tamaño para icono de cerebro */
+  transition: transform 0.3s ease;         /* Transición suave */
+}
+
+/* Animación de "flujo líquido" para variación de opacidad en los SVGs */
+@keyframes liquid-flow {
+  0% {
+    opacity: 0.8;                          /* Opacidad inicial */
+  }
+  50% {
+    opacity: 1;                            /* Opacidad máxima en punto medio */
+  }
+  100% {
+    opacity: 0.8;                          /* Retorno a opacidad inicial */
+  }
+}
+
+/* Aplicación de la animación de flujo a todos los elementos SVG */
+.inline-icon path,
+.inline-icon rect,
+.inline-icon circle,
+.inline-icon line {
+  animation: liquid-flow 3s ease-in-out infinite; /* Animación continua de cambio de opacidad */
+}
+
+/* Ajustes específicos para cada tipo de icono SVG */
+.inline-refresh-icon path {
+  stroke-linecap: round;                   /* Terminaciones redondeadas para trazos */
+  stroke-linejoin: round;                  /* Uniones redondeadas para trazos */
+  stroke-width: 2;                         /* Grosor del trazo */
+}
+
+.inline-briefcase-icon path,
+.inline-briefcase-icon rect {
+  stroke-width: 2;                         /* Grosor del trazo */
+}
+
+.inline-brain-icon circle,
+.inline-brain-icon line {
+  stroke-width: 1.5;                       /* Grosor del trazo ligeramente menor */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilos para la tarjeta de comunidad (sección derecha)                    */
+/*---------------------------------------------------------------------------*/
+.community-card {
+  background-color: rgba(35, 35, 40, 0.7); /* Fondo oscuro semitransparente */
+  border-radius: 16px;                     /* Bordes redondeados */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); /* Sombra profunda */
+  border: 1px solid rgba(255, 135, 0, 0.15); /* Borde naranja sutil */
+  width: 100%;                             /* Ocupa todo el ancho disponible */
+  max-width: 400px;                        /* Ancho máximo */
+  position: relative;                      /* Para posicionamiento de elementos internos */
+  overflow: hidden;                        /* Contiene efectos visuales internos */
+  transition: all 0.3s ease;               /* Transición suave para efectos hover */
+}
+
+/* Efectos al pasar el cursor sobre la tarjeta */
+.community-card:hover {
+  border-color: rgba(255, 135, 0, 0.25);   /* Borde más visible */
+  transform: translateY(-5px);             /* Elevación para efecto flotante */
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4); /* Sombra más profunda */
+}
+
+/* Aumenta la intensidad del brillo al pasar el cursor */
+.community-card:hover .card-glow-effect {
+  opacity: 0.07;                           /* Aumenta la opacidad del brillo */
+}
+
+/* Estilo para la barra superior de la tarjeta (estilo macOS) */
+.card-header {
+  display: flex;                           /* Layout flexible */
+  gap: 8px;                                /* Espacio entre los círculos */
+  padding: 15px 20px;                      /* Espaciado interno */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Separador sutil */
+  background-color: rgba(20, 20, 25, 0.7); /* Fondo ligeramente más oscuro que la tarjeta */
+}
+
+/* Puntos de colores en la barra de la tarjeta (estilo macOS) */
+.card-header-dot {
+  width: 12px;                             /* Tamaño del círculo */
+  height: 12px;                            /* Tamaño del círculo */
+  border-radius: 50%;                      /* Forma circular */
+}
+
+/* Colores específicos para cada punto (rojo, amarillo, verde) */
+.card-header-dot:nth-child(1) {
+  background-color: #ff5f57;               /* Rojo - cerrar */
+}
+
+.card-header-dot:nth-child(2) {
+  background-color: #ffbd2e;               /* Amarillo - minimizar */
+}
+
+.card-header-dot:nth-child(3) {
+  background-color: #28ca41;               /* Verde - maximizar */
+}
+
+/* Contenido principal de la tarjeta */
+.card-content {
+  padding: 30px;                           /* Espaciado interno */
+  position: relative;                      /* Para z-index */
+  z-index: 2;                              /* Por encima del efecto de brillo */
+}
+
+/* Efecto de brillo radial en el fondo de la tarjeta */
+.card-glow-effect {
+  position: absolute;                      /* Posicionamiento absoluto */
+  top: 50%;                                /* Centrado vertical */
+  left: 50%;                               /* Centrado horizontal */
+  transform: translate(-50%, -50%);        /* Ajuste de centrado preciso */
+  width: 80%;                              /* Ancho del efecto */
+  height: 200px;                           /* Alto del efecto */
+  background: radial-gradient(ellipse at center, rgba(255, 77, 0, 0.3) 0%, rgba(255, 77, 0, 0) 70%); /* Degradado radial */
+  opacity: 0.05;                           /* Opacidad inicial baja */
+  pointer-events: none;                    /* No intercepta eventos del ratón */
+  transition: opacity 0.3s ease;           /* Transición suave */
+  z-index: 1;                              /* Por debajo del contenido */
+}
+
+/* Título de la tarjeta con efecto de gradiente */
+.card-title {
+  font-size: 1.6rem;                       /* Tamaño grande */
+  margin-bottom: 16px;                     /* Espacio inferior */
+  color: #fff;                             /* Color base */
+  background: linear-gradient(90deg, #ff4d00, #ff8700); /* Gradiente naranja */
+  -webkit-background-clip: text;           /* Aplica gradiente solo al texto */
+  background-clip: text;                   /* Estándar CSS para clip de texto */
+  color: transparent;                      /* Hace el texto transparente para ver el gradiente */
+}
+
+/* Texto descriptivo de la tarjeta */
+.card-description {
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  margin-bottom: 32px;                     /* Espaciado inferior */
+  font-size: 1.05rem;                      /* Tamaño legible */
+  line-height: 1.6;                        /* Altura de línea para mejor legibilidad */
+}
+
+/* Contenedor de botones de acción */
+.card-buttons {
+  display: flex;                           /* Layout flexible */
+  flex-direction: column;                  /* Apilados verticalmente */
+  gap: 16px;                               /* Espacio entre botones */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilos para los iconos dentro de los botones                             */
+/*---------------------------------------------------------------------------*/
+.btn-icon {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  justify-content: center;                 /* Centrado horizontal */
+  margin-right: 10px;                      /* Espacio a la derecha del icono */
+  overflow: visible;                       /* Permite que los efectos excedan el contenedor */
+}
+
+/* Tamaño base para iconos de GitHub y Discord */
+.github-icon,
+.discord-icon {
+  width: 24px;                             /* Ancho del icono */
+  height: 24px;                            /* Alto del icono */
+}
+
+/* Ajuste específico para el icono de Discord */
+.discord-icon {
+  /* Ajuste de escala para el SVG de Discord que viene muy grande */
+  transform: scale(0.8);                   /* Reducción proporcional */
+  transform-origin: center;                /* Punto de origen para la transformación */
+}
+
+/* Contenedor específico para el icono de Discord */
+.discord-icon-wrapper {
+  width: 28px;                             /* Ancho del contenedor */
+  height: 28px;                            /* Alto del contenedor */
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  justify-content: center;                 /* Centrado horizontal */
+  position: relative;                      /* Para posicionamiento interno */
+  overflow: visible;                       /* Permite efectos que excedan el contenedor */
+}
+
+/* Contenedor específico para el icono de GitHub */
+.github-icon-wrapper {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  justify-content: center;                 /* Centrado horizontal */
+  width: 24px;                             /* Ancho del contenedor */
+  height: 24px;                            /* Alto del contenedor */
+}
+
+/* Aplicación de efectos de gradiente y brillo a los paths de los iconos */
+.github-icon path,
+.discord-icon path {
+  fill: url(#liquid-gradient);             /* Relleno con gradiente definido en el SVG */
+  filter: url(#icon-glow);                 /* Filtro de brillo definido en el SVG */
+  transition: filter 0.3s ease;            /* Transición suave */
+}
+
+/* Aumenta el brillo de los iconos al pasar el cursor sobre el botón */
+.landing-btn:hover .github-icon path,
+.landing-btn:hover .discord-icon path {
+  filter: url(#icon-glow) brightness(1.2); /* Aumenta el brillo del filtro */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilos mejorados para los botones de acción                              */
+/*---------------------------------------------------------------------------*/
+.landing-btn.landing-btn-secondary {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  justify-content: center;                 /* Centrado horizontal */
+  padding: 12px 18px;                      /* Espaciado interno */
+  background-color: rgba(255, 255, 255, 0.05); /* Fondo claro semitransparente */
+  border: 1px solid rgba(255, 77, 0, 0.2); /* Borde naranja sutil */
+  border-radius: 8px;                      /* Bordes redondeados */
+  font-weight: 500;                        /* Peso de la fuente semibold */
+  transition: all 0.3s ease;               /* Transición suave */
+  gap: 8px;                                /* Espacio entre icono y texto */
+}
+
+/* Efectos al pasar el cursor sobre los botones */
+.landing-btn.landing-btn-secondary:hover {
+  background-color: rgba(255, 77, 0, 0.1); /* Fondo naranja más visible */
+  border-color: rgba(255, 77, 0, 0.4);     /* Borde naranja más visible */
+  transform: translateY(-2px);             /* Elevación ligera */
+  box-shadow: 0 4px 12px rgba(255, 77, 0, 0.15); /* Sombra naranja sutil */
+}
+
+/* Animación pulsante de brillo para los botones */
+@keyframes button-glow {
+  0% {
+    box-shadow: 0 0 0 rgba(255, 77, 0, 0); /* Sin sombra */
+  }
+  50% {
+    box-shadow: 0 0 8px rgba(255, 77, 0, 0.3); /* Sombra máxima */
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255, 77, 0, 0); /* Sin sombra */
+  }
+}
+
+/* Aplicación de la animación de brillo a los botones */
+.landing-btn.landing-btn-secondary {
+  animation: button-glow 3s infinite;      /* Animación continua */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilos para la tarjeta de información (sección izquierda)                */
+/*---------------------------------------------------------------------------*/
+.info-card {
+  background-color: rgba(35, 35, 40, 0.7); /* Fondo oscuro semitransparente */
+  border-radius: 16px;                     /* Bordes redondeados */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); /* Sombra profunda */
+  border: 1px solid rgba(255, 135, 0, 0.15); /* Borde naranja sutil */
+  padding: 30px;                           /* Espaciado interno */
+  position: relative;                      /* Para posicionamiento de elementos internos */
+  overflow: hidden;                        /* Contiene efectos visuales */
+  transition: all 0.3s ease;               /* Transición suave */
+}
+
+/* Efectos al pasar el cursor sobre la tarjeta de información */
+.info-card:hover {
+  border-color: rgba(255, 135, 0, 0.25);   /* Borde más visible */
+  transform: translateY(-3px);             /* Elevación ligera */
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4); /* Sombra más profunda */
+}
+
+/* Subtítulo dentro de la tarjeta con efecto de gradiente */
+.info-card .community-subtitle {
+  background: linear-gradient(90deg, #ff4d00, #ff8700); /* Gradiente naranja */
+  -webkit-background-clip: text;           /* Aplica gradiente solo al texto */
+  background-clip: text;                   /* Estándar CSS para clip de texto */
+  color: transparent;                      /* Hace el texto transparente para ver el gradiente */
+  margin-bottom: 20px;                     /* Espaciado inferior */
+}
+
+/* Efecto de brillo radial en el fondo de la tarjeta de información */
+.info-card-glow {
+  position: absolute;                      /* Posicionamiento absoluto */
+  top: 50%;                                /* Centrado vertical */
+  left: 50%;                               /* Centrado horizontal */
+  transform: translate(-50%, -50%);        /* Ajuste de centrado preciso */
+  width: 80%;                              /* Ancho del efecto */
+  height: 200px;                           /* Alto del efecto */
+  background: radial-gradient(ellipse at center, rgba(255, 77, 0, 0.3) 0%, rgba(255, 77, 0, 0) 70%); /* Degradado radial */
+  opacity: 0.05;                           /* Opacidad inicial baja */
+  pointer-events: none;                    /* No intercepta eventos del ratón */
+  transition: opacity 0.3s ease;           /* Transición suave */
+  z-index: -1;                             /* Por debajo del contenido */
+}
+
+/* Aumenta la intensidad del brillo al pasar el cursor */
+.info-card:hover .info-card-glow {
+  opacity: 0.08;                           /* Aumenta la opacidad del brillo */
+}
+
+/* Ajustes específicos para el texto descriptivo dentro de la tarjeta */
+.info-card .community-description {
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  margin-bottom: 24px;                     /* Espaciado inferior */
+}
+
+/* Ajustes para la lista de beneficios dentro de la tarjeta */
+.info-card .community-benefits {
+  margin-top: 20px;                        /* Espaciado superior */
+}
+
+/* Efecto de resplandor en el borde al pasar el cursor */
+.info-card:hover {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), 0 0 15px rgba(255, 77, 0, 0.2); /* Sombra con resplandor naranja */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilos responsivos para diferentes tamaños de pantalla                   */
+/*---------------------------------------------------------------------------*/
+
+/* Para pantallas medianas (tablets, laptops pequeñas) */
+@media (max-width: 992px) {
+  .community-content {
+    flex-direction: column;                /* Cambia a layout vertical */
+    gap: 48px;                             /* Reduce el espacio entre elementos */
+  }
+  
+  .community-info, .community-actions {
+    width: 100%;                           /* Ocupa todo el ancho disponible */
+  }
+  
+  .community-card {
+    max-width: 100%;                       /* Ocupa todo el ancho disponible */
+  }
+}
+
+/* Para pantallas pequeñas (tablets pequeñas) */
+@media (max-width: 768px) {
+  .community-stats {
+    gap: 40px;                             /* Reduce el espacio entre estadísticas */
+  }
+  
+  .stat-number {
+    font-size: 2.5rem;                     /* Reduce el tamaño de los números */
+  }
+  
+  .community-section {
+    padding: 6rem 0;                       /* Reduce el padding vertical */
+  }
+}
+
+/* Para pantallas muy pequeñas (móviles) */
+@media (max-width: 576px) {
+  .community-stats {
+    flex-direction: column;                /* Cambia a layout vertical */
+    gap: 32px;                             /* Reduce el espacio entre estadísticas */
+  }
+  
+  .stat-number {
+    font-size: 2.2rem;                     /* Reduce más el tamaño de los números */
+  }
+  
+  .community-section {
+    padding: 4rem 0;                       /* Reduce aún más el padding vertical */
+  }
+  
+  .card-content {
+    padding: 20px;                         /* Reduce el padding del contenido */
+  }
+}

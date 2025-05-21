@@ -1,0 +1,253 @@
+/*===========================================================================*/
+/*                    ESTILOS DE LA BARRA DE NAVEGACIÓN                      */
+/*===========================================================================*/
+/* Este archivo contiene los estilos para el componente NavbarLanding que      */
+/* implementa la barra de navegación principal de la landing page de Synaps.   */
+/* Incluye estilos para diferentes estados (normal, scroll), versiones para    */
+/* escritorio y móvil, y transiciones visuales para mejorar la experiencia.    */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor principal de la barra de navegación                            */
+/*---------------------------------------------------------------------------*/
+.landing-navbar {
+  position: fixed;                         /* Fijada en la parte superior */
+  top: 0;                                  /* Alineada con el borde superior */
+  left: 0;                                 /* Alineada con el borde izquierdo */
+  width: 100%;                             /* Ocupa todo el ancho disponible */
+  height: 80px;                            /* Altura fija en estado normal */
+  z-index: 1000;                           /* Por encima de otros elementos */
+  transition: all 0.3s ease;               /* Transición suave para cambios */
+  background-color: rgba(23, 23, 26, 0.95); /* Color oscuro semitransparente */
+  backdrop-filter: blur(10px);             /* Efecto de desenfoque en el fondo */
+  -webkit-backdrop-filter: blur(10px);     /* Soporte para Safari */
+  border: none;                            /* Sin borde */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor interno con ancho máximo                                       */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-container {
+  max-width: 1280px;                       /* Ancho máximo consistente */
+  margin: 0 auto;                          /* Centrado horizontal */
+  padding: 0 24px;                         /* Espaciado lateral */
+  height: 100%;                            /* Ocupa toda la altura disponible */
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  justify-content: space-between;          /* Distribuye los elementos horizontalmente */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilo aplicado cuando se ha hecho scroll                                 */
+/*---------------------------------------------------------------------------*/
+.navbar-scrolled {
+  height: 70px;                            /* Altura reducida al hacer scroll */
+  background-color: rgba(23, 23, 26, 0.98); /* Fondo ligeramente más opaco */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Sombra sutil para destacar */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Logo con enlace a la página principal                                     */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-logo {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  text-decoration: none;                   /* Sin subrayado */
+  color: var(--snow);                      /* Color blanco para el texto */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Imagen del logo                                                           */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-logo img {
+  height: 32px;                            /* Altura fija para el logo */
+  margin-right: 10px;                      /* Espacio a la derecha */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Texto del logo                                                            */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-logo span {
+  font-weight: 700;                        /* Negrita para destacar */
+  font-size: 1.5rem;                       /* Tamaño grande */
+  letter-spacing: 0.5px;                   /* Espaciado entre letras para legibilidad */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor de enlaces para escritorio                                     */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-links-desktop {
+  display: flex;                           /* Layout flexible horizontal */
+  gap: 32px;                               /* Espacio entre enlaces */
+  margin: 0 auto;                          /* Centrado automático */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilo base para enlaces de navegación                                    */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-link {
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  text-decoration: none;                   /* Sin subrayado */
+  font-size: 1rem;                         /* Tamaño estándar */
+  font-weight: 500;                        /* Semibold para mejor legibilidad */
+  transition: color 0.3s ease;             /* Transición suave del color */
+  padding: 8px 0;                          /* Espaciado vertical para área de clic */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Efecto hover para enlaces                                                 */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-link:hover {
+  color: var(--snow);                      /* Texto blanco al pasar el cursor */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Enlace específico para iniciar sesión                                     */
+/*---------------------------------------------------------------------------*/
+.login-link {
+  color: var(--snow);                      /* Color blanco para destacar */
+  font-weight: 600;                        /* Más negrita que los otros enlaces */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor para los botones de autenticación                              */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-auth {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  gap: 24px;                               /* Espacio entre elementos */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Botones pequeños utilizados en la barra de navegación                     */
+/*---------------------------------------------------------------------------*/
+.landing-btn-sm {
+  padding: 10px 20px;                      /* Espaciado interior reducido */
+  font-size: 0.875rem;                     /* Tamaño de texto ligeramente menor */
+  border-radius: 4px;                      /* Bordes menos redondeados */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Botón hamburguesa para menú móvil                                         */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-toggle {
+  display: none;                           /* Oculto por defecto (solo visible en móvil) */
+  flex-direction: column;                  /* Apila las barras verticalmente */
+  justify-content: space-between;          /* Distribuye las barras uniformemente */
+  width: 30px;                             /* Ancho fijo */
+  height: 21px;                            /* Alto fijo */
+  background: transparent;                 /* Fondo transparente */
+  border: none;                            /* Sin borde */
+  cursor: pointer;                         /* Cursor tipo mano al pasar por encima */
+  padding: 0;                              /* Sin padding */
+  z-index: 1100;                           /* Por encima del menú móvil */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Barras individuales del botón hamburguesa                                 */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-toggle span {
+  width: 100%;                             /* Ocupan todo el ancho del botón */
+  height: 3px;                             /* Grosor de las barras */
+  background-color: var(--snow);           /* Color blanco */
+  border-radius: 3px;                      /* Bordes redondeados */
+  transition: all 0.3s ease;               /* Transición suave para animación */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Menú desplegable para dispositivos móviles                                */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-mobile {
+  position: fixed;                         /* Posición fija en la pantalla */
+  top: 0;                                  /* Alineado con el borde superior */
+  right: 0;                                /* Alineado con el borde derecho */
+  width: 100%;                             /* Ocupa todo el ancho */
+  height: 100vh;                           /* Ocupa toda la altura de la ventana */
+  background-color: rgba(23, 23, 26, 0.98); /* Fondo oscuro casi opaco */
+  display: flex;                           /* Layout flexible */
+  flex-direction: column;                  /* Elementos apilados verticalmente */
+  justify-content: center;                 /* Centrado vertical */
+  align-items: center;                     /* Centrado horizontal */
+  transform: translateX(100%);             /* Inicialmente fuera de la pantalla */
+  transition: transform 0.3s ease-in-out;  /* Transición suave para animación */
+  z-index: 999;                            /* Por encima del contenido pero debajo del botón */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estado abierto del menú móvil                                             */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-mobile.open {
+  transform: translateX(0);                /* Muestra el menú en pantalla */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor de enlaces dentro del menú móvil                               */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-mobile-links {
+  display: flex;                           /* Layout flexible */
+  flex-direction: column;                  /* Elementos apilados verticalmente */
+  align-items: center;                     /* Centrado horizontal */
+  gap: 24px;                               /* Espacio entre elementos */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor de botones de autenticación en menú móvil                      */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-mobile-auth {
+  margin-top: 32px;                        /* Espacio superior */
+  display: flex;                           /* Layout flexible */
+  flex-direction: column;                  /* Elementos apilados verticalmente */
+  gap: 16px;                               /* Espacio entre elementos */
+  width: 100%;                             /* Ocupa todo el ancho disponible */
+  align-items: center;                     /* Centrado horizontal */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Botones dentro del menú móvil                                             */
+/*---------------------------------------------------------------------------*/
+.landing-navbar-mobile-auth .landing-btn {
+  width: 200px;                            /* Ancho fijo para botones */
+  text-align: center;                      /* Texto centrado */
+}
+
+/*---------------------------------------------------------------------------*/
+/* AJUSTES RESPONSIVOS                                                       */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/* Pantallas medianas (tablets, laptops pequeñas)                            */
+/*---------------------------------------------------------------------------*/
+@media (max-width: 992px) {
+  .landing-navbar {
+    width: calc(100% - 24px);              /* Ancho reducido con margen */
+  }
+  
+  /* Oculta menú de escritorio */
+  .landing-navbar-links-desktop {
+    display: none;                         /* No se muestra en pantallas pequeñas */
+  }
+
+  /* Oculta botones de autenticación de escritorio */
+  .landing-navbar-auth {
+    display: none;                         /* No se muestra en pantallas pequeñas */
+  }
+
+  /* Muestra el botón de menú hamburguesa */
+  .landing-navbar-toggle {
+    display: flex;                         /* Visible en pantallas pequeñas */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* Pantallas muy pequeñas (móviles)                                          */
+/*---------------------------------------------------------------------------*/
+@media (max-width: 576px) {
+  .landing-navbar {
+    width: calc(100% - 16px);              /* Ancho reducido con margen menor */
+    top: 10px;                             /* Separación del borde superior */
+  }
+  
+  .navbar-scrolled {
+    top: 6px;                              /* Separación menor al hacer scroll */
+  }
+}

@@ -1,0 +1,18 @@
+.minute-hand,
+.hour-hand {
+  transform-origin: center;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hour-hand {
+  transition-duration: 0.5s;
+  transition-timing-function: ease-in-out;
+}
+
+.minute-hand.animate {
+  transform: rotate(360deg);
+}
+
+.hour-hand.animate {
+  transform: rotate(27deg);
+}

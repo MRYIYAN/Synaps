@@ -1,0 +1,176 @@
+/*===========================================================================*/
+/*                    ESTILOS DE LA SECCIÓN HERO                            */
+/*===========================================================================*/
+/* Este archivo contiene los estilos para el componente HeroSection que       */
+/* representa la sección principal de bienvenida en la landing page. Incluye  */
+/* estilos para el título principal, badge, elementos con gradiente animado,  */
+/* botones de llamada a la acción y ajustes responsivos.                      */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor principal del Hero                                             */
+/*---------------------------------------------------------------------------*/
+.hero-section {
+  padding-top: 120px;                      /* Espacio para el navbar */
+  min-height: 90vh;                        /* Altura mínima para ocupar casi toda la pantalla */
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor interno con ancho máximo                                       */
+/*---------------------------------------------------------------------------*/
+.hero-container {
+  display: flex;                           /* Layout flexible */
+  flex-direction: column;                  /* Elementos apilados verticalmente */
+  align-items: flex-start;                 /* Alineados a la izquierda */
+  max-width: 800px;                        /* Ancho máximo para mejor lectura */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Badge destacado con animación de gradiente                                */
+/*---------------------------------------------------------------------------*/
+.hero-badge {
+  display: inline-flex;                    /* Layout flexible inline */
+  align-items: center;                     /* Centrado vertical */
+  background-color: rgba(245, 110, 15, 0.1); /* Fondo naranja semitransparente */
+  padding: 8px 16px;                       /* Espaciado interno */
+  border-radius: 50px;                     /* Bordes completamente redondeados */
+  margin-bottom: 32px;                     /* Espacio inferior */
+  border: 1px solid rgba(255, 77, 0, 0.2); /* Borde sutil */
+  box-shadow: 0 2px 8px rgba(255, 77, 0, 0.1); /* Sombra sutil */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Icono dentro del badge con efecto de gradiente                            */
+/*---------------------------------------------------------------------------*/
+.hero-badge-icon {
+  margin-right: 8px;                       /* Espacio entre icono y texto */
+  font-size: 1.2rem;                       /* Tamaño del texto/icono */
+  background: linear-gradient(
+    90deg,
+    #ff4d00,
+    #ff8700,
+    #ff4d00
+  );                                       /* Gradiente naranja "lava líquida" */
+  background-size: 200% 100%;              /* Tamaño ampliado para animación */
+  -webkit-background-clip: text;           /* Aplica gradiente solo al texto (webkit) */
+  background-clip: text;                   /* Aplica gradiente solo al texto (estándar) */
+  color: transparent;                      /* Hace el texto transparente para ver el gradiente */
+  animation: liquid-lava 1.5s linear infinite; /* Animación continua del gradiente */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Texto del badge con efecto de gradiente                                   */
+/*---------------------------------------------------------------------------*/
+.hero-badge-text {
+  font-weight: 600;                        /* Semibold para mayor visibilidad */
+  font-size: 0.9rem;                       /* Tamaño ligeramente reducido */
+  background: linear-gradient(
+    90deg,
+    #ff4d00,
+    #ff8700,
+    #ff4d00
+  );                                       /* Gradiente naranja "lava líquida" */
+  background-size: 200% 100%;              /* Tamaño ampliado para animación */
+  color: transparent;                      /* Hace el texto transparente */
+  -webkit-background-clip: text;           /* Aplica gradiente solo al texto (webkit) */
+  background-clip: text;                   /* Aplica gradiente solo al texto (estándar) */
+  animation: liquid-lava 1.5s linear infinite; /* Animación continua del gradiente */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Título principal H1                                                       */
+/*---------------------------------------------------------------------------*/
+.hero-title {
+  margin-bottom: 24px;                     /* Espacio inferior */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Texto destacado dentro del título con efecto de gradiente                 */
+/*---------------------------------------------------------------------------*/
+.hero-highlight {
+  display: block;                          /* Muestra como bloque para ocupar toda la línea */
+  background: linear-gradient(
+    90deg,
+    #ff4d00,
+    #ff8700,
+    #ff4d00
+  );                                       /* Gradiente naranja "lava líquida" */
+  background-size: 200% 100%;              /* Tamaño ampliado para animación */
+  color: transparent;                      /* Hace el texto transparente */
+  -webkit-background-clip: text;           /* Aplica gradiente solo al texto (webkit) */
+  background-clip: text;                   /* Aplica gradiente solo al texto (estándar) */
+  animation: liquid-lava 1.5s linear infinite; /* Animación continua del gradiente */
+  font-weight: bold;                       /* Negrita para destacar */
+  margin-top: 8px;                         /* Pequeño espacio superior */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Subtítulo descriptivo                                                     */
+/*---------------------------------------------------------------------------*/
+.hero-subtitle {
+  margin-bottom: 48px;                     /* Espacio inferior generoso */
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  max-width: 600px;                        /* Ancho máximo para mejor lectura */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor de botones de llamada a la acción                              */
+/*---------------------------------------------------------------------------*/
+.hero-cta-container {
+  display: flex;                           /* Layout flexible */
+  gap: 16px;                               /* Espacio entre botones */
+  margin-bottom: 48px;                     /* Espacio inferior */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Botones individuales de llamada a la acción                               */
+/*---------------------------------------------------------------------------*/
+.hero-cta-btn {
+  min-width: 160px;                        /* Ancho mínimo para consistencia */
+  text-align: center;                      /* Texto centrado */
+}
+
+/*---------------------------------------------------------------------------*/
+/* AJUSTES RESPONSIVOS                                                       */
+/*---------------------------------------------------------------------------*/
+@media (max-width: 768px) {
+  /*-------------------------------------------------------------------------*/
+  /* Ajustes para tablets y móviles                                          */
+  /*-------------------------------------------------------------------------*/
+  .hero-section {
+    padding-top: 100px;                    /* Reduce el espacio superior */
+    min-height: 80vh;                      /* Reduce la altura mínima */
+  }
+  
+  .hero-container {
+    align-items: center;                   /* Centra todos los elementos */
+    text-align: center;                    /* Alinea texto al centro */
+  }
+  
+  .hero-cta-container {
+    flex-direction: column;                /* Apila los botones verticalmente */
+    width: 100%;                           /* Ocupa todo el ancho disponible */
+  }
+  
+  .hero-cta-btn {
+    width: 100%;                           /* Botones a ancho completo */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* ANIMACIONES                                                               */
+/*---------------------------------------------------------------------------*/
+/* Animación del gradiente para efecto "lava líquida"                        */
+@keyframes liquid-lava {
+  0% {
+    background-position: 0% 50%;           /* Posición inicial del gradiente */
+  }
+  50% {
+    background-position: 100% 50%;         /* Posición intermedia (desplazamiento completo) */
+  }
+  100% {
+    background-position: 0% 50%;           /* Regreso a posición inicial */
+  }
+}

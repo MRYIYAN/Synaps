@@ -1,0 +1,128 @@
+/*===========================================================================*/
+/*                    ESTILOS DE LA SECCIÓN DE CARACTERÍSTICAS               */
+/*===========================================================================*/
+/* Este archivo contiene los estilos para la sección de características       */
+/* de la landing page de Synaps, incluyendo las tarjetas individuales,        */
+/* iconos, títulos y estilos responsivos para diferentes tamaños de pantalla. */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor principal de la sección de características                     */
+/*---------------------------------------------------------------------------*/
+.feature-section {
+  padding: 100px 0;                        /* Espaciado vertical generoso */
+  background-color: var(--dark_void);      /* Fondo oscuro */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Título principal de la sección                                            */
+/*---------------------------------------------------------------------------*/
+.feature-title {
+  text-align: center;                      /* Centra el título horizontalmente */
+  margin-bottom: 16px;                     /* Espacio inferior */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Subtítulo o descripción general de la sección                             */
+/*---------------------------------------------------------------------------*/
+.feature-subtitle {
+  text-align: center;                      /* Centra el texto horizontalmente */
+  max-width: 600px;                        /* Limita el ancho para mejor legibilidad */
+  margin: 0 auto 64px;                     /* Margen superior e inferior con centrado horizontal */
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Cuadrícula para mostrar las tarjetas de características                   */
+/*---------------------------------------------------------------------------*/
+.feature-grid {
+  display: grid;                           /* Layout de cuadrícula */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Columnas responsivas */
+  gap: 40px;                               /* Espacio entre las tarjetas */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Tarjeta individual de característica                                      */
+/*---------------------------------------------------------------------------*/
+.feature-card {
+  background-color: var(--gluon_gray);     /* Fondo gris oscuro */
+  border-radius: 16px;                     /* Bordes redondeados */
+  padding: 40px;                           /* Espaciado interior generoso */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave para efectos hover */
+  border: 1px solid rgba(255, 255, 255, 0.05); /* Borde sutil claro */
+  height: 100%;                            /* Ocupa toda la altura disponible */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Efecto al pasar el cursor sobre la tarjeta                                */
+/*---------------------------------------------------------------------------*/
+.feature-card:hover {
+  transform: translateY(-8px);             /* Elevación al pasar el cursor */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); /* Sombra profunda */
+  border: 1px solid rgba(245, 110, 15, 0.2); /* Borde naranja sutil al hacer hover */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor del icono en la tarjeta                                        */
+/*---------------------------------------------------------------------------*/
+.feature-icon {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centra verticalmente el contenido */
+  justify-content: center;                 /* Centra horizontalmente el contenido */
+  width: 80px;                             /* Ancho del contenedor - aumentado de 70px */
+  height: 80px;                            /* Alto del contenedor - aumentado de 70px */
+  background: rgba(245, 110, 15, 0.1);     /* Fondo naranja semitransparente */
+  border-radius: 12px;                     /* Bordes redondeados */
+  margin-bottom: 24px;                     /* Espacio inferior */
+  overflow: visible;                       /* Permite que los elementos sobresalgan durante animaciones */
+  position: relative;                      /* Para posicionamiento absoluto interno */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Ajustes para el contenedor directo del SVG del icono                      */
+/*---------------------------------------------------------------------------*/
+.feature-icon > div {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centra verticalmente el contenido */
+  justify-content: center;                 /* Centra horizontalmente el contenido */
+  width: 100%;                             /* Ocupa todo el ancho disponible */
+  height: 100%;                            /* Ocupa todo el alto disponible */
+  position: relative;                      /* Para posicionamiento absoluto interno */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Título de la característica en cada tarjeta                               */
+/*---------------------------------------------------------------------------*/
+.feature-name {
+  margin-bottom: 16px;                     /* Espacio inferior */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Descripción textual de la característica                                  */
+/*---------------------------------------------------------------------------*/
+.feature-description {
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  line-height: 1.6;                        /* Altura de línea para mejor legibilidad */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilos responsivos para pantallas medianas y pequeñas                    */
+/*---------------------------------------------------------------------------*/
+@media (max-width: 768px) {
+  .feature-grid {
+    grid-template-columns: 1fr;            /* Cambia a una sola columna */
+  }
+  
+  .feature-card {
+    padding: 30px;                         /* Reduce el padding en pantallas pequeñas */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* Posibles efectos visuales adicionales (pueden ser implementados después)  */
+/*---------------------------------------------------------------------------*/
+/* Por ejemplo, animaciones para los iconos al hacer hover:
+.feature-card:hover .feature-icon {
+  background: rgba(245, 110, 15, 0.2);
+}
+*/

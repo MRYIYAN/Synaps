@@ -1,0 +1,237 @@
+/*===========================================================================*/
+/*                    ESTILOS DEL PIE DE PÁGINA (FOOTER)                     */
+/*===========================================================================*/
+/* Este archivo contiene los estilos para el componente Footer de la landing  */
+/* page de Synaps. Incluye la estructura del grid, enlaces, logo, iconos de   */
+/* redes sociales con efectos de gradiente animado, y ajustes responsivos.    */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor principal del footer                                           */
+/*---------------------------------------------------------------------------*/
+.landing-footer {
+  background-color: var(--dark_void);      /* Fondo oscuro consistente con la aplicación */
+  border-top: 1px solid rgba(135, 135, 135, 0.2); /* Separador sutil en la parte superior */
+  padding: 80px 0 40px;                    /* Espaciado vertical generoso, menor abajo */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor interno con ancho máximo                                       */
+/*---------------------------------------------------------------------------*/
+.footer-container {
+  max-width: 1200px;                       /* Ancho máximo consistente con otras secciones */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estructura de grid para organizar las columnas del footer                 */
+/*---------------------------------------------------------------------------*/
+.footer-grid {
+  display: grid;                           /* Layout de cuadrícula */
+  grid-template-columns: 2fr 1fr 1fr 1fr;  /* Columna principal más ancha (2fr) */
+  gap: 48px;                               /* Espacio entre columnas */
+  margin-bottom: 64px;                     /* Espacio inferior antes del copyright */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Columna principal con logo y descripción                                  */
+/*---------------------------------------------------------------------------*/
+.footer-brand {
+  display: flex;                           /* Layout flexible */
+  flex-direction: column;                  /* Elementos apilados verticalmente */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilo del logo en el footer                                              */
+/*---------------------------------------------------------------------------*/
+.footer-logo {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Alineación vertical centrada */
+  text-decoration: none;                   /* Sin subrayado */
+  color: var(--snow);                      /* Color blanco para el texto */
+  margin-bottom: 16px;                     /* Espacio inferior */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Imagen del logo                                                           */
+/*---------------------------------------------------------------------------*/
+.footer-logo img {
+  height: 32px;                            /* Altura fija para el logo */
+  margin-right: 10px;                      /* Espacio entre imagen y texto */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Texto del logo                                                            */
+/*---------------------------------------------------------------------------*/
+.footer-logo span {
+  font-weight: 700;                        /* Negrita para destacar */
+  font-size: 1.5rem;                       /* Tamaño grande */
+  letter-spacing: 0.5px;                   /* Espaciado entre letras para legibilidad */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Descripción de la empresa/plataforma                                      */
+/*---------------------------------------------------------------------------*/
+.footer-description {
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  margin-bottom: 24px;                     /* Espacio inferior */
+  line-height: 1.6;                        /* Altura de línea para legibilidad */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor de iconos de redes sociales                                    */
+/*---------------------------------------------------------------------------*/
+.footer-social {
+  display: flex;                           /* Layout flexible horizontal */
+  margin-top: 20px;                        /* Espacio superior */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Botón de red social individual con efecto de gradiente animado            */
+/*---------------------------------------------------------------------------*/
+.social-icon {
+  display: flex;                           /* Layout flexible */
+  align-items: center;                     /* Centrado vertical */
+  justify-content: center;                 /* Centrado horizontal */
+  width: 40px;                             /* Ancho fijo */
+  height: 40px;                            /* Altura fija (cuadrado) */
+  border-radius: 50%;                      /* Forma circular */
+  margin-right: 12px;                      /* Espacio entre iconos */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
+  background: linear-gradient(
+    90deg,
+    #ff4d00,
+    #ff8700,
+    #ff4d00
+  );                                       /* Gradiente naranja "lava líquida" */
+  background-size: 200% 100%;              /* Tamaño ampliado para animación */
+  color: white;                            /* Color del texto/icono */
+  animation: liquid-lava 1.5s linear infinite; /* Animación continua del gradiente */
+  box-shadow: 0 0 8px rgba(255, 77, 0, 0.4) inset; /* Sombra interior naranja */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Efecto hover para iconos de redes sociales                                */
+/*---------------------------------------------------------------------------*/
+.social-icon:hover {
+  transform: translateY(-3px);             /* Elevación al pasar el cursor */
+  box-shadow: 0 0 12px rgba(255, 77, 0, 0.6) inset, 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra mejorada */
+}
+
+/*---------------------------------------------------------------------------*/
+/* SVG dentro de los botones de redes sociales                               */
+/*---------------------------------------------------------------------------*/
+.social-svg {
+  width: 24px;                             /* Ancho fijo del icono */
+  height: 24px;                            /* Alto fijo del icono */
+  filter: brightness(0) invert(1);         /* Convierte los iconos a color blanco */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Títulos de las columnas de enlaces                                        */
+/*---------------------------------------------------------------------------*/
+.footer-heading {
+  color: var(--snow);                      /* Color blanco para destacar */
+  font-size: 1.2rem;                       /* Tamaño moderadamente grande */
+  margin-bottom: 24px;                     /* Espacio inferior */
+  font-weight: 600;                        /* Semibold para legibilidad */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Lista de enlaces en cada columna                                          */
+/*---------------------------------------------------------------------------*/
+.footer-link-list {
+  list-style: none;                        /* Sin viñetas */
+  padding: 0;                              /* Sin padding */
+  margin: 0;                               /* Sin margen */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Elementos individuales de la lista de enlaces                             */
+/*---------------------------------------------------------------------------*/
+.footer-link-list li {
+  margin-bottom: 12px;                     /* Espacio entre elementos */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Enlaces individuales en las listas                                        */
+/*---------------------------------------------------------------------------*/
+.footer-link-list a {
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  text-decoration: none;                   /* Sin subrayado */
+  transition: color 0.3s ease;             /* Transición suave del color */
+  font-size: 0.95rem;                      /* Tamaño ligeramente menor */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Efecto hover para enlaces                                                 */
+/*---------------------------------------------------------------------------*/
+.footer-link-list a:hover {
+  color: var(--liquid_lava);               /* Cambia a color naranja al pasar el cursor */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Sección inferior con copyright                                            */
+/*---------------------------------------------------------------------------*/
+.footer-bottom {
+  border-top: 1px solid rgba(135, 135, 135, 0.2); /* Separador sutil superior */
+  padding-top: 32px;                       /* Espacio superior */
+  text-align: center;                      /* Alineación centrada */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Texto de copyright                                                        */
+/*---------------------------------------------------------------------------*/
+.footer-copyright {
+  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  font-size: 0.9rem;                       /* Tamaño pequeño */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Animación del gradiente para efecto "lava líquida"                        */
+/*---------------------------------------------------------------------------*/
+@keyframes liquid-lava {
+  0% {
+    background-position: 0% 50%;           /* Posición inicial del gradiente */
+  }
+  50% {
+    background-position: 100% 50%;         /* Posición intermedia (desplazamiento completo) */
+  }
+  100% {
+    background-position: 0% 50%;           /* Regreso a posición inicial */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* AJUSTES RESPONSIVOS                                                       */
+/*---------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------*/
+/* Pantallas medianas (tablets, laptops pequeñas)                            */
+/*---------------------------------------------------------------------------*/
+@media (max-width: 992px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;        /* Reduce a 2 columnas */
+  }
+  
+  .footer-brand {
+    grid-column: span 2;                   /* La columna principal ocupa todo el ancho */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* Pantallas pequeñas (móviles)                                              */
+/*---------------------------------------------------------------------------*/
+@media (max-width: 576px) {
+  .landing-footer {
+    padding: 48px 0 32px;                  /* Reduce el padding vertical */
+  }
+  
+  .footer-grid {
+    grid-template-columns: 1fr;            /* Cambia a una sola columna */
+    gap: 32px;                             /* Reduce el espacio entre elementos */
+  }
+  
+  .footer-brand {
+    grid-column: span 1;                   /* Cada elemento ocupa una fila completa */
+  }
+}

@@ -1,0 +1,140 @@
+/* ---------------------------------------------------------------------
+   CSS principal para la Landing Page de Synaps
+   --------------------------------------------------------------------- */
+
+/* Reset y configuraciones básicas */
+.landing-page {
+  margin: 0;
+  padding: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  background-color: var(--dark_void);
+  color: var(--snow);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Contenedor principal */
+.landing-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Tipografía */
+.landing-heading-xl {
+  font-family: 'Dune Rise', sans-serif;
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.landing-heading-lg {
+  font-family: 'Dune Rise', sans-serif;
+  font-size: 3rem;
+  line-height: 1.2;
+  margin-bottom: 1.25rem;
+  font-weight: 700;
+}
+
+.landing-heading-md {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 2rem;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.landing-text-lg {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.landing-text-md {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Botones */
+.landing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.landing-btn-primary {
+  background: linear-gradient(90deg, #ff4d00, #ff8700, #ff4d00);
+  background-size: 200% 100%;
+  color: white;
+  border: none;
+  animation: liquid-lava 1.5s linear infinite;
+  box-shadow: 0 0 8px rgba(255, 77, 0, 0.4) inset;
+}
+
+.landing-btn-secondary {
+  background: transparent;
+  color: var(--snow);
+  border: 1px solid var(--snow);
+}
+
+.landing-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(255, 77, 0, 0.3);
+}
+
+.landing-btn-secondary:hover {
+  background-color: rgba(251, 251, 251, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Secciones */
+.landing-section {
+  padding: 6rem 0;
+  position: relative;
+}
+
+/* Animaciones */
+@keyframes liquid-lava {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .landing-container {
+    padding: 0 16px;
+  }
+  
+  .landing-heading-xl {
+    font-size: 2.5rem;
+  }
+  
+  .landing-heading-lg {
+    font-size: 2rem;
+  }
+  
+  .landing-heading-md {
+    font-size: 1.5rem;
+  }
+  
+  .landing-section {
+    padding: 4rem 0;
+  }
+}

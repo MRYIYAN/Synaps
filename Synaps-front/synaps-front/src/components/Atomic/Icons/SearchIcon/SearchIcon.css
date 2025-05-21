@@ -1,0 +1,53 @@
+.search-icon {
+  transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              transform 1s ease-in-out;
+  overflow: visible;
+  /* Aumentamos ligeramente el grosor del trazo para mayor visibilidad */
+  stroke-width: 2.2;
+}
+
+.search-icon.animate {
+  animation: search-bounce 1s ease-in-out;
+}
+
+@keyframes search-bounce {
+  0%,
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(0) translateY(-3px);
+  }
+  50% {
+    transform: translateX(-3px) translateY(0);
+  }
+}
+
+.search-check-icon {
+  overflow: visible;
+}
+
+.check-path {
+  stroke-dasharray: 9;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.125s ease-out, opacity 0.125s ease-out;
+}
+
+.search-check-icon.animate .check-path {
+  animation: checkAnimation 0.5s ease-out backwards;
+}
+
+@keyframes checkAnimation {
+  0% {
+    stroke-dashoffset: 9;
+    opacity: 0;
+  }
+  33% {
+    stroke-dashoffset: 9;
+    opacity: 0;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
