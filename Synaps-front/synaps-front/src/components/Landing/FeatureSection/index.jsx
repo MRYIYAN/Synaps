@@ -14,12 +14,17 @@
 import React from 'react';
 import { SearchIcon, CollaborateIcon, BlocksIcon } from '../../Atomic/Icons';
 import './FeatureSection.css';
+import AnimatedElement from '../../Animated/AnimatedElement';
+import useScrollAnimation from '../../../hooks/useScrollAnimation';
 //===========================================================================//
 
 //---------------------------------------------------------------------------//
 //  Componente principal de la sección de características                    //
 //---------------------------------------------------------------------------//
 const FeatureSection = () => {
+  // Hook para detectar cuando la sección de características es visible
+  const [featuresRef, isVisible] = useScrollAnimation({ threshold: 0.2 });
+
   //---------------------------------------------------------------------------//
   //  Array de datos de características                                         //
   //  Cada objeto contiene:                                                     //
@@ -56,21 +61,30 @@ const FeatureSection = () => {
   return (
     <section id="features" className="feature-section landing-section">
       <div className="landing-container">
-        {/* Título principal de la sección */}
-        <h2 className="feature-title landing-heading-lg">Características principales</h2>
+        {/* Título con animación de aparición */}
+        <AnimatedElement animation="fade-in-up">
+          <h2 className="feature-title landing-heading-lg">Caracteristicas principales</h2>
+        </AnimatedElement>
         
-        {/* Subtítulo explicativo */}
-        <p className="feature-subtitle landing-text-lg">
-          Herramientas diseñadas para potenciar tu productividad y creatividad
-        </p>
+        {/* Subtítulo con animación de aparición y retardo */}
+        <AnimatedElement animation="fade-in-up" delay={200}>
+          <p className="feature-subtitle landing-text-lg">
+            Herramientas diseñadas para potenciar tu productividad y creatividad
+          </p>
+        </AnimatedElement>
 
-        {/* Cuadrícula de tarjetas de características */}
-        <div className="feature-grid">
-          {/* Generamos dinámicamente cada tarjeta de característica a partir del array */}
-          {features.map(feature => (
-            <div key={feature.id} className="feature-card">
-              {/* Contenedor del icono con fondo y estilizado */}
-              <div className="feature-icon">{feature.icon}</div>
+        {/* Contenedor para animación en cascada de las tarjetas */}
+        <div 
+          ref={featuresRef} 
+          className={`feature-grid stagger-container ${isVisible ? 'visible' : ''}`}
+        >
+          {/* Generamos cada tarjeta como un stagger-item para animación en cascada */}
+          {features.map((feature, index) => (
+            <div key={feature.id} className="feature-card stagger-item shine-effect">
+              {/* Contenedor del icono con clase para animación flotante */}
+              <div className="feature-icon float-animation">
+                {feature.icon}
+              </div>
               
               {/* Título de la característica */}
               <h3 className="feature-name landing-heading-md">{feature.title}</h3>

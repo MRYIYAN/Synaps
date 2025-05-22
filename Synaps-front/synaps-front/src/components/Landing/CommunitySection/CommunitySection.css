@@ -10,10 +10,9 @@
 /* Estilos principales del contenedor de la sección                          */
 /*---------------------------------------------------------------------------*/
 .community-section {
-  background-color: rgba(27, 27, 30, 0.5); /* Fondo oscuro semitransparente */
-  position: relative;                      /* Para posicionamiento de elementos internos */
-  overflow: hidden;                        /* Evita desbordamiento de contenido */
-  padding: 8rem 0;                         /* Espaciado vertical generoso */
+  background-color: transparent !important;
+  position: relative;
+  z-index: 1;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -123,7 +122,8 @@
 /* Texto descriptivo de cada beneficio */
 .benefit-text {
   font-size: 1.05rem;                      /* Tamaño legible */
-  color: var(--snow);                      /* Color claro para mejor legibilidad */
+  color: #ffffff;                          /* Blanco puro */
+  font-weight: 500;                        /* Semi-negrita */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -228,15 +228,17 @@
 /* Estilos para la tarjeta de comunidad (sección derecha)                    */
 /*---------------------------------------------------------------------------*/
 .community-card {
-  background-color: rgba(35, 35, 40, 0.7); /* Fondo oscuro semitransparente */
+  background-color: rgba(35, 35, 40, 0.4);
   border-radius: 16px;                     /* Bordes redondeados */
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); /* Sombra profunda */
-  border: 1px solid rgba(255, 135, 0, 0.15); /* Borde naranja sutil */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra menos intensa */
+  border: none;
+  border-image: none;
   width: 100%;                             /* Ocupa todo el ancho disponible */
   max-width: 400px;                        /* Ancho máximo */
   position: relative;                      /* Para posicionamiento de elementos internos */
   overflow: hidden;                        /* Contiene efectos visuales internos */
   transition: all 0.3s ease;               /* Transición suave para efectos hover */
+  backdrop-filter: none !important;        /* Eliminamos cualquier desenfoque */
 }
 
 /* Efectos al pasar el cursor sobre la tarjeta */
@@ -257,7 +259,8 @@
   gap: 8px;                                /* Espacio entre los círculos */
   padding: 15px 20px;                      /* Espaciado interno */
   border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Separador sutil */
-  background-color: rgba(20, 20, 25, 0.7); /* Fondo ligeramente más oscuro que la tarjeta */
+  background-color: rgba(20, 20, 25, 0.5); /* Más transparente */
+  backdrop-filter: none !important;        /* Eliminamos cualquier desenfoque */
 }
 
 /* Puntos de colores en la barra de la tarjeta (estilo macOS) */
@@ -315,7 +318,7 @@
 
 /* Texto descriptivo de la tarjeta */
 .card-description {
-  color: var(--dusty_gray);                /* Color gris para texto secundario */
+  color: #e6e6e6;                          /* Gris muy claro */
   margin-bottom: 32px;                     /* Espaciado inferior */
   font-size: 1.05rem;                      /* Tamaño legible */
   line-height: 1.6;                        /* Altura de línea para mejor legibilidad */
@@ -401,6 +404,7 @@
   font-weight: 500;                        /* Peso de la fuente semibold */
   transition: all 0.3s ease;               /* Transición suave */
   gap: 8px;                                /* Espacio entre icono y texto */
+  backdrop-filter: none !important;        /* Eliminamos cualquier desenfoque */
 }
 
 /* Efectos al pasar el cursor sobre los botones */
@@ -411,36 +415,58 @@
   box-shadow: 0 4px 12px rgba(255, 77, 0, 0.15); /* Sombra naranja sutil */
 }
 
-/* Animación pulsante de brillo para los botones */
-@keyframes button-glow {
-  0% {
-    box-shadow: 0 0 0 rgba(255, 77, 0, 0); /* Sin sombra */
-  }
-  50% {
-    box-shadow: 0 0 8px rgba(255, 77, 0, 0.3); /* Sombra máxima */
-  }
-  100% {
-    box-shadow: 0 0 0 rgba(255, 77, 0, 0); /* Sin sombra */
-  }
+/* Eliminamos los efectos que puedan causar problemas de visualización */
+.info-card-glow,
+.card-glow-effect {
+  opacity: 0.04;                           /* Reducimos la opacidad */
 }
 
-/* Aplicación de la animación de brillo a los botones */
-.landing-btn.landing-btn-secondary {
-  animation: button-glow 3s infinite;      /* Animación continua */
+/* Aumentamos el contraste de los textos para mejor visibilidad */
+.benefit-text {
+  color: #ffffff;                          /* Blanco puro */
+  font-weight: 500;                        /* Semi-negrita */
+}
+
+.card-description,
+.community-description {
+  color: #e6e6e6;                          /* Gris muy claro */
+}
+
+/* Aseguramos que los iconos sean bien visibles */
+.inline-icon path,
+.inline-icon rect,
+.inline-icon circle,
+.inline-icon line {
+  stroke-width: 2px;                       /* Trazos más gruesos */
+}
+
+/* Aseguramos que los gradientes y efectos de brillo sean más sutiles */
+@keyframes liquid-lava {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /*---------------------------------------------------------------------------*/
 /* Estilos para la tarjeta de información (sección izquierda)                */
 /*---------------------------------------------------------------------------*/
 .info-card {
-  background-color: rgba(35, 35, 40, 0.7); /* Fondo oscuro semitransparente */
-  border-radius: 16px;                     /* Bordes redondeados */
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); /* Sombra profunda */
-  border: 1px solid rgba(255, 135, 0, 0.15); /* Borde naranja sutil */
-  padding: 30px;                           /* Espaciado interno */
-  position: relative;                      /* Para posicionamiento de elementos internos */
-  overflow: hidden;                        /* Contiene efectos visuales */
-  transition: all 0.3s ease;               /* Transición suave */
+    background-color: rgba(35, 35, 40, 0.7);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: none;
+    border-image: none;
+    padding: 50px 30px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: none !important;
 }
 
 /* Efectos al pasar el cursor sobre la tarjeta de información */

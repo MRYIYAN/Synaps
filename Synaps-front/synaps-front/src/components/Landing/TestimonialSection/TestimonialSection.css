@@ -37,10 +37,10 @@
 /* Contenedor principal de la sección                                        */
 /*---------------------------------------------------------------------------*/
 .testimonial-section {
-  background-color: rgba(27, 27, 30, 0.5); /* Fondo oscuro semitransparente */
-  position: relative;                      /* Para posicionamiento de elementos */
-  overflow: hidden;                        /* Evita desbordamiento de contenido */
-  padding: 8rem 0;                         /* Espaciado vertical generoso */
+  background-color: transparent !important;
+  position: relative;
+  overflow: hidden;
+  padding: 8rem 0;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -82,13 +82,13 @@
 }
 
 /*---------------------------------------------------------------------------*/
-/* Contenedor de las tarjetas del carrusel                                   */
+/* Contenedor de las tarjetas del carrusel - ALTURA AJUSTADA                 */
 /*---------------------------------------------------------------------------*/
 .testimonial-wrapper {
   position: relative;                      /* Para posicionamiento de tarjetas */
   overflow: hidden;                        /* Oculta las tarjetas fuera de vista */
   width: 100%;                             /* Ocupa todo el ancho disponible */
-  height: 360px;                           /* Altura fija aumentada */
+  height: 320px;                           /* Altura reducida de 360px a 320px */
   padding: 20px 0;                         /* Espaciado vertical */
   display: flex;                           /* Layout flexible */
   justify-content: center;                 /* Centrado horizontal */
@@ -100,25 +100,21 @@
 /* Tarjeta individual de testimonio (estado base)                            */
 /*---------------------------------------------------------------------------*/
 .testimonial-card {
-  position: absolute;                      /* Posicionamiento absoluto para animación */
-  top: 0;                                  /* Alineado con el borde superior */
-  left: 50%;                               /* Centrado horizontal (parte 1) */
-  transform: translateX(-50%) translateX(150%); /* Posición inicial fuera de pantalla a la derecha */
-  width: 90%;                              /* Ancho relativo al contenedor */
-  margin: 0;                               /* Sin margen */
-  opacity: 0;                              /* Inicialmente invisible */
-  transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0s; /* Transición lenta para posición, instantánea para opacidad */
-  pointer-events: none;                    /* No interactúa con eventos del mouse */
-  background-color: rgba(35, 35, 40, 0.7); /* Fondo oscuro semitransparente */
-  border-radius: 16px;                     /* Bordes muy redondeados */
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); /* Sombra profunda */
-  border: 1px solid rgba(255, 255, 255, 0.05); /* Borde sutil claro */
-  overflow: hidden;                        /* Oculta contenido desbordante */
-  height: 100%;                            /* Ocupa toda la altura disponible */
-  display: flex;                           /* Layout flexible */
-  flex-direction: column;                  /* Elementos apilados verticalmente */
-  justify-content: space-between;          /* Distribución uniforme del espacio */
-  will-change: transform;                  /* Optimización de rendimiento */
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateX(150%);
+  width: 90%;
+  margin: 0;
+  opacity: 0;
+  /* Transición más fluida: reducimos tiempo y ajustamos la curva de timing */
+  transition: transform 500ms cubic-bezier(0.33, 1, 0.68, 1), opacity 250ms ease;
+  pointer-events: none;
+  background-color: rgba(35, 35, 40, 0.5); /* Ligeramente más oscuro */
+  border-radius: 12px; /* Bordes más redondeados */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+  backdrop-filter: none !important;
+  overflow: hidden; /* Asegura que el contenido no se salga */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -126,9 +122,9 @@
 /*---------------------------------------------------------------------------*/
 .testimonial-card.prev {
   transform: translateX(-50%) translateX(-150%); /* Posición fuera de pantalla a la izquierda */
-  z-index: 0;                              /* Capa base */
-  opacity: 0;                              /* Invisible */
-  transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0s; /* Transición lenta */
+  z-index: 0;
+  opacity: 0;
+  transition: transform 500ms cubic-bezier(0.33, 1, 0.68, 1), opacity 250ms ease; /* Mismo timing que el base */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -136,9 +132,9 @@
 /*---------------------------------------------------------------------------*/
 .testimonial-card.next {
   transform: translateX(-50%) translateX(150%); /* Posición fuera de pantalla a la derecha */
-  z-index: 0;                              /* Capa base */
-  opacity: 0;                              /* Invisible */
-  transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0s; /* Transición lenta */
+  z-index: 0;
+  opacity: 0;
+  transition: transform 500ms cubic-bezier(0.33, 1, 0.68, 1), opacity 250ms ease; /* Mismo timing que el base */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -146,46 +142,46 @@
 /*---------------------------------------------------------------------------*/
 .testimonial-card.active {
   transform: translateX(-50%) translateX(0); /* Centrado en la pantalla */
-  pointer-events: auto;                    /* Habilita interacción */
-  z-index: 2;                              /* Por encima de las otras tarjetas */
-  opacity: 1;                              /* Completamente visible */
-  transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.5s; /* Transición lenta para posición, rápida para opacidad */
+  pointer-events: auto;
+  z-index: 2;
+  opacity: 1;
+  transition: transform 500ms cubic-bezier(0.33, 1, 0.68, 1), opacity 250ms ease; /* Mismo timing pero con delay para opacidad */
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 77, 0, 0.1); /* Sombra mejorada y borde sutil */
 }
 
 /*---------------------------------------------------------------------------*/
-/* Contenedor interno del contenido del testimonio                           */
+/* Contenedor interno del contenido del testimonio - MEJOR AJUSTADO          */
 /*---------------------------------------------------------------------------*/
 .testimonial-content {
-  padding: 30px 50px 30px 30px;            /* Espaciado interno con más espacio a la derecha */
-  position: relative;                      /* Para posicionamiento de elementos internos */
-  z-index: 2;                              /* Por encima del efecto de resplandor */
-  height: 100%;                            /* Ocupa toda la altura disponible */
-  display: flex;                           /* Layout flexible */
-  flex-direction: column;                  /* Elementos apilados verticalmente */
+  padding: 25px 40px;                      /* Padding más equilibrado y compacto */
+  position: relative;
+  z-index: 2;
+  height: 100%;                            /* Cambiado de 95% a 100% */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;                 /* Centramos verticalmente el contenido */
+  align-items: center;                     /* Centrado horizontal de los elementos hijos */
 }
 
 /*---------------------------------------------------------------------------*/
 /* Efecto de resplandor detrás del contenido                                 */
 /*---------------------------------------------------------------------------*/
 .testimonial-glow {
-  position: absolute;                      /* Posicionamiento absoluto */
-  top: 50%;                                /* Centrado vertical (parte 1) */
-  left: 50%;                               /* Centrado horizontal (parte 1) */
-  transform: translate(-50%, -50%);        /* Centrado vertical y horizontal (parte 2) */
-  width: 120%;                             /* Más ancho que el contenedor */
-  height: 250px;                           /* Altura fija */
-  background: radial-gradient(ellipse at center, rgba(255, 77, 0, 0.2) 0%, rgba(255, 77, 0, 0) 70%); /* Gradiente radial naranja que se desvanece */
-  opacity: 0.08;                           /* Inicialmente sutil */
-  pointer-events: none;                    /* No interactúa con eventos del mouse */
-  transition: opacity 0.3s ease;           /* Transición suave de opacidad */
-  z-index: 1;                              /* Entre el fondo y el contenido */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130%;
+  height: 280px;
+  background: radial-gradient(ellipse at center, rgba(255, 77, 0, 0.08) 0%, rgba(255, 77, 0, 0) 70%);
+  opacity: 0.15;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.5s ease;
 }
 
-/*---------------------------------------------------------------------------*/
-/* Intensificación del resplandor al pasar el cursor                         */
-/*---------------------------------------------------------------------------*/
 .testimonial-card.active:hover .testimonial-glow {
-  opacity: 0.12;                           /* Aumenta ligeramente la intensidad */
+  opacity: 0.25;
+  transform: translate(-50%, -50%) scale(1.05);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -209,7 +205,7 @@
 .testimonial-accent-bottom {
   position: absolute;                      /* Posicionamiento absoluto */
   bottom: 0;                               /* Alineado con borde inferior */
-  left: 0;                                 /* Alineado con borde izquierdo */
+  left: 0;                                 /* Alineado al borde izquierdo */
   right: 0;                                /* Extendido hasta borde derecho */
   height: 3px;                             /* Grosor del borde */
   background: linear-gradient(270deg, rgba(255,77,0,0.8), rgba(255,135,0,0.8)); /* Gradiente naranja invertido */
@@ -237,47 +233,140 @@
 }
 
 /*---------------------------------------------------------------------------*/
-/* Texto del testimonio                                                      */
+/* Texto del testimonio - MÁS COMPACTO                                       */
 /*---------------------------------------------------------------------------*/
 .testimonial-text {
-  font-size: 1.1rem;                       /* Tamaño de texto aumentado */
-  line-height: 1.6;                        /* Altura de línea para legibilidad */
-  text-align: center;                      /* Centrado horizontal */
-  color: var(--snow);                      /* Color blanco */
-  flex: 1;                                 /* Ocupa espacio disponible */
-  position: relative;                      /* Para posicionamiento relativo */
+  font-size: 1.1rem;                       /* Ligeramente más pequeño (de 1.15rem a 1.1rem) */
+  line-height: 1.6;                        /* Menos espacio entre líneas (de 1.7 a 1.6) */
+  text-align: center;
+  color: var(--snow);
+  margin-bottom: 20px;                     /* Reducido el margen inferior (de 24px a 20px) */
+  position: relative;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  padding: 0 10px;                         /* Padding horizontal reducido (de 15px a 10px) */
+  font-style: italic;                      /* Mantenemos el estilo itálica */
+}
+
+/* Cambiar posición de las comillas a arriba a la derecha */
+.testimonial-text::before {
+  content: '"';
+  position: absolute;
+  right: 10px;           
+  left: auto;            
+  top: -40px;            /* Subimos aún más, de -30px a -40px */
+  font-size: 5rem;       /* Aumentamos tamaño de 4rem a 5rem */
+  opacity: 0.25;         
+  color: #F56E0F;        
+  font-family: Georgia, serif;
 }
 
 /*---------------------------------------------------------------------------*/
-/* Ajustes para el icono de usuario                                          */
+/* Contenedor centralizado para el avatar del usuario                        */
+/*---------------------------------------------------------------------------*/
+.author-avatar-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;                    /* Reducido (de 20px a 15px) */
+  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Icono de usuario mejorado y centrado                                      */
 /*---------------------------------------------------------------------------*/
 .user-avatar-icon {
-  width: 65px;                             /* Ancho aumentado */
-  height: 65px;                            /* Alto aumentado */
-  border-radius: 50%;                      /* Forma circular */
-  background: rgba(35, 35, 40, 0.7);       /* Fondo oscuro semitransparente */
-  display: flex;                           /* Layout flexible */
-  align-items: center;                     /* Centrado vertical */
-  justify-content: center;                 /* Centrado horizontal */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil claro */
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Sombra sutil */
-  transition: all 0.3s ease;               /* Transición suave */
+  width: 80px;                            /* Aumentado de 65px a 80px */
+  height: 80px;                          /* Aumentado de 65px a 80px */
+  border-radius: 50%;
+  background: rgba(35, 35, 40, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 77, 0, 0.2); /* Borde naranja */
+  box-shadow: 0 0 25px rgba(255, 77, 0, 0.15); /* Resplandor sutil */
+  transition: all 0.3s ease;
+  margin: 0 auto; /* Centra horizontalmente si está en un contenedor de bloque */
 }
 
 /*---------------------------------------------------------------------------*/
-/* Información de autor y rol                                                */
+/* Información de autor y rol - centrada                                     */
+/*---------------------------------------------------------------------------*/
+.author-info-centered {
+  text-align: center; /* Centra el texto */
+  padding-top: 10px;
+  position: relative;
+  width: 100%; /* Ocupa todo el ancho disponible */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra los elementos hijos */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Línea decorativa centrada encima del nombre                               */
+/*---------------------------------------------------------------------------*/
+.author-info-centered::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%); /* Centra la línea */
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 77, 0, 0), rgba(255, 77, 0, 0.5), rgba(255, 77, 0, 0));
+}
+
+/*---------------------------------------------------------------------------*/
+/* Nombre del autor centrado                                                 */
 /*---------------------------------------------------------------------------*/
 .author-name {
-  font-weight: 600;                        /* Semibold */
-  font-size: 1.1rem;                       /* Tamaño aumentado */
-  color: var(--snow);                      /* Color blanco */
-  margin-bottom: 4px;                      /* Espacio inferior pequeño */
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--snow);
+  margin-bottom: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+  text-align: center; /* Centra el texto explícitamente */
 }
 
+/*---------------------------------------------------------------------------*/
+/* Rol del autor centrado                                                    */
+/*---------------------------------------------------------------------------*/
 .author-role {
-  color: var(--dusty_gray);                /* Color gris para texto secundario */
-  font-size: 0.95rem;                      /* Tamaño ligeramente menor */
-  position: relative;                      /* Para posicionamiento relativo */
+  font-size: 0.95rem;
+  position: relative;
+  width: 100%; 
+  text-align: center;
+  
+  /* Efecto liquid lava */
+  background: linear-gradient(
+    90deg, 
+    #F56E0F, 
+    #FF8700, 
+    #FF5E00, 
+    #FF9E45, 
+    #F56E0F
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: liquid-lava 3s ease infinite;
+  text-shadow: none; /* Quitamos sombra de texto para mejor efecto */
+  font-weight: 600;  /* Un poco más gruesa para mejor legibilidad */
+  letter-spacing: 0.5px; /* Mejor espaciado entre letras */
+}
+
+/* Aseguramos que la animación de liquid-lava esté definida correctamente */
+@keyframes liquid-lava {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -380,19 +469,20 @@
 /* Botones de navegación (anterior/siguiente)                                */
 /*---------------------------------------------------------------------------*/
 .carousel-control {
-  background: rgba(35, 35, 40, 0.7);       /* Fondo oscuro semitransparente */
-  border: 1px solid rgba(255, 77, 0, 0.3); /* Borde naranja sutil */
-  color: #fff;                             /* Color blanco para el icono */
-  width: 44px;                             /* Ancho fijo */
-  height: 44px;                            /* Alto fijo (circular) */
-  border-radius: 50%;                      /* Forma circular */
-  display: flex;                           /* Layout flexible */
-  align-items: center;                     /* Centrado vertical */
-  justify-content: center;                 /* Centrado horizontal */
-  cursor: pointer;                         /* Cursor tipo mano */
-  position: relative;                      /* Para posicionamiento relativo */
-  z-index: 10;                             /* Por encima del carrusel */
-  transition: all 0.3s ease;               /* Transición suave */
+  background: rgba(35, 35, 40, 0.5) !important; /* Más transparente */
+  border: 1px solid rgba(255, 77, 0, 0.3);
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+  transition: all 0.3s ease;
+  backdrop-filter: none !important; /* Elimina cualquier desenfoque */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -415,104 +505,42 @@
 /* Efecto hover en botones de navegación                                     */
 /*---------------------------------------------------------------------------*/
 .carousel-control:hover {
-  background: rgba(35, 35, 40, 0.9);       /* Fondo ligeramente más opaco */
-  border-color: rgba(255, 77, 0, 0.7);     /* Borde naranja más visible */
-  transform: scale(1.1);                   /* Ligeramente agrandado */
-  box-shadow: 0 0 15px rgba(255, 77, 0, 0.3); /* Resplandor naranja */
+  background: rgba(35, 35, 40, 0.7) !important; /* Aún transparente en hover */
+  border-color: rgba(255, 77, 0, 0.7);
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 77, 0, 0.2); /* Sombra menos intensa */
 }
 
-/*---------------------------------------------------------------------------*/
-/* Mostrar y animar el aro externo al hacer hover                            */
-/*---------------------------------------------------------------------------*/
-.carousel-control:hover::after {
-  opacity: 1;                              /* Visible */
-  animation: pulse-control 2s infinite;    /* Animación continua */
-}
-
-/*---------------------------------------------------------------------------*/
-/* Keyframes para animación de pulso del control                             */
-/*---------------------------------------------------------------------------*/
-@keyframes pulse-control {
-  0% {
-    transform: scale(1);                   /* Tamaño normal */
-    opacity: 0.7;                          /* Moderadamente visible */
-  }
-  50% {
-    transform: scale(1.2);                 /* Agrandado */
-    opacity: 0.3;                          /* Muy transparente */
-  }
-  100% {
-    transform: scale(1);                   /* Vuelve a tamaño normal */
-    opacity: 0.7;                          /* Moderadamente visible */
-  }
-}
-
-/*---------------------------------------------------------------------------*/
-/* Estado deshabilitado de los botones de navegación                         */
-/*---------------------------------------------------------------------------*/
-.carousel-control:disabled {
-  opacity: 0.5;                            /* Semi-transparente */
-  cursor: not-allowed;                     /* Cursor de no permitido */
-  box-shadow: none;                        /* Sin efectos de sombra */
-}
-
-/*---------------------------------------------------------------------------*/
-/* Posicionamiento específico de botones anterior/siguiente                  */
-/*---------------------------------------------------------------------------*/
-.carousel-prev {
-  margin-right: 16px;                      /* Espacio a la derecha */
-}
-
-.carousel-next {
-  margin-left: 16px;                       /* Espacio a la izquierda */
-}
-
-/*---------------------------------------------------------------------------*/
-/* Estructura del autor centrado con avatar y nombre                         */
-/*---------------------------------------------------------------------------*/
-.testimonial-author-centered {
-  display: flex;                           /* Layout flexible */
-  flex-direction: column;                  /* Elementos apilados verticalmente */
-  align-items: center;                     /* Centrado horizontal */
-  margin-bottom: 30px;                     /* Espacio inferior */
-  text-align: center;                      /* Texto centrado */
-}
-
-/*---------------------------------------------------------------------------*/
-/* Contenedor del avatar centrado                                            */
-/*---------------------------------------------------------------------------*/
-.author-avatar-centered {
-  margin-bottom: 15px;                     /* Espacio inferior */
-  display: flex;                           /* Layout flexible */
-  justify-content: center;                 /* Centrado horizontal */
-}
-
-/*---------------------------------------------------------------------------*/
-/* Información de autor con nombre y rol                                     */
-/*---------------------------------------------------------------------------*/
-.author-info-centered {
-  text-align: center;                      /* Texto centrado */
-}
-
-/*---------------------------------------------------------------------------*/
-/* Estructura del cuerpo del testimonio                                      */
-/*---------------------------------------------------------------------------*/
+/* Eliminamos efectos de sombra y backdrop-filter de cualquier otro elemento */
+.testimonial-content,
+.carousel-bullets,
+.author-info-centered,
 .testimonial-body {
-  position: relative;                      /* Para posicionamiento relativo */
-  display: flex;                           /* Layout flexible */
-  flex: 1;                                 /* Ocupa espacio disponible */
-  padding-right: 15px;                     /* Espacio a la derecha */
+  backdrop-filter: none !important;
 }
 
-/*---------------------------------------------------------------------------*/
-/* Posicionamiento de las comillas decorativas                               */
-/*---------------------------------------------------------------------------*/
+/* Mejoramos el contraste de textos para mejor legibilidad */
+.testimonial-text {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Sombra sutil para legibilidad */
+}
+
+.author-name {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Sombra sutil para legibilidad */
+}
+
+/* Eliminamos las líneas decorativas superior e inferior */
+.testimonial-section::before,
+.testimonial-section::after {
+  opacity: 0.5; /* Hacerlas menos visibles */
+}
+
+/* Aseguramos que todos los elementos dentro de la tarjeta de testimonial sean semi-transparentes */
+.testimonial-author-centered,
+.author-info-centered,
+.testimonial-body,
+.testimonial-text,
 .testimonial-quote-mark-right {
-  position: absolute;                      /* Posicionamiento absoluto */
-  top: -30px;                              /* Posición superior */
-  right: 20px;                             /* Posición derecha */
-  opacity: 0.8;                            /* Ligeramente transparente */
-  z-index: 5;                              /* Por encima del contenido */
+  background-color: transparent !important;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -524,7 +552,7 @@
 /*---------------------------------------------------------------------------*/
 @media (max-width: 992px) {
   .testimonial-wrapper {
-    height: 380px;                         /* Aumenta la altura para más contenido */
+    height: 340px;                        /* Reducido (de 380px a 340px) */
   }
 }
 
@@ -533,35 +561,12 @@
 /*---------------------------------------------------------------------------*/
 @media (max-width: 768px) {
   .testimonial-wrapper {
-    height: 400px;                         /* Más altura para contenido reajustado */
-  }
-  
-  .testimonial-quote-mark-right {
-    transform: scale(0.8);                 /* Reduce tamaño de comillas */
-    top: -15px;                            /* Ajusta posición vertical */
-    right: 10px;                           /* Ajusta posición horizontal */
-  }
-  
-  .testimonial-content {
-    padding: 25px 35px 25px 25px;          /* Reduce el padding */
+    height: 360px;                        /* Reducido (de 400px a 360px) */
   }
 }
 
-/*---------------------------------------------------------------------------*/
-/* Pantallas muy pequeñas (móviles)                                          */
-/*---------------------------------------------------------------------------*/
 @media (max-width: 576px) {
   .testimonial-wrapper {
-    height: 440px;                         /* Altura significativamente mayor */
-  }
-  
-  .testimonial-quote-mark-right {
-    transform: scale(0.7);                 /* Reduce más el tamaño */
-    top: -10px;                            /* Ajusta posición vertical */
-    right: 5px;                            /* Ajusta posición horizontal */
-  }
-  
-  .testimonial-content {
-    padding: 20px 30px 20px 20px;          /* Reduce más el padding */
+    height: 400px;                        /* Reducido (de 440px a 400px) */
   }
 }

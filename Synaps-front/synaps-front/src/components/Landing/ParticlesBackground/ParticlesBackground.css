@@ -1,10 +1,129 @@
+/*===========================================================================*/
+/*                    ESTILOS DEL FONDO DE PARTÍCULAS                        */
+/*===========================================================================*/
+/* Este archivo contiene los estilos que configuran el canvas de partículas   */
+/* interactivas y establece reglas para asegurar que el fondo se muestre      */
+/* correctamente por debajo de todos los componentes de la landing page.      */
+/* También incluye reglas para mejorar la fluidez visual entre secciones.     */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/* Canvas de partículas - Configuración principal                            */
+/*---------------------------------------------------------------------------*/
 .particles-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  pointer-events: none;
-  background-color: var(--dark_void);
+  position: fixed !important;         /* Fijado en la ventana del navegador */
+  width: 100%;                        /* Ocupa todo el ancho disponible */
+  height: 100%;                       /* Ocupa todo el alto disponible */
+  top: 0;                             /* Alineado con la parte superior */
+  left: 0;                            /* Alineado con la parte izquierda */
+  z-index: 0;                         /* Nivel de apilamiento (debajo del contenido) */
+  pointer-events: none;               /* No intercepta eventos del mouse */
+  background-color: #1a1a1e !important; /* Fondo oscuro explícito */
+  filter: none;                       /* Sin filtros CSS */
+  image-rendering: crisp-edges;       /* Mejora la nitidez de los píxeles */
+  overflow: hidden !important;        /* Asegura que nada se salga del canvas */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Refuerzo de configuración para el canvas                                  */
+/*---------------------------------------------------------------------------*/
+canvas.particles-canvas {
+  z-index: 0 !important;              /* Refuerzo para asegurar nivel de apilamiento */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Configuración global para evitar desbordamiento horizontal                */
+/*---------------------------------------------------------------------------*/
+body, html, #root {
+  overflow-x: hidden;                 /* Previene scroll horizontal */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estilo base para la página de landing                                     */
+/*---------------------------------------------------------------------------*/
+.landing-page {
+  position: relative;                 /* Establece contexto de posicionamiento */
+  z-index: 1;                         /* Por encima del canvas de partículas */
+  background-color: transparent !important; /* Fondo transparente para ver partículas */
+
+  /*-------------------------------------------------------------------------*/
+  /* Configuración de secciones para una experiencia fluida                  */
+  /*-------------------------------------------------------------------------*/
+  & > section {
+    margin: 0 !important;             /* Elimina márgenes entre secciones */
+    padding-top: 6rem !important;     /* Espaciado superior consistente */
+    padding-bottom: 6rem !important;  /* Espaciado inferior consistente */
+    background-color: transparent !important; /* Secciones transparentes */
+    position: relative;               /* Para posicionar elementos internos */
+  }
+
+  /*-------------------------------------------------------------------------*/
+  /* Efecto de transición sutil entre secciones                              */
+  /*-------------------------------------------------------------------------*/
+  & > section::after {
+    content: '';                      /* Crea un pseudoelemento */
+    position: absolute;               /* Posicionamiento absoluto */
+    height: 3rem;                     /* Altura del degradado */
+    bottom: 0;                        /* Alineado con la parte inferior */
+    left: 0;                          /* Desde el borde izquierdo */
+    right: 0;                         /* Hasta el borde derecho */
+    background: linear-gradient(to bottom,
+                              transparent,
+                              rgba(26, 26, 30, 0.1)); /* Degradado sutil */
+    pointer-events: none;             /* No intercepta eventos del mouse */
+  }
+
+  /*-------------------------------------------------------------------------*/
+  /* Elimina el efecto de degradado en la última sección                     */
+  /*-------------------------------------------------------------------------*/
+  & > section:last-child::after {
+    display: none;                    /* Oculta el degradado inferior */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* Contenedores con fondos semi-transparentes para contenido                 */
+/*---------------------------------------------------------------------------*/
+.section-content {
+  background-color: rgba(26, 26, 30, 0.5); /* Fondo oscuro semi-transparente */
+  border: 1px solid rgba(255, 77, 0, 0.1); /* Borde naranja sutil */
+  border-radius: 16px;                /* Bordes redondeados */
+  padding: 2rem;                      /* Espaciado interno */
+  position: relative;                 /* Para posicionar elementos internos */
+  backdrop-filter: none !important;   /* Sin efectos de desenfoque */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Tarjetas dentro de las secciones de la landing                           */
+/*---------------------------------------------------------------------------*/
+.landing-card {
+  background-color: rgba(35, 35, 40, 0.4); /* Fondo un poco más claro que el principal */
+  border: 1px solid rgba(255, 77, 0, 0.1); /* Borde naranja sutil */
+  border-radius: 12px;                /* Bordes redondeados */
+  backdrop-filter: none !important;   /* Sin efectos de desenfoque */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Ajustes de rendimiento para optimizar la animación                        */
+/*---------------------------------------------------------------------------*/
+.particles-canvas {
+  will-change: transform;             /* Optimiza rendimiento GPU */
+  transform: translateZ(0);           /* Fuerza aceleración por hardware */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Fondo de partículas - Nueva clase propuesta                              */
+/*---------------------------------------------------------------------------*/
+.particles-background {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important; /* Usar vw para asegurar ancho completo */
+  height: 100vh !important; /* Usar vh para asegurar alto completo */
+  z-index: 0 !important; /* CAMBIO IMPORTANTE: De -1 a 0 para que no quede detrás del fondo */
+  pointer-events: none !important;
+  background-color: transparent !important;
+  display: block !important; /* Forzar display block */
+  visibility: visible !important; /* Forzar visibilidad */
+  opacity: 1 !important; /* Forzar opacidad completa */
 }

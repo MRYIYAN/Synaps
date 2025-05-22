@@ -2,15 +2,48 @@
    CSS principal para la Landing Page de Synaps
    --------------------------------------------------------------------- */
 
-/* Reset y configuraciones básicas */
-.landing-page {
+/* Corrección global para scroll */
+html, body, #root {
+  width: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'IBM Plex Sans', sans-serif;
-  background-color: var(--dark_void);
-  color: var(--snow);
   overflow-x: hidden;
+}
+
+body {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  position: relative;
+}
+
+/* Reset y configuraciones básicas */
+html, body {
+  background-color: #1a1a1e !important; /* Color de fondo oscuro */
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.landing-page {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background-color: transparent !important; /* Cambiado a transparente */
+  color: white;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden; /* Prevenir scroll horizontal */
+  overflow-y: visible; /* Permitir flujo natural del contenido vertical */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Contenedor principal */
@@ -18,7 +51,7 @@
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 24px 24px;
 }
 
 /* Tipografía */
@@ -137,4 +170,76 @@
   .landing-section {
     padding: 4rem 0;
   }
+}
+
+/* Aseguramos que todos los elementos dentro de la página tengan fondo transparente */
+.landing-page > * {
+  background-color: transparent !important;
+}
+
+/* Restauramos las propiedades específicas de ParticlesBackground */
+.particles-background,
+.particles-canvas {
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 0 !important; /* Cambiado de -1 a 0 */
+  pointer-events: none !important;
+  background-color: transparent !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Aseguramos que el fondo oscuro no sea sobreescrito */
+#root, #app, main, .app-container {
+  background-color: #1a1a1e !important;
+}
+
+/* Verificamos que no haya un overlay o un fondo blanco en algún contenedor */
+.landing-section,
+.hero-section,
+.feature-section,
+.solutions-section,
+.community-section,
+.testimonial-section,
+.cta-section,
+.section-divider {
+  background-color: transparent !important;
+}
+
+/* Para asegurar que el cuerpo de la página tenga un fondo oscuro */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(26, 26, 30, 0.9); /* #1a1a1e con opacidad */
+  z-index: -1; /* Detrás de las partículas */
+  pointer-events: none;
+}
+
+/* Aseguramos que no haya líneas divisorias entre secciones */
+.landing-page > section {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.landing-page > section::after, 
+.landing-page > section::before {
+  display: none !important;
+}
+
+/* Creamos "pegamento visual" entre secciones */
+.landing-page > section + section {
+  margin-top: -1px !important; /* Solapamos ligeramente para evitar línea divisoria */
+}
+
+/* Eliminamos efectos de transición que puedan causar líneas */
+.landing-page > section::after {
+  display: none !important;
 }

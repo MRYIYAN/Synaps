@@ -11,8 +11,11 @@
 //===========================================================================//
 //                             IMPORTS                                       //
 //===========================================================================//
-import React from 'react';
+import React, { useState } from 'react';
 import './SolutionsShowcase.css';
+import AnimatedElement from '../../Animated/AnimatedElement';
+import useScrollAnimation from '../../../hooks/useScrollAnimation';
+
 //===========================================================================//
 
 //---------------------------------------------------------------------------//
@@ -105,9 +108,22 @@ const InlineCalendarIcon = ({ color = 'var(--liquid_lava)', size = 36 }) => (
 );
 
 //---------------------------------------------------------------------------//
+//  Componente de partícula pixelada para el efecto hover                    //
+//---------------------------------------------------------------------------//
+const PixelParticle = ({ style }) => (
+  <div className="pixel-particle" style={style}></div>
+);
+
+//---------------------------------------------------------------------------//
 //  Componente principal de muestra de soluciones                            //
 //---------------------------------------------------------------------------//
 const SolutionsShowcase = () => {
+  // Para detectar cuando la lista de soluciones está visible
+  const [solutionsRef, isSolutionsVisible] = useScrollAnimation({ threshold: 0.2 });
+  
+  // Estado para manejar qué solución tiene el cursor encima
+  const [activeHoverIndex, setActiveHoverIndex] = useState(null);
+
   //---------------------------------------------------------------------------//
   //  Array de soluciones para mostrar                                         //
   //  Cada objeto contiene:                                                     //
@@ -137,39 +153,92 @@ const SolutionsShowcase = () => {
     }
   ];
 
+  // Genera partículas pixeladas para el efecto hover
+   const generateParticles = (count = 40) => {
+    return Array.from({ length: count }).map((_, i) => {
+      const size = Math.random() * 6 + 3; // Aumentado de 2-6px a 3-9px
+      const posX = Math.random() * 150 - 25; // Mayor rango de posición X
+      const posY = Math.random() * 150 - 25; // Mayor rango de posición Y
+      const delay = Math.random() * 1.5; // Aumentado de 1 a 1.5
+      const duration = Math.random() * 3 + 2; // Aumentado de 1-3s a 2-5s
+      const opacity = Math.random() * 0.7 + 0.3; // Aumentado rango de 0.2-0.7 a 0.3-1.0
+      
+      return {
+        width: `${size}px`,
+        height: `${size}px`,
+        left: `${posX}%`,
+        top: `${posY}%`,
+        animationDelay: `${delay}s`,
+        animationDuration: `${duration}s`,
+        opacity
+      };
+    });
+  };
+  
+  // Partículas pre-generadas para evitar re-renderizado
+  const [particles] = useState(() => generateParticles(50)); // Aumentado de 30 a 50
+
   //---------------------------------------------------------------------------//
   //  Renderizado del componente                                                //
   //---------------------------------------------------------------------------//
   return (
     <section id="solutions" className="solutions-section landing-section">
       <div className="landing-container">
-        {/* Título principal de la sección con clase especial para fuente personalizada */}
-        <h2 className="solutions-title dune-rise-font">DESCUBRE NUESTRAS SOLUCIONES</h2>
+        {/* Título con animación de aparición */}
+        <AnimatedElement animation="fade-in-up">
+          <h2 className="solutions-title dune-rise-font">DESCUBRE NUESTRAS SOLUCIONES</h2>
+        </AnimatedElement>
         
-        {/* Layout principal con dos columnas: vista previa y lista de soluciones */}
         <div className="solutions-layout">
-          {/* Columna izquierda: Vista previa de la aplicación */}
-          <div className="solutions-preview">
-            <div className="preview-container">
-              <p className="preview-text">Vista previa de la aplicación</p>
-              {/* Aquí se podría colocar una imagen o componente interactivo de la app */}
+          {/* Vista previa con animación desde la izquierda */}
+          <AnimatedElement animation="fade-in-left" delay={300}>
+            <div className="solutions-preview">
+              <div className="preview-container square-container pulse-animation">
+                {/* Contenido de la vista previa */}
+                <div className="preview-content">
+                  {/* Texto eliminado */}
+                </div>
+              </div>
             </div>
-          </div>
-          
-          {/* Columna derecha: Lista de soluciones con iconos */}
-          <div className="solutions-list">
-            {/* Generamos dinámicamente cada elemento de solución desde el array */}
-            {solutions.map(solution => (
-              <div key={solution.id} className="solution-item">
-                {/* Contenedor del icono con estilizado específico */}
+          </AnimatedElement>
+
+          {/* Lista de soluciones con animación en cascada */}
+          <div 
+            ref={solutionsRef} 
+            className={`solutions-list stagger-container ${isSolutionsVisible ? 'visible' : ''}`}
+          >
+            {solutions.map((solution, index) => (
+              <div 
+                key={solution.id} 
+                className={`solution-item stagger-item ${activeHoverIndex === index ? 'hover-active' : ''}`}
+                onMouseEnter={() => setActiveHoverIndex(index)}
+                onMouseLeave={() => setActiveHoverIndex(null)}
+              >
                 <div className="solution-icon">
                   {solution.icon}
                 </div>
-                {/* Contenido textual: título y descripción */}
                 <div className="solution-content">
                   <h3 className="solution-title">{solution.title}</h3>
                   <p className="solution-description">{solution.description}</p>
                 </div>
+                
+                {/* Este div es opcional, crea un efecto de partículas pixeladas adicionales */}
+                {activeHoverIndex === index && (
+                  <div className="solution-aura-particles">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                      <div 
+                        key={i}
+                        className="aura-particle"
+                        style={{
+                          left: `${Math.random() * 100}%`,
+                          top: `${Math.random() * 100}%`,
+                          animationDelay: `${Math.random() * 0.5}s`,
+                          animationDuration: `${1 + Math.random() * 2}s`
+                        }}
+                      ></div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -1,0 +1,136 @@
+/* Importación de Animate.css para efectos predefinidos */
+@import 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css';
+
+/* Clase para ocultar elementos antes de animar */
+.invisible {
+  opacity: 0;
+}
+
+/* Personalización de algunas duraciones para animaciones específicas */
+.animate__animated.animate__slow {
+  --animate-duration: 1.5s;
+}
+
+.animate__animated.animate__slower {
+  --animate-duration: 2s;
+}
+
+.animate__animated.animate__fast {
+  --animate-duration: 500ms;
+}
+
+.animate__animated.animate__faster {
+  --animate-duration: 300ms;
+}
+
+/* Animación de brillo para elementos destacados */
+@keyframes shine {
+  from {
+    background-position: -200px;
+  }
+  to {
+    background-position: 200px;
+  }
+}
+
+.shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+  background-size: 200px 100%;
+  animation: shine 1.5s infinite linear;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.shine-effect:hover::after {
+  opacity: 1;
+}
+
+/* Efecto flotante suave */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.float-animation {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Efecto de pulso */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pulse-animation {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+/* Efecto cascada para elementos en serie */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.stagger-container.visible .stagger-item {
+  animation: staggerFadeIn 0.8s ease forwards;
+}
+
+.stagger-container.visible .stagger-item:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.stagger-container.visible .stagger-item:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.stagger-container.visible .stagger-item:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+.stagger-container.visible .stagger-item:nth-child(4) {
+  animation-delay: 0.7s;
+}
+
+.stagger-container.visible .stagger-item:nth-child(5) {
+  animation-delay: 0.9s;
+}
+
+@keyframes staggerFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -13,6 +13,7 @@
   padding: 8rem 0;                         /* Espaciado vertical generoso */
   position: relative;                      /* Para elementos posicionados internos */
   overflow: hidden;                        /* Previene desbordamiento de contenido */
+  background-color: transparent !important; /* Fondo transparente */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -26,12 +27,16 @@
 /* Fondo estilizado con gradiente y efectos visuales                         */
 /*---------------------------------------------------------------------------*/
 .cta-background {
-  background: linear-gradient(135deg, rgba(40, 40, 45, 0.9), rgba(30, 30, 35, 0.95)); /* Gradiente diagonal */
+  /* Fondo ligeramente más visible para destacar llamada a la acción */
+  background: linear-gradient(135deg, rgba(40, 40, 45, 0.4), rgba(30, 30, 35, 0.5));
+  /* Eliminamos el borde degradado */
+  border: none;
+  border-image: none;
+  backdrop-filter: none !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   border-radius: 24px;                     /* Bordes muy redondeados */
   position: relative;                      /* Para posicionar elementos internos */
   overflow: hidden;                        /* Contiene efectos visuales internos */
-  border: 1px solid rgba(245, 110, 15, 0.3); /* Borde naranja sutil */
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); /* Sombra profunda */
   padding: 64px 32px;                      /* Espaciado interno generoso */
 }
 
@@ -43,7 +48,7 @@
   left: 0;                                 /* Alineado con la parte izquierda */
   right: 0;                                /* Extendido hasta la derecha */
   bottom: 0;                               /* Extendido hasta abajo */
-  background: radial-gradient(circle at top right, rgba(255, 100, 0, 0.2), transparent 60%); /* Gradiente radial */
+  background: radial-gradient(circle at top right, rgba(255, 100, 0, 0.1), transparent 60%); /* Menos intenso */
   z-index: 0;                              /* Debajo del contenido */
 }
 
@@ -56,6 +61,7 @@
   text-align: center;                      /* Texto centrado */
   max-width: 800px;                        /* Ancho máximo para legibilidad */
   margin: 0 auto;                          /* Centrado horizontal */
+  background-color: transparent !important; /* Fondo transparente */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -67,6 +73,24 @@
   background-clip: text;                   /* Aplica gradiente solo al texto */
   -webkit-background-clip: text;           /* Soporte para navegadores webkit */
   color: transparent;                      /* Hace el texto transparente para mostrar gradiente */
+  font-size: 2rem;                         /* Tamaño reducido pero legible */
+  letter-spacing: -0.5px;                  /* Reducir espaciado entre letras */
+  width: 100%;                             /* Ancho completo */
+  max-width: 100%;                         /* Asegurar que no exceda el contenedor */
+  display: block;                          /* Elemento de bloque para usar todo el ancho */
+  white-space: normal;                     /* Permite saltos de línea si es necesario */
+  overflow-wrap: break-word;               /* Permite romper palabras largas */
+  padding: 0 10px;                         /* Espacio a los lados */
+  box-sizing: border-box;                  /* Incluir padding en el ancho */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra sutil para legibilidad */
+}
+
+/* Media query para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .cta-title {
+    font-size: 1.8rem;                     /* Tamaño más pequeño en móviles */
+    padding: 0 5px;                        /* Menos padding en móviles */
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -75,6 +99,7 @@
 .cta-description {
   color: var(--dusty_gray);                /* Color gris para texto secundario */
   margin-bottom: 40px;                     /* Espacio inferior amplio */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Sombra sutil para legibilidad */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -94,6 +119,15 @@
   min-width: 180px;                        /* Ancho mínimo para consistencia */
   padding: 14px 28px;                      /* Espaciado interno generoso */
   font-size: 1.1rem;                       /* Tamaño de texto mayor */
+  backdrop-filter: none !important;        /* Elimina el desenfoque */
+  -webkit-backdrop-filter: none !important; /* Compatibilidad con Safari */
+  background-color: rgba(255, 69, 0, 0.8) !important; /* Solo para el botón primario */
+}
+
+/* Botón secundario con fondo más transparente */
+.landing-btn.landing-btn-secondary.cta-btn {
+  background-color: rgba(40, 40, 45, 0.4) !important; /* Fondo más transparente */
+  border: 1px solid rgba(255, 77, 0, 0.3);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -114,11 +148,9 @@
   display: flex;                           /* Layout flexible */
   align-items: center;                     /* Centrado vertical */
   margin-bottom: 14px;                     /* Espacio inferior */
+  background-color: transparent !important; /* Fondo transparente */
 }
 
-/*---------------------------------------------------------------------------*/
-/* Contenedor del icono de característica                                    */
-/*---------------------------------------------------------------------------*/
 .cta-feature-icon {
   display: flex;                           /* Layout flexible */
   align-items: center;                     /* Centrado vertical */
@@ -129,41 +161,36 @@
   background-color: transparent;           /* Fondo transparente */
 }
 
-/*---------------------------------------------------------------------------*/
-/* Texto descriptivo de la característica                                    */
-/*---------------------------------------------------------------------------*/
 .cta-feature-text {
   font-size: 1.1rem;                       /* Tamaño de texto ligeramente mayor */
   color: var(--snow);                      /* Color claro para mejor legibilidad */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Sombra sutil para legibilidad */
 }
 
-/*---------------------------------------------------------------------------*/
-/* Estilos responsivos para pantallas medianas                               */
-/*---------------------------------------------------------------------------*/
-@media (max-width: 768px) {
-  .cta-section {
-    padding: 4rem 0;                       /* Reduce el espaciado vertical */
-  }
-  
-  .cta-background {
-    padding: 40px 24px;                    /* Reduce el espaciado interno */
-    border-radius: 16px;                   /* Bordes menos redondeados */
-  }
-  
-  .cta-buttons {
-    flex-direction: column;                /* Cambia a layout vertical */
-    gap: 16px;                             /* Reduce el espacio entre botones */
-  }
-  
-  .cta-btn {
-    width: 100%;                           /* Ocupa todo el ancho disponible */
-  }
-  
-  .cta-features {
-    flex-direction: column;                /* Cambia a layout vertical */
-    align-items: center;                   /* Centrado horizontal */
-    gap: 16px;                             /* Reduce el espacio entre características */
-  }
+/* Asegura que los elementos internos sean transparentes */
+.cta-buttons,
+.cta-features {
+  background-color: transparent !important;
+}
+
+/* Refuerza la transparencia en elementos animados */
+.animated-element {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+}
+
+/* Refuerzo para asegurar que todos los elementos hijos sean transparentes */
+.cta-section *,
+.cta-background * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Aseguramos que los iconos SVG sean más visibles */
+svg path,
+svg circle,
+svg rect {
+  stroke-width: 2px; /* Trazos más gruesos */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -176,3 +203,11 @@
   100% { box-shadow: 0 0 5px rgba(255, 77, 0, 0.3); }
 }
 */
+
+/* Ajuste adicional para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .cta-title {
+    font-size: 1.4rem;                     /* Tamaño aún más pequeño para pantallas muy pequeñas */
+    letter-spacing: -0.7px;                /* Mayor compresión de letras */
+  }
+}

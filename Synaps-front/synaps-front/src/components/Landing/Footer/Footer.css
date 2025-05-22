@@ -1,10 +1,6 @@
 /*===========================================================================*/
 /*                    ESTILOS DEL PIE DE PÁGINA (FOOTER)                     */
 /*===========================================================================*/
-/* Este archivo contiene los estilos para el componente Footer de la landing  */
-/* page de Synaps. Incluye la estructura del grid, enlaces, logo, iconos de   */
-/* redes sociales con efectos de gradiente animado, y ajustes responsivos.    */
-/*===========================================================================*/
 
 /*---------------------------------------------------------------------------*/
 /* Contenedor principal del footer                                           */
@@ -13,13 +9,6 @@
   background-color: var(--dark_void);      /* Fondo oscuro consistente con la aplicación */
   border-top: 1px solid rgba(135, 135, 135, 0.2); /* Separador sutil en la parte superior */
   padding: 80px 0 40px;                    /* Espaciado vertical generoso, menor abajo */
-}
-
-/*---------------------------------------------------------------------------*/
-/* Contenedor interno con ancho máximo                                       */
-/*---------------------------------------------------------------------------*/
-.footer-container {
-  max-width: 1200px;                       /* Ancho máximo consistente con otras secciones */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -44,28 +33,18 @@
 /* Estilo del logo en el footer                                              */
 /*---------------------------------------------------------------------------*/
 .footer-logo {
-  display: flex;                           /* Layout flexible */
-  align-items: center;                     /* Alineación vertical centrada */
+  display: block;                          /* Cambiado de flex a block ya que no hay texto */
   text-decoration: none;                   /* Sin subrayado */
-  color: var(--snow);                      /* Color blanco para el texto */
   margin-bottom: 16px;                     /* Espacio inferior */
 }
 
 /*---------------------------------------------------------------------------*/
-/* Imagen del logo                                                           */
+/* Estilos para el logo SVG                                                   */
 /*---------------------------------------------------------------------------*/
-.footer-logo img {
-  height: 32px;                            /* Altura fija para el logo */
-  margin-right: 10px;                      /* Espacio entre imagen y texto */
-}
-
-/*---------------------------------------------------------------------------*/
-/* Texto del logo                                                            */
-/*---------------------------------------------------------------------------*/
-.footer-logo span {
-  font-weight: 700;                        /* Negrita para destacar */
-  font-size: 1.5rem;                       /* Tamaño grande */
-  letter-spacing: 0.5px;                   /* Espaciado entre letras para legibilidad */
+.footer-logo-svg {
+  width: 180px;                           /* Ajustar ancho según necesidad */
+  height: auto;                           /* Mantener proporción */
+  margin-bottom: 16px;                    /* Espacio inferior */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -75,6 +54,7 @@
   color: var(--dusty_gray);                /* Color gris para texto secundario */
   margin-bottom: 24px;                     /* Espacio inferior */
   line-height: 1.6;                        /* Altura de línea para legibilidad */
+  max-width: 80%;                          /* Limitar ancho para mejor lectura */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -123,7 +103,15 @@
 .social-svg {
   width: 24px;                             /* Ancho fijo del icono */
   height: 24px;                            /* Alto fijo del icono */
-  filter: brightness(0) invert(1);         /* Convierte los iconos a color blanco */
+  fill: white;                             /* Color blanco para los iconos */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Columnas secundarias de enlaces                                           */
+/*---------------------------------------------------------------------------*/
+.footer-column {
+  display: flex;                           /* Layout flexible */
+  flex-direction: column;                  /* Elementos apilados verticalmente */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -211,6 +199,7 @@
 @media (max-width: 992px) {
   .footer-grid {
     grid-template-columns: 1fr 1fr;        /* Reduce a 2 columnas */
+    gap: 32px;                             /* Reduce el espacio entre columnas */
   }
   
   .footer-brand {
@@ -233,5 +222,9 @@
   
   .footer-brand {
     grid-column: span 1;                   /* Cada elemento ocupa una fila completa */
+  }
+  
+  .footer-description {
+    max-width: 100%;                       /* Ancho completo en móviles */
   }
 }

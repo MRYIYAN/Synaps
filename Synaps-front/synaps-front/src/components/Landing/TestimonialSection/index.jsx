@@ -40,7 +40,7 @@ const TestimonialSection = () => {
     },
     {
       id: 2,
-      text: "Como investigador, necesito organizar grandes cantidades de información. Synaps me permite visualizar conexiones y patrones que de otro modo no vería.",
+      text: "Como investigador, Synaps me permite visualizar conexiones y patrones que de otro modo no vería.",
       author: "Carlos Martínez",
       role: "Investigador en IA",
       avatar: "/avatars/user2.jpg"
@@ -88,7 +88,7 @@ const TestimonialSection = () => {
     setAnimating(true);                    // Marca como animando para prevenir otras transiciones
     const nextIndex = activeIndex === testimonials.length - 1 ? 0 : activeIndex + 1; // Calcula el siguiente índice con vuelta circular
     setActiveIndex(nextIndex);             // Actualiza el índice activo
-    setTimeout(() => setAnimating(false), 4000); // Desactiva la bandera tras completar la animación
+    setTimeout(() => setAnimating(false), 700); // Reducido de 4000ms a 700ms para transiciones más rápidas
   }, [activeIndex, animating, testimonials.length]);
   
   //---------------------------------------------------------------------------//
@@ -100,7 +100,7 @@ const TestimonialSection = () => {
     setAnimating(true);                    // Marca como animando para prevenir otras transiciones
     const nextIndex = activeIndex === 0 ? testimonials.length - 1 : activeIndex - 1; // Calcula el índice anterior con vuelta circular
     setActiveIndex(nextIndex);             // Actualiza el índice activo
-    setTimeout(() => setAnimating(false), 4000); // Desactiva la bandera tras completar la animación
+    setTimeout(() => setAnimating(false), 700); // Reducido de 4000ms a 700ms
   }, [activeIndex, animating, testimonials.length]);
   
   //---------------------------------------------------------------------------//
@@ -111,7 +111,7 @@ const TestimonialSection = () => {
     if (animating || index === activeIndex) return; // No hace nada si está animando o ya es el índice activo
     setAnimating(true);                    // Marca como animando
     setActiveIndex(index);                 // Salta al índice indicado
-    setTimeout(() => setAnimating(false), 4000); // Desactiva la bandera tras la animación
+    setTimeout(() => setAnimating(false), 700); // Reducido de 4000ms a 700ms
   };
 
   //---------------------------------------------------------------------------//
@@ -123,7 +123,7 @@ const TestimonialSection = () => {
     const play = () => {
       autoPlayRef.current = setTimeout(() => {
         nextSlide();
-      }, 4000);                            // Avanza cada 4 segundos
+      }, 5000);                        // Reducido de 8000ms a 5000ms (5 segundos)
     };
     
     play();                                // Inicia la reproducción automática

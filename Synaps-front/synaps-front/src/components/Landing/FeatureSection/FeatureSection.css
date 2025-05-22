@@ -60,6 +60,7 @@
   transform: translateY(-8px);             /* Elevación al pasar el cursor */
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); /* Sombra profunda */
   border: 1px solid rgba(245, 110, 15, 0.2); /* Borde naranja sutil al hacer hover */
+  filter: drop-shadow(0 0 8px rgba(255, 77, 0, 0.4)) brightness(1.05); /* Valores reducidos */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -119,10 +120,47 @@
 }
 
 /*---------------------------------------------------------------------------*/
-/* Posibles efectos visuales adicionales (pueden ser implementados después)  */
+/* Efecto de brillo continuo mientras se hace hover sobre la tarjeta         */
 /*---------------------------------------------------------------------------*/
-/* Por ejemplo, animaciones para los iconos al hacer hover:
-.feature-card:hover .feature-icon {
-  background: rgba(245, 110, 15, 0.2);
+.shine-effect {
+  position: relative;
+  overflow: hidden;
 }
-*/
+
+/* Estado normal - sin efecto visible */
+.shine-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%; /* Comienza fuera del elemento por la izquierda */
+  width: 35%; /* Ancho reducido aún más */
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 50%, /* Opacidad reducida de 0.08 a 0.05 */
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg); /* Ángulo diagonal para el efecto */
+  pointer-events: none; /* No interfiere con clics */
+  opacity: 0; /* Invisible inicialmente */
+  transition: opacity 0.3s ease; /* Transición suave para aparecer/desaparecer */
+}
+
+/* En hover, activa la animación continua */
+.shine-effect:hover::after {
+  opacity: 0.8; /* Reducido de 1.0 a 0.8 para menor intensidad general */
+  animation: continuousShine 2.5s infinite linear; /* Animación continua mientras dure el hover */
+}
+
+/* Keyframes para la animación continua */
+@keyframes continuousShine {
+  0% {
+    left: -150%; /* Comienza fuera del elemento */
+  }
+  100% {
+    left: 150%; /* Termina fuera del elemento por la derecha */
+  }
+}
+
+/* La opacidad sigue siendo baja para que el efecto sea sutil */

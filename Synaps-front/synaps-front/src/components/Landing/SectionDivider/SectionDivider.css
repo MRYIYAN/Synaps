@@ -1,0 +1,62 @@
+/*===========================================================================*/
+/*                    ESTILOS PARA DIVISORES DE SECCIÓN                      */
+/*===========================================================================*/
+/* Este archivo define los estilos para los divisores visuales utilizados     */
+/* entre las diferentes secciones de la landing page. Proporciona espaciado   */
+/* visual y transiciones sutiles que ayudan a la estructura sin interrumpir   */
+/* el flujo visual ni ocultar las partículas del fondo.                       */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/* Contenedor principal del divisor de sección                              */
+/*---------------------------------------------------------------------------*/
+.section-divider {
+  height: 60px;                       /* Altura del divisor estándar */
+  position: relative;                 /* Para posicionar la línea interna */
+  z-index: 2;                         /* Por encima del contenido básico */
+  opacity: 0.3;                       /* Baja opacidad para sutileza */
+  background: transparent;            /* Fondo transparente */
+  pointer-events: none;               /* No intercepta eventos del mouse */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Línea visual dentro del divisor                                          */
+/*---------------------------------------------------------------------------*/
+.divider-line {
+  position: absolute;                 /* Posicionamiento absoluto dentro del contenedor */
+  height: 1px;                        /* Altura mínima para sutileza */
+  width: 0%;                          /* Ancho nulo - invisible */
+  left: 50%;                          /* Centrado horizontal */
+  top: 50%;                           /* Centrado vertical */
+  background: transparent;            /* Sin color de fondo */
+  /* El gradiente naranja ha sido eliminado para evitar líneas visibles entre secciones */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Variante acentuada del divisor (más espacio)                              */
+/*---------------------------------------------------------------------------*/
+.section-divider.accent {
+  height: 80px;                       /* Mayor altura para separación adicional */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Línea en la variante acentuada                                           */
+/*---------------------------------------------------------------------------*/
+.section-divider.accent .divider-line {
+  height: 0px;                        /* Sin altura - completamente invisible */
+  /* Proporciona mayor espacio entre secciones pero sin elementos visibles */
+}
+
+/*---------------------------------------------------------------------------*/
+/* Estado anterior del divisor (comentado como referencia)                   */
+/*---------------------------------------------------------------------------*/
+/* 
+.divider-line {
+  position: absolute;
+  height: 1px;
+  width: 60%;
+  left: 20%;
+  top: 50%;
+  background: linear-gradient(to right, transparent, rgba(255, 77, 0, 0.3), transparent);
+}
+*/

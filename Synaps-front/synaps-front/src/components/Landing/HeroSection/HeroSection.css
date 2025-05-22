@@ -11,10 +11,17 @@
 /* Contenedor principal del Hero                                             */
 /*---------------------------------------------------------------------------*/
 .hero-section {
-  padding-top: 120px;                      /* Espacio para el navbar */
+  padding-top: 120px !important;         /* Mantener espacio para navbar */
   min-height: 90vh;                        /* Altura mínima para ocupar casi toda la pantalla */
   display: flex;                           /* Layout flexible */
   align-items: center;                     /* Centrado vertical */
+  background-color: transparent !important; /* Hacemos el fondo transparente */
+  position: relative;
+  z-index: 1;
+  /* Eliminamos después para evitar línea visible */
+  &::after {
+    display: none;
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -25,6 +32,14 @@
   flex-direction: column;                  /* Elementos apilados verticalmente */
   align-items: flex-start;                 /* Alineados a la izquierda */
   max-width: 800px;                        /* Ancho máximo para mejor lectura */
+  backdrop-filter: none !important;
+  background-color: #1B1B1E;
+  /* Eliminamos el borde degradado que causa la línea */
+  border-image: none;
+  padding: 20px;                           /* Añadimos padding interno */
+  border-radius: 12px;                     /* Bordes redondeados */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(245, 110, 15, 0.2);
 }
 
 /*---------------------------------------------------------------------------*/

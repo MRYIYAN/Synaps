@@ -55,7 +55,7 @@
 .solutions-layout {
   display: flex;                           /* Layout flexible */
   gap: 40px;                               /* Espacio entre columnas */
-  align-items: flex-start;                 /* Alineación superior */
+  align-items: stretch;                    /* Cambiado de center a stretch para igualar alturas */
   justify-content: space-between;          /* Distribución uniforme del espacio */
 }
 
@@ -63,39 +63,43 @@
 /* Columna izquierda: Vista previa                                           */
 /*---------------------------------------------------------------------------*/
 .solutions-preview {
-  flex: 1;                                 /* Ocupa una proporción del espacio disponible */
-  position: relative;                      /* Para posicionamiento de elementos internos */
+  flex: 0.8;                               /* Mantener proporción */
+  display: flex;                           /* Para estirar el contenido */
+  align-items: stretch;                    /* Para que ocupe toda la altura disponible */
 }
 
 /*---------------------------------------------------------------------------*/
-/* Contenedor de la vista previa                                             */
+/* Contenedor de la vista previa adaptado a la altura total                  */
 /*---------------------------------------------------------------------------*/
 .preview-container {
-  background-color: rgba(255, 255, 255, 0.05); /* Fondo claro semitransparente */
-  border-radius: 12px;                     /* Bordes redondeados */
-  min-height: 400px;                       /* Altura mínima */
-  display: flex;                           /* Layout flexible */
-  align-items: center;                     /* Centrado vertical */
+  background-color: var(--gluon_gray);     /* Color de fondo oscuro */
+  border-radius: 16px;                     /* Bordes redondeados */
+  border: 1px solid rgba(255, 255, 255, 0.05); /* Borde sutil */
+  position: relative;                      /* Para posicionar elementos internos */
+  overflow: hidden;                        /* Para ocultar partículas que se salen */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* Sombra elegante */
+  width: 100%;                             /* Ocupa todo el ancho disponible */
+  height: auto;                            /* Ajusta la altura automáticamente */
+  min-height: 100%;                        /* Ocupa al menos toda la altura del contenedor padre */
+  display: flex;                           /* Flexbox para centrar contenido */
   justify-content: center;                 /* Centrado horizontal */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Borde sutil */
+  align-items: center;                     /* Centrado vertical */
 }
 
-/*---------------------------------------------------------------------------*/
-/* Texto temporal de la vista previa                                         */
-/*---------------------------------------------------------------------------*/
-.preview-text {
-  color: var(--dusty_gray);                /* Color gris para texto secundario */
-  font-size: 1.2rem;                       /* Tamaño moderadamente grande */
+/* Eliminar la clase square-container que forzaba un aspecto cuadrado */
+.square-container {
+  aspect-ratio: auto;                      /* Elimina la restricción de aspecto cuadrado */
 }
 
 /*---------------------------------------------------------------------------*/
 /* Columna derecha: Lista de soluciones                                      */
 /*---------------------------------------------------------------------------*/
 .solutions-list {
-  flex: 1;                                 /* Ocupa una proporción del espacio disponible */
+  flex: 1.2;                               /* Proporción aumentada */
   display: flex;                           /* Layout flexible */
   flex-direction: column;                  /* Elementos apilados verticalmente */
   gap: 24px;                               /* Espacio entre elementos */
+  justify-content: space-between;          /* Distribuye el espacio entre tarjetas */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -107,16 +111,63 @@
   border-radius: 12px;                     /* Bordes redondeados */
   padding: 20px;                           /* Espaciado interno */
   border: 1px solid rgba(255, 255, 255, 0.05); /* Borde sutil */
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease; /* Transiciones suaves */
+  transition: all 0.3s ease;               /* Transición suave para todas las propiedades */
+  position: relative;                      /* Para el aura y posicionamiento */
+  overflow: hidden;                        /* Oculta contenido que excede durante la transición */
+  z-index: 1;                              /* Nivel de apilamiento para efectos */
+  flex: 1;                                 /* Todos los elementos crecen por igual */
 }
 
 /*---------------------------------------------------------------------------*/
-/* Efectos al pasar el cursor sobre la tarjeta                               */
+/* Efectos al pasar el cursor sobre la tarjeta - SIN CAMBIO DE TAMAÑO        */
 /*---------------------------------------------------------------------------*/
+.solution-item:hover,
+.solution-item.hover-active {
+  border: 1px solid rgba(245, 110, 15, 0.15); /* Borde naranja más sutil */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra reducida */
+  /* Eliminado: transform: translateY(-5px) scale(1.03); */
+  /* Eliminado: height: 120px; */
+}
+
+/* Efecto de aura alrededor de la tarjeta al hacer hover - MENOS INTENSIDAD */
+.solution-item::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 18px;                     /* Ligeramente mayor que la tarjeta */
+  background: linear-gradient(45deg, 
+              rgba(245, 110, 15, 0), 
+              rgba(245, 110, 15, 0.05),    /* Reducido de 0.1 a 0.05 */
+              rgba(245, 110, 15, 0.1),     /* Reducido de 0.2 a 0.1 */
+              rgba(245, 110, 15, 0.05),    /* Reducido de 0.1 a 0.05 */
+              rgba(245, 110, 15, 0));
+  opacity: 0;                              /* Invisible inicialmente */
+  transition: opacity 0.3s ease;           /* Transición suave */
+  z-index: -1;                             /* Debajo de la tarjeta */
+  filter: blur(8px);                       /* Difuminado para el aura */
+}
+
+/* Mostrar el aura al hacer hover - REDUCIDA INTENSIDAD */
+.solution-item:hover::before {
+  opacity: 0.8;                            /* Reducida de 1.0 a 0.8 */
+}
+
+/* Reducir la intensidad de la iluminación externa adicional */
 .solution-item:hover {
-  transform: translateX(-8px);             /* Desplazamiento horizontal a la izquierda */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra para efecto de elevación */
-  border: 1px solid rgba(245, 110, 15, 0.2); /* Borde naranja sutil */
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.15),       /* Reducido de 0.2 a 0.15 */
+    0 0 15px rgba(245, 110, 15, 0.1),      /* Reducido de 0.15 a 0.1 */
+    0 0 30px rgba(245, 110, 15, 0.05);     /* Reducido de 0.07 a 0.05 */
+}
+
+/* Reducir el brillo del icono */
+.solution-item:hover .solution-icon {
+  background: rgba(245, 110, 15, 0.08);    /* Reducido de 0.1 a 0.08 */
+  transform: scale(1.05);                  /* Reducido de 1.1 a 1.05 */
+  box-shadow: 0 0 15px rgba(245, 110, 15, 0.1); /* Reducido de 0.15 a 0.1 */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -132,31 +183,14 @@
   min-width: 50px;                         /* Ancho mínimo para consistencia */
   background: rgba(245, 110, 15, 0.1);     /* Fondo naranja semitransparente */
   border-radius: 50%;                      /* Forma circular */
+  transition: all 0.3s ease;               /* Transición suave */
 }
 
-/*---------------------------------------------------------------------------*/
-/* Contenedor del texto de la solución                                       */
-/*---------------------------------------------------------------------------*/
-.solution-content {
-  flex: 1;                                 /* Ocupa el espacio restante */
-}
-
-/*---------------------------------------------------------------------------*/
-/* Título de la solución                                                     */
-/*---------------------------------------------------------------------------*/
-.solution-title {
-  font-size: 1.2rem;                       /* Tamaño moderadamente grande */
-  margin-bottom: 8px;                      /* Espacio inferior */
-  color: var(--liquid_lava);               /* Color naranja destacado */
-}
-
-/*---------------------------------------------------------------------------*/
-/* Descripción de la solución                                                */
-/*---------------------------------------------------------------------------*/
-.solution-description {
-  color: var(--dusty_gray);                /* Color gris para texto secundario */
-  font-size: 0.95rem;                      /* Tamaño ligeramente reducido */
-  line-height: 1.4;                        /* Altura de línea para legibilidad */
+/* Efecto en el icono al hacer hover en la tarjeta */
+.solution-item:hover .solution-icon {
+  background: rgba(245, 110, 15, 0.1);     /* Reducido de 0.2 a 0.1 */
+  transform: scale(1.1);                   /* Mantener */
+  box-shadow: 0 0 15px rgba(245, 110, 15, 0.15); /* Reducido de 0.3 a 0.15 */
 }
 
 /*---------------------------------------------------------------------------*/
@@ -299,5 +333,108 @@
   
   .solution-item {
     padding: 16px;                         /* Padding reducido */
+  }
+  
+  .solutions-preview,
+  .solutions-list {
+    width: 100%;
+  }
+  
+  .solutions-preview {
+    margin-bottom: 40px;
+    max-width: 350px;             /* Limita el tamaño en móviles */
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* Efecto de partículas para el aura                                         */
+/*---------------------------------------------------------------------------*/
+.solution-aura-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;                   /* No interfiere con interacciones */
+  overflow: visible;                      /* Cambiado de hidden a visible para permitir partículas fuera */
+  border-radius: 12px;                    /* Mismo que la tarjeta */
+}
+
+.aura-particle {
+  position: absolute;
+  width: 6px;                             /* Aumentado de 4px a 6px */
+  height: 6px;                            /* Aumentado de 4px a 6px */
+  background-color: var(--liquid_lava);   /* Color naranja */
+  border-radius: 50%;                     /* Forma circular */
+  opacity: 0.7;                           /* Aumentado de 0.6 a 0.7 */
+  filter: blur(2px);                      /* Aumentado de 1px a 2px */
+  animation: floatAuraParticle 3s infinite ease-in-out; /* Aumentado duración */
+}
+
+/* Modificar animación para mayor presencia */
+@keyframes floatAuraParticle {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.4;                         /* Aumentado de 0.2 a 0.4 */
+  }
+  50% {
+    opacity: 0.9;                         /* Aumentado de 0.8 a 0.9 */
+  }
+  100% {
+    transform: translateY(-30px) translateX(15px); /* Mayor movimiento */
+    opacity: 0;
+  }
+}
+
+/* Mantener el marco del cuadrado de vista previa pero mejorar su aspecto */
+.square-container {
+  width: 100%;                            /* Mantener ancho */
+  aspect-ratio: 1/1;                      /* Mantener cuadrado */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;                      /* Mantener altura */
+  border: 1px solid rgba(245, 110, 15, 0.1); /* Borde ligeramente visible */
+  box-shadow: 
+    inset 0 0 30px rgba(245, 110, 15, 0.05), /* Brillo interior sutil */
+    0 10px 40px rgba(0, 0, 0, 0.3);         /* Sombra externa para profundidad */
+}
+
+/* Eliminar línea que se movía debajo del texto de vista previa */
+.preview-text::after {
+  display: none;                          /* Eliminar línea animada */
+}
+
+/* Animación para el contenedor de vista previa (reducida intensidad) */
+.preview-container::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  right: -20%;
+  bottom: -20%;
+  background: radial-gradient(
+    circle,
+    rgba(245, 110, 15, 0.05) 0%,           /* Reducido de 0.1 a 0.05 */
+    rgba(245, 110, 15, 0) 70%
+  );
+  filter: blur(30px);
+  animation: pulsateAura 4s infinite ease-in-out;
+  opacity: 0.5;                            /* Reducido de 0.7 a 0.5 */
+  z-index: -1;
+}
+
+/* Ajuste responsivo para mantener proporciones */
+@media (max-width: 992px) {
+  .solutions-layout {
+    flex-direction: column;
+  }
+  
+  .solutions-preview,
+  .solutions-list {
+    width: 100%;
+    flex: none;
   }
 }
