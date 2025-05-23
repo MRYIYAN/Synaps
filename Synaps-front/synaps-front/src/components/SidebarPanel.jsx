@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom';
 import { ReactComponent as SearchIcon } from "../assets/icons/search.svg";
 import { ReactComponent as FoldersIcon } from "../assets/icons/folders.svg";
 import { ReactComponent as GalaxyViewIcon } from "../assets/icons/waypoints.svg";

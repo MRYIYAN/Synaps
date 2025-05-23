@@ -210,7 +210,7 @@ const FilesPanel = () => {
 
     // Actualizamos el estado de notas y la variable global en paralelo
     setNotes( prev => {
-      const updated = [...prev, note];
+      const updated = [...(window.currentNotes || []), note];
       window.currentNotes = updated;
 
       // Marcamos como seleccionado el nuevo item
@@ -252,7 +252,7 @@ const FilesPanel = () => {
 
     // Actualizamos el estado de notas y la variable global en paralelo
     setNotes( prev => {
-      const updated = [...prev, folder];
+      const updated = [...(window.currentNotes || []), folder];
       window.currentNotes = updated;
 
       // Marcamos como seleccionado el nuevo item

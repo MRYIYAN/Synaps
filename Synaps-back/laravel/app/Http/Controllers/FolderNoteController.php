@@ -35,6 +35,9 @@ class FolderNoteController extends Controller
     $message  = '';
     $folder   = [];
 
+    $vault['vault_id']  = 1;
+    $vault['vault_id2'] = 'F7D8FDG78D9SF789G789D7S89F7S';
+
     // Validamos los datos recibidos
     $data = $request->validate( [
         'newFolderName' => 'required|string|max:255'
@@ -85,6 +88,7 @@ class FolderNoteController extends Controller
             'folder_id2'     => Str::random( 32 )
           , 'folder_title'   => $data['newFolderName']
           , 'parent_id'      => $parent_id
+          , 'vault_id'       => $vault['vault_id']
           , 'children_count' => 0
         ] );
 

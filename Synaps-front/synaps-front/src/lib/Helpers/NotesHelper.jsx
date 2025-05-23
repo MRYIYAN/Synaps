@@ -101,8 +101,11 @@ export function NotesHelper() {
         throw new Error( 'Error al borrar la nota' );
 
       // Eliminamos la nota del array y actualizamos la interfaz
-      setNotes( prev => {
-        const filtered = prev.filter( node => node.id2 !== note_id2 );
+      setNotes( () => {
+        const filtered = ( window.currentNotes || [] ).filter(
+          node => node.id2 !== note_id2
+        );
+
         window.currentNotes = filtered;
         return filtered;
       } );

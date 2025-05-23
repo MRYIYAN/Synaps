@@ -107,6 +107,7 @@ class NoteController extends Controller
             'note_id2'         => Str::random( 32 )
           , 'note_title'       => $data['newNoteName']
           , 'note_markdown'    => '# ' . ucfirst( $data['newNoteName'] )
+          , 'vault_id'         => $vault['vault_id']
           , 'insert_date'      => now()
           , 'last_update_date' => now()
           , 'parent_id'        => $parent_id

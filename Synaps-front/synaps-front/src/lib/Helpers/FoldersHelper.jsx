@@ -20,8 +20,11 @@ export function FoldersHelper() {
         throw new Error( 'Error al borrar la carpeta' );
 
       // Eliminamos la carpeta del array y actualizamos la interfaz
-      setNotes( prev => {
-        const filtered = prev.filter( node => node.id2 !== folder_id2 );
+      setNotes( () => {
+        const filtered = ( window.currentNotes || [] ).filter(
+          node => node.id2 !== folder_id2
+        );
+
         window.currentNotes = filtered;
         return filtered;
       } );
