@@ -8,10 +8,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 use App\Models\FolderNote;
+use App\Models\Note;
+use App\Http\Controllers\NoteController;
 use Exception;
 
 use App\Helpers\DatabaseHelper;
@@ -104,4 +105,103 @@ class FolderNoteController extends Controller
       ], $result ? 201 : 500 );
     }
   }
+
+
+  /**
+   * POST /api/deleteFolder
+   *
+   * @param  Request      $request     Datos de la carpeta: folder_id2
+   * @return JsonResponse              Resultado y datos de la carpeta
+   */
+  public function deleteFolder( Request $request ): JsonResponse
+  {
+    // Inicializamos los valores a devolver
+    $result  = 0;
+    $message = '';
+
+    // Obtenemos el identificador del usuario autenticado
+    // $user_id = ( int ) $request->user()->id;
+    $user_id  = 1;
+
+    // Separamos por tipo
+    $note_ids    = [];
+    $folder_ids  = [];
+
+    try
+    {
+      // Inicializamos la conexión de DB
+      $user_db = DatabaseHelper::connect( $user_id );
+
+      // --------------------------------------------------------------------------------
+      // Validación
+      // --------------------------------------------------------------------------------
+
+      // Validamos los datos recibidos
+      $data = $request->validate( [
+        'folder_id2' => 'nullable|string'
+      ] );
+
+      // --------------------------------------------------------------------------------
+      // Búsqueda de los elementos a borrar
+      // --------------------------------------------------------------------------------
+
+      // Capturamos el id de la carpeta a borrar
+      $folder_id = FolderNote::on( $user_db )
+        ->where( 'folder_id2', '=', $data['folder_id2'] )
+        ->value( 'folder_id' );
+
+      // Capturamos las notas y carpetas relacionadas a esta carpeta
+      $items_response = ( new NoteController )->getNotes( null, $folder_id );
+      $related_items  = $items_response->getData()->items;
+
+      foreach( $related_items as $item )
+      {
+        if( $item->type === 'note' )
+          $note_ids[] = $item->id;
+
+        if( $item->type === 'folder' )
+          $folder_ids[] = $item->id;
+      }
+
+      // --------------------------------------------------------------------------------
+      // Borrado de datos
+      // --------------------------------------------------------------------------------
+
+      // Borramos notas
+      if( !empty( $note_ids ) )
+      {
+        Note::on( $user_db )
+          ->whereIn( 'note_id', $note_ids )->delete();
+      }
+
+      // Borramos carpetas
+      if( !empty( $folder_ids ) )
+      {
+        FolderNote::on( $user_db )
+          ->whereIn( 'folder_id', $folder_ids )->delete();
+      }
+
+      // Borramos la carpeta según folder_id2
+      FolderNote::on( $user_db )
+        ->where( 'folder_id2', $data['folder_id2'] )
+        ->delete();
+
+      // Si llegamos hasta aquí está todo OK
+      $result = 1;
+    }
+    catch( Exception $e )
+    {
+      $message = $e->getMessage();
+      throw $e;
+    }
+    finally
+    {
+      // Devolvemos la respuesta con resultado, mensaje y datos de la nota
+      return response()->json( [
+          'result'  => $result
+        , 'message' => $message
+      ], $result ? 200 : 500 );
+    }
+  }
+
 }

@@ -131,12 +131,18 @@ class NoteController extends Controller
   }
 
   /**
-   * GET /api/getNotes
+   * Obtiene las notas y carpetas hijas de un `parent_id`.
+   * 
+   * Si se invoca vía HTTP, toma `parent_id` desde el Request.
+   * Si se invoca directamente desde PHP, usa el valor de `$parent_id`.
    *
-   * @param  Request      $request
-   * @return JsonResponse              Resultado y lista plana de notas
+   * @route GET /api/getNotes
+   *
+   * @param  Request|null  $request         Petición HTTP (opcional si se llama desde PHP)
+   * @param  int|null      $tmp_parent_id   ID del padre (usado solo si $request es null)
+   * @return JsonResponse                   Resultado y lista plana de notas y carpetas
    */
-  public function getNotes( Request $request ): JsonResponse
+  public function getNotes( ?Request $request, ?int $tmp_parent_id = null ): JsonResponse
   {
     // Inicializamos los valores a devolver
     $result  = 0;
@@ -145,10 +151,18 @@ class NoteController extends Controller
 
     try
     {
-      // Validamos los datos recibidos
-      $data = $request->validate( [
-        'parent_id' => 'nullable|integer'
-      ] );
+      // Si hay un parent, lo usamos
+      if( $tmp_parent_id )
+        $parent_id = $tmp_parent_id;
+      else
+      {
+        // Validamos los datos recibidos
+        $data = $request->validate( [
+          'parent_id' => 'nullable|integer'
+        ] );
+
+        $parent_id = $data['parent_id'];
+      }
 
       // Identificador del usuario autenticado
       // $user_id = ( int ) $request->user()->id;
@@ -156,16 +170,16 @@ class NoteController extends Controller
       $user_db = DatabaseHelper::connect( $user_id );
 
       // Obtenemos todas las notas (propias + compartidas)
-      $notes = NoteService::GetNotes( $user_id, '', $data['parent_id'] );
+      $notes = NoteService::GetNotes( $user_id, '', $parent_id );
 
       // Obtenemos todas las carpetas del usuario
       $folders = FolderNote::on( $user_db )
         ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id'] )
-        ->where( 'parent_id', '=', $data['parent_id'] )
+        ->where( 'parent_id', '=', $parent_id )
         ->get();
 
       // Si no hay notas, saltamos una excepción
-      if( empty( $notes ) )
+      if( empty( $notes ) && !$tmp_parent_id )
       {
         $result = 1;
         throw new Exception( 'Notas no encontradas' );
@@ -208,6 +222,56 @@ class NoteController extends Controller
         , 'message' => $message
         , 'items'   => $items
       ] );
+    }
+  }
+
+  /**
+   * POST /api/deleteNote
+   *
+   * @param  Request      $request     Datos de la nota: note_id2
+   * @return JsonResponse              Resultado y datos de la nota
+   */
+  public function deleteNote( Request $request ): JsonResponse
+  {
+    // Inicializamos los valores a devolver
+    $result  = 0;
+    $message = '';
+    $note    = [];
+
+    // Obtenemos el identificador del usuario autenticado
+    // $user_id = ( int ) $request->user()->id;
+    $user_id  = 1;
+
+    try
+    {
+      // Validamos los datos recibidos
+      $data = $request->validate( [
+        'note_id2' => 'nullable|string'
+      ] );
+
+      // Inicializamos la conexión de DB
+      $user_db = DatabaseHelper::connect( $user_id );
+
+      // Buscamos la nota según note_id2
+      Note::on( $user_db )
+        ->where( 'note_id2', $data['note_id2'] )
+        ->delete();
+
+      // Si llegamos hasta aquí está todo OK
+      $result = 1;
+    }
+    catch( Exception $e )
+    {
+      $message = $e->getMessage();
+      throw $e;
+    }
+    finally
+    {
+      // Devolvemos la respuesta con resultado, mensaje y datos de la nota
+      return response()->json( [
+          'result'  => $result
+        , 'message' => $message
+      ], $result ? 200 : 500 );
     }
   }
 

@@ -38,6 +38,7 @@ class Note extends Model
             'note_id2'
         ,   'note_title'
         ,   'note_markdown'
+        ,   'vault_id'
         ,   'insert_date'
         ,   'last_update_date'
         ,   'parent_id'

@@ -49,6 +49,7 @@ class FolderNote extends Model
   protected $fillable = [
       'folder_id2'
     , 'folder_title'
+    , 'vault_id'
     , 'parent_id'
     , 'children_count'
   ];

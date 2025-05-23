@@ -103,12 +103,28 @@ Route::post( '/addNote', [NoteController::class, 'addNote'] );
 Route::post( '/addFolder', [FolderNoteController::class, 'addFolder'] );
 
 /**
+ * POST /deleteFolder
+ * Crea una nueva carpeta de notas.
+ *
+ * @see FolderNoteController::deleteFolder()
+ */
+Route::post( '/deleteFolder', [FolderNoteController::class, 'deleteFolder'] );
+
+/**
  * GET /getNotes
  * Recupera todas las notas del usuario.
  *
  * @see NoteController::getNotes()
  */
 Route::get( '/getNotes', [NoteController::class, 'getNotes'] );
+
+/**
+ * POST /deleteNote
+ * Elimina una nota.
+ *
+ * @see NoteController::deleteNote()
+ */
+Route::post( '/deleteNote', [NoteController::class, 'deleteNote'] );
 
 /**
  * POST /searchNotes

@@ -11,11 +11,14 @@
  * @param {boolean}  props.selected    Indica si el nodo está seleccionado
  */
 
-import React, { useState, useRef } from "react";
+import React, { useState, useContext } from "react";
+import { PanelRefContext } from "./NoteTree";
+
 import styles from "./NoteTree.css";
 import ContextMenu from "../Atomic/Menu/ContextMenu";
 import { ReactComponent as FolderIcon } from "../../assets/icons/folder.svg";
 import { ReactComponent as FileIcon }   from "../../assets/icons/file.svg";
+import ConfirmationModal from '../Atomic/Modal/ConfirmationModal';
 
 export default function NoteItem( {
   id,
@@ -31,6 +34,32 @@ export default function NoteItem( {
   // Estado para menú contextual
   const [menuPos, setMenuPos] = useState( { x: null, y: null } );
   const [menuOptions, setMenuOptions] = useState( [] );
+  const [isConfirmOpen, setIsConfirmOpen] = useState( false );
+
+  // Capturamos la referencia del Panel
+  const panelRef = useContext( PanelRefContext );
+
+  // -----------------------------------------------------------------
+  // Modal
+  // -----------------------------------------------------------------
+  
+  // Lógica para confirmar o cancelar eliminación
+  const handleConfirmDelete = () => {
+    if( !hasChildren )
+      window.deleteNote( id2 );
+    else
+      window.deleteFolder( id2 );
+    
+    setIsConfirmOpen( false );
+  };
+
+  const handleCancelDelete = () => {
+    setIsConfirmOpen( false );
+  };
+
+  // -----------------------------------------------------------------
+  // Evento Click
+  // -----------------------------------------------------------------
 
   // Función para manejar los eventos de los items
   function handleClick() {
@@ -60,7 +89,11 @@ export default function NoteItem( {
     e.preventDefault();
 
     setMenuOptions( [
-      { label: 'Eliminar', onClick: () => alert( 'Eliminar: ' + title ) },
+      { label: 'Eliminar', onClick: () => {
+          setIsConfirmOpen( true );
+          closeMenu();
+        } 
+      },
 
       /*
       { label: 'Renombrar', onClick: () => alert('Renombrar: ' + title) },
@@ -69,7 +102,12 @@ export default function NoteItem( {
       */
     ] );
 
-    setMenuPos( { x: e.clientX, y: e.clientY } );
+    // Calculamos la posición del click respecto al panel
+    const panelRect = panelRef.current.getBoundingClientRect();
+    const x = e.clientX - panelRect.left + panelRef.current.scrollLeft + 50;
+    const y = e.clientY - panelRect.top + panelRef.current.scrollTop + 65;
+
+    setMenuPos({ x, y });
   }
 
   function closeMenu() {
@@ -80,30 +118,43 @@ export default function NoteItem( {
   const indentStyle = { paddingLeft: `${depth * 16}px` };
 
   return (
-    <div
-      className={`node-item ${selected ? "selected" : ""}`}
-      role="treeitem"
-      aria-expanded={hasChildren ? !collapsed : undefined}
-      aria-selected={selected}
-      id={id2}
-      onClick={handleClick}
-      onContextMenu={handleContextMenu}
-      style={indentStyle}
-    >
-      {/* Muestra icono de carpeta si tiene hijos, de archivo si no */}
-      {hasChildren
-        ? <FolderIcon className={"node-tree-icon"} aria-label={collapsed ? "Expandir" : "Colapsar"} />
-        : <FileIcon className={"node-tree-icon"} aria-hidden="true" />
-      }
+    <>
+      <div
+        className={`node-item ${selected ? "selected" : ""}`}
+        role="treeitem"
+        aria-expanded={hasChildren ? !collapsed : undefined}
+        aria-selected={selected}
+        id={id2}
+        onClick={handleClick}
+        onContextMenu={handleContextMenu}
+        style={indentStyle}
+      >
+        {/* Muestra icono de carpeta si tiene hijos, de archivo si no */}
+        {hasChildren
+          ? <FolderIcon className={"node-tree-icon"} aria-label={collapsed ? "Expandir" : "Colapsar"} />
+          : <FileIcon className={"node-tree-icon"} aria-hidden="true" />
+        }
 
-      {/* Título de la nota */}
-      <span title={title} className={styles.title}>{title}</span>
-      <ContextMenu
-        options={menuOptions}
-        x={menuPos.x - 50}
-        y={menuPos.y}
-        onClose={closeMenu}
+        {/* Título de la nota */}
+        <span title={title} className={styles.title}>{title}</span>
+        <ContextMenu
+          options={menuOptions}
+          x={menuPos.x - 50}
+          y={menuPos.y}
+          onClose={closeMenu}
+        />
+      </div>
+
+      <ConfirmationModal
+        isOpen={isConfirmOpen}
+        title={hasChildren ? 'Eliminar carpeta' : 'Eliminar nota'}
+        message={`¿Estás seguro de eliminar “${title}”?`}
+        icon={hasChildren ? FolderIcon : FileIcon}
+        confirmText="Sí, eliminar"
+        cancelText="No, cancelar"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
       />
-    </div>
+    </>
   );
 }

@@ -1035,6 +1035,7 @@ body.modal-open {
   position: relative;
   animation: scale-in 0.3s ease forwards;
   background-color: #1e1e1e;
+  color: white;
 }
 
 /* Contenedor del modal - Eliminado el borde */
