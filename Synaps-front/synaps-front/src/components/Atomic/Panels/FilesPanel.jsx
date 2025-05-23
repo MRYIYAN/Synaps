@@ -56,9 +56,12 @@ const FilesPanel = () => {
 
   const [notes, setNotes] = useState( [] );
   useEffect( () => {
-    getNotes( 0 );
 
-    window.currentNotes = notes;
+    if( typeof window.currentNotes == 'undefined' ) {
+      getNotes( 0 );
+      window.currentNotes = notes;
+    }
+
   }, [] );
 
   //---------------------------------------------------------------------------//

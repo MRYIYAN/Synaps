@@ -16,10 +16,10 @@ const WS_PORT = 8082;
  * @param {string} note_id2 – Identificador de la nota (id2)
  * @returns {JSX.Element}
  */
-export default function MDEditorWS( { note_id2 } )
+export default function MDEditorWS( { note_id2 = '', modal = false, options = true } )
 {
   const [markdown, set_markdown]  = useState( '' );
-  const [key, setKey]             = useState(0);
+  const [key, setKey]             = useState( 0 );
   const ws_ref                    = useRef( null );
 
   useEffect( () => {
@@ -36,8 +36,13 @@ export default function MDEditorWS( { note_id2 } )
   useEffect( () =>
   {
     const fetchNote = async () => {
-      const url  = 'http://localhost:8010/api/readNote';
-      const body = { first: 1 };
+      const url = 'http://localhost:8010/api/readNote';
+      let body  = {};
+
+      if( !modal && note_id2 === '' )
+        body = { first: 1 };
+      else
+        body = { note_id2: note_id2 };
 
       // Realizamos la petición
       const { result, http_data } = await http_get( url, body );
@@ -117,6 +122,7 @@ export default function MDEditorWS( { note_id2 } )
       key={ key }
       markdown={ markdown }
       onChange={ handle_change }
+      options={options}
     />
   );
 }

@@ -45,7 +45,12 @@
   stroke: #565656;
 }
 
-.node-item span {
+.node-item a {
+  text-decoration: none;
+  color: white;
+}
+
+.node-item span, .node-item a {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

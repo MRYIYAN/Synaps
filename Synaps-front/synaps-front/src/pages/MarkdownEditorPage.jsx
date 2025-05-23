@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useParams } from 'react-router-dom';
 
 // ------------------------------------------------------------
 // Componentes React
@@ -20,16 +20,13 @@ import MDEditorWS from "../components/MarkdownEditor/MDEditorWS";
 
 const MarkdownEditor = function() {
 
-  const note_id2  = 'wxQurJHajctZKfJbssDRueOm9BP9ENwR';
+  const { note_id2 } = useParams();
 
   return (
     <div className="layout-markdown-editor">
       <SidebarPanel />
       <div className="md-editor-wrapper">
-        {note_id2
-          ? <MDEditorWS note_id2={note_id2} />
-          : <p style={{ padding: 20 }}>Selecciona una nota para editar</p>
-        }
+        <MDEditorWS note_id2={note_id2 || ''} />
       </div>
     </div>
   );

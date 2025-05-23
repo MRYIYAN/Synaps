@@ -22,7 +22,7 @@ import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
 // Configuración de los elementos de navegación
 const navigationItems = [
   { id: "files", label: "Archivos", icon: FoldersIcon },
-  { id: "galaxyview", label: "Vista de galaxia", icon: GalaxyViewIcon, url: 'galaxyview' },
+  { id: "galaxyview", label: "Vista de galaxia", icon: GalaxyViewIcon, url: '/galaxyview' },
   { id: "list-todo", label: "Lista de tareas", icon: ListTodoIcon },
   // { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
 ];
@@ -37,12 +37,12 @@ const panelComponents = {
 
 const SidebarPanel = () => {
   // Estados para la interfaz de usuario
-  const [rightPanelOpen, setRightPanelOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [rightPanelOpen, setRightPanelOpen]       = useState(true);
+  const [selectedItem, setSelectedItem]           = useState('files');
   const [indicatorPosition, setIndicatorPosition] = useState(0);
-  const [isClosing, setIsClosing] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [isClosing, setIsClosing]                 = useState(false);
+  const [showLogoutModal, setShowLogoutModal]     = useState(false);
+  const [showSettingsMenu, setShowSettingsMenu]   = useState(false);
   const [showCreateVaultModal, setShowCreateVaultModal] = useState(false);
 
   // Estados para los datos del usuario y las vaults
@@ -257,7 +257,7 @@ const handleVaultCreated = (vault) => {
             const IconComponent = item.icon;
             const isActive = selectedItem === item.id;
             const hasUrl   = 'url' in item && item.url;
-            
+
             return (
               <li 
                 key={item.id} 

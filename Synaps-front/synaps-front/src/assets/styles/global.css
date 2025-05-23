@@ -106,6 +106,10 @@ sea completamente legible por el tema oscuro de la aplicación.
     --snow:        #FBFBFB !important;
 }
 
+.view-root {
+  view-transition: expand 400ms ease-in-out;
+}
+
 /* ===== Scrollbar CSS ===== */
 /* Firefox */
 * {

@@ -13,6 +13,7 @@
 
 import React, { useState, useContext } from "react";
 import { PanelRefContext } from "./NoteTree";
+import { Link, useLocation } from 'react-router-dom';
 
 import styles from "./NoteTree.css";
 import ContextMenu from "../Atomic/Menu/ContextMenu";
@@ -35,6 +36,10 @@ export default function NoteItem( {
   const [menuPos, setMenuPos]             = useState( { x: null, y: null } );
   const [menuOptions, setMenuOptions]     = useState( [] );
   const [isConfirmOpen, setIsConfirmOpen] = useState( false );
+
+  // Localización de ruta para detectar galaxy view
+  const location = useLocation();
+  const isGalaxyView = location.pathname.includes('galaxyview');
 
   // Capturamos la referencia del Panel
   const panelRef = useContext( PanelRefContext );
@@ -135,8 +140,15 @@ export default function NoteItem( {
           : <FileIcon className={"node-tree-icon"} aria-hidden="true" />
         }
 
-        {/* Título de la nota */}
-        <span title={title} className={styles.title}>{title}</span>
+        {/* En galaxy view, los nodos de nota enlazan a la página de editor */}
+        {isGalaxyView && !hasChildren ? (
+          <Link to={`/markdowneditor/${id2}`} className={styles.title}>
+            <span title={title} className={styles.title}>{title}</span>
+          </Link>
+        ) : (
+          <span title={title} className={styles.title}>{title}</span>
+        )}
+        
         <ContextMenu
           options={menuOptions}
           x={menuPos.x - 50}

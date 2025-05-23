@@ -90,6 +90,10 @@
   }
 }
 
+.modal-container.popup.markdown-modal ._rootContentEditableWrapper_sects_1114.mdxeditor-root-contenteditable {
+  margin: 4vh 4vw;
+}
+
 ._codeMirrorToolbar_sects_409 {
   display: none !important;
 }

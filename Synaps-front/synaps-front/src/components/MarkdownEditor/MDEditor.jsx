@@ -37,42 +37,50 @@ import '@mdxeditor/editor/style.css'
 import './MDEditor.css'
 import './obsidian.css'
 
-export default function MDEditor ( { markdown, onChange } ) {
+export default function MDEditor( { markdown, onChange, options = true } ) {
+  
+  // Plugins comunes a siempre incluir
+  const basePlugins = [
+    headingsPlugin({ allowedHeadingLevels: [1, 2, 3, 4, 5, 6] }),
+    listsPlugin(),
+    linkPlugin(),
+    quotePlugin(),
+    tablePlugin({ floatingToolbar: 'hover' }),
+    codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
+    codeMirrorPlugin({
+      codeBlockLanguages: { js: 'JavaScript' },
+      autoLoadLanguageSupport: false
+    }),
+    markdownShortcutPlugin()
+  ];
+
+  // Si options está habilitado, agregamos toolbarPlugin
+  const plugins = options
+    ? [
+        toolbarPlugin({
+          sticky: true,
+          toolbarContents: () => (
+            <>
+              <UndoRedo />
+              <BoldItalicUnderlineToggles />
+              <BlockTypeSelect />
+              <ListsToggle />
+              <InsertCodeBlock />
+              <InsertTable />
+            </>
+          )
+        }),
+        ...basePlugins
+      ]
+    : basePlugins;
 
   return (
     <div className='mdx-obsidian dark h-full w-full'>
       <MDXEditor
-        markdown={ markdown ?? '' }
-        onChange={ onChange }
+        markdown={markdown ?? ''}
+        onChange={onChange}
         className='obsidian-theme'
-        plugins={[
-          headingsPlugin({ allowedHeadingLevels: [1, 2, 3, 4, 5, 6] }),
-          listsPlugin(),
-          linkPlugin(),
-          quotePlugin(),
-          tablePlugin({
-            floatingToolbar: 'hover'
-          }),
-          codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }), // Fijamos JS por defecto
-          codeMirrorPlugin({
-            codeBlockLanguages: { js: 'JavaScript' },
-            autoLoadLanguageSupport: false
-          }),
-          toolbarPlugin({
-            sticky: true,
-            toolbarContents: () => (
-              <>
-                <UndoRedo />
-                <BoldItalicUnderlineToggles />
-                <BlockTypeSelect />
-                <ListsToggle />
-                <InsertCodeBlock />
-                <InsertTable />
-              </>
-            )
-          }),
-          markdownShortcutPlugin()
-        ]}
+        plugins={plugins}
       />
     </div>
   )

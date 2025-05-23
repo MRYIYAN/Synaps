@@ -363,7 +363,7 @@ pre {
   z-index: 5;
   overflow-y: auto;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-  overflow: scroll;
+  overflow-x: hidden;
 }
 
 /* Header para el panel derecho */
@@ -1038,6 +1038,10 @@ body.modal-open {
   color: white;
 }
 
+.modal-container.popup .modal-content {
+  max-width: 100%;
+} 
+
 /* Contenedor del modal - Eliminado el borde */
 .modal-container {
   background-color: #1e1e1e;
@@ -1047,6 +1051,13 @@ body.modal-open {
   max-width: 450px;
   overflow: hidden;
   border: none; /* Eliminado el borde */
+}
+
+.modal-container.popup {
+  max-width: 700px;
+  height: 80%;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 /* Botón para cerrar el modal - AJUSTADO TAMAÑO Y COLORES */
@@ -1556,6 +1567,10 @@ body.modal-open {
   animation: fadeIn 0.2s ease;
 }
 
+.modal-container.popup {
+  border-radius: 10px;
+}
+
 /* Contenedor del modal */
 .modal-container {
   background-color: #1e1e1e;
@@ -1565,6 +1580,19 @@ body.modal-open {
   max-width: 450px;
   overflow: hidden;
   border: none; /* Eliminado el borde */
+}
+
+.modal-container.popup .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #303031;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 95%;
+  background-color: #1e1e1e;
 }
 
 /* Encabezado del modal */
@@ -1598,8 +1626,13 @@ body.modal-open {
   color: white;
 }
 
+.modal-controls {
+  display: flex;
+  grid-area: 0.5rem;
+}
+
 /* Botón para cerrar el modal */
-.modal-close-button {
+.modal-close-button, .modal-controls button {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -1613,11 +1646,11 @@ body.modal-open {
   transition: all 0.15s ease;
 }
 
-.modal-close-button:hover {
+.modal-close-button:hover, .modal-controls button:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-.modal-close-button svg {
+.modal-close-button svg, .modal-controls button svg {
   width: 22px;
   height: 22px;
   color: #969696; /* Color gris */
@@ -1627,7 +1660,7 @@ body.modal-open {
   transition: color 0.2s ease;
 }
 
-.modal-close-button:hover svg {
+.modal-close-button:hover svg, .modal-controls button:hover svg {
   color: var(--liquid-lava); /* Cambio a color naranja al hacer hover */
   stroke-width: 1.8px; /* Ligeramente más grueso en hover */
 }

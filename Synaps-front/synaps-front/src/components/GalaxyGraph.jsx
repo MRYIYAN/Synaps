@@ -2,8 +2,12 @@
 // GalaxyGraph.jsx
 // ------------------------------------------------------------------------------------------------
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
+import { useNavigate } from 'react-router-dom';
+
+import MarkdownModal from './Atomic/Modal/MarkdownModal';
+import MDEditorWS from './MarkdownEditor/MDEditorWS';
 
 /**
  * GalaxyGraph
@@ -13,6 +17,12 @@ import ForceGraph2D from 'react-force-graph-2d';
  * @returns {JSX.Element}
  */
 const GalaxyGraph = ( { data } ) => {
+
+  const navigate = useNavigate();
+
+  // Estados para manejar el editor de notas
+  const [editorNode, setEditorNode]     = useState( null );
+  const [isFullScreen, setIsFullScreen] = useState( false );
 
   // Paleta de colores inspirados en los nodos de Obsidian
   const NODES_COLOR_PALETTE = [
@@ -68,7 +78,6 @@ const GalaxyGraph = ( { data } ) => {
       group_colors[node.group] = generate_random_color();
   } );
 
-  console.log( data );
   // Calculamos el número de conexiones que tiene cada nodo
   let nodes_count = {};
   data.nodes.forEach( ( node ) => { nodes_count[node.id] = 0 } );
@@ -101,68 +110,97 @@ const GalaxyGraph = ( { data } ) => {
     }
   }, [] );
 
+  // Si está en modo pantalla completa, solo renderiza el editor
+  if( isFullScreen && editorNode ) {
+    return (
+      <div className="md-editor-fullscreen">
+        <MDEditorWS note_id2={editorNode.id} />
+      </div>
+    );
+  }
+
   // ------------------------------------------------------------------------------------------------
   // Gráfico
   // ------------------------------------------------------------------------------------------------
 
   return (
-    <ForceGraph2D
-      ref              = {graph_pointer}  // Vinculamos el puntero del gráfico
-      graphData        = {data}           // Datos del gráfico
-      backgroundColor  = 'rgb(28,28,28)'           // Fondo oscuro estilo Obsidian
-      nodeCanvasObject = { ( node, ctx, graph_scale ) => {
+    <>
+      <ForceGraph2D
+        ref              = {graph_pointer}  // Vinculamos el puntero del gráfico
+        graphData        = {data}           // Datos del gráfico
+        backgroundColor  = 'rgb(28,28,28)'           // Fondo oscuro estilo Obsidian
+        nodeCanvasObject = { ( node, ctx, graph_scale ) => {
 
-        // Creamos el nodo en forma de círculo con un SVG
-        const radius = 17 + ( nodes_count[node.id] * 4.5 );
-        ctx.beginPath();
-        ctx.arc( node.x, node.y, radius, 0, 2 * Math.PI, false );
-        ctx.fillStyle = group_colors[node.group];
-        ctx.fill();
+          // Creamos el nodo en forma de círculo con un SVG
+          const radius = 17 + ( nodes_count[node.id] * 4.5 );
+          ctx.beginPath();
+          ctx.arc( node.x, node.y, radius, 0, 2 * Math.PI, false );
+          ctx.fillStyle = group_colors[node.group];
+          ctx.fill();
 
-        // Solo mostramos el texto cuando haya suficiente zoom
-        // Ajusta el valor 4 según la sensibilidad que quieras
-        if( graph_scale > 0.50 ) {
+          // Solo mostramos el texto cuando haya suficiente zoom
+          // Ajusta el valor 4 según la sensibilidad que quieras
+          if( graph_scale > 0.50 ) {
 
-          // Tamaño de la fuente
-          ctx.font      = `${12 / graph_scale}px Arial, Sans, sans-serif`;
-          ctx.fillStyle = '#919090';
-          ctx.fillText(
-            node.name,                // Texto a mostrar
-            node.x + radius + 2,      // Posición horizontal (x)
-            node.y + 4 / graph_scale  // Posición vertical (y)
-          );
-        }
-      } }
+            // Tamaño de la fuente
+            ctx.font      = `${12 / graph_scale}px Arial, Sans, sans-serif`;
+            ctx.fillStyle = '#919090';
+            ctx.fillText(
+              node.name,                // Texto a mostrar
+              node.x + radius + 2,      // Posición horizontal (x)
+              node.y + 4 / graph_scale  // Posición vertical (y)
+            );
+          }
+        } }
 
-      linkColor={ () => "#dcdcdc" }
-      linkWidth       = {1}       // Grosor de los enlaces
-      nodeLabel       = 'name'    // Muestra nombre al pasar el ratón
-      nodeAutoColorBy = 'group'   // Color automático según grupo
+        linkColor={ () => "#dcdcdc" }
+        linkWidth       = {1}       // Grosor de los enlaces
+        nodeLabel       = 'name'    // Muestra nombre al pasar el ratón
+        nodeAutoColorBy = 'group'   // Color automático según grupo
 
-      // -----------------------------------------------------------------------------------------------
-      // EVENTOS DRAG
-      // -----------------------------------------------------------------------------------------------
+        // -----------------------------------------------------------------------------------------------
+        // EVENTOS DRAG
+        // -----------------------------------------------------------------------------------------------
 
-      // Al arrastrar, desactivamos la repulsión para que los demás nodos no se muevan
-      onNodeDrag = { ( node ) => {
-        const graph = graph_pointer.current;
-        graph.d3Force( 'charge' ).strength( 0 );
-      } }
+        // Al arrastrar, desactivamos la repulsión para que los demás nodos no se muevan
+        onNodeDrag = { ( node ) => {
+          const graph = graph_pointer.current;
+          graph.d3Force( 'charge' ).strength( 0 );
+        } }
 
-      // Al soltar, restauramos la repulsión original
-      onNodeDragEnd = { ( node ) => {
-        const graph = graph_pointer.current;
-        graph.d3Force( 'charge' ).strength( -50 );
-      } }
+        // Al soltar, restauramos la repulsión original
+        onNodeDragEnd = { ( node ) => {
+          const graph = graph_pointer.current;
+          graph.d3Force( 'charge' ).strength( -50 );
+        } }
 
-      // Evento onClick
-      onNodeClick = { ( node ) => {
-        console.log( node.id );
-      } }
+        // Evento onClick
+        onNodeClick={ node => setEditorNode( node ) }
 
-      // Ajustamos el zoom al terminar el cálculo
-      onEngineStop={ () => graph_pointer.current.zoomToFit( 1000 ) } 
-    />
+        // Ajustamos el zoom al terminar el cálculo
+        onEngineStop={ () => graph_pointer.current.zoomToFit( 1000 ) } 
+      />
+
+      {/* Modal con editor embebido */}
+      {editorNode && (
+        <MarkdownModal
+          onClose={() => setEditorNode( null )}
+          onExpand={() => {
+            const target = `/markdowneditor/${editorNode.id}`;
+            if( document.startViewTransition ) {
+              document.startViewTransition( () => {
+                navigate( target );
+              });
+            } else
+              navigate( target );
+          }}
+        >
+          <div className="md-editor-wrapper">
+            <MDEditorWS note_id2={editorNode.id} modal={true} options={false} />
+          </div>
+        </MarkdownModal>
+      )}
+    </>
   );
 };
 
