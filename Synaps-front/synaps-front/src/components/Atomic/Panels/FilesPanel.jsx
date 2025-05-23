@@ -17,6 +17,10 @@ import { ReactComponent as NewFolderIcon }  from "../../../assets/icons/new-fold
 import { ReactComponent as FilterIcon }     from "../../../assets/icons/filter-sort.svg"; // Icono para filtrado/ordenación
 import NoteTree from "../../NoteTree/NoteTree.jsx";
 import { http_post, http_get } from '../../../lib/http.js';
+
+import { NotesHelper } from '../../../lib/Helpers/NotesHelper.jsx';
+import { FoldersHelper } from '../../../lib/Helpers/FoldersHelper.jsx';
+
 //===========================================================================//
 
 //===========================================================================//
@@ -25,6 +29,9 @@ import { http_post, http_get } from '../../../lib/http.js';
 
 // Este componente implementa un panel de búsqueda interactivo con múltiples funciones
 const FilesPanel = () => {
+
+  const { getNotes, readNote, deleteNote }  = NotesHelper();
+  const { deleteFolder }                    = FoldersHelper();
 
   // -----------------------------------------------------------------
   // Selected Item
@@ -47,134 +54,11 @@ const FilesPanel = () => {
   // Notes
   // -----------------------------------------------------------------
 
-  // Estado para almacenar las notas
   const [notes, setNotes] = useState( [] );
-
-  // Función para obtener todas las notas desde la API
-  const getNotes = async( parent_id = 0 ) => {
-
-    try {
-
-      // URL de la API y parámetros
-      const url = 'http://localhost:8010/api/getNotes';
-      let body  = { parent_id: parent_id };
-
-      // Llamada GET usando tu helper http_get
-      const { result, http_data } = await http_get( url, body );
-      if ( result !== 1 )
-        throw new Error( 'Error al cargar notas' );
-      
-      // Actualizamos los items
-      const newItems = http_data.items.map( item => ( {
-          id       : item.id
-        , id2      : item.id2
-        , title    : item.title
-        , parent_id: item.parent_id
-        , type     : item.type
-      } ) );
-
-      // Actualizamos el estado de notas y la variable global en paralelo
-      setNotes( prev => {
-        const filtered = prev.filter( item => item.parent_id !== parent_id );
-        const updated = [...filtered, ...newItems];
-        window.currentNotes = updated;
-        return updated;
-      } );
-
-    } catch( error ) {
-      console.error( error );
-    }
-  }
-
   useEffect( () => {
-    window.getNotesForFolder = getNotes;
-    getNotes();
-  }, [] );
+    getNotes( 0 );
 
-
-  // -----------------------------------------------------------------
-  // Leer una nota concreta
-  // -----------------------------------------------------------------
-  const readNote = async( note_id2 ) => {
-    try {
-      const url  = 'http://localhost:8010/api/readNote';
-      const body = { note_id2 };
-
-      // Realizamos la petición
-      const { result, http_data } = await http_get( url, body );
-      if( result !== 1 )
-        throw new Error( 'Error al leer la nota' );
-
-      window.set_markdown( http_data.note.markdown );
-      
-      // Forzamos la recarga del MarkdownEditor
-      window.setKey( k => k + 1 );
-
-    } catch ( error ) {
-      console.log( error );
-    }
-  };
-
-  useEffect( () => {
-    window.readNote = readNote;
-  }, [] );
-
-  // -----------------------------------------------------------------
-  // Borrar una nota concreta
-  // -----------------------------------------------------------------
-  const deleteNote = async( note_id2 ) => {
-    try {
-      const url  = 'http://localhost:8010/api/deleteNote';
-      const body = { note_id2 };
-
-      // Realizamos la petición
-      const { result, http_data } = await http_post( url, body );
-      if( result !== 1 )
-        throw new Error( 'Error al borrar la nota' );
-
-      // Eliminamos la nota del array y actualizamos la interfaz
-      setNotes( prev => {
-        const filtered = prev.filter( node => node.id2 !== note_id2 );
-        window.currentNotes = filtered;
-        return filtered;
-      } );
-
-    } catch ( error ) {
-      console.log( error );
-    }
-  };
-
-  useEffect( () => {
-    window.deleteNote = deleteNote;
-  }, [] );
-
-  // -----------------------------------------------------------------
-  // Borrar una carpeta concreta
-  // -----------------------------------------------------------------
-  const deleteFolder = async( folder_id2 ) => {
-    try {
-      const url  = 'http://localhost:8010/api/deleteFolder';
-      const body = { folder_id2 };
-
-      // Realizamos la petición
-      const { result, http_data } = await http_post( url, body );
-      if( result !== 1 )
-        throw new Error( 'Error al borrar la carpeta' );
-
-      // Eliminamos la carpeta del array y actualizamos la interfaz
-      setNotes( prev => {
-        const filtered = prev.filter( node => node.id2 !== folder_id2 );
-        window.currentNotes = filtered;
-        return filtered;
-      } );
-
-    } catch ( error ) {
-      console.log( error );
-    }
-  };
-
-  useEffect( () => {
-    window.deleteFolder = deleteFolder;
+    window.currentNotes = notes;
   }, [] );
 
   //---------------------------------------------------------------------------//

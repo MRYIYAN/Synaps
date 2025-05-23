@@ -32,8 +32,8 @@ export default function NoteItem( {
 } ) {
 
   // Estado para menú contextual
-  const [menuPos, setMenuPos] = useState( { x: null, y: null } );
-  const [menuOptions, setMenuOptions] = useState( [] );
+  const [menuPos, setMenuPos]             = useState( { x: null, y: null } );
+  const [menuOptions, setMenuOptions]     = useState( [] );
   const [isConfirmOpen, setIsConfirmOpen] = useState( false );
 
   // Capturamos la referencia del Panel
