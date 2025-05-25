@@ -789,7 +789,7 @@ h1, h2, h3, h4, h5, h6 { margin: 0; }
   height: 2.5rem;
   flex-shrink: 0;
   border: 2px solid transparent;
-  background-color: var(--gluon_gray) !important;
+  background-color: rgba(30, 29, 34, 0.7) !important;
   color: var(--snow);
   border-radius: 8px;
   padding: 0.15rem 1.5rem;

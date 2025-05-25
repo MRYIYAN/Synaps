@@ -7,7 +7,6 @@
 /*---------------------------------------------------------------------------*/
 .landing-footer {
   background-color: var(--dark_void);      /* Fondo oscuro consistente con la aplicación */
-  border-top: 1px solid rgba(135, 135, 135, 0.2); /* Separador sutil en la parte superior */
   padding: 80px 0 40px;                    /* Espaciado vertical generoso, menor abajo */
 }
 

@@ -1,0 +1,87 @@
+/*===========================================================================*/
+/*           ESTILOS PARA PARTÍCULAS INTERACTIVAS EN LOGIN                  */
+/*===========================================================================*/
+/*  Este archivo CSS contiene la configuración visual para el sistema de     */
+/*  partículas animadas que forma el fondo interactivo de la página de       */
+/*  login. Define las capas de z-index, transparencias y responsividad       */
+/*  necesarias para integrar las partículas con el formulario de acceso.     */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/*  Canvas principal - Fondo de partículas que ocupa toda la pantalla       */
+/*---------------------------------------------------------------------------*/
+.login-particles-canvas {
+  position: fixed;              /* Posición fija para cubrir toda la ventana */
+  top: 0;                      /* Esquina superior izquierda como punto de origen */
+  left: 0;
+  width: 100%;                 /* Ocupar todo el ancho de la ventana */
+  height: 100%;                /* Ocupar toda la altura de la ventana */
+  z-index: 0;                  /* Capa más baja - detrás de todo el contenido */
+  pointer-events: none;        /* Evitar que interfiera con la interacción del usuario */
+  background-color: var(--dark-void);  /* Color de fondo base usando variable CSS */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Elemento de destaque eliminado - Sin efectos de brillo adicionales      */
+/*---------------------------------------------------------------------------*/
+/* Eliminar completamente el área de destaque para partículas */
+.login-particles-highlight {
+  display: none;               /* Ocultar completamente el brillo naranja */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Contenedor principal - Capa intermedia para el contenido general        */
+/*---------------------------------------------------------------------------*/
+/* Asegurar que el canvas esté por debajo del contenido */
+.login-main-container {
+  position: relative;          /* Contexto de posicionamiento para elementos hijos */
+  z-index: 2;                  /* Segunda capa - encima del canvas de partículas */
+  background-color: transparent !important; /* Asegurar que sea transparente */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Wrapper del formulario - Capa transparente sin interferencias visuales  */
+/*---------------------------------------------------------------------------*/
+/* Hacer transparente el wrapper del formulario */
+.login-form-wrapper {
+  position: relative;          /* Contexto de posicionamiento relativo */
+  z-index: 3;                  /* Tercera capa - encima del contenedor principal */
+  background-color: transparent !important; /* Eliminar el fondo del formulario */
+  box-shadow: none !important; /* Eliminar cualquier sombra */
+  backdrop-filter: none !important; /* Eliminar cualquier filtro */
+  border: none !important;     /* Eliminar cualquier borde */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Elementos del formulario - Capa superior con máxima visibilidad         */
+/*---------------------------------------------------------------------------*/
+/* Mantener solo los elementos del formulario visibles */
+.login-title, 
+.login-subtitle, 
+.login-label,
+.login-input,
+.login-button {
+  position: relative;          /* Posicionamiento relativo para control de capas */
+  z-index: 4;                  /* Capa superior - máxima prioridad visual */
+  /* Añadir un poco de sombra para mejorar legibilidad sobre nodos */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Consulta de medios - Responsividad para dispositivos móviles            */
+/*---------------------------------------------------------------------------*/
+/* Media query para responsividad - ya no es necesaria */
+@media (max-width: 768px) {
+  .login-particles-highlight {
+    display: none;             /* Asegurar que el destaque permanezca oculto en móviles */
+  }
+}
+
+/*===========================================================================*/
+/*                        JERARQUÍA DE CAPAS (Z-INDEX)                      */
+/*===========================================================================*/
+/*  z-index: 0 - Canvas de partículas (fondo)                               */
+/*  z-index: 2 - Contenedor principal                                       */
+/*  z-index: 3 - Wrapper del formulario                                     */
+/*  z-index: 4 - Elementos del formulario (primera línea)                   */
+/*===========================================================================*/

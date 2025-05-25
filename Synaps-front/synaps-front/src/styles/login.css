@@ -1,0 +1,666 @@
+/*===========================================================================*/
+/*                    ESTILOS PARA LA PÁGINA DE LOGIN                        */
+/*===========================================================================*/
+
+/* Importar fuente Dune Rise para el título */
+@font-face {
+  font-family: 'Dune Rise';
+  src: url('../assets/fonts/Dune_Rise/Dune_Rise.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Variables de colores */
+:root {
+  --dark-void: #151419;
+  --liquid-lava: #F56E0F;
+  --gluon-gray: #1B1B1E;
+  --snow: #FBFBFB;
+  --error-color: #e74c3c; /* Color de error */
+}
+
+/* Animaciones */
+@keyframes liquid-lava {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.7), 0 0 15px rgba(245, 110, 15, 0.3); }
+  50% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 0 20px rgba(245, 110, 15, 0.5); }
+}
+
+/* Animación de escritura para el subtítulo */
+@keyframes typing {
+  0% { 
+    width: 0; 
+    opacity: 1;
+  }
+  99% { 
+    opacity: 1;
+  }
+  100% { 
+    width: 100%; 
+    opacity: 1;
+    border-right: transparent;
+  }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: var(--liquid-lava) }
+}
+
+/*---------------------------------------------------------------------------*/
+/* ESTRUCTURA PRINCIPAL DE LA PÁGINA                                         */
+/*---------------------------------------------------------------------------*/
+/* ESTRUCTURA PRINCIPAL DE LA PÁGINA - AJUSTADA PARA POSICIÓN IZQUIERDA */
+.login-page-container {
+  min-height: 120vh; /* Aumentado para mantener proporciones */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent !important; /* Fuerza transparencia */
+  position: relative;
+  overflow-x: hidden; /* Evitar scroll horizontal */
+}
+
+/* Centrar completamente el contenedor principal */
+.login-main-container {
+  display: flex;
+  justify-content: flex-start !important; /* Mantener alineación a la izquierda */
+  align-items: flex-start !important;
+  padding-left: 6% !important; 
+  padding-right: 0 !important;
+  min-height: calc(100vh - 70px);
+  padding-top: 170px !important; /* Aumentado 20px más (de 150px a 170px) */
+  padding-bottom: 50px !important; /* Reducido de 100px a 50px para tener menos espacio inferior */
+  position: relative;
+  z-index: 5;
+  background-color: transparent !important;
+  width: 100% !important;
+}
+
+/* Wrapper del formulario alineado a la izquierda */
+.login-form-wrapper {
+  width: 100%;
+  max-width: 400px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center !important; /* Centrar elementos con respecto al título */
+  justify-content: flex-start !important;
+  margin: 0 !important;
+  margin-top: 30px !important; /* Reducido para subir más el formulario */
+  padding: 0 !important;
+  position: relative;
+  z-index: 10;
+  background-color: transparent !important;
+}
+  
+/* Sobreescribir cualquier regla que esté centrando el formulario */
+.login-form-wrapper.center-align,
+.login-form-wrapper[class*="center"],
+.login-form-wrapper[style*="margin: 0 auto"] {
+  margin: 0 !important;
+  align-items: flex-start !important;
+}
+
+/* Asegurar que todos los elementos internos mantengan alineación izquierda */
+.login-form-wrapper .login-title,
+.login-form-wrapper .login-subtitle,
+.login-form-wrapper .login-form-group,
+.login-form-wrapper .login-button-container,
+.login-form-wrapper .login-register-container,
+.login-form-wrapper .login-form,
+.login-form-wrapper .login-input {
+  width: 150% !important;
+  max-width: 480px !important; /* Ancho consistente */
+  align-self: center !important; /* Centrar respecto al título */
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Centrar el texto del título y subtítulo */
+.login-form-wrapper h1.login-title,
+.login-form-wrapper p.login-subtitle {
+  text-align: center !important; /* Centrar texto */
+}
+
+/* Ajustar el tamaño del título */
+.login-form-wrapper h1.login-title {
+  font-size: 36px !important; /* Aumentado de 28px a 36px */
+  letter-spacing: 2px !important; /* Aumentado de 1.5px a 2px para mejor legibilidad */
+  margin-bottom: 16px !important; /* Aumentado de 8px a 16px para dar más espacio */
+  line-height: 1.2 !important; /* Ajustado de 1.3 a 1.2 para texto más grande */
+  font-family: 'Dune Rise', sans-serif;
+  color: var(--snow);
+  text-align: center !important;
+}
+
+/* Ajustar el título para pantallas medianas */
+@media (max-width: 768px) {
+  .login-form-wrapper h1.login-title {
+    font-size: 32px !important; /* Ligeramente más pequeño en tablets */
+  }
+}
+
+/* Ajustar el título para pantallas pequeñas */
+@media (max-width: 576px) {
+  .login-form-wrapper h1.login-title {
+    font-size: 28px !important; /* Más pequeño en móviles pero aún prominente */
+    letter-spacing: 1.8px !important;
+  }
+}
+
+/* Ajustar subtítulo */
+.login-form-wrapper p.login-subtitle {
+  /* Configuración básica */
+  font-size: 16px !important;
+  margin-bottom: 40px !important;
+  color: var(--liquid-lava);
+  max-width: 480px !important;
+  text-align: center !important;
+  
+  /* Para la animación de escritura */
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap !important; /* Forzar una sola línea */
+  margin-left: auto !important; 
+  margin-right: auto !important;
+  
+  /* Animación modificada para que se reinicie al recargar */
+  width: 0;
+  border-right: 2px solid var(--liquid-lava);
+  animation: 
+    typing 3.5s steps(40, end) forwards,
+    blink-caret 0.75s step-end infinite;
+  animation-play-state: running !important; /* Forzar reproducción */
+  animation-delay: 0.5s; /* Pequeño retraso para asegurar que inicie correctamente */
+    
+  /* Asegurar buena legibilidad */
+  letter-spacing: 0.5px;
+  font-weight: 400;
+
+  /* Garantizar que se vea completa */
+  min-width: 0;
+}
+
+/* Eliminar todas las definiciones anteriores del subtítulo y crear una nueva limpia */
+
+/* Reset completo para el subtítulo */
+.login-subtitle {
+  /* Eliminar cualquier regla anterior */
+  all: initial;
+  
+  /* Estilos básicos */
+  font-family: inherit;
+  font-size: 16px !important;
+  color: var(--liquid-lava) !important;
+  display: block !important;
+  text-align: center !important;
+  margin: 0 auto !important;
+  margin-top: 8px !important;
+  margin-bottom: 30px !important;
+  
+  /* Forzar una sola línea */
+  white-space: nowrap !important;
+  overflow: visible !important;
+  max-width: none !important; /* Eliminar restricciones de ancho máximo */
+  
+  /* Eliminar propiedades de animación */
+  border-right: none !important;
+  animation: none !important;
+}
+
+/* Contenedor para centrar el subtítulo */
+.login-subtitle-container {
+  width: 100%;
+  text-align: center !important;
+  margin-bottom: 20px !important;
+  overflow: visible !important;
+}
+
+/* Animaciones simplificadas y más precisas */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--liquid-lava); }
+}
+
+/* Clase para activar la animación */
+.login-subtitle-animated {
+  animation: 
+    typing 2.5s steps(40, end) forwards,
+    blink-caret 0.75s step-end infinite !important;
+}
+
+/* El formulario se mantiene centrado verticalmente */
+.login-container {
+  width: 100%;
+  margin: auto 0;
+}
+
+/* Footer integrado fluidamente sin líneas extrañas - SUBIR MÁS ARRIBA */
+.login-footer {
+  width: 100%;
+  background-color: transparent !important;
+  position: relative;
+  z-index: 10;
+  border-top: none !important;
+  padding: 0.5rem 0;
+  margin-top: -150px !important; /* Aumentado de -100px a -150px para subir más el footer */
+}
+
+/* Reducir espacio entre el final del formulario y el footer */
+.login-main-container {
+  padding-bottom: 50px !important; /* Reducido de 100px a 50px para tener menos espacio inferior */
+}
+
+/* Eliminar completamente cualquier espaciador */
+.login-spacer {
+  height: 0 !important;
+  display: none !important;
+}
+
+/* Ajustar para móviles y tablets */
+@media (max-width: 768px) {
+  .login-footer {
+    margin-top: -120px !important; /* Un poco menos negativo en pantallas pequeñas */
+  }
+  
+  .login-main-container {
+    padding-bottom: 30px !important; /* Menos padding en móviles */
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .login-footer {
+    margin-top: -100px !important; /* Ajuste para móviles pequeños */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/* FORMULARIO DE LOGIN                                                      */
+/*---------------------------------------------------------------------------*/
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center !important; /* Centrar elementos */
+}
+
+/* Título con un ancho específico que servirá de referencia */
+.login-title {
+  width: 100%;
+  max-width: 560px; /* Ajusta este valor según el ancho exacto que necesites */
+  text-align: left;
+  margin-bottom: 10px;
+  color: var(--snow);
+  font-family: 'Dune Rise', sans-serif;
+  letter-spacing: 2px;
+  font-size: 32px;
+}
+
+/* Ajustar el subtítulo para que coincida con el ancho del título */
+.login-subtitle {
+  width: 100%;
+  max-width: 560px; /* Mismo ancho que el título */
+  margin-bottom: 40px;
+  color: var(--liquid-lava);
+  font-size: 18px;
+}
+
+/* Campos de entrada ajustados - aumentados en 16% más */
+.login-input {
+  width: 174% !important; /* Cambiado de 150% a 174% (150% * 1.16) */
+  height: 50px;
+  padding: 14px 18px;
+  box-sizing: border-box;
+  background-color: rgba(30, 29, 34, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--snow);
+  font-size: 16px;
+}
+
+/* Asegurar que los grupos de formulario también tienen espacio para los inputs más anchos */
+.login-form-group {
+  width: 100%;
+  max-width: 650px; /* Aumentado de 560px para adaptarse al nuevo ancho */
+  margin-bottom: 35px !important;
+}
+
+/* Actualizar el ancho de los elementos del formulario en general */
+.login-form-wrapper .login-form-group,
+.login-form-wrapper .login-input,
+.login-form-wrapper .login-button-container,
+.login-form-wrapper .login-register-container {
+  max-width: 560px !important; /* Aumentado de 480px a 560px */
+  width: 174% !important; /* Actualizado a 174% para mantener coherencia */
+}
+
+/* Etiquetas de los campos */
+.login-label {
+  display: block;
+  width: 100%;
+  text-align: left !important;
+  margin-bottom: 6px !important;
+  color: var(--liquid-lava);
+  font-size: 16px;
+}
+
+/* Estilos para campos con error */
+.login-input.input-error {
+  border: 1px solid var(--error-color) !important;
+  background-color: rgba(30, 29, 34, 0.7) !important;
+}
+
+/* Mensaje de error para los inputs */
+.input-error-message {
+  color: var(--error-color);
+  font-size: 13px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Estilos para animaciones en mensajes de error */
+@keyframes errorAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Aplicar animación a los mensajes de error */
+.input-error-message {
+  animation: errorAppear 0.3s ease-out forwards;
+  color: var(--error-color, #e74c3c);
+}
+
+/* Asegurar que el icono de error tenga el tamaño adecuado */
+.error-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  vertical-align: middle;
+  color: var(--error-color, #e74c3c);
+}
+
+/* Mejorar transiciones para los cambios de estado en inputs */
+.login-input {
+  transition: border 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.login-input.input-error {
+  border: 1px solid var(--error-color, #e74c3c) !important;
+  box-shadow: 0 0 0 1px rgba(231, 76, 60, 0.2) !important;
+  background-color: rgba(231, 76, 60, 0.05) !important;
+}
+
+/* Añadir espacio adicional cuando hay errores */
+.login-form-group.has-error {
+  margin-bottom: 35px !important;
+}
+
+/* Hacer que los mensajes de error sean más visibles */
+.input-error-message {
+  margin-top: 5px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+}
+
+/* Botón desactivado con mejor feedback visual */
+.login-button:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+  filter: grayscale(40%);
+}
+
+/* Botón de inicio de sesión - MODIFICADO PARA ELIMINAR EL BORDE BLANCO */
+.login-button {
+  min-width: 220px;
+  padding: 15px 30px;
+  background: linear-gradient(90deg, #ff4d00, #ff8700, #ff4d00);
+  background-size: 200% 100%;
+  color: white;
+  animation: liquid-lava 1.5s linear infinite;
+  border: none !important;
+  outline: none !important;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  /* Asegurarnos de eliminar cualquier efecto que pueda parecer un borde */
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  text-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  overflow: hidden; /* Para contener el efecto degradado dentro del borde */
+}
+
+/* Dar un efecto sutil de profundidad en hover sin borde blanco */
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 77, 0, 0.4) !important;
+}
+
+/* Restablecer en active */
+.login-button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(255, 77, 0, 0.3) !important;
+}
+
+/* Asegurar que focus no genera bordes */
+.login-button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Texto del botón con mejor antialiasing */
+.login-button-text {
+  font-family: 'Dune Rise', sans-serif;
+  letter-spacing: 1px;
+  font-size: 16px;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative; /* Para asegurar que no haya efectos extraños */
+  z-index: 1; /* Por encima del fondo del botón */
+}
+
+/* Estilizar el contenedor de error */
+.login-error-container {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* Mensaje de error estilizado */
+.login-error {
+  color: var(--error-color) !important; /* Usar variable de color de error (rojo) */
+  font-size: 15px;
+  background-color: rgba(231, 76, 60, 0.1);
+  border-left: 3px solid var(--error-color);
+  padding: 10px 15px;
+  border-radius: 0 5px 5px 0;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  width: fit-content;
+  margin: 0 auto;
+  position: relative;
+  padding-left: 40px; /* Espacio para el icono SVG */
+}
+
+/* Reemplazar el emoji por el mismo SVG de las validaciones */
+.login-error::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22Z' stroke='%23e74c3c' stroke-width='2'/%3E%3Cpath d='M12 8V12' stroke='%23e74c3c' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='16' r='1' fill='%23e74c3c'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Animación de aparición para el error */
+@keyframes errorAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Aplicar animación al contenedor de error */
+.login-error-container {
+  animation: errorAppear 0.3s ease-out forwards;
+  width: 100%;
+  max-width: 480px; /* Asegurar que coincida con el ancho de los inputs */
+  margin: 20px auto 10px;
+  display: flex;
+  justify-content: center;
+}
+
+/*---------------------------------------------------------------------------*/
+/* RESPONSIVE                                                                */
+/*---------------------------------------------------------------------------*/
+@media (max-width: 576px) {
+  .login-main-container {
+    padding-top: 120px !important; /* Menos padding en móviles pero aún suficiente */
+  }
+  
+  .login-form-wrapper {
+    margin-top: 0px !important; /* Eliminar margen en móviles */
+  }
+  
+  .login-form-wrapper p.login-subtitle {
+    font-size: 15px !important; /* Ligeramente más pequeño */
+    margin-bottom: 30px !important; /* Menos margen */
+  }
+}
+
+@media (max-width: 768px) {
+  .login-main-container {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    justify-content: center !important; /* Forzar centrado en todas las pantallas */
+  }
+  
+  .login-form-wrapper {
+    max-width: 340px; /* Ligeramente más pequeño en móviles */
+  }
+  
+  .login-title, 
+  .login-subtitle, 
+  .login-form-group, 
+  .login-button-container,
+  .login-register-container {
+    max-width: 100%; /* En pantallas pequeñas, usar todo el ancho disponible */
+  }
+}
+
+/* Ajustar tamaño del título específicamente para la página de login */
+.login-form-wrapper h1.login-title {
+  font-size: 31px !important; /* Reducir tamaño de fuente */
+  letter-spacing: 1.5px !important; /* Ajustar espaciado de letras */
+  margin-bottom: 8px !important; /* Reducir margen inferior */
+  line-height: 1.3 !important; /* Ajustar altura de línea */
+}
+
+/* Ajustar subtítulo proporcionalmente */
+.login-form-wrapper p.login-subtitle {
+  font-size: 16px !important; /* Tamaño más pequeño */
+  margin-bottom: 30px !important; /* Reducir espacio */
+}
+
+/* Asegurar que los inputs mantengan el mismo ancho que el título reducido */
+.login-form-wrapper .login-form-group,
+.login-form-wrapper .login-input,
+.login-form-wrapper .login-button-container,
+.login-form-wrapper .login-register-container {
+  max-width: 535px !important; /* Ancho ajustado al nuevo tamaño del título */
+  width: 150% !important;
+}
+
+/* Centrar el botón respecto a los inputs */
+.login-form-wrapper .login-button-container {
+  display: flex;
+  justify-content: center !important; /* Centrar horizontalmente */
+  align-items: center;
+  margin-top: 30px !important;
+}
+
+/* Ajustar tamaño de los labels */
+.login-form-wrapper .login-label {
+  font-size: 14px !important;
+  margin-bottom: 6px !important;
+}
+
+/* Para pantallas muy pequeñas, centrar el contenido */
+@media (max-width: 480px) {
+  .login-main-container {
+    justify-content: center !important; /* Centrar en pantallas muy pequeñas */
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+}
+
+/* Footer con fondo transparente */
+footer, .footer {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+.footer-container {
+  background-color: transparent !important;
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+/* Asegurar que cualquier otro contenedor en el footer también sea transparente */
+.footer > div, 
+.footer-content, 
+.footer-wrapper {
+  background-color: transparent !important;
+}
+
+/* Eliminar bordes o líneas en el footer que puedan tener color de fondo */
+.footer-border,
+.footer-divider,
+.footer hr {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+/* Opcional: Si necesitas mantener el texto legible contra cualquier fondo */
+.footer * {
+  text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); /* Añade un sutil sombreado al texto */
+}
+

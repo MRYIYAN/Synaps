@@ -12,7 +12,8 @@
 import React, { useEffect, useRef } from 'react';
 import './ParticlesBackground.css';
 
-const ParticlesBackground = () => {
+// Agregar un prop para identificar si estamos en la página de login
+const ParticlesBackground = ({ className, isLoginPage }) => {
   const canvasRef = useRef(null);
   
   useEffect(() => {
@@ -270,12 +271,12 @@ const ParticlesBackground = () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationId);
     };
-  }, []);
+  }, [className]);
   
   return (
     <canvas 
       ref={canvasRef} 
-      className="particles-background" 
+      className={`particles-background particles-canvas ${className || ''}`}
       style={{
         position: 'fixed',
         top: 0,

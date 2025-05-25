@@ -1,0 +1,612 @@
+/*===========================================================================*/
+/*              ESTILOS PARA LA PÁGINA DE REGISTRO COMPLETA                 */
+/*===========================================================================*/
+/*  Este archivo CSS define todos los estilos visuales para la página de     */
+/*  registro de la plataforma Synaps. Incluye diseño responsive, validación  */
+/*  visual en tiempo real, animaciones de transición entre pasos y           */
+/*  integración con el sistema de partículas de fondo.                       */
+/*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/*  Fuentes personalizadas - Importación de tipografía principal            */
+/*---------------------------------------------------------------------------*/
+/* Importar fuente Dune Rise para el título - igual que en login */
+@font-face {
+  font-family: 'Dune Rise';
+  src: url('../assets/fonts/Dune_Rise/Dune_Rise.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Variables globales - Paleta de colores de la marca Synaps               */
+/*---------------------------------------------------------------------------*/
+:root {
+  --dark-void: #151419;        /* Fondo principal oscuro */
+  --liquid-lava: #F56E0F;      /* Naranja principal de la marca */
+  --gluon-gray: #1B1B1E;       /* Gris para elementos secundarios */
+  --snow: #FBFBFB;             /* Blanco para textos principales */
+  --error-color: #e74c3c;      /* Rojo para mensajes de error */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Contenedor principal - Estructura base de la página                     */
+/*---------------------------------------------------------------------------*/
+/* Estilos generales para la página de registro */
+.register-page-container {
+  min-height: 100vh;           /* Altura mínima de pantalla completa */
+  position: relative;          /* Contexto para posicionamiento de hijos */
+  background-color: transparent !important; /* Sin fondo para mostrar partículas */
+  display: flex;               /* Layout flexbox para organización vertical */
+  flex-direction: column;      /* Organización vertical: header, main, footer */
+  justify-content: space-between; /* Distribuir espacio entre elementos */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Barra de navegación superior - Header con transparencia y blur          */
+/*---------------------------------------------------------------------------*/
+/* Navbar específico para la página de registro */
+.register-navbar {
+  background-color: rgba(21, 20, 25, 0.95); /* Fondo semi-transparente */
+  backdrop-filter: blur(10px); /* Efecto de desenfoque del fondo */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+  position: relative;          /* Posicionamiento relativo */
+  z-index: 10;                 /* Capa alta para estar encima de partículas */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Contenedor principal del formulario - Posicionamiento y espaciado       */
+/*---------------------------------------------------------------------------*/
+/* Contenedor principal - aumentar padding-top para bajar el formulario */
+.register-main-container {
+  flex: 1;                     /* Ocupar espacio disponible en flexbox */
+  display: flex;               /* Layout flexbox interno */
+  align-items: flex-start !important;    /* Alineación superior */
+  justify-content: flex-start !important; /* Alineación izquierda */
+  padding-left: 6% !important;           /* Espaciado desde borde izquierdo */
+  padding-right: 0 !important;           /* Sin espaciado derecho */
+  padding-top: 220px !important;         /* Espaciado superior amplio */
+  padding-bottom: 60px !important;       /* Espaciado inferior reducido */
+  min-height: calc(100vh - 120px);       /* Altura mínima calculada */
+  z-index: 5;                            /* Capa intermedia */
+  background-color: transparent !important; /* Sin fondo propio */
+  width: 100% !important;                /* Ancho completo */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Wrapper del formulario - Contenedor directo del formulario              */
+/*---------------------------------------------------------------------------*/
+/* Contenedor del formulario más ancho */
+.register-form-wrapper {
+  width: 100%;                 /* Ancho completo del contenedor padre */
+  max-width: 480px !important; /* Ancho máximo aumentado para mejor UX */
+  display: flex;               /* Layout flexbox */
+  flex-direction: column;      /* Organización vertical */
+  align-items: center !important;        /* Centrado horizontal */
+  justify-content: flex-start !important; /* Alineación superior */
+  margin: 0 !important;                   /* Sin márgenes externos */
+  margin-top: 10px !important;           /* Pequeño margen superior */
+  padding: 0 !important;                 /* Sin padding interno */
+  position: relative;                    /* Contexto de posicionamiento */
+  z-index: 10;                          /* Capa alta */
+  background-color: transparent !important; /* Sin fondo propio */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Estructura del formulario - Estilo base del contenedor                  */
+/*---------------------------------------------------------------------------*/
+/* Estilo del formulario de registro */
+.register-form-container {
+  color: white;                /* Color base del texto */
+  width: 100%;                 /* Ancho completo */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Header del formulario - Título y subtítulo                              */
+/*---------------------------------------------------------------------------*/
+.register-form-header {
+  margin-bottom: 2rem;         /* Espaciado inferior */
+  text-align: center !important; /* Centrado del texto */
+}
+
+/* Título con el mismo estilo que login - en una sola línea */
+.register-form-header h2 {
+  font-family: 'Dune Rise', sans-serif; /* Fuente personalizada */
+  font-size: 32px !important;           /* Tamaño aumentado */
+  color: var(--snow);                   /* Color blanco principal */
+  margin-bottom: 8px !important;        /* Espaciado inferior mínimo */
+  font-weight: normal;                  /* Peso normal de fuente */
+  letter-spacing: 1.5px !important;     /* Espaciado entre letras */
+  line-height: 1.3 !important;          /* Altura de línea compacta */
+  text-transform: uppercase;            /* Texto en mayúsculas */
+  text-align: center !important;        /* Centrado del texto */
+  white-space: nowrap !important;       /* Evitar salto de línea */
+}
+
+/* Subtítulo con estilo igual a login - más grande */
+.register-form-header p {
+  color: var(--liquid-lava);    /* Color naranja de la marca */
+  font-size: 18px !important;   /* Tamaño aumentado */
+  margin-bottom: 28px !important;       /* Espaciado inferior */
+  text-align: center !important;        /* Centrado del texto */
+  font-weight: 500 !important;          /* Peso semi-bold */
+  letter-spacing: 0.5px !important;     /* Espaciado sutil entre letras */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Formulario principal - Layout y espaciado general                       */
+/*---------------------------------------------------------------------------*/
+/* Formulario centrado y más ancho */
+.register-form {
+  display: flex;               /* Layout flexbox */
+  flex-direction: column;      /* Organización vertical */
+  width: 100% !important;      /* Ancho completo */
+  max-width: 480px !important; /* Ancho máximo ampliado */
+  margin-left: auto !important;  /* Centrado automático */
+  margin-right: auto !important; /* Centrado automático */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Grupos de campos - Estructura de cada campo del formulario              */
+/*---------------------------------------------------------------------------*/
+/* Grupo de campos - similar a login */
+.form-group {
+  width: 100%;                 /* Ancho completo */
+  margin-bottom: 25px !important;       /* Espaciado entre grupos */
+  position: relative;                   /* Contexto para elementos hijos */
+  display: flex !important;             /* Layout flexbox */
+  flex-direction: column !important;    /* Organización vertical */
+  align-items: flex-start !important;   /* Alineación izquierda */
+  justify-content: flex-start !important; /* Justificación superior */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Etiquetas de campos - Labels posicionadas arriba de inputs              */
+/*---------------------------------------------------------------------------*/
+/* Etiquetas arriba a la izquierda */
+.form-group label {
+  width: 100% !important;      /* Ancho completo */
+  text-align: left !important; /* Alineación izquierda */
+  margin-bottom: 10px !important;       /* Espaciado con input */
+  margin-right: 0 !important;           /* Sin margen derecho */
+  color: var(--liquid-lava);            /* Color naranja */
+  font-size: 14px !important;           /* Tamaño de fuente */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Campos de entrada - Inputs con diseño glassmorphism                     */
+/*---------------------------------------------------------------------------*/
+/* Inputs sin borde naranja por defecto */
+.form-group input {
+  width: 100% !important;      /* Ancho completo */
+  height: 45px !important;     /* Altura estándar */
+  padding: 12px 16px !important;        /* Padding interno */
+  box-sizing: border-box;               /* Cálculo de caja incluyendo padding */
+  background-color: rgba(30, 29, 34, 0.7) !important; /* Fondo semi-transparente */
+  backdrop-filter: blur(5px) !important; /* Efecto glassmorphism */
+  border: none !important;              /* Sin borde por defecto */
+  border-radius: 6px !important;        /* Bordes redondeados */
+  color: var(--snow) !important;        /* Texto blanco */
+  font-size: 15px !important;           /* Tamaño de fuente */
+  text-align: left !important;          /* Alineación del texto */
+  transition: all 0.2s ease-in-out !important; /* Transiciones suaves */
+  position: relative;                   /* Contexto de posicionamiento */
+  z-index: 5;                          /* Capa intermedia */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Estados de interacción - Focus y hover de inputs                        */
+/*---------------------------------------------------------------------------*/
+/* Focus con borde naranja más brillante */
+.form-group input:focus {
+  outline: none;               /* Eliminar outline por defecto */
+  border: 1px solid #FF7F00 !important; /* Borde naranja brillante */
+  box-shadow: 0 0 0 1px rgba(255, 127, 0, 0.2) !important; /* Sombra naranja */
+  background-color: #232327 !important; /* Fondo más sólido en focus */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Estados de error - Visualización de campos con errores                  */
+/*---------------------------------------------------------------------------*/
+/* Estilo para campos con error */
+.form-group input.error {
+  border: 1px solid #e74c3c !important; /* Borde rojo de error */
+  box-shadow: 0 0 0 1px rgba(231, 76, 60, 0.2) !important; /* Sombra roja */
+  background-color: rgba(231, 76, 60, 0.05) !important; /* Fondo rojizo sutil */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Mensajes de error - Feedback visual para validaciones                   */
+/*---------------------------------------------------------------------------*/
+/* Mensaje de error general */
+.error-message {
+  color: var(--error-color);   /* Color rojo de error */
+  font-size: 13px;             /* Tamaño pequeño */
+  margin-top: 8px !important;  /* Espaciado superior */
+  display: flex;               /* Layout flexbox */
+  align-items: center;         /* Centrado vertical */
+  gap: 6px;                    /* Espacio entre elementos */
+  width: 100% !important;      /* Ancho completo */
+  padding-left: 0 !important;  /* Sin padding izquierdo */
+  background-color: rgba(255, 0, 0, 0.2); /* Fondo rojizo transparente */
+  border: 1px solid rgba(255, 0, 0, 0.4); /* Borde rojizo */
+  backdrop-filter: blur(5px);  /* Efecto blur */
+  position: relative;          /* Contexto de posicionamiento */
+  z-index: 5;                  /* Capa intermedia */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Mensajes de error específicos - Con iconos y animaciones                */
+/*---------------------------------------------------------------------------*/
+/* Estilo para los mensajes de error similar a login */
+.field-error {
+  color: #e74c3c;              /* Color rojo */
+  font-size: 13px;             /* Tamaño pequeño */
+  margin-top: 5px;             /* Espaciado superior */
+  display: flex;               /* Layout flexbox */
+  align-items: center;         /* Centrado vertical */
+  gap: 6px;                    /* Espacio entre elementos */
+  padding-left: 20px;          /* Padding para el icono */
+  position: relative;          /* Contexto para pseudo-elementos */
+  animation: errorAppear 0.3s ease-out forwards; /* Animación de aparición */
+}
+
+/* Añadir icono de error antes del mensaje */
+.field-error::before {
+  content: "";                 /* Contenido vacío para pseudo-elemento */
+  position: absolute;          /* Posicionamiento absoluto */
+  left: 0;                     /* Posición izquierda */
+  top: 50%;                    /* Centrado vertical */
+  transform: translateY(-50%); /* Ajuste fino de centrado */
+  width: 16px;                 /* Ancho del icono */
+  height: 16px;                /* Alto del icono */
+  /* SVG del icono de error embebido como data URI */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22Z' stroke='%23e74c3c' stroke-width='2'/%3E%3Cpath d='M12 8V12' stroke='%23e74c3c' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='16' r='1' fill='%23e74c3c'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; /* No repetir imagen */
+  background-position: center;  /* Centrar imagen */
+  background-size: contain;     /* Ajustar tamaño */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Animaciones de validación - Keyframes para efectos suaves               */
+/*---------------------------------------------------------------------------*/
+/* Animación de aparición para los mensajes de error */
+@keyframes errorAppear {
+  from {
+    opacity: 0;                /* Iniciar invisible */
+    transform: translateY(-5px); /* Posición inicial superior */
+  }
+  to {
+    opacity: 1;                /* Terminar visible */
+    transform: translateY(0);  /* Posición final normal */
+  }
+}
+
+/* Añadir espacio entre grupos cuando hay errores */
+.form-group:has(.field-error) {
+  margin-bottom: 25px !important; /* Espaciado adicional con errores */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Botones principales - Estilos para botones de acción                    */
+/*---------------------------------------------------------------------------*/
+/* Botón de registro con el mismo estilo que login */
+.register-button {
+  width: 100%;                 /* Ancho completo */
+  min-width: 220px !important; /* Ancho mínimo */
+  padding: 14px 28px !important; /* Padding interno */
+  /* Gradiente animado estilo lava líquida */
+  background: linear-gradient(90deg, #ff4d00, #ff8700, #ff4d00);
+  background-size: 200% 100%;   /* Tamaño de fondo para animación */
+  color: white;                 /* Texto blanco */
+  animation: liquid-lava 1.5s linear infinite; /* Animación continua */
+  border: none !important;      /* Sin borde */
+  outline: none !important;     /* Sin outline */
+  border-radius: 6px;           /* Bordes redondeados */
+  font-weight: 600;             /* Peso bold */
+  cursor: pointer;              /* Cursor de mano */
+  transition: all 0.3s ease;    /* Transiciones suaves */
+  margin-top: 25px !important;  /* Margen superior */
+  margin-bottom: 15px !important; /* Margen inferior */
+  
+  /* Propiedades de renderizado */
+  height: auto !important;      /* Altura automática */
+  min-height: 45px !important;  /* Altura mínima */
+  overflow: visible !important; /* Contenido visible */
+  
+  /* Eliminar efectos no deseados */
+  box-shadow: none !important;  /* Sin sombra por defecto */
+  text-shadow: none;            /* Sin sombra de texto */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Animaciones de botones - Keyframes para efectos dinámicos               */
+/*---------------------------------------------------------------------------*/
+/* Animación de gradiente líquido */
+@keyframes liquid-lava {
+  0% { background-position: 0% 50%; }    /* Posición inicial */
+  100% { background-position: 200% 50%; } /* Posición final */
+}
+
+/* Estados de interacción del botón principal */
+.register-button:hover {
+  transform: translateY(-2px);  /* Elevación sutil */
+  box-shadow: 0 6px 15px rgba(255, 77, 0, 0.4) !important; /* Sombra naranja */
+}
+
+.register-button:active {
+  transform: translateY(0);     /* Volver a posición normal */
+  box-shadow: 0 3px 8px rgba(255, 77, 0, 0.3) !important; /* Sombra reducida */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Texto de botones - Tipografía y antialiasing                            */
+/*---------------------------------------------------------------------------*/
+/* Texto del botón con mejor antialiasing */
+.register-button span {
+  font-family: 'Dune Rise', sans-serif; /* Fuente personalizada */
+  letter-spacing: 1px;          /* Espaciado entre letras */
+  font-size: 16px;              /* Tamaño de fuente */
+  display: inline-block;        /* Display en línea */
+  -webkit-font-smoothing: antialiased;      /* Antialiasing WebKit */
+  -moz-osx-font-smoothing: grayscale;       /* Antialiasing Firefox */
+  position: relative;           /* Contexto de posicionamiento */
+  z-index: 1;                   /* Capa frontal */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Botón secundario - Estilo para botón "Atrás"                            */
+/*---------------------------------------------------------------------------*/
+/* Estilos para el botón de regresar */
+.back-button {
+  background: rgba(30, 29, 34, 0.7) !important; /* Fondo semi-transparente */
+  border: 1px solid rgba(255, 255, 255, 0.2) !important; /* Borde sutil */
+  border-radius: 6px !important;        /* Bordes redondeados */
+  color: #ffffff !important;            /* Texto blanco */
+  font-weight: 600 !important;          /* Peso bold */
+  padding: 0 !important;                /* Sin padding */
+  cursor: pointer !important;           /* Cursor de mano */
+  transition: all 0.3s ease !important; /* Transiciones suaves */
+  flex: 1 !important;                   /* Flex para layout */
+  max-width: 160px !important;          /* Ancho máximo */
+  width: 160px !important;              /* Ancho fijo */
+  height: 45px !important;              /* Altura estándar */
+  position: relative !important;        /* Contexto de posicionamiento */
+  z-index: 5 !important;                /* Capa intermedia */
+  backdrop-filter: blur(5px) !important; /* Efecto glassmorphism */
+  display: flex !important;             /* Layout flexbox */
+  align-items: center !important;       /* Centrado vertical */
+  justify-content: center !important;   /* Centrado horizontal */
+}
+
+/* Texto del botón secundario */
+.back-button span {
+  font-family: 'Dune Rise', sans-serif !important; /* Fuente personalizada */
+  letter-spacing: 1px !important;      /* Espaciado entre letras */
+  font-size: 16px !important;          /* Tamaño igual al principal */
+  display: inline-block !important;    /* Display en línea */
+  -webkit-font-smoothing: antialiased !important;  /* Antialiasing WebKit */
+  -moz-osx-font-smoothing: grayscale !important;   /* Antialiasing Firefox */
+  position: relative !important;       /* Contexto de posicionamiento */
+  z-index: 1 !important;               /* Capa frontal */
+}
+
+/* Estados de interacción del botón secundario */
+.back-button:hover {
+  background: rgba(40, 39, 44, 0.8) !important;    /* Fondo más sólido */
+  border-color: rgba(255, 255, 255, 0.3) !important; /* Borde más visible */
+  transform: translateY(-2px) !important;          /* Elevación sutil */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important; /* Sombra oscura */
+}
+
+.back-button:active {
+  transform: translateY(0) !important; /* Volver a posición normal */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important; /* Sombra reducida */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Contenedor de botones - Layout para múltiples botones                   */
+/*---------------------------------------------------------------------------*/
+/* Espaciado para los botones del paso 2 */
+.form-buttons {
+  display: flex !important;            /* Layout flexbox */
+  justify-content: space-between !important; /* Distribución uniforme */
+  gap: 20px !important;                /* Espacio entre botones */
+  margin-top: 25px !important;         /* Margen superior */
+  width: 100% !important;              /* Ancho completo */
+  align-items: center !important;      /* Centrado vertical */
+  height: 45px !important;             /* Altura consistente */
+}
+
+/* Ajustes al botón de registro en layout de dos botones */
+.form-buttons .register-button {
+  background: linear-gradient(90deg, #ff4d00, #ff8700, #ff4d00) !important;
+  background-size: 200% 100% !important; /* Tamaño para animación */
+  flex: 1 !important;                   /* Flex para espacio igual */
+  width: 160px !important;              /* Ancho fijo */
+  max-width: 160px !important;          /* Ancho máximo */
+  margin: 0 !important;                 /* Sin márgenes */
+  height: 45px !important;              /* Altura estándar */
+  border-radius: 6px !important;        /* Bordes redondeados */
+  padding: 0 !important;                /* Sin padding */
+  overflow: visible !important;         /* Contenido visible */
+  display: flex !important;             /* Layout flexbox */
+  align-items: center !important;       /* Centrado vertical */
+  justify-content: center !important;   /* Centrado horizontal */
+}
+
+/* Unificación de estilos de texto para ambos botones */
+.register-button span,
+.back-button span {
+  font-family: 'Dune Rise', sans-serif !important; /* Fuente consistente */
+  letter-spacing: 1px !important;      /* Espaciado consistente */
+  font-size: 16px !important;          /* Tamaño consistente */
+  text-transform: uppercase !important; /* Mayúsculas */
+  display: inline-block !important;    /* Display en línea */
+  -webkit-font-smoothing: antialiased !important;  /* Antialiasing */
+  -moz-osx-font-smoothing: grayscale !important;   /* Antialiasing */
+  position: relative !important;       /* Contexto de posicionamiento */
+  z-index: 1 !important;               /* Capa frontal */
+  text-align: center !important;       /* Centrado del texto */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Responsividad - Adaptación para dispositivos móviles                    */
+/*---------------------------------------------------------------------------*/
+/* Ajustes para pantallas medianas */
+@media (max-width: 768px) {
+  .register-main-container {
+    padding-left: 20px !important;     /* Menor padding lateral */
+    padding-right: 20px !important;    /* Menor padding lateral */
+    padding-top: 200px !important;     /* Menor padding superior */
+    padding-bottom: 40px !important;   /* Menor padding inferior */
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .form-buttons {
+    flex-direction: row !important;    /* Mantener en línea */
+    gap: 10px !important;              /* Reducir espacio */
+  }
+  
+  .register-button,
+  .back-button {
+    width: 140px !important;           /* Ancho reducido */
+    max-width: 140px !important;       /* Ancho máximo reducido */
+  }
+  
+  .register-button span,
+  .back-button span {
+    font-size: 14px !important;        /* Fuente más pequeña */
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Espaciador - Elemento para controlar scroll                             */
+/*---------------------------------------------------------------------------*/
+/* Espacio eliminado para optimizar layout */
+.register-spacer {
+  height: 0;                   /* Sin altura */
+  display: none;               /* Oculto completamente */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Footer transparente - Sin interferencias visuales                       */
+/*---------------------------------------------------------------------------*/
+/* Footer completamente transparente y sin líneas */
+.register-footer-container {
+  width: 100%;                 /* Ancho completo */
+  padding: 0.5rem 0;           /* Padding mínimo */
+  z-index: 10;                 /* Capa alta */
+  background-color: transparent !important; /* Sin fondo */
+  position: relative;          /* Posicionamiento relativo */
+  margin-top: -100px;          /* Margen negativo para solapamiento */
+  border-top: none !important; /* Sin borde superior */
+  box-shadow: none !important; /* Sin sombra */
+}
+
+/* Eliminar todos los elementos divisorios del footer */
+.register-footer-container .footer-divider,
+.register-footer-container hr,
+.register-footer-container .separator,
+.register-footer-container .divider,
+.register-footer-container .footer hr,
+.register-footer-container .footer > div > hr,
+.register-footer-container .footer-wrapper hr {
+  display: none !important;    /* Ocultar completamente */
+  opacity: 0 !important;       /* Sin opacidad */
+  height: 0 !important;        /* Sin altura */
+  border: none !important;     /* Sin bordes */
+  margin: 0 !important;        /* Sin márgenes */
+  padding: 0 !important;       /* Sin padding */
+}
+
+/* Transparencia total para contenedores del footer */
+.register-footer-container .footer-container,
+.register-footer-container .footer-content,
+.register-footer-container .footer-wrapper,
+.register-footer-container .footer,
+.register-footer-container .footer > div,
+.register-footer-container footer {
+  background-color: transparent !important; /* Sin fondo */
+  backdrop-filter: none !important;         /* Sin filtros */
+  box-shadow: none !important;              /* Sin sombras */
+  border: none !important;                  /* Sin bordes */
+  border-top: none !important;              /* Sin borde superior */
+}
+
+/* Eliminar pseudo-elementos que podrían crear líneas */
+.register-footer-container .footer:before,
+.register-footer-container .footer:after,
+.register-footer-container .footer > *:before,
+.register-footer-container .footer > *:after,
+.register-footer-container .footer-wrapper:before,
+.register-footer-container .footer-wrapper:after {
+  display: none !important;    /* Ocultar pseudo-elementos */
+  content: none !important;    /* Sin contenido */
+  border: none !important;     /* Sin bordes */
+  background: none !important; /* Sin fondo */
+  height: 0 !important;        /* Sin altura */
+}
+
+/* Mejorar legibilidad del texto del footer sobre partículas */
+.register-footer-container .footer-text,
+.register-footer-container .footer-links a,
+.register-footer-container .copyright {
+  color: rgba(255, 255, 255, 0.7) !important; /* Color semi-transparente */
+  text-shadow: 0px 1px 3px rgba(0,0,0,0.5) !important; /* Sombra para legibilidad */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Animaciones de transición - Efectos entre pasos del formulario          */
+/*---------------------------------------------------------------------------*/
+/* Contenedor de transiciones */
+.form-transition-container {
+  position: relative;          /* Contexto de posicionamiento */
+  width: 100%;                 /* Ancho completo */
+  overflow: hidden;            /* Ocultar desbordamiento */
+}
+
+/* Clase base para animaciones del formulario */
+.register-form {
+  width: 100%;                 /* Ancho completo */
+  transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* Estado de entrada - formulario visible */
+.slide-in {
+  opacity: 1;                  /* Completamente visible */
+  transform: translateX(0);    /* Posición normal */
+  filter: blur(0);             /* Sin desenfoque */
+}
+
+/* Animación de salida hacia la izquierda (ir al siguiente paso) */
+.slide-out-left {
+  opacity: 0;                  /* Invisible */
+  transform: translateX(-80px); /* Desplazamiento izquierdo */
+  filter: blur(4px);           /* Desenfoque */
+}
+
+/* Animación de salida hacia la derecha (volver al paso anterior) */
+.slide-out-right {
+  opacity: 0;                  /* Invisible */
+  transform: translateX(80px); /* Desplazamiento derecho */
+  filter: blur(4px);           /* Desenfoque */
+}
+
+/* Contenido del formulario con transiciones */
+.form-content {
+  width: 100%;                 /* Ancho completo */
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Transiciones suaves */
+}
+
+/*===========================================================================*/
+/*                        NOTAS DE IMPLEMENTACIÓN                           */
+/*===========================================================================*/
+/*  - Formulario de dos pasos con validación en tiempo real                 */
+/*  - Diseño glassmorphism para integración con fondo de partículas         */
+/*  - Animaciones suaves entre transiciones de pasos                        */
+/*  - Footer completamente transparente sin interferencias visuales         */
+/*  - Sistema responsive optimizado para todos los dispositivos             */
+/*===========================================================================*/
