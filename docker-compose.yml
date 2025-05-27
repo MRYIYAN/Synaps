@@ -60,7 +60,9 @@ services:
       - synaps-redis
     environment:
       - REDIS_URL=redis://synaps-redis:6379
-      - WS_PORT=8084
+      - WS_PORT=8082
+    ports:
+      - "8082:8082"   
 
   # --------------------------------- MARIADB --------------------------------- #
   synaps-mariadb:

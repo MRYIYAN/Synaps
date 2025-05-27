@@ -29,6 +29,7 @@ export function NotesHelper() {
 
   // Función para obtener todas las notas desde la API
   const getNotes = async (vault_id, parent_id = 0) => {
+    console.log("Vault actual:", window.currentVaultId);
     // Asegúrate de que vault_id es el actual (ejemplo: window.currentVaultId o prop)
     try {
       const url = 'http://localhost:8010/api/getNotes';
