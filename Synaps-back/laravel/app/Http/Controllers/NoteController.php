@@ -151,30 +151,16 @@ class NoteController extends Controller
 
     try
     {
-
+      throw new Exception( json_encode( $request ) );
+      
       // Validar parámetros de entrada
       $data = $request->validate( [
-          'vault_id'  => 'required|string|max:255'
-        , 'parent_id' => 'nullable|string|max:255'
+          'vault_id'  => 'required|integer'
+        , 'parent_id' => 'nullable|integer'
       ] );
 
-      $vault_id = intval($data['vault_id']);
-      
-      // Manejar correctamente el parent_id
-      if ($tmp_parent_id !== null) {
-        $parent_id = $tmp_parent_id;
-      } else {
-        $parent_id = isset($data['parent_id']) ? intval($data['parent_id']) : null;
-      }
-
-      // Validar tipos de datos explícitamente
-      if (!is_int($vault_id)) {
-        throw new Exception('vault_id debe ser de tipo integer, recibido: ' . gettype($vault_id) . ' con valor: ' . var_export($vault_id, true));
-      }
-
-      if (!is_null($parent_id) && !is_int($parent_id)) {
-        throw new Exception('parent_id debe ser de tipo integer o null, recibido: ' . gettype($parent_id) . ' con valor: ' . var_export($parent_id, true));
-      }
+      $vault_id  = $data['vault_id'];
+      $parent_id = $tmp_parent_id ?? $data['parent_id'];
 
       // Conectar a la base de datos del usuario (ejemplo fijo user_id=1)
       $user_id = 1;
@@ -186,7 +172,6 @@ class NoteController extends Controller
         ->when( !is_null( $parent_id ), fn( $q ) => $q->where( 'parent_id', $parent_id ) )
         ->get();
 
-  
       // Obtener carpetas
       $folders = FolderNote::on( $user_db )
         ->select(['folder_id', 'folder_id2', 'folder_title', 'parent_id'])
