@@ -177,7 +177,7 @@ const LoginForm = () => {
       // Si la consulta ha sido correcta, guardamos el access_token y redirigimos
       if (http_data.access_token) {
         localStorage.setItem('access_token', http_data.access_token);
-        window.location.href = '/home'; // Redirigir a HomePage
+        window.location.href = '/markdowneditor'; // Redirigir a Markdown Editor
       }
       
     } catch (error) {

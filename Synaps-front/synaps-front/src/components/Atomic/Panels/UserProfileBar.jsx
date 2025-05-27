@@ -56,11 +56,11 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
    * @param {Object} vault - La vault seleccionada
    */
   const selectVault = (vault) => {
+    console.log('Vault seleccionada:', vault); // Para debug
     if (typeof onVaultSelect === 'function') {
       onVaultSelect(vault);
     }
     setShowVaultSelector(false);
-    // TODO: Implementar guardado de la última vault seleccionada
   };
 
   /**
@@ -81,9 +81,11 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
           <VaultIcon className="vault-icon" />
         </div>
         <div className="vault-selector">
-          {/* Usar operador opcional para evitar errores con currentVault null */}
           <span className="vault-name">
-            {currentVault ? currentVault.name : "Seleccionar Vault"}
+            {currentVault ? 
+              (currentVault.name || currentVault.vault_title || 'Vault sin nombre') : 
+              "Seleccionar Vault"
+            }
           </span>
         </div>
       </div>
@@ -97,16 +99,26 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
                 <span>No hay vaults disponibles</span>
               </li>
             ) : (
-              vaults.map((vault, index) => (
-                <li 
-                  key={vault.vault_id2 || index}
-                  className={`vault-item ${currentVault && (vault.id === currentVault.id) ? 'active' : ''}`}
-                  onClick={() => selectVault(vault)}
-                  style={{"--item-index": index}}
-                >
-                  {vault.name || vault.vault_title || 'Sin nombre'}
-                </li>
-              ))
+              vaults.map((vault, index) => {
+                // Determinar si este vault es el seleccionado actualmente
+                const isActive = currentVault && (
+                  // Comparar por vault_id2 si ambos existen
+                  (vault.vault_id2 && currentVault.vault_id2 && vault.vault_id2 === currentVault.vault_id2) || 
+                  // O comparar por id si ambos existen
+                  (vault.id && currentVault.id && vault.id === currentVault.id)
+                );
+                
+                return (
+                  <li 
+                    key={vault.vault_id2 || vault.id || index}
+                    className={`vault-item ${isActive ? 'active' : ''}`}
+                    onClick={() => selectVault(vault)}
+                    style={{"--item-index": index}}
+                  >
+                    {vault.name || vault.vault_title || 'Sin nombre'}
+                  </li>
+                );
+              })
             )}
           </ul>
           <button className="create-vault-button" onClick={handleCreateNewVault}>
