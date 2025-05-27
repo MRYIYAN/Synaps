@@ -36,6 +36,11 @@ export function FoldersHelper() {
 
   // Ejemplo de función para obtener carpetas por vault
   const getFolders = async (vault_id, parent_id = 0) => {
+    vault_id = parseInt(vault_id, 10);
+    if (isNaN(vault_id)) {
+      console.error("vault_id inválido");
+      return;
+    }
     try {
       const url = 'http://localhost:8010/api/getFolders';
       const body = { parent_id, vault_id }; // Enviar vault_id

@@ -81,7 +81,7 @@ const SidebarPanel = () => {
         if (vaults.length > 0) {
           // Seleccionar primer vault automáticamente
           setCurrentVault(vaults[0]);
-          window.currentVaultId = vaults[0].vault_id;
+          window.currentVaultId = parseInt(vaults[0].vault_id, 10);
 
           // Llamar para recargar carpetas y notas globalmente (si estas funciones están disponibles)
           window.getFolders?.(vaults[0].vault_id);
@@ -147,7 +147,7 @@ const SidebarPanel = () => {
   // Función para manejar el selector de vaults
   const handleVaultSelect = (vault) => {
     setCurrentVault(vault);
-    window.currentVaultId = vault?.vault_id || null;
+    window.currentVaultId = parseInt(vault?.vault_id || 0, 10);
 
     // Recargar carpetas, notas y nota activa para el vault seleccionado
     window.getFolders?.(vault?.vault_id);

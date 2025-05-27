@@ -249,13 +249,15 @@ class FolderNoteController extends Controller
   {
     $vault_id = $request->query('vault_id');
 
-    if (!$vault_id) {
+    if (!is_numeric($vault_id)) {
       return response()->json([
         'result' => 0,
-        'message' => 'Parámetro vault_id requerido',
+        'message' => 'Parámetro vault_id inválido',
         'items' => []
       ]);
     }
+
+    $vault_id = (int)$vault_id;
 
     $folders = FolderNote::where('vault_id', $vault_id)->get();
 

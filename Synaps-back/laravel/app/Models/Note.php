@@ -66,6 +66,3 @@ class Note extends Model
         return $this->belongsTo(\App\Models\FolderNote::class, 'parent_id', 'folder_id');
     }
 }
-
-// Al consultar notas por vault, usa siempre:
-$notes = \App\Models\Note::where('vault_id', $vault_id)->get();

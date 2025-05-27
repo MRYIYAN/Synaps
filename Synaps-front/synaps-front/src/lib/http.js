@@ -57,21 +57,28 @@ export async function http_post( url, body, headers, credentials = 'include' ) {
 }
 
 // Helper para GET con Bearer
-export async function http_get( url, body = {}, headers = {}, credentials = 'include' ) {
+export async function http_get( url, body = {} ) {
+
+  // Log para verificar los parámetros enviados
+  Object.entries(body).forEach(([k, v]) => {
+    if (k === 'vault_id') {
+      console.log('Tipo de vault_id:', typeof v, 'Valor:', v);
+    }
+  });
+  console.log("Query params:", new URLSearchParams( body ).toString());
 
   // Inicializamos el valor a devolver
   let result    = 0;
   let message   = '';
   let http_data = [];
 
-  try {
+  // Define headers y credentials por defecto
+  let headers = {
+    Accept: 'application/json'
+  };
+  let credentials = 'include';
 
-    // Si no se han especificado cabeceras, insertamos las de JSON por defecto
-    if( !headers ) {
-      headers = {
-        Accept: 'application/json'
-      };
-    }
+  try {
 
     // Calculamos la URL final
     const params = new URLSearchParams( body ).toString();

@@ -151,16 +151,23 @@ class NoteController extends Controller
 
     try
     {
-      throw new Exception( json_encode( $request ) );
-      
       // Validar parámetros de entrada
       $data = $request->validate( [
-          'vault_id'  => 'required|integer'
-        , 'parent_id' => 'nullable|integer'
+          'vault_id'  => 'required',
+          'parent_id' => 'nullable|integer'
       ] );
 
-      $vault_id  = $data['vault_id'];
-      $parent_id = $tmp_parent_id ?? $data['parent_id'];
+      $vault_id = $data['vault_id'];
+      if (!is_numeric($vault_id)) {
+        return response()->json([
+          'result' => 0,
+          'message' => 'Parámetro vault_id inválido',
+          'items' => []
+        ]);
+      }
+      $vault_id = (int)$vault_id;
+
+      $parent_id = $tmp_parent_id ?? ($data['parent_id'] ?? null);
 
       // Conectar a la base de datos del usuario (ejemplo fijo user_id=1)
       $user_id = 1;
