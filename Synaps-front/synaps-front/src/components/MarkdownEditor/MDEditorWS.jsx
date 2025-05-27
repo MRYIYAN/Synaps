@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import MDEditor from './MDEditor';
 import { http_get } from '../../lib/http';
 
+
 // Host y puerto del bridge WS
 const WS_HOST = 'localhost';
 const WS_PORT = 8082;
@@ -16,48 +17,46 @@ const WS_PORT = 8082;
  * @param {string} note_id2 – Identificador de la nota (id2)
  * @returns {JSX.Element}
  */
-export default function MDEditorWS( { note_id2 = '', modal = false, options = true } )
-{
-  const [markdown, set_markdown]  = useState( '' );
-  const [key, setKey]             = useState( 0 );
-  const ws_ref                    = useRef( null );
+export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = false, options = true }) {
+  const [markdown, set_markdown]  = useState('');
+  const [key, setKey]             = useState(0);
+  const ws_ref                    = useRef(null);
 
-  useEffect( () => {
+  useEffect(() => {
     window.set_markdown = set_markdown;
-  }, [] );
+  }, []);
 
-  useEffect( () => {
+  useEffect(() => {
     window.setKey = setKey;
-  }, [] );
+  }, []);
 
   // -------------------------------------------------------------------------
   // Carga inicial de la nota vía HTTP
   // -------------------------------------------------------------------------
-  useEffect( () =>
-  {
+  useEffect(() => {
     const fetchNote = async () => {
+      console.log('MDEditorWS: usando vault_id', vault_id);
+
       const url = 'http://localhost:8010/api/readNote';
-      let body  = {};
+      let body = {};
 
-      if( !modal && note_id2 === '' )
-        body = { first: 1 };
-      else
-        body = { note_id2: note_id2 };
+      if (!modal && note_id2 === '') {
+        body = { first: 1, vault_id };
+      } else {
+        body = { note_id2, vault_id };
+      }
 
-      // Realizamos la petición
-      const { result, http_data } = await http_get( url, body );
-      if( result !== 1 )
-        throw new Error( 'Error al leer la nota' );
+      const { result, http_data } = await http_get(url, body);
+      if (result !== 1) throw new Error('Error al leer la nota');
 
-      set_markdown( http_data.note.markdown );
-      
-      // Forzamos la recarga del MarkdownEditor
-      setKey( k => k + 1 );
+      set_markdown(http_data.note.markdown);
+      setKey(k => k + 1);
     };
 
-    fetchNote();
-  }, [ note_id2 ] );
-
+    if (vault_id !== null) {
+      fetchNote();
+    }
+  }, [note_id2, vault_id]);
   // -------------------------------------------------------------------------
   // Conexión y suscripción WebSocket
   // -------------------------------------------------------------------------

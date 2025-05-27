@@ -68,7 +68,6 @@ const SidebarPanel = () => {
     const fetchVaults = async () => {
       try {
         console.log(" Solicitando vaults desde la API...");
-
         const accessToken = localStorage.getItem('access_token');
         const response = await fetch('http://localhost:8010/api/vaults', {
           headers: {
@@ -78,6 +77,17 @@ const SidebarPanel = () => {
         const vaults = await response.json();
         console.log(' Vaults cargados de la DB:', vaults);
         setVaults(vaults);
+
+        if (vaults.length > 0) {
+          // Seleccionar primer vault automáticamente
+          setCurrentVault(vaults[0]);
+          window.currentVaultId = vaults[0].vault_id;
+
+          // Llamar para recargar carpetas y notas globalmente (si estas funciones están disponibles)
+          window.getFolders?.(vaults[0].vault_id);
+          window.getNotes?.(vaults[0].vault_id);
+        }
+
       } catch (e) {
         console.error(" Error al cargar vaults:", e);
         setVaults([]);
@@ -85,7 +95,6 @@ const SidebarPanel = () => {
     };
 
     fetchVaults();
-    setCurrentVault(null);
   }, []);
 
   // Manejo de clics en la barra de navegación
@@ -137,10 +146,15 @@ const SidebarPanel = () => {
   
   // Función para manejar el selector de vaults
   const handleVaultSelect = (vault) => {
-    // TODO: Implementar lógica para cargar contenido de la vault seleccionada
     setCurrentVault(vault);
-    // Protección para evitar error si vault o vault.name es undefined
-    const name = (vault?.name || '').toLowerCase();
+    window.currentVaultId = vault?.vault_id || null;
+
+    // Recargar carpetas, notas y nota activa para el vault seleccionado
+    window.getFolders?.(vault?.vault_id);
+    window.getNotes?.(vault?.vault_id);
+    if (window.selectedItemId2) {
+      window.readNote?.(window.selectedItemId2, vault?.vault_id);
+    }
   };
   
   // Nueva función para manejar el menú de configuración

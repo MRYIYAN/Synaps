@@ -143,50 +143,68 @@ class NoteController extends Controller
    * @param  int|null      $tmp_parent_id   ID del padre (usado solo si $request es null)
    * @return JsonResponse                   Resultado y lista plana de notas y carpetas
    */
-  public function getNotes( ?Request $request, ?int $tmp_parent_id = null ): JsonResponse
+  public function getNotes(Request $request, ?int $tmp_parent_id = null): JsonResponse
   {
-    // Inicializamos los valores a devolver
     $result  = 0;
     $message = '';
     $items   = [];
 
+    // Definir vault_id correctamente desde query o input (para compatibilidad)
+    $vault_id = $request->query('vault_id');
+    if (!$vault_id) {
+      $vault_id = $request->input('vault_id');
+    }
+    \Log::debug('vault_id recibido: ' . $vault_id);
+
+    if (!$vault_id) {
+      return response()->json([
+        'result' => 0,
+        'message' => 'Parámetro vault_id requerido',
+        'items' => []
+      ]);
+    }
+
     try
     {
-      // Si hay un parent, lo usamos
       if( $tmp_parent_id )
         $parent_id = $tmp_parent_id;
       else
       {
-        // Validamos los datos recibidos
         $data = $request->validate( [
           'parent_id' => 'nullable|integer'
         ] );
-
         $parent_id = $data['parent_id'];
       }
 
-      // Identificador del usuario autenticado
-      // $user_id = ( int ) $request->user()->id;
       $user_id = 1;
       $user_db = DatabaseHelper::connect( $user_id );
 
-      // Obtenemos todas las notas (propias + compartidas)
-      $notes = NoteService::GetNotes( $user_id, '', $parent_id );
-
-      // Obtenemos todas las carpetas del usuario
-      $folders = FolderNote::on( $user_db )
-        ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id'] )
-        ->where( 'parent_id', '=', $parent_id )
+      // Asegúrate de que $vault_id está definido aquí antes de usarlo
+      $notes = Note::on($user_db)
+        ->where('vault_id', $vault_id)
+        ->where(function($query) use ($parent_id) {
+          if (!is_null($parent_id)) {
+            $query->where('parent_id', $parent_id);
+          }
+        })
         ->get();
 
-      // Si no hay notas, saltamos una excepción
+      $folders = FolderNote::on( $user_db )
+        ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id'] )
+        ->where('vault_id', $vault_id)
+        ->where(function($query) use ($parent_id) {
+          if (!is_null($parent_id)) {
+            $query->where('parent_id', $parent_id);
+          }
+        })
+        ->get();
+
       if( empty( $notes ) && !$tmp_parent_id )
       {
         $result = 1;
         throw new Exception( 'Notas no encontradas' );
       }
 
-      // Mapeamos notas al formato común { id, id2, title, parent_id y type }
       $notesArray = $notes
         ->map( fn( $note ) => [
             'id'        => $note->note_id
@@ -197,7 +215,6 @@ class NoteController extends Controller
         ] )
         ->toArray();
 
-      // Mapeamos carpetas al mismo formato
       $foldersArray = $folders
         ->map( fn( $folder ) => [
             'id'        => $folder->folder_id
@@ -208,7 +225,6 @@ class NoteController extends Controller
         ] )
         ->toArray();
 
-      // Unimos ambos arrays
       $items = array_merge( $foldersArray, $notesArray );
     }
     catch( Exception $e )
@@ -217,7 +233,6 @@ class NoteController extends Controller
     }
     finally
     {
-      // Devolvemos resultado y datos
       return response()->json( [
           'result'  => $result
         , 'message' => $message
@@ -268,11 +283,12 @@ class NoteController extends Controller
     }
     finally
     {
-      // Devolvemos la respuesta con resultado, mensaje y datos de la nota
-      return response()->json( [
-          'result'  => $result
-        , 'message' => $message
-      ], $result ? 200 : 500 );
+      // Devolver resultado estándar para borrado de nota
+      return response()->json([
+        'result' => 1,
+        'message' => 'OK',
+        'items' => $notes ?? []
+      ]);
     }
   }
 
@@ -295,52 +311,37 @@ class NoteController extends Controller
 
     try
     {
-      // Validamos los datos recibidos
-      $data = $request->validate( [
-          'note_id2' => 'nullable|string'
-        , 'first'    => 'nullable|bool'
-      ] );
+      // Recibe ambos parámetros
+      $note_id2 = $request->input('note_id2');
+      $vault_id = $request->input('vault_id');
 
-      // Inicializamos la conexión de DB
-      $user_db    = DatabaseHelper::connect( $user_id );
-      $connection = DatabaseHelper::connect( $user_id );
-
-      // Si pedimos el primer registro, lo buscamos
-      if( !empty( $data['first'] ) && $data['first'] == true )
-      {
-        $data['note_id2'] = Note::on( $user_db )
-          ->orderBy( 'note_id', 'asc' ) // Ordenamos alfabéticamente por el campo 'note_id'
-          ->value( 'note_id2' );
+      // Validación básica de parámetros
+      if (!$note_id2 || !$vault_id) {
+        return response()->json(['result' => 0, 'message' => 'Parámetros incompletos', 'note' => []]);
       }
 
-      // Buscamos la nota según note_id2
-      $note_row = Note::on( $user_db )
-        ->where( 'note_id2', $data['note_id2'] )
+      // Inicializamos la conexión de DB
+      $user_db = DatabaseHelper::connect( $user_id );
+
+      // Filtra por ambos parámetros
+      $note = Note::on( $user_db )
+        ->where('note_id2', $note_id2)
+        ->where('vault_id', $vault_id)
         ->first();
 
-      // Preparamos los datos de la nota
-      $note = [
-          'title'            => $note_row->note_title       ?? ''
-        , 'markdown'         => $note_row->note_markdown    ?? ''
-        , 'last_update_date' => $note_row->last_update_date ?? ''
-      ];
+      if (!$note) {
+        return response()->json(['result' => 0, 'message' => 'Nota no encontrada', 'note' => []]);
+      }
 
-      // Si llegamos hasta aquí está todo OK
-      $result = 1;
+      return response()->json(['result' => 1, 'message' => 'OK', 'note' => $note]);
     }
     catch( Exception $e )
     {
-      $message = $e->getMessage();
-      throw $e;
-    }
-    finally
-    {
-      // Devolvemos la respuesta con resultado, mensaje y datos de la nota
-      return response()->json( [
-          'result'  => $result
-        , 'message' => $message
-        , 'note'    => $note
-      ], $result ? 200 : 500 );
+      return response()->json([
+        'result' => 0,
+        'message' => $e->getMessage(),
+        'note' => []
+      ], 500);
     }
   }
 

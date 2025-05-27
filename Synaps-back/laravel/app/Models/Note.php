@@ -49,4 +49,23 @@ class Note extends Model
             'insert_date'      => 'datetime'
         ,   'last_update_date' => 'datetime'
     ];
+
+    /**
+     * Relación inversa: nota pertenece a un vault
+     */
+    public function vault()
+    {
+        return $this->belongsTo(\App\Models\Vault::class, 'vault_id', 'vault_id');
+    }
+
+    /**
+     * Relación inversa: nota pertenece a una carpeta
+     */
+    public function parent()
+    {
+        return $this->belongsTo(\App\Models\FolderNote::class, 'parent_id', 'folder_id');
+    }
 }
+
+// Al consultar notas por vault, usa siempre:
+$notes = \App\Models\Note::where('vault_id', $vault_id)->get();

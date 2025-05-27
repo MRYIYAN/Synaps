@@ -34,6 +34,21 @@ export function FoldersHelper() {
     }
   };
 
+  // Ejemplo de función para obtener carpetas por vault
+  const getFolders = async (vault_id, parent_id = 0) => {
+    try {
+      const url = 'http://localhost:8010/api/getFolders';
+      const body = { parent_id, vault_id }; // Enviar vault_id
+
+      const { result, http_data } = await http_get(url, body);
+      if (result !== 1)
+        throw new Error('Error al cargar carpetas');
+      // ...actualiza el estado de carpetas aquí...
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect( () => {
     window.deleteFolder = deleteFolder;
   }, [] );

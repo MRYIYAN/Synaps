@@ -19,14 +19,14 @@ import MDEditorWS from "../components/MarkdownEditor/MDEditorWS";
 // ------------------------------------------------------------
 
 const MarkdownEditor = function() {
-
   const { note_id2 } = useParams();
+  const vault_id = window.currentVaultId || null;
 
   return (
     <div className="layout-markdown-editor">
       <SidebarPanel />
       <div className="md-editor-wrapper">
-        <MDEditorWS note_id2={note_id2 || ''} />
+        <MDEditorWS note_id2={note_id2 || ''} vault_id={vault_id} />
       </div>
     </div>
   );

@@ -51,4 +51,23 @@ class Vault extends Model
         'is_private',
         'created_at',
     ];
+    /**
+     * Campos que deben ser convertidos a tipos nativos.
+     * @var array
+     */
+    //------------------------------------------//
+    // Relación: un vault tiene muchas carpetas
+    //------------------------------------------//
+    public function folders()
+    {
+        return $this->hasMany(\App\Models\FolderNote::class, 'vault_id', 'vault_id');
+    }
+
+    //------------------------------------------//
+    // Relación: un vault tiene muchas notas
+    //------------------------------------------//
+    public function notes()
+    {
+        return $this->hasMany(\App\Models\Note::class, 'vault_id', 'vault_id');
+    }
 }

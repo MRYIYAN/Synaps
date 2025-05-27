@@ -17,14 +17,14 @@ class FolderNote extends Model
    *
    * @var string
    */
-  protected $table = 'folders_notes';
+  protected $table = 'folders_notes';   // nombre tabla en DB
 
   /**
    * Clave primaria de la tabla
    *
    * @var string
    */
-  protected $primaryKey = 'folder_id';
+  protected $primaryKey = 'folder_id';  // clave primaria
 
   /**
    * Tipo de la clave primaria (incremental integer)
@@ -39,7 +39,7 @@ class FolderNote extends Model
    *
    * @var bool
    */
-  public $timestamps = false;
+  public $timestamps = false;           // si no usas timestamps automáticos
 
   /**
    * Campos asignables en asignación masiva
@@ -70,11 +70,19 @@ class FolderNote extends Model
   }
 
   /**
+   * Relación inversa: carpeta pertenece a un vault
+   */
+  public function vault()
+  {
+    return $this->belongsTo(\App\Models\Vault::class, 'vault_id', 'vault_id');
+  }
+
+  /**
    * Relación uno a muchos: hijos de esta carpeta
    */
   public function children()
   {
-    return $this->hasMany( FolderNote::class, 'parent_id', 'folder_id' );
+    return $this->hasMany(FolderNote::class, 'parent_id', 'folder_id');
   }
 
   /**
@@ -82,7 +90,7 @@ class FolderNote extends Model
    */
   public function parent()
   {
-    return $this->belongsTo( FolderNote::class, 'parent_id', 'folder_id' );
+    return $this->belongsTo(FolderNote::class, 'parent_id', 'folder_id');
   }
 
   /**
@@ -103,5 +111,16 @@ class FolderNote extends Model
   public function decrementChildrenCount() : void
   {
     $this->decrement( 'children_count' );
+  }
+
+  /**
+   * Al consultar carpetas por vault, usar siempre:
+   *
+   * @param int $vault_id
+   * @return \Illuminate\Database\Eloquent\Collection
+   */
+  public static function getFoldersByVaultId( int $vault_id )
+  {
+    return self::where('vault_id', $vault_id)->get();
   }
 }

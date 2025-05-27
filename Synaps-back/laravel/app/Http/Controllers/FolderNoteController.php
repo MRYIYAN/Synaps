@@ -155,8 +155,39 @@ class FolderNoteController extends Controller
         ->value( 'folder_id' );
 
       // Capturamos las notas y carpetas relacionadas a esta carpeta
-      $items_response = ( new NoteController )->getNotes( null, $folder_id );
-      $related_items  = $items_response->getData()->items;
+      $related_items = [];
+
+      if ($folder_id) {
+        $vault_id = FolderNote::on($user_db)
+          ->where('folder_id', $folder_id)
+          ->value('vault_id');
+
+        // Notas hijas
+        $notes = Note::on($user_db)
+          ->where('parent_id', $folder_id)
+          ->where('vault_id', $vault_id)
+          ->get();
+
+        foreach ($notes as $note) {
+          $related_items[] = (object)[
+            'type' => 'note',
+            'id'   => $note->note_id
+          ];
+        }
+
+        // Carpetas hijas
+        $folders = FolderNote::on($user_db)
+          ->where('parent_id', $folder_id)
+          ->where('vault_id', $vault_id)
+          ->get();
+
+        foreach ($folders as $folder) {
+          $related_items[] = (object)[
+            'type' => 'folder',
+            'id'   => $folder->folder_id
+          ];
+        }
+      }
 
       foreach( $related_items as $item )
       {
@@ -206,6 +237,33 @@ class FolderNoteController extends Controller
         , 'message' => $message
       ], $result ? 200 : 500 );
     }
+  }
+
+  /**
+   * Obtiene las carpetas hijas de un vault y parent_id.
+   *
+   * @param  Request $request
+   * @return JsonResponse
+   */
+  public function getFolders(Request $request)
+  {
+    $vault_id = $request->query('vault_id');
+
+    if (!$vault_id) {
+      return response()->json([
+        'result' => 0,
+        'message' => 'Parámetro vault_id requerido',
+        'items' => []
+      ]);
+    }
+
+    $folders = FolderNote::where('vault_id', $vault_id)->get();
+
+    return response()->json([
+      'result' => 1,
+      'message' => 'OK',
+      'items' => $folders
+    ]);
   }
 
 }

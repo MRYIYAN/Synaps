@@ -28,15 +28,12 @@ export function NotesHelper() {
   // -----------------------------------------------------------------
 
   // Función para obtener todas las notas desde la API
-  const getNotes = async( parent_id = 0 ) => {
-
+  const getNotes = async (vault_id, parent_id = 0) => {
+    // Asegúrate de que vault_id es el actual (ejemplo: window.currentVaultId o prop)
     try {
-
-      // URL de la API y parámetros
       const url = 'http://localhost:8010/api/getNotes';
-      let body  = { parent_id: parent_id };
+      const body = { parent_id, vault_id }; //  Enviar vault_id
 
-      // Llamada GET usando tu helper http_get
       const { result, http_data } = await http_get( url, body );
       if ( result !== 1 )
         throw new Error( 'Error al cargar notas' );
@@ -63,16 +60,13 @@ export function NotesHelper() {
     }
   }
 
-
-  // -----------------------------------------------------------------
   // Leer una nota concreta
-  // -----------------------------------------------------------------
-  const readNote = async( note_id2 ) => {
+  const readNote = async( note_id2, vault_id ) => {
+    // Asegúrate de que vault_id es el actual (ejemplo: window.currentVaultId o prop)
     try {
       const url  = 'http://localhost:8010/api/readNote';
-      const body = { note_id2 };
+      const body = { note_id2, vault_id }; //  Enviar vault_id
 
-      // Realizamos la petición
       const { result, http_data } = await http_get( url, body );
       if( result !== 1 )
         throw new Error( 'Error al leer la nota' );
