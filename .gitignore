@@ -5,3 +5,4 @@ Synaps-Api/synaps-api/
 .devcontainer
 *.sql
 *.sql
+.vscode
