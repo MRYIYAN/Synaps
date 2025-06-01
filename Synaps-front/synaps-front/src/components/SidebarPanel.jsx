@@ -19,6 +19,7 @@ import FilesPanel      from './Atomic/Panels/FilesPanel';
 import GalaxyViewPanel  from './Atomic/Panels/GalaxyViewPanel';
 import ListTodoPanel    from './Atomic/Panels/ListTodoPanel';
 import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
+import { NotesHelper } from '../lib/Helpers/NotesHelper.jsx';
 
 // Configuración de los elementos de navegación
 const navigationItems = [
@@ -55,6 +56,12 @@ const SidebarPanel = () => {
 
   const [vaults, setVaults] = useState([]);
   const [currentVault, setCurrentVault] = useState(null);
+
+  // Usar NotesHelper para obtener notas y función getNotes
+  const { notes, getNotes } = NotesHelper();
+
+  // Guardar notas en estado local para sincronizar con NotesHelper
+  const [localNotes, setLocalNotes] = useState([]);
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -96,6 +103,10 @@ const SidebarPanel = () => {
 
     fetchVaults();
   }, []);
+
+  useEffect(() => {
+    setLocalNotes(notes);
+  }, [notes]);
 
   // Manejo de clics en la barra de navegación
   const handleIconClick = (itemId, index) => {
@@ -149,12 +160,13 @@ const SidebarPanel = () => {
     setCurrentVault(vault);
     window.currentVaultId = parseInt(vault?.vault_id || 0, 10);
 
-    // Recargar carpetas, notas y nota activa para el vault seleccionado
-    window.getFolders?.(vault?.vault_id);
-    window.getNotes?.(vault?.vault_id);
-    if (window.selectedItemId2) {
-      window.readNote?.(window.selectedItemId2, vault?.vault_id);
-    }
+    // Notificar a FilesPanel que cambió el vault
+    window.dispatchEvent(new Event("vaultChanged"));
+
+    getNotes(vault?.vault_id);  // Cargar notas del vault seleccionado
+
+    // Opcional: resetear nota seleccionada
+    window.readNote?.('', vault?.vault_id);
   };
   
   // Nueva función para manejar el menú de configuración
@@ -330,7 +342,11 @@ const handleVaultCreated = (vault) => {
           
           {/* Componente del panel seleccionado */}
           <div className="panel-content">
-            <CurrentPanelComponent />
+            <FilesPanel
+              notes={localNotes}
+              getNotes={getNotes}
+              // ...otros props necesarios...
+            />
           </div>
           
           {/* Componente de perfil de usuario en la parte inferior */}

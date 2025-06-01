@@ -10,7 +10,7 @@
 //===========================================================================//
 //                             IMPORTS                                       //
 //===========================================================================//
-import React, { useEffect, useState, useRef } from "react";  // Importación de React y el hook useState
+import React, { useEffect, useState } from "react";  // Importación de React y el hook useState
 import { ReactComponent as SearchIcon }     from "../../../assets/icons/search.svg";      // Icono de búsqueda
 import { ReactComponent as NewNoteIcon }    from "../../../assets/icons/new-file.svg";    // Icono para nuevas notas
 import { ReactComponent as NewFolderIcon }  from "../../../assets/icons/new-folder.svg";  // Icono para nuevas carpetas
@@ -28,9 +28,37 @@ import { FoldersHelper } from '../../../lib/Helpers/FoldersHelper.jsx';
 //===========================================================================//
 
 // Este componente implementa un panel de búsqueda interactivo con múltiples funciones
-const FilesPanel = () => {
+const FilesPanel = ({ notes: notesProp, getNotes }) => {
+  // Mantener estado local de notes sincronizado con prop
+  const [notes, setNotes] = useState(notesProp || []);
+  const [currentVaultId, setCurrentVaultId] = useState(window.currentVaultId || 0);
 
-  const { getNotes, readNote, deleteNote }  = NotesHelper();
+  // Sincronizar estado local si prop cambia
+  useEffect(() => {
+    setNotes(notesProp || []);
+  }, [notesProp]);
+
+  // Exponer la función global para cargar notas por carpeta
+  useEffect(() => {
+    window.getNotesForFolder = (parent_id) => {
+      if (!currentVaultId) {
+        console.error("No hay vault seleccionado");
+        return;
+      }
+      console.log("Cargando notas para vault_id:", currentVaultId, "parent_id:", parent_id);
+      getNotes(currentVaultId, parent_id);
+    };
+
+    // Actualiza currentVaultId si cambia globalmente
+    const onVaultChange = () => setCurrentVaultId(window.currentVaultId || 0);
+    window.addEventListener("vaultChanged", onVaultChange);
+    return () => {
+      window.getNotesForFolder = null;
+      window.removeEventListener("vaultChanged", onVaultChange);
+    };
+  }, [getNotes, currentVaultId]);
+
+  const { getNotes: getNotesHelper, readNote, deleteNote }  = NotesHelper();
   const { deleteFolder }                    = FoldersHelper();
 
   // -----------------------------------------------------------------
@@ -54,15 +82,7 @@ const FilesPanel = () => {
   // Notes
   // -----------------------------------------------------------------
 
-  const [notes, setNotes] = useState( [] );
-  useEffect( () => {
-
-    if( typeof window.currentNotes == 'undefined' ) {
-      getNotes( 0 );
-      window.currentNotes = notes;
-    }
-
-  }, [] );
+  // Elimina cualquier estado local de notes, usa solo el prop notes
 
   //---------------------------------------------------------------------------//
   //  Estados para manejar la búsqueda y la interfaz                           //
@@ -437,7 +457,8 @@ const FilesPanel = () => {
         {/* Contenedor del árbol de archivos */}
         {/* Agrupa todos los archivos/notas del usuario */}
         <div className="search-panel-tree" style={{ marginTop: 12, marginBottom: 12 }}>
-          <NoteTree nodes={window.currentNotes} />
+          {/* Renderiza el árbol de notas usando el prop notes */}
+          <NoteTree nodes={notes} />
         </div>
       </div>
     </div>
