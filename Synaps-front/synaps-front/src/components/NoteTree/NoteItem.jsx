@@ -85,7 +85,7 @@ export default function NoteItem( {
 
       // Si es nota, carga el Markdown en el editor
       if( typeof window.readNote === 'function' )
-        window.readNote( id2 );
+        window.readNote( id2, window.currentVaultId ); 
     }
   }
 

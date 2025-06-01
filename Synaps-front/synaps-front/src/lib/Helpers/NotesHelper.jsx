@@ -66,23 +66,28 @@ export function NotesHelper() {
   }
 
   // Leer una nota concreta
-  const readNote = async( note_id2, vault_id ) => {
-    // Asegúrate de que vault_id es el actual (ejemplo: window.currentVaultId o prop)
+  const readNote = async (note_id2, vault_id) => {
     try {
       const url  = 'http://localhost:8010/api/readNote';
       const body = { note_id2, vault_id }; //  Enviar vault_id
 
-      const { result, http_data } = await http_get( url, body );
-      if( result !== 1 )
-        throw new Error( 'Error al leer la nota' );
+      const { result, http_data } = await http_get(url, body);
+      if (result !== 1)
+        throw new Error('Error al leer la nota');
 
-      window.set_markdown( http_data.note.markdown );
-      
+      window.set_markdown(http_data.note.markdown);
+
       // Forzamos la recarga del MarkdownEditor
-      window.setKey( k => k + 1 );
+      window.setKey(k => k + 1);
 
-    } catch ( error ) {
-      console.log( error );
+      // Notifica al editor de que hay nueva nota
+      const event = new CustomEvent('noteSelected', {
+        detail: { note_id2, vault_id }
+      });
+      window.dispatchEvent(event);
+
+    } catch (error) {
+      console.log(error);
     }
   };
 

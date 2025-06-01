@@ -47,13 +47,23 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
       }
 
       const { result, http_data } = await http_get(url, body);
-      if (result !== 1) throw new Error('Error al leer la nota');
+      if (result !== 1 || !http_data?.note) {
+        console.error(' No se pudo cargar la nota');
+        return;
+      }
 
-      set_markdown(http_data.note.markdown);
-      setKey(k => k + 1);
+      const note = http_data.note;
+      console.log('Nota recibida:', note);
+
+      const markdown = note.note_markdown || note.markdown || '';
+      console.log('Contenido del markdown:', markdown);
+
+      set_markdown(markdown);
+      setKey(prev => prev + 1);
     };
 
-    if (vault_id !== null) {
+    const skip_initial_fetch = note_id2 === '' && !modal;
+    if (!skip_initial_fetch && vault_id !== null) {
       fetchNote();
     }
   }, [note_id2, vault_id]);
@@ -116,6 +126,8 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
   // -------------------------------------------------------------------------
   // Renderizado del editor
   // -------------------------------------------------------------------------
+  console.log('[MDEditorWS] ha renderizado: ', { note_id2, vault_id });
+
   return (
     <MDEditor
       key={ key }
