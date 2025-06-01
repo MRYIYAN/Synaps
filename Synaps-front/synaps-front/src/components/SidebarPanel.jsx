@@ -20,6 +20,8 @@ import GalaxyViewPanel  from './Atomic/Panels/GalaxyViewPanel';
 import ListTodoPanel    from './Atomic/Panels/ListTodoPanel';
 import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
 import { NotesHelper } from '../lib/Helpers/NotesHelper.jsx';
+import { FoldersHelper } from '../lib/Helpers/FoldersHelper.jsx';
+const { getFolders } = FoldersHelper(); 
 
 // Configuración de los elementos de navegación
 const navigationItems = [
@@ -86,13 +88,7 @@ const SidebarPanel = () => {
         setVaults(vaults);
 
         if (vaults.length > 0) {
-          // Seleccionar primer vault automáticamente
-          setCurrentVault(vaults[0]);
-          window.currentVaultId = parseInt(vaults[0].vault_id, 10);
-
-          // Llamar para recargar carpetas y notas globalmente (si estas funciones están disponibles)
-          window.getFolders?.(vaults[0].vault_id);
-          window.getNotes?.(vaults[0].vault_id);
+          handleVaultSelect(vaults[0]); //  reutiliza la lógica centralizada
         }
 
       } catch (e) {
@@ -163,6 +159,7 @@ const SidebarPanel = () => {
     // Notificar a FilesPanel que cambió el vault
     window.dispatchEvent(new Event("vaultChanged"));
 
+    getFolders(vault?.vault_id); 
     getNotes(vault?.vault_id);  // Cargar notas del vault seleccionado
 
     // Opcional: resetear nota seleccionada
@@ -343,12 +340,11 @@ const handleVaultCreated = (vault) => {
           {/* Componente del panel seleccionado */}
           <div className="panel-content">
             <FilesPanel
-              notes={localNotes}
+              notes={notes}
               getNotes={getNotes}
-              // ...otros props necesarios...
+           
             />
           </div>
-          
           {/* Componente de perfil de usuario en la parte inferior */}
           <UserProfileBar 
             currentUser={currentUser}
