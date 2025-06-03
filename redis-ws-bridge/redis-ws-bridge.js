@@ -144,10 +144,15 @@ function handle_ws_message( ws, message, set_token_callback )
     }
 
     // Actualización: frontend -> backend
-    if( data.type === 'update' && data.token && data.updates )
-    {
-      log( 'INFO', `Actualización recibida`, { token: data.token } );
-      publish_to_backend( data.token, data.updates );
+    if (data.type === 'update' && data.token && data.updates) {
+      log('INFO', `Actualización recibida`, { token: data.token });
+
+      // Guardar en Redis
+      const note_id2 = data.token;
+      const markdown = data.updates.markdown;
+      save_note_to_redis(note_id2, markdown);
+
+      publish_to_backend(data.token, data.updates);
       return;
     }
 
@@ -291,3 +296,17 @@ function start_bridge()
 }
 
 start_bridge();
+
+//----------------------------------------------------------------------
+// Funciones adicionales para guardar notas en Redis
+//----------------------------------------------------------------------
+
+/**
+ * Guarda el contenido de una nota en Redis.
+ * @param {string} note_id2
+ * @param {string} markdown
+ */
+function save_note_to_redis(note_id2, markdown) {
+  const key = `synaps:note:${note_id2}`;
+  redis.set(key, markdown);
+}

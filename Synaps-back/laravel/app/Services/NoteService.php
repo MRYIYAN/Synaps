@@ -10,8 +10,17 @@ namespace App\Services;
 use App\Models\Note;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 use App\Helpers\DatabaseHelper;
+//---------------------------------------------------------------------------//
+//                        Clase NoteService                                  //
+//---------------------------------------------------------------------------//
+/**
+ * Clase que proporciona métodos para interactuar con las notas de un usuario,
+ * incluyendo la obtención de notas propias y compartidas.
+ */
+//---------------------------------------------------------------------------//
 
 class NoteService
 {
@@ -69,5 +78,37 @@ class NoteService
 
     // Combinamos las notas propias y compartidas y devuelve la colección reindexada
     return $own_notes->concat( $shared_notes )->values();
+  }
+
+  //---------------------------------------------------------------------------//
+  //                          Métodos CRUD de notas                         //
+  //---------------------------------------------------------------------------//
+  /**
+   * Lee una nota concreta por su identificador.
+   *
+   * @param string $note_id2 Identificador de la nota
+   * @return Note|null
+   */
+  //---------------------------------------------------------------------------//
+
+  public function readNote($note_id2)
+  {
+    // 1. Intentar obtener desde Redis
+    $redis_key = 'synaps:note:' . $note_id2;
+    $cached_md = Redis::get($redis_key);
+
+    if ($cached_md !== null) {
+        dd('[REDIS] Cargando markdown desde cache:', $cached_md);
+        // Crear un objeto simulado con solo lo necesario
+        return (object)[
+            'note_id2' => $note_id2,
+            'note_markdown' => $cached_md
+        ];
+    }
+
+    // 2. Si no está en Redis, buscar en base de datos
+    $note = Note::where('note_id2', $note_id2)->first();
+
+    return $note;
   }
 }
