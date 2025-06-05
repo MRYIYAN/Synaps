@@ -2,7 +2,6 @@
 .node-branch {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
   overflow-x: hidden;
 }
 
@@ -24,17 +23,26 @@
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 4px 8px;
+  padding: 2px 12px;
   padding-left: 8px;
-  gap: 0.25rem;
-  transition: all 0.3s ease-in-out;
+  gap: 0.5rem;
+  transition: all 0.2s ease-in-out;
   font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 1px 0;
+  min-height: 32px;
 }
 
 .node-item.selected, .node-item:hover {
-  background-color: var(--vscode-activityBar-background);
+  background-color: var(--vscode-list-hoverBackground, rgba(255, 255, 255, 0.1));
   overflow: hidden;
   cursor: pointer;
+}
+
+.node-item.selected {
+  background-color: var(--vscode-list-activeSelectionBackground, rgba(245, 110, 15, 0.3));
+  border: 1px solid var(--liquid_lava, #F56E0F);
 }
 
 .node-tree-icon {
@@ -56,6 +64,8 @@
   white-space: nowrap;
   flex: 1;
   min-width: 0;
+  padding: 4px 0;
+  line-height: 1.2;
 }
 
 .node-item > svg {
@@ -64,4 +74,22 @@
 
 .node-item:hover > svg {
   stroke: #F56E0F;
+}
+
+.editInput {
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  flex: 1;
+  min-width: 0;
+}
+
+.editInput:focus {
+  border-color: var(--vscode-focusBorder);
+  box-shadow: 0 0 0 1px var(--vscode-focusBorder);
 }

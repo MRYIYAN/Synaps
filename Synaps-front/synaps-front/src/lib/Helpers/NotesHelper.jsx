@@ -119,12 +119,44 @@ export function NotesHelper() {
     }
   };
 
+  // -----------------------------------------------------------------
+  // Renombrar una nota concreta
+  // -----------------------------------------------------------------
+  const renameNote = async( note_id2, new_title ) => {
+    try {
+      const url  = 'http://localhost:8010/api/renameNote';
+      const body = { id2: note_id2, new_title };
+
+      // Realizamos la petición
+      const { result, http_data } = await http_post( url, body );
+      if( result !== 1 )
+        throw new Error( 'Error al renombrar la nota' );
+
+      // Actualizamos la nota en el array y la interfaz
+      setNotes( () => {
+        const updated = ( window.currentNotes || [] ).map( node => {
+          if( node.id2 === note_id2 ) {
+            return { ...node, title: new_title };
+          }
+          return node;
+        });
+
+        window.currentNotes = updated;
+        return updated;
+      } );
+
+    } catch ( error ) {
+      console.log( error );
+    }
+  };
+
   // Registrar en window al montar
   useEffect( () => {
     window.setSelectedItemId2 = setSelectedItemId2;
     window.getNotes = getNotes;
     window.readNote = readNote;
     window.deleteNote = deleteNote;
+    window.renameNote = renameNote;
   }, [] );
 
   // Devolver API del hook
@@ -135,5 +167,6 @@ export function NotesHelper() {
     getNotes,
     readNote,
     deleteNote,
+    renameNote,
   };
 }

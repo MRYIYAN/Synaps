@@ -23,6 +23,30 @@ export function FoldersHelper() {
     }
   };
 
+  // Renombrar una carpeta concreta
+  const renameFolder = async (folder_id2, new_title) => {
+    try {
+      const url = 'http://localhost:8010/api/renameFolder';
+      const body = { id2: folder_id2, new_title };
+
+      const { result } = await http_post(url, body);
+      if (result !== 1)
+        throw new Error('Error al renombrar la carpeta');
+
+      // Actualizamos la carpeta en el array y la interfaz
+      const updated = (window.currentNotes || []).map(node => {
+        if (node.id2 === folder_id2) {
+          return { ...node, title: new_title };
+        }
+        return node;
+      });
+
+      window.currentNotes = updated;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // Obtener carpetas por vault
   const getFolders = async (vault_id, parent_id = 0) => {
     vault_id = parseInt(vault_id, 10);
@@ -53,9 +77,11 @@ export function FoldersHelper() {
   // Registrar en window
   window.getFolders = getFolders;
   window.deleteFolder = deleteFolder;
+  window.renameFolder = renameFolder;
 
   return {
     getFolders,
     deleteFolder,
+    renameFolder,
   };
 }
