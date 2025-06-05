@@ -16,6 +16,7 @@ use App\Http\Controllers\NoteController;
 use Exception;
 
 use App\Helpers\DatabaseHelper;
+use App\Helpers\AuthHelper;
 
 /**
  * Controlador para crear carpetas en Synaps.
@@ -47,9 +48,12 @@ class FolderNoteController extends Controller
     try
     {
       // Obtenemos el identificador del usuario autenticado
-      // $user_id = ( int ) $request->user()->id;
-      $user_id  = 1;
-      $user_id2 = 'F7D8S9FG78F9DG78D9F7G89DF789FDGU';
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] )
+        throw new Exception( 'Usuario no autenticado' );
+      
+      $user_id  = $auth_result['user_id'];
+      $user_id2 = $auth_result['user_id2'];
 
       // Inicializamos las conexiones de DB
       $user_db = DatabaseHelper::connect( $user_id );
@@ -123,16 +127,20 @@ class FolderNoteController extends Controller
     $result  = 0;
     $message = '';
 
-    // Obtenemos el identificador del usuario autenticado
-    // $user_id = ( int ) $request->user()->id;
-    $user_id  = 1;
-
     // Separamos por tipo
     $note_ids    = [];
     $folder_ids  = [];
 
     try
     {
+      // Obtenemos el identificador del usuario autenticado
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] )
+        throw new Exception( 'Usuario no autenticado' );
+      
+      $user_id  = $auth_result['user_id'];
+      $user_id2 = $auth_result['user_id2'];
+      
       // Inicializamos la conexión de DB
       $user_db = DatabaseHelper::connect( $user_id );
 
@@ -157,32 +165,35 @@ class FolderNoteController extends Controller
       // Capturamos las notas y carpetas relacionadas a esta carpeta
       $related_items = [];
 
-      if ($folder_id) {
-        $vault_id = FolderNote::on($user_db)
-          ->where('folder_id', $folder_id)
-          ->value('vault_id');
+      if( $folder_id )
+      {
+        $vault_id = FolderNote::on( $user_db )
+          ->where( 'folder_id', $folder_id )
+          ->value( 'vault_id' );
 
         // Notas hijas
-        $notes = Note::on($user_db)
-          ->where('parent_id', $folder_id)
-          ->where('vault_id', $vault_id)
+        $notes = Note::on( $user_db )
+          ->where( 'parent_id', $folder_id )
+          ->where( 'vault_id', $vault_id )
           ->get();
 
-        foreach ($notes as $note) {
-          $related_items[] = (object)[
+        foreach( $notes as $note )
+        {
+          $related_items[] = ( object )[
             'type' => 'note',
             'id'   => $note->note_id
           ];
         }
 
         // Carpetas hijas
-        $folders = FolderNote::on($user_db)
-          ->where('parent_id', $folder_id)
-          ->where('vault_id', $vault_id)
+        $folders = FolderNote::on( $user_db )
+          ->where( 'parent_id', $folder_id )
+          ->where( 'vault_id', $vault_id )
           ->get();
 
-        foreach ($folders as $folder) {
-          $related_items[] = (object)[
+        foreach( $folders as $folder )
+        {
+          $related_items[] = ( object )[
             'type' => 'folder',
             'id'   => $folder->folder_id
           ];
@@ -245,27 +256,125 @@ class FolderNoteController extends Controller
    * @param  Request $request
    * @return JsonResponse
    */
-  public function getFolders(Request $request)
+  public function getFolders( Request $request ): JsonResponse
   {
-    $vault_id = $request->query('vault_id');
+    // Inicializamos los valores a devolver
+    $result  = 0;
+    $message = '';
+    $folders = [];
 
-    if (!is_numeric($vault_id)) {
-      return response()->json([
-        'result' => 0,
-        'message' => 'Parámetro vault_id inválido',
-        'items' => []
-      ]);
+    try
+    {
+      // Obtenemos el identificador del usuario autenticado
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] )
+        throw new Exception( 'Usuario no autenticado' );
+      
+      $user_id  = $auth_result['user_id'];
+      $user_id2 = $auth_result['user_id2'];
+
+      // Validamos los datos recibidos
+      $data = $request->validate( [
+          'vault_id' => 'required|integer'
+      ] );
+
+      // Inicializamos la conexión de DB
+      $user_db = DatabaseHelper::connect( $user_id );
+
+      // Obtenemos las carpetas del vault
+      $folders = FolderNote::on( $user_db )
+        ->where( 'vault_id', $data['vault_id'] )
+        ->get()
+        ->toArray();
+
+      // Si llegamos hasta aquí está todo OK
+      $result = 1;
     }
+    catch( Exception $e )
+    {
+      $message = $e->getMessage();
+    }
+    finally
+    {
+      // Devolvemos la respuesta con resultado, mensaje y datos de las carpetas
+      return response()->json( [
+          'result'  => $result
+        , 'message' => $message
+        , 'folders' => $folders
+      ], $result ? 200 : 500 );
+    }
+  }
 
-    $vault_id = (int)$vault_id;
+  /**
+   * POST /api/renameFolder
+   *
+   * Renombra una carpeta existente.
+   *
+   * @param  Request      $request     Datos: folder_id2, new_title
+   * @return JsonResponse              Resultado de la operación
+   */
+  public function renameFolder( Request $request ): JsonResponse
+  {
+    // Inicializamos los valores a devolver
+    $result  = 0;
+    $message = '';
+    $folder  = [];
 
-    $folders = FolderNote::where('vault_id', $vault_id)->get();
+    try
+    {
+      // Obtenemos el identificador del usuario autenticado
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] )
+        throw new Exception( 'Usuario no autenticado' );
+      
+      $user_id  = $auth_result['user_id'];
+      $user_id2 = $auth_result['user_id2'];
 
-    return response()->json([
-      'result' => 1,
-      'message' => 'OK',
-      'items' => $folders
-    ]);
+      // Validamos los datos recibidos
+      $data = $request->validate( [
+          'id2'       => 'required|string'
+        , 'new_title' => 'required|string|max:255'
+      ] );
+
+      // Inicializamos la conexión de DB
+      $user_db = DatabaseHelper::connect( $user_id );
+
+      // Buscamos la carpeta a renombrar
+      $folder = FolderNote::on( $user_db )
+        ->where( 'folder_id2', $data['id2'] )
+        ->firstOrFail();
+
+      // Verificamos que no exista otra carpeta con el mismo nombre en el mismo nivel
+      $exists = FolderNote::on( $user_db )
+        ->where( 'parent_id', $folder->parent_id )
+        ->where( 'folder_id', '!=', $folder->folder_id )
+        ->whereRaw( 'BINARY folder_title = ?', [$data['new_title']] )
+        ->exists();
+
+      if( $exists ) {
+        throw new Exception( 'Ya existe una carpeta con ese nombre en esta ubicación' );
+      }
+
+      // Actualizamos el título de la carpeta
+      $folder->folder_title = $data['new_title'];
+      $folder->save();
+
+      // Si llegamos hasta aquí está todo OK
+      $result = 1;
+    }
+    catch( Exception $e )
+    {
+      $message = $e->getMessage();
+    }
+    finally
+    {
+      // Devolvemos la respuesta con resultado, mensaje y datos de la carpeta
+      return response()->json( [
+          'result'  => $result
+        , 'message' => $message
+        , 'folder'  => $folder
+      ], $result ? 200 : 500 );
+    }
   }
 
 }

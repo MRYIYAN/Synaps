@@ -40,6 +40,8 @@ const panelComponents = {
 };
 
 const SidebarPanel = () => {
+  const location = useLocation();
+  
   // Estados para la interfaz de usuario
   const [rightPanelOpen, setRightPanelOpen]       = useState(true);
   const [selectedItem, setSelectedItem]           = useState('files');
@@ -323,7 +325,7 @@ const handleVaultCreated = (vault) => {
       </aside>
 
       {/* Side Bar - panel que aparece a la derecha de Activity Bar */}
-      {(rightPanelOpen || isClosing) && CurrentPanelComponent && (
+      {(rightPanelOpen || isClosing) && CurrentPanelComponent && location.pathname !== '/galaxyview' && (
         <div className={`right-options-panel ${isClosing ? 'closing' : ''}`}>
           {/* Logo en la parte superior */}
 
@@ -339,7 +341,7 @@ const handleVaultCreated = (vault) => {
           
           {/* Componente del panel seleccionado */}
           <div className="panel-content">
-            <FilesPanel
+            <CurrentPanelComponent
               notes={notes}
               getNotes={getNotes}
            

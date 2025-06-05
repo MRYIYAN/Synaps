@@ -21,6 +21,7 @@ use App\Services\VaultService;
 use App\Events\NoteUpdated;
 
 use App\Helpers\DatabaseHelper;
+use App\Helpers\AuthHelper;
 
 /**
  * Controlador para crear notas y carpetas en Synaps.
@@ -43,22 +44,22 @@ class NoteController extends Controller
     $vault['vault_id']  = 1;
     $vault['vault_id2'] = 'F7D8FDG78D9SF789G789D7S89F7S';
 
-    // Obtenemos el identificador del usuario autenticado
-    // $user_id = ( int ) $request->user()->id;
-    $user_id  = 1;
-    $user_id2 = 'HG8F90HG89H0J8F90GD890FG890B8FDD';
-
-    // Validamos los datos recibidos
-    $data = $request->validate( [
-        'newNoteName' => 'required|string|max:255'
-      , 'parent_id2'  => 'nullable|string'
-    ] );
-
     try
     {
       // Obtenemos el identificador del usuario autenticado
-      // $user_id = ( int ) $request->user()->id;
-      $user_id = 1;
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] ) {
+        throw new Exception( 'Usuario no autenticado' );
+      }
+      $user_id = $auth_result['user_id'];
+
+      // Validamos los datos recibidos
+      $data = $request->validate( [
+          'newNoteName' => 'required|string|max:255'
+        , 'parent_id2'  => 'nullable|string'
+      ] );
+
+      // Conectamos a la base de datos del usuario
       $user_db = DatabaseHelper::connect( $user_id );
 
       // Calculamos el parent_id (0 = root)
@@ -158,19 +159,19 @@ class NoteController extends Controller
       ] );
 
       $vault_id = $data['vault_id'];
-      if (!is_numeric($vault_id)) {
-        return response()->json([
-          'result' => 0,
-          'message' => 'Parámetro vault_id inválido',
-          'items' => []
-        ]);
+      if( !is_numeric( $vault_id ) ) {
+        throw new Exception( 'Parámetro vault_id inválido' );
       }
-      $vault_id = (int)$vault_id;
+      $vault_id = ( int )$vault_id;
 
-      $parent_id = $tmp_parent_id ?? ($data['parent_id'] ?? null);
+      $parent_id = $tmp_parent_id ?? ( $data['parent_id'] ?? null );
 
-      // Conectar a la base de datos del usuario (ejemplo fijo user_id=1)
-      $user_id = 1;
+      // Conectar a la base de datos del usuario
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] ) {
+        throw new Exception( 'Usuario no autenticado' );
+      }
+      $user_id = $auth_result['user_id'];
       $user_db = DatabaseHelper::connect( $user_id );
 
       // Obtener notas
@@ -181,7 +182,7 @@ class NoteController extends Controller
 
       // Obtener carpetas
       $folders = FolderNote::on( $user_db )
-        ->select(['folder_id', 'folder_id2', 'folder_title', 'parent_id'])
+        ->select( ['folder_id', 'folder_id2', 'folder_title', 'parent_id'] )
         ->where( 'vault_id', $vault_id )
         ->when( !is_null( $parent_id ), fn( $q ) => $q->where( 'parent_id', $parent_id ) )
         ->get();
@@ -242,12 +243,15 @@ class NoteController extends Controller
     $message = '';
     $note    = [];
 
-    // Obtenemos el identificador del usuario autenticado
-    // $user_id = ( int ) $request->user()->id;
-    $user_id  = 1;
-
     try
     {
+      // Obtenemos el identificador del usuario autenticado
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] ) {
+        throw new Exception( 'Usuario no autenticado' );
+      }
+      $user_id = $auth_result['user_id'];
+
       // Validamos los datos recibidos
       $data = $request->validate( [
         'note_id2' => 'nullable|string'
@@ -292,12 +296,15 @@ class NoteController extends Controller
     $message = '';
     $note    = [];
 
-    // Obtenemos el identificador del usuario autenticado
-    // $user_id = ( int ) $request->user()->id;
-    $user_id  = 1;
-
     try
     {
+      // Obtenemos el identificador del usuario autenticado
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] ) {
+        throw new Exception( 'Usuario no autenticado' );
+      }
+      $user_id = $auth_result['user_id'];
+
       // Recibe ambos parámetros
       $note_id2 = $request->input( 'note_id2' );
       $vault_id = $request->input( 'vault_id' );
@@ -345,19 +352,22 @@ class NoteController extends Controller
     $message  = '';
     $note     = [];
 
-    // Obtenemos el identificador del usuario autenticado
-    // $user_id = ( int ) $request->user()->id;
-    $user_id = 1;
-    $user_db = DatabaseHelper::connect( $user_id );
-    
-    // Validamos los datos mandados por Redis
-    $data = $request->validate( [
-        'markdown'   => 'required|string'
-      , 'updated_at' => 'required|date'
-    ] );
-
     try
     {
+      // Obtenemos el identificador del usuario autenticado
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] ) {
+        throw new Exception( 'Usuario no autenticado' );
+      }
+      $user_id = $auth_result['user_id'];
+      $user_db = DatabaseHelper::connect( $user_id );
+      
+      // Validamos los datos mandados por Redis
+      $data = $request->validate( [
+          'markdown'   => 'required|string'
+        , 'updated_at' => 'required|date'
+      ] );
+
       // Buscamos la nota pedida por Redis
       $note = Note::on( $user_db )
         ->where( 'note_id2', $note_id2 )
@@ -418,8 +428,11 @@ class NoteController extends Controller
       ] );
 
       // Identificador del usuario autenticado
-      // $user_id = ( int ) $request->user()->id;
-      $user_id = 1;
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] ) {
+        throw new Exception( 'Usuario no autenticado' );
+      }
+      $user_id = $auth_result['user_id'];
       $user_db = DatabaseHelper::connect( $user_id );
 
       // Obtenemos todas las notas (propias + compartidas)
@@ -490,8 +503,11 @@ class NoteController extends Controller
     try
     {
       // Identificador del usuario autenticado
-      // $user_id = ( int ) $request->user()->id;
-      $user_id = 1;
+      $auth_result = AuthHelper::getAuthenticatedUserId();
+      if( $auth_result['error_response'] ) {
+        throw new Exception( 'Usuario no autenticado' );
+      }
+      $user_id = $auth_result['user_id'];
       $user_db = DatabaseHelper::connect( $user_id );
 
       // Obtenemos todas las notas (propias + compartidas)
@@ -606,6 +622,240 @@ class NoteController extends Controller
           'result' => $result
         , 'nodes'  => $nodes
         , 'links'  => $links
+      ], $result ? 200 : 500 );
+    }
+  }
+
+  /**
+   * POST /api/uploadFile
+   *
+   * Sube un archivo y crea una nota a partir de su contenido.
+   *
+   * @param  Request      $request     Archivo y datos adicionales
+   * @return JsonResponse              Resultado de la operación con datos de la nota creada
+   */
+  public function uploadFile( Request $request ): JsonResponse
+  {
+    // Inicializamos los valores a devolver
+    $result  = 0;
+    $message = '';
+    $note    = [];
+
+    $vault['vault_id']  = 1;
+    $vault['vault_id2'] = 'F7D8FDG78D9SF789G789D7S89F7S';
+
+    // Obtenemos el identificador del usuario autenticado
+    $auth_result = AuthHelper::getAuthenticatedUserId();
+    if( $auth_result['error_response'] ) {
+      throw new Exception( 'Usuario no autenticado' );
+    }
+    $user_id = $auth_result['user_id'];
+    $user_id2 = 'HG8F90HG89H0J8F90GD890FG890B8FDD';
+
+    try
+    {
+      // Validamos que se haya enviado un archivo
+      $request->validate( [
+          'file'       => 'required|file|max:10240|mimes:txt,md,pdf,doc,docx,rtf'  // Max 10MB
+        , 'parent_id2' => 'nullable|string'
+      ] );
+
+      $file = $request->file( 'file' );
+      $parent_id2 = $request->input( 'parent_id2', '' );
+
+      // Conectamos a la DB del usuario
+      $user_db = DatabaseHelper::connect( $user_id );
+
+      // Calculamos el parent_id (0 = root)
+      $parent_id = 0;
+      if( !empty( $parent_id2 ) )
+      {
+        // Buscamos la carpeta según el parent_id2
+        $parent = FolderNote::on( $user_db )
+          ->where( 'folder_id2', $parent_id2 )
+          ->first();
+
+        // Capturamos el id
+        if( $parent && $parent->folder_id )
+          $parent_id = ( int ) $parent->folder_id;
+        else
+        {
+          // Si no hay carpeta, intentamos encontrar una nota con ese id2
+          $note_parent = Note::on( $user_db )
+            ->where( 'note_id2', $parent_id2 )
+            ->first();
+
+          // Si la encontramos, guardamos el ID del padre
+          if( $note_parent )
+            $parent_id = ( int ) $note_parent->parent_id;
+        }
+      }
+
+      // Extraemos el contenido del archivo según su tipo
+      $content = $this->extractFileContent( $file );
+      
+      // Generamos el nombre de la nota basado en el archivo
+      $noteName = pathinfo( $file->getClientOriginalName(), PATHINFO_FILENAME );
+      
+      // Verificamos que no existe una nota con el mismo nombre en el mismo nivel
+      $exists = Note::on( $user_db )
+        ->where( 'parent_id', $parent_id )
+        ->whereRaw( 'BINARY note_title = ?', [$noteName] )
+        ->exists();
+
+      // Si existe, añadimos un sufijo
+      if( $exists ) {
+        $counter = 1;
+        $originalName = $noteName;
+        do {
+          $noteName = $originalName . " ($counter)";
+          $counter++;
+          $exists = Note::on( $user_db )
+            ->where( 'parent_id', $parent_id )
+            ->whereRaw( 'BINARY note_title = ?', [$noteName] )
+            ->exists();
+        } while( $exists );
+      }
+
+      // Si no es Root, incrementamos el número de hijos del padre
+      if( $parent_id !== 0 && isset( $parent ) )
+        $parent->incrementChildrenCount();
+
+      // Creamos la nueva nota con el contenido del archivo
+      $note = Note::on( $user_db )
+        ->create( [
+            'note_id2'         => Str::random( 32 )
+          , 'note_title'       => $noteName
+          , 'note_markdown'    => $content
+          , 'vault_id'         => $vault['vault_id']
+          , 'insert_date'      => now()
+          , 'last_update_date' => now()
+          , 'parent_id'        => $parent_id
+        ] );
+
+      // Marcamos el resultado según el éxito de la operación
+      $result = $note ? 1 : 0;
+    }
+    catch ( Exception $e )
+    {
+      $message = $e->getMessage();
+    }
+    finally
+    {
+      // Devolvemos la respuesta con resultado, mensaje y nota creada
+      return response()->json( [
+          'result'  => $result
+        , 'message' => $message
+        , 'http_data' => [ 'note' => $note ]
+      ], $result ? 201 : 500 );
+    }
+  }
+
+  /**
+   * Extrae el contenido de un archivo subido según su tipo.
+   *
+   * @param  \Illuminate\Http\UploadedFile $file
+   * @return string
+   */
+  private function extractFileContent( $file ): string
+  {
+    $extension = strtolower( $file->getClientOriginalExtension() );
+    
+    switch( $extension ) {
+      case 'txt':
+      case 'md':
+        // Archivos de texto plano
+        return file_get_contents( $file->getRealPath() );
+        
+      case 'pdf':
+        // Para PDFs necesitarías una librería como smalot/pdfparser
+        // Por ahora devolvemos un placeholder
+        return "# " . pathinfo( $file->getClientOriginalName(), PATHINFO_FILENAME ) . "\n\n[Archivo PDF subido: " . $file->getClientOriginalName() . "]\n\nContenido del PDF pendiente de extracción.";
+        
+      case 'doc':
+      case 'docx':
+        // Para documentos Word necesitarías una librería como phpoffice/phpword
+        // Por ahora devolvemos un placeholder
+        return "# " . pathinfo( $file->getClientOriginalName(), PATHINFO_FILENAME ) . "\n\n[Documento Word subido: " . $file->getClientOriginalName() . "]\n\nContenido del documento pendiente de extracción.";
+        
+      case 'rtf':
+        // Para RTF podrías usar una librería específica
+        // Por ahora devolvemos un placeholder
+        return "# " . pathinfo( $file->getClientOriginalName(), PATHINFO_FILENAME ) . "\n\n[Archivo RTF subido: " . $file->getClientOriginalName() . "]\n\nContenido del RTF pendiente de extracción.";
+        
+      default:
+        return "# " . pathinfo( $file->getClientOriginalName(), PATHINFO_FILENAME ) . "\n\n[Archivo subido: " . $file->getClientOriginalName() . "]\n\nTipo de archivo no soportado para extracción de contenido.";
+    }
+  }
+
+  /**
+   * POST /api/renameNote
+   *
+   * Renombra una nota existente.
+   *
+   * @param  Request      $request     Datos: note_id2, new_title
+   * @return JsonResponse              Resultado de la operación
+   */
+  public function renameNote( Request $request ): JsonResponse
+  {
+    // Inicializamos los valores a devolver
+    $result  = 0;
+    $message = '';
+    $note    = [];
+
+    // Obtenemos el identificador del usuario autenticado
+    $auth_result = AuthHelper::getAuthenticatedUserId();
+    if( $auth_result['error_response'] ) {
+      throw new Exception( 'Usuario no autenticado' );
+    }
+    $user_id = $auth_result['user_id'];
+
+    try
+    {
+      // Validamos los datos recibidos
+      $data = $request->validate( [
+          'id2'       => 'required|string'
+        , 'new_title' => 'required|string|max:255'
+      ] );
+
+      // Inicializamos la conexión de DB
+      $user_db = DatabaseHelper::connect( $user_id );
+
+      // Buscamos la nota a renombrar
+      $note = Note::on( $user_db )
+        ->where( 'note_id2', $data['id2'] )
+        ->firstOrFail();
+
+      // Verificamos que no exista otra nota con el mismo nombre en el mismo nivel
+      $exists = Note::on( $user_db )
+        ->where( 'parent_id', $note->parent_id )
+        ->where( 'note_id', '!=', $note->note_id )
+        ->whereRaw( 'BINARY note_title = ?', [$data['new_title']] )
+        ->exists();
+
+      if( $exists ) {
+        throw new Exception( 'Ya existe una nota con ese nombre en esta ubicación' );
+      }
+
+      // Actualizamos el título de la nota
+      $note->note_title = $data['new_title'];
+      $note->last_update_date = now();
+      $note->save();
+
+      // Si llegamos hasta aquí está todo OK
+      $result = 1;
+    }
+    catch( Exception $e )
+    {
+      $message = $e->getMessage();
+    }
+    finally
+    {
+      // Devolvemos la respuesta con resultado, mensaje y datos de la nota
+      return response()->json( [
+          'result'  => $result
+        , 'message' => $message
+        , 'note'    => $note
       ], $result ? 200 : 500 );
     }
   }
