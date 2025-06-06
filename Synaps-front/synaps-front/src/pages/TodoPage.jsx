@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from "react";
-
-// ------------------------------------------------------------
-// Componentes React
-// ------------------------------------------------------------
-
-/*
-import Button     from "../components/Button";
-import Card       from "../components/Card";
-import LoginForm  from "../components/LoginForm";
-import Modal      from "../components/Modal";
-*/
+import { useLocation } from 'react-router-dom';
+import SidebarPanel from "../components/SidebarPanel";
+import TasksPanel from "../components/Atomic/Panels/TasksPanel";
+import "../assets/styles/TodoPage.css";
 
 // ------------------------------------------------------------
 // APP
 // ------------------------------------------------------------
 
 const Todo = function() {
+  const location = useLocation();
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // HTML del formulario
+  useEffect(() => {
+    // Leer parámetros de la URL usando useLocation de React Router
+    const params = new URLSearchParams(location.search);
+    const filter = params.get('filter');
+    const action = params.get('action');
+
+    if (filter) {
+      setSelectedFilter(filter);
+    }
+
+    if (action === 'create') {
+      setShowCreateModal(true);
+    }
+  }, [location.search]); // Dependencia en location.search para reaccionar a cambios en la URL
+
+  // HTML del componente
   return (
-    <div>
-      <h1>Todo</h1>
+    <div className="todo-page">
+      <SidebarPanel />      <div className="todo-main-content">
+        <TasksPanel 
+          initialFilter={selectedFilter} 
+          showModal={showCreateModal}
+          onCloseModal={() => setShowCreateModal(false)}
+        />
+      </div>
     </div>
   );
 }

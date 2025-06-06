@@ -1,0 +1,137 @@
+/* TaskListPanel.css - Estilos para la lista de tareas en el sidebar */
+
+.task-list-panel {
+  padding: 0;
+  height: 100%;
+  background: var(--background-primary);
+  color: var(--text-primary);
+}
+
+.task-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--background-secondary);
+}
+
+.task-list-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.add-task-btn-small {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: var(--accent-color);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.add-task-btn-small:hover {
+  background: var(--accent-hover);
+  transform: scale(1.05);
+}
+
+.task-lists {
+  padding: 8px 0;
+}
+
+.task-list-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.task-list-item:hover {
+  background: var(--background-hover);
+}
+
+.task-list-item.selected {
+  background: var(--background-selected);
+  border-left-color: var(--accent-color);
+}
+
+.task-list-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.task-list-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.task-count {
+  background: var(--background-tertiary);
+  color: var(--text-secondary);
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.task-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.task-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.task-priority-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.task-mini-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.no-tasks-mini {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Variables CSS (si no están definidas en tu proyecto) */
+:root {
+  --background-primary: #1e1e1e;
+  --background-secondary: #2d2d2d;
+  --background-tertiary: #3c3c3c;
+  --background-hover: rgba(255, 255, 255, 0.05);
+  --background-selected: rgba(255, 165, 2, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-muted: #888888;
+  --accent-color: #ffa502;
+  --accent-hover: #ff9502;
+  --border-color: #444444;
+}

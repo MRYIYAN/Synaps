@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom';
-import { ReactComponent as SearchIcon } from "../assets/icons/search.svg";
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactComponent as FoldersIcon } from "../assets/icons/folders.svg";
 import { ReactComponent as GalaxyViewIcon } from "../assets/icons/waypoints.svg";
 import { ReactComponent as ListTodoIcon } from "../assets/icons/list-todo.svg";
-import { ReactComponent as SecretNotesIcon } from "../assets/icons/lock.svg";
 import { ReactComponent as LogoutIcon } from "../assets/icons/logout.svg";
 
 
@@ -18,39 +16,36 @@ import UserSettingsModal from "./Atomic/Modal/UserSettingsModal";
 import UserProfileBar from "./Atomic/Panels/UserProfileBar";
 import FilesPanel      from './Atomic/Panels/FilesPanel';
 import GalaxyViewPanel  from './Atomic/Panels/GalaxyViewPanel';
-import ListTodoPanel    from './Atomic/Panels/ListTodoPanel';
-import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
+import TaskListPanel      from './Atomic/Panels/TaskListPanel';
 import { NotesHelper } from '../lib/Helpers/NotesHelper.jsx';
 import { FoldersHelper } from '../lib/Helpers/FoldersHelper.jsx';
 
 // Configuración de los elementos de navegación
 const navigationItems = [
-  { id: "files", label: "Archivos", icon: FoldersIcon },
-  { id: "galaxyview", label: "Vista de galaxia", icon: GalaxyViewIcon, url: '/galaxyview' },
-  { id: "list-todo", label: "Lista de tareas", icon: ListTodoIcon },
-  // { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
+  { id: "files", label: "Archivos", icon: FoldersIcon, url: "/markdowneditor" },
+  { id: "galaxyview", label: "Vista de galaxia", icon: GalaxyViewIcon, url: "/galaxyview" },
+  { id: "list-todo", label: "Lista de tareas", icon: ListTodoIcon, url: "/todo" },
 ];
 
 // Mapeo de componentes de panel por ID
 const panelComponents = {
   "files": FilesPanel,
   "galaxyview": GalaxyViewPanel,
-  "list-todo": ListTodoPanel,
-  // "secret-notes": SecretNotesPanel,
+  "list-todo": TaskListPanel,
 };
 
 const SidebarPanel = () => {
 
-  // Usar React Router hook para obtener la ubicación actual
+  // Usar React Router hooks para navegación y ubicación actual
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Usar los helpers
   const { getFolders } = FoldersHelper();
   const { getNotes, notes } = NotesHelper();
 
 
-  
-  // Estados para la interfaz de usuario
+    // Estados para la interfaz de usuario
   const [rightPanelOpen, setRightPanelOpen]       = useState(true);
   const [selectedItem, setSelectedItem]           = useState('files');
   const [indicatorPosition, setIndicatorPosition] = useState(0);
@@ -59,6 +54,7 @@ const SidebarPanel = () => {
   const [showSettingsMenu, setShowSettingsMenu]   = useState(false);
   const [showCreateVaultModal, setShowCreateVaultModal] = useState(false);
   const [showUserSettingsModal, setShowUserSettingsModal] = useState(false);
+  const [showTasksSidebar, setShowTasksSidebar]   = useState(false); // Estado para el sidebar de tareas
   // Estados para los datos del usuario y las vaults
   const [currentUser, setCurrentUser] = useState({
     name: "",
@@ -126,30 +122,66 @@ const SidebarPanel = () => {
 
         if (vaults.length > 0) {
           handleVaultSelect(vaults[0]); //  reutiliza la lógica centralizada
-        }
-
-      } catch (e) {
+        }      } catch (e) {
         console.error(" Error al cargar vaults:", e);
         setVaults([]);
+      }    };    fetchVaults();
+  }, []);  // Efecto para actualizar el indicador visual basado en la ruta actual
+  useEffect(() => {
+    const currentPath = location.pathname;
+    
+    // Manejo especial para rutas del markdown editor
+    if (currentPath.startsWith('/markdowneditor')) {
+      setSelectedItem('files');
+      setIndicatorPosition(0 * 48); // Primer item (files)
+    } else {
+      const currentItemIndex = navigationItems.findIndex(item => item.url === currentPath);
+      
+      if (currentItemIndex !== -1) {
+        setSelectedItem(navigationItems[currentItemIndex].id);
+        setIndicatorPosition(currentItemIndex * 48);
       }
-    };
+    }
 
-    fetchVaults();
-  }, []);
-
+    // Mostrar el sidebar de tareas por defecto cuando navegamos a /todo
+    if (currentPath === '/todo') {
+      setShowTasksSidebar(true);
+    } else {
+      setShowTasksSidebar(false);
+    }
+  }, [location.pathname]);
   // Manejo de clics en la barra de navegación
   const handleIconClick = (itemId, index) => {
-    if(selectedItem === itemId) {
-      if(rightPanelOpen)
-        handleCloseSidebar();
-      else
-        setRightPanelOpen(true);
-    } else {
-      setSelectedItem(itemId);
-      setRightPanelOpen(true);
-    }
+    // Buscar el item correspondiente para obtener su URL
+    const item = navigationItems.find(navItem => navItem.id === itemId);
     
-    setIndicatorPosition(index * 48);
+    if (item && item.url) {
+      // Caso especial: si estamos en la página de tareas y hacemos clic en el icono de tareas
+      if (itemId === 'list-todo' && location.pathname === '/todo') {
+        // Alternar la visibilidad del sidebar de tareas
+        setShowTasksSidebar(!showTasksSidebar);
+      } else {
+        // Navegar a la URL correspondiente
+        navigate(item.url);
+        
+        // Si navegamos a la página de tareas, mostrar el sidebar por defecto
+        if (itemId === 'list-todo') {
+          setShowTasksSidebar(true);
+        } else {
+          setShowTasksSidebar(false);
+        }
+      }
+      
+      setSelectedItem(itemId);
+      setIndicatorPosition(index * 48);
+    }
+  };
+
+  // Manejo de doble click para cerrar completamente el sidebar
+  const handleIconDoubleClick = (itemId, index) => {
+    setRightPanelOpen(false);
+    setSelectedItem(null);
+    setIndicatorPosition(-48); // Ocultar el indicador
   };
 
   // Cerrar el sidebar con una transición
@@ -350,27 +382,15 @@ const handleVaultCreated = (vault) => {
             const isActive = selectedItem === item.id;
             const hasUrl   = 'url' in item && item.url;
 
-            return (
-              <li 
+            return (              <li 
                 key={item.id} 
                 className={isActive ? "active" : ""} 
                 onClick={() => handleIconClick(item.id, index)}
+                onDoubleClick={() => handleIconDoubleClick(item.id, index)}
                 role="menuitem"
                 aria-current={isActive ? "page" : undefined}
               >
-                {/* Si tiene una URl vinculada, creamos un link */}
-                {hasUrl ? (
-                  <a 
-                    href={item.url}
-                    tabIndex={0}
-                    className="nav-link"
-                    aria-label={item.title || item.id}
-                  >
-                    <IconComponent aria-hidden="true" />
-                  </a>
-                ) : (
-                  <IconComponent aria-hidden="true" />
-                )}
+                <IconComponent aria-hidden="true" />
               </li>
             );
           })}
@@ -388,11 +408,9 @@ const handleVaultCreated = (vault) => {
             <LogoutIcon aria-hidden="true" />
           </li>
         </ul>
-      </aside>
-
-      {/* Side Bar - panel que aparece a la derecha de Activity Bar */}
-      {(rightPanelOpen || isClosing) && CurrentPanelComponent && location.pathname !== '/galaxyview' && (
-        <div className={`right-options-panel ${isClosing ? 'closing' : ''}`}>
+      </aside>      {/* Side Bar - panel que aparece a la derecha de Activity Bar */}
+      {(location.pathname === '/home' || location.pathname.startsWith('/markdowneditor') || (location.pathname === '/todo' && showTasksSidebar)) && (
+        <div className="right-options-panel">
           {/* Logo en la parte superior */}
 
           {/*
@@ -403,15 +421,20 @@ const handleVaultCreated = (vault) => {
               className="header-logo"
             />
           </div>
-          */}
-          
-          {/* Componente del panel seleccionado */}
+          */}          {/* Componente del panel seleccionado */}
           <div className="panel-content">
-            <CurrentPanelComponent
-              notes={notes}
-              getNotes={getNotes}
-           
-            />
+            {(location.pathname === '/home' || location.pathname.startsWith('/markdowneditor')) && (
+              <FilesPanel
+                notes={notes}
+                getNotes={getNotes}
+              />
+            )}
+            {location.pathname === '/todo' && showTasksSidebar && (
+              <TaskListPanel
+                notes={notes}
+                getNotes={getNotes}
+              />
+            )}
           </div>
           {/* Componente de perfil de usuario en la parte inferior */}
           <UserProfileBar 

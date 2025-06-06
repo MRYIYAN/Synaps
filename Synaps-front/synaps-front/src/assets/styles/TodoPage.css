@@ -1,0 +1,37 @@
+/* TodoPage.css - Estilos para la página completa de tareas */
+
+.todo-page {
+  display: flex;
+  height: 100vh;
+  background: var(--background-primary, #1e1e1e);
+  color: var(--text-primary, #ffffff);
+}
+
+.todo-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-left: 0; /* El SidebarPanel ya maneja su propio espacio */
+}
+
+/* Asegurar que el TasksPanel ocupe todo el espacio disponible */
+.todo-main-content .tasks-panel {
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Variables CSS para consistencia */
+:root {
+  --background-primary: #1e1e1e;
+  --background-secondary: #2d2d2d;
+  --background-tertiary: #3c3c3c;
+  --background-hover: rgba(255, 255, 255, 0.05);
+  --background-selected: rgba(255, 165, 2, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-muted: #888888;
+  --accent-color: #ffa502;
+  --accent-hover: #ff9502;
+  --border-color: #444444;
+}
