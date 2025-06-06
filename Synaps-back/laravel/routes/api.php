@@ -7,6 +7,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\VaultController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FolderNoteController;
 use App\Http\Controllers\NoteController;
@@ -54,6 +55,26 @@ try
          * @see VaultController::store()
          */
         Route::post( '/vaults', [VaultController::class, 'store'] );
+
+        //=======================//
+        // USER API             //
+        //=======================//
+
+        /**
+         * GET /user
+         * Obtiene la información del usuario autenticado.
+         *
+         * @see UserController::getUser()
+         */
+        Route::get( '/user', [UserController::class, 'getUser'] );
+
+        /**
+         * PUT /user
+         * Actualiza la información del usuario autenticado.
+         *
+         * @see UserController::updateUser()
+         */
+        Route::put( '/user', [UserController::class, 'updateUser'] );
     } );
 }
 catch( Exception $e )

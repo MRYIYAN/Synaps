@@ -2063,22 +2063,638 @@ body.modal-open {
   }
 }
 
-/* Estilos para campos con error */
-.input-field.error {
-  border-color: #f56e6e;
-  background-color: rgba(245, 110, 110, 0.05);
-}
-
-.input-error {
-  color: #f56e6e;
-  font-size: 0.75rem;
-  margin-top: 4px;
-  display: block;
-  animation: fadeIn 0.2s ease;
-}
-
 /* Deshabilitar el botón de avanzar */
 .modal-button.primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Estilos para el modal de configuración de usuario - REDISEÑADO */
+.user-settings-modal {
+  max-width: 520px;
+  width: 90%;
+  max-height: 85vh;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease;
+  border-radius: 12px;
+  background: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header moderno del modal */
+.modal-header-modern {
+  position: relative;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  color: var(--vscode-foreground);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.modal-close-button:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.modal-close-button svg {
+  width: 24px;
+  height: 24px;
+}
+
+.modal-user-info {
+  flex: 1;
+}
+
+.user-name-display {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  margin-bottom: 4px;
+}
+
+.user-email-display {
+  font-size: 14px;
+  color: var(--vscode-descriptionForeground);
+}
+
+/* Formulario principal */
+.user-settings-form {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: calc(85vh - 80px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Scrollbar solo cuando la sección de contraseña está activa */
+.user-settings-form.password-section-active {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 110, 15, 0.3) transparent;
+}
+
+/* Estilos personalizados para el scrollbar del modal de usuario */
+.user-settings-form.password-section-active::-webkit-scrollbar {
+  width: 6px;
+}
+
+.user-settings-form.password-section-active::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.user-settings-form.password-section-active::-webkit-scrollbar-thumb {
+  background: rgba(245, 110, 15, 0.3);
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.user-settings-form.password-section-active::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 110, 15, 0.5);
+}
+
+.user-settings-form.password-section-active::-webkit-scrollbar-thumb:active {
+  background: rgba(245, 110, 15, 0.7);
+}
+
+/* Sección de foto de perfil centrada */
+.profile-section-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.profile-photo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-photo-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--liquid-lava);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+}
+
+.profile-photo-container:hover {
+  transform: scale(1.05);
+  border-color: var(--liquid-lava);
+  box-shadow: 0 0 0 2px rgba(245, 110, 15, 0.3);
+}
+
+.profile-photo-container.has-image {
+  background-color: transparent;
+  border: 3px solid var(--vscode-sideBarSectionHeader-border);
+}
+
+.profile-photo-container.has-image:hover {
+  border-color: var(--liquid-lava);
+}
+
+.profile-photo-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.photo-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 50%;
+}
+
+.profile-photo-container:hover .photo-overlay {
+  opacity: 1;
+}
+
+.camera-icon {
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+.camera-icon-placeholder {
+  width: 24px;
+  height: 24px;
+  color: white;
+  opacity: 0.9;
+}
+
+.photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.change-photo-text {
+  background: none;
+  border: none;
+  color: var(--vscode-descriptionForeground);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.change-photo-text:hover {
+  color: var(--liquid-lava);
+  background-color: rgba(245, 110, 15, 0.1);
+}
+
+/* Contenedor de campos del formulario */
+.form-fields-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Fila de formulario para dos columnas */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Grupos de formulario */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Etiquetas del formulario */
+.form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vscode-foreground);
+  margin: 0;
+}
+
+/* Inputs del formulario */
+.form-input {
+  padding: 12px 14px;
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.02);
+  color: var(--vscode-foreground);
+  font-size: 14px;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  border-color: var(--liquid-lava);
+  box-shadow: 0 0 0 3px rgba(245, 110, 15, 0.1);
+}
+
+.form-input:hover:not(:focus) {
+  border-color: var(--vscode-focusBorder);
+}
+
+.username-input-wrapper:hover:not(:focus-within) {
+  border-color: var(--vscode-focusBorder);
+}
+
+.form-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Wrapper general para todos los inputs del formulario */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.02);
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.input-wrapper:focus-within {
+  border-color: var(--liquid-lava);
+  box-shadow: 0 0 0 3px rgba(245, 110, 15, 0.1);
+}
+
+.input-wrapper:hover:not(:focus-within) {
+  border-color: var(--vscode-focusBorder);
+}
+
+.input-wrapper input {
+  flex: 1;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  color: var(--vscode-foreground);
+  outline: none;
+  font-size: 14px;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.input-wrapper input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Wrapper para username */
+.username-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.02);
+  transition: all 0.2s ease;
+  width: 100%;
+  grid-column: span 2; /* Hace que el campo de usuario ocupe el ancho completo como el email */
+}
+
+.username-input-wrapper:focus-within {
+  border-color: var(--liquid-lava);
+  box-shadow: 0 0 0 3px rgba(245, 110, 15, 0.1);
+}
+
+.username-input-wrapper:hover:not(:focus-within) {
+  border-color: var(--vscode-focusBorder);
+}
+
+.username-input {
+  flex: 1;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  color: var(--vscode-foreground);
+  outline: none;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+/* Sección de contraseña */
+.password-section {
+  padding-top: 16px;
+  border-top: 1px solid var(--vscode-sideBarSectionHeader-border);
+}
+
+/* Botón para cambiar contraseña */
+.change-password-btn {
+  background: transparent;
+  border: 1px solid var(--liquid-lava);
+  color: var(--liquid-lava);
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.change-password-btn:hover:not(:disabled) {
+  background-color: var(--liquid-lava);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(245, 110, 15, 0.3);
+}
+
+.change-password-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Campos de contraseña con transición */
+.password-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: passwordSectionSlideInFromRight 0.4s ease;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Animación para la sección de contraseña desde la derecha */
+@keyframes passwordSectionSlideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Estilos adicionales para mejorar la consistencia */
+.form-group input:focus {
+  border-color: var(--liquid-lava);
+  box-shadow: 0 0 0 3px rgba(245, 110, 15, 0.1);
+}
+
+.form-group input:hover:not(:focus) {
+  border-color: var(--vscode-focusBorder);
+}
+
+/* Mejora para el área de la foto de perfil */
+.profile-section .photo-help-text {
+  margin-top: 12px;
+}
+
+/* Animación suave para el cambio de sección */
+.form-fields-container {
+  transition: all 0.3s ease;
+}
+
+/* Estilos específicos para el campo de username que ocupa el ancho completo */
+.form-group.username-group {
+  grid-column: span 2;
+}
+
+.form-group.username-group .username-input-wrapper {
+  width: 100%;
+}
+
+/* Botón para cancelar cambio de contraseña */
+.cancel-password-btn {
+  background: none;
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
+  color: var(--vscode-descriptionForeground);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-align: center;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.cancel-password-btn:hover:not(:disabled) {
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-list-hoverBackground);
+  border-color: var(--vscode-focusBorder);
+  transform: translateY(-1px);
+}
+
+.cancel-password-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Animación para la sección de contraseña */
+@keyframes passwordSectionSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Footer moderno del modal */
+.modal-footer-modern {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid var(--vscode-sideBarSectionHeader-border);
+  margin-top: 8px;
+}
+
+.footer-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Botones del modal */
+.modal-button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  outline: none;
+}
+
+.modal-button.secondary {
+  background-color: transparent;
+  color: var(--vscode-foreground);
+  border: 1px solid var(--vscode-sideBarSectionHeader-border);
+}
+
+.modal-button.secondary:hover {
+  background-color: var(--vscode-list-hoverBackground);
+  border-color: var(--vscode-focusBorder);
+}
+
+.modal-button.primary {
+  background-color: var(--liquid-lava);
+  color: white;
+  border: 1px solid var(--liquid-lava);
+}
+
+.modal-button.primary:hover:not(:disabled) {
+  background-color: var(--vscode-button-hoverBackground);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(245, 110, 15, 0.3);
+}
+
+.modal-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.modal-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+/* Animaciones */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos responsivos */
+@media (max-width: 600px) {
+  .user-settings-modal {
+    max-width: 95%;
+    margin: 20px auto;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .modal-footer-modern {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .footer-right {
+    justify-content: stretch;
+  }
+  
+  .footer-right .modal-button {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* Overlay con blur para cambios no guardados */
+.modal-overlay.has-changes {
+  backdrop-filter: blur(2px);
+}
+
+.modal-overlay.has-changes .modal-content {
+  box-shadow: 0 0 0 2px var(--liquid-lava), 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Animación de entrada del modal */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Estilos adicionales para foto de perfil */
+.photo-help-text {
+  color: var(--vscode-descriptionForeground);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  margin-top: 8px;
 }

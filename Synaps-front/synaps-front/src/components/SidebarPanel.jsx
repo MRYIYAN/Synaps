@@ -14,6 +14,7 @@ import "../assets/styles/SidebarPanel.css";
 // Importaciones de componentes
 import LogoutConfirmModal from "./Atomic/Modal/LogoutConfirmModal";
 import CreateVaultModal from "./Atomic/Modal/CreateVaultModal";
+import UserSettingsModal from "./Atomic/Modal/UserSettingsModal";
 import UserProfileBar from "./Atomic/Panels/UserProfileBar";
 import FilesPanel      from './Atomic/Panels/FilesPanel';
 import GalaxyViewPanel  from './Atomic/Panels/GalaxyViewPanel';
@@ -21,7 +22,6 @@ import ListTodoPanel    from './Atomic/Panels/ListTodoPanel';
 import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
 import { NotesHelper } from '../lib/Helpers/NotesHelper.jsx';
 import { FoldersHelper } from '../lib/Helpers/FoldersHelper.jsx';
-const { getFolders } = FoldersHelper(); 
 
 // Configuración de los elementos de navegación
 const navigationItems = [
@@ -40,38 +40,69 @@ const panelComponents = {
 };
 
 const SidebarPanel = () => {
+  // Usar los helpers
+  const { getFolders } = FoldersHelper();
+  const { getNotes, notes } = NotesHelper();
+  
   // Estados para la interfaz de usuario
   const [rightPanelOpen, setRightPanelOpen]       = useState(true);
   const [selectedItem, setSelectedItem]           = useState('files');
   const [indicatorPosition, setIndicatorPosition] = useState(0);
-  const [isClosing, setIsClosing]                 = useState(false);
+  const [isClosing, setIsClosing]                 = useState(false);  
   const [showLogoutModal, setShowLogoutModal]     = useState(false);
   const [showSettingsMenu, setShowSettingsMenu]   = useState(false);
   const [showCreateVaultModal, setShowCreateVaultModal] = useState(false);
-
+  const [showUserSettingsModal, setShowUserSettingsModal] = useState(false);
   // Estados para los datos del usuario y las vaults
-  // TODO: Reemplazar con datos reales de la API
   const [currentUser, setCurrentUser] = useState({
     name: "",
+    email: "",
     avatar: null
   });
 
   const [vaults, setVaults] = useState([]);
   const [currentVault, setCurrentVault] = useState(null);
-
-  // Usar NotesHelper para obtener notas y función getNotes
-  const { notes, getNotes } = NotesHelper();
-
-  // Guardar notas en estado local para sincronizar con NotesHelper
-  const [localNotes, setLocalNotes] = useState([]);
-
+  
   // Cargar datos iniciales
   useEffect(() => {
-    // Cargar datos del usuario (simulado)
-    setCurrentUser({
-      name: "Usuario",
-      avatar: null
-    });
+    // Cargar datos del usuario desde la API
+    const fetchUserData = async () => {
+      try {
+        console.log("🔍 Solicitando datos del usuario desde la API...");
+        const accessToken = localStorage.getItem('access_token');
+        const response = await fetch('http://localhost:8010/api/user', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        const userData = await response.json();
+        
+        if (userData.result === 1 && userData.user) {
+          console.log("👤 Datos del usuario cargados:", userData.user);
+          setCurrentUser({
+            name: userData.user.name || "",
+            email: userData.user.email || "",
+            avatar: null
+          });
+        } else {
+          console.error("❌ Error al cargar usuario:", userData.message);
+          // Fallback a datos por defecto
+          setCurrentUser({
+            name: "Usuario",
+            email: "",
+            avatar: null
+          });
+        }
+      } catch (e) {
+        console.error("❌ Error al cargar datos del usuario:", e);
+        // Fallback a datos por defecto
+        setCurrentUser({
+          name: "Usuario", 
+          email: "",
+          avatar: null
+        });
+      }
+    };    fetchUserData();
 
     // Cargar vaults reales desde la API
     const fetchVaults = async () => {
@@ -99,10 +130,6 @@ const SidebarPanel = () => {
 
     fetchVaults();
   }, []);
-
-  useEffect(() => {
-    setLocalNotes(notes);
-  }, [notes]);
 
   // Manejo de clics en la barra de navegación
   const handleIconClick = (itemId, index) => {
@@ -165,11 +192,46 @@ const SidebarPanel = () => {
     // Opcional: resetear nota seleccionada
     window.readNote?.('', vault?.vault_id);
   };
-  
-  // Nueva función para manejar el menú de configuración
+    // Nueva función para manejar el menú de configuración
   const handleSettingsClick = () => {
-    setShowSettingsMenu(!showSettingsMenu);
-    // TODO: Implementar el menú de configuración
+    setShowUserSettingsModal(true);
+  };
+
+  // Función para manejar el guardado de datos del usuario
+  const handleSaveUser = async (userData) => {
+    try {
+      console.log("💾 Guardando datos del usuario:", userData);
+      const accessToken = localStorage.getItem('access_token');
+      
+      const response = await fetch('http://localhost:8010/api/user', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const result = await response.json();
+      
+      if (result.result === 1 && result.user) {
+        console.log("✅ Usuario actualizado exitosamente:", result.user);
+        
+        // Actualizar el estado local con los nuevos datos
+        setCurrentUser({
+          name: result.user.name || "",
+          email: result.user.email || "",
+          avatar: null
+        });
+        
+        return result;
+      } else {
+        throw new Error(result.message || 'Error al actualizar el usuario');
+      }
+    } catch (error) {
+      console.error("❌ Error al guardar usuario:", error);
+      throw error;
+    }
   };
   
   /**
@@ -369,6 +431,14 @@ const handleVaultCreated = (vault) => {
         isOpen={showCreateVaultModal}
         onClose={() => setShowCreateVaultModal(false)}
         onCreateVault={handleVaultCreated}
+      />
+
+      {/* Modal de configuración de usuario */}
+      <UserSettingsModal 
+        isOpen={showUserSettingsModal}
+        onClose={() => setShowUserSettingsModal(false)}
+        currentUser={currentUser}
+        onSaveUser={handleSaveUser}
       />
     </div>
   );
