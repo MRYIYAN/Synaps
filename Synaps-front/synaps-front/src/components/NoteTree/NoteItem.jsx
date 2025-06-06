@@ -36,6 +36,8 @@ export default function NoteItem( {
   const [menuPos, setMenuPos]             = useState( { x: null, y: null } );
   const [menuOptions, setMenuOptions]     = useState( [] );
   const [isConfirmOpen, setIsConfirmOpen] = useState( false );
+  const [isEditMode, setIsEditMode]       = useState( false );
+  const [editTitle, setEditTitle]         = useState( title );
 
   // Localización de ruta para detectar galaxy view
   const location = useLocation();
@@ -45,7 +47,7 @@ export default function NoteItem( {
   const panelRef = useContext( PanelRefContext );
 
   // -----------------------------------------------------------------
-  // Modal
+  // Modal y edición
   // -----------------------------------------------------------------
   
   // Lógica para confirmar o cancelar eliminación
@@ -62,6 +64,38 @@ export default function NoteItem( {
     setIsConfirmOpen( false );
   };
 
+  // Lógica para editar título
+  const handleEdit = () => {
+    setIsEditMode( true );
+    setEditTitle( title );
+    closeMenu();
+  };
+
+  const handleSaveEdit = () => {
+    if( editTitle.trim() !== title && editTitle.trim() !== '' ) {
+      // Llamar a la función para renombrar
+      if( hasChildren && typeof window.renameFolder === 'function' ) {
+        window.renameFolder( id2, editTitle.trim() );
+      } else if( !hasChildren && typeof window.renameNote === 'function' ) {
+        window.renameNote( id2, editTitle.trim() );
+      }
+    }
+    setIsEditMode( false );
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditMode( false );
+    setEditTitle( title );
+  };
+
+  const handleKeyPress = ( e ) => {
+    if( e.key === 'Enter' ) {
+      handleSaveEdit();
+    } else if( e.key === 'Escape' ) {
+      handleCancelEdit();
+    }
+  };
+
   // -----------------------------------------------------------------
   // Evento Click
   // -----------------------------------------------------------------
@@ -74,11 +108,11 @@ export default function NoteItem( {
 
     if( hasChildren ) {
 
-      // Si es carpeta, recarga su contenido y expande/colapsa
-      if( collapsed && typeof window.getNotesForFolder === 'function' )
+      // Si es carpeta, recarga su contenido y expande/colapsa con un solo click
+      if( typeof window.getNotesForFolder === 'function' )
         window.getNotesForFolder( id );
         
-      // Toggle
+      // Toggle inmediato
       if( typeof onToggle === 'function' )
         onToggle();
     } else {
@@ -94,6 +128,7 @@ export default function NoteItem( {
     e.preventDefault();
 
     setMenuOptions( [
+      { label: 'Editar', onClick: handleEdit },
       { label: 'Eliminar', onClick: () => {
           setIsConfirmOpen( true );
           closeMenu();
@@ -141,7 +176,17 @@ export default function NoteItem( {
         }
 
         {/* En galaxy view, los nodos de nota enlazan a la página de editor */}
-        {isGalaxyView && !hasChildren ? (
+        {isEditMode ? (
+          <input
+            type="text"
+            value={editTitle}
+            onChange={(e) => setEditTitle(e.target.value)}
+            onKeyDown={handleKeyPress}
+            onBlur={handleSaveEdit}
+            autoFocus
+            className={styles.editInput}
+          />
+        ) : isGalaxyView && !hasChildren ? (
           <Link to={`/markdowneditor/${id2}`} className={styles.title}>
             <span title={title} className={styles.title}>{title}</span>
           </Link>

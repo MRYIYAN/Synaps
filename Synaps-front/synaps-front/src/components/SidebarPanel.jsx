@@ -40,9 +40,15 @@ const panelComponents = {
 };
 
 const SidebarPanel = () => {
+
+  // Usar React Router hook para obtener la ubicación actual
+  const location = useLocation();
+
   // Usar los helpers
   const { getFolders } = FoldersHelper();
   const { getNotes, notes } = NotesHelper();
+
+
   
   // Estados para la interfaz de usuario
   const [rightPanelOpen, setRightPanelOpen]       = useState(true);
@@ -385,7 +391,7 @@ const handleVaultCreated = (vault) => {
       </aside>
 
       {/* Side Bar - panel que aparece a la derecha de Activity Bar */}
-      {(rightPanelOpen || isClosing) && CurrentPanelComponent && (
+      {(rightPanelOpen || isClosing) && CurrentPanelComponent && location.pathname !== '/galaxyview' && (
         <div className={`right-options-panel ${isClosing ? 'closing' : ''}`}>
           {/* Logo en la parte superior */}
 
@@ -401,7 +407,7 @@ const handleVaultCreated = (vault) => {
           
           {/* Componente del panel seleccionado */}
           <div className="panel-content">
-            <FilesPanel
+            <CurrentPanelComponent
               notes={notes}
               getNotes={getNotes}
            

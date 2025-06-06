@@ -124,6 +124,22 @@ Route::post( '/addNote', [NoteController::class, 'addNote'] );
 Route::post( '/addFolder', [FolderNoteController::class, 'addFolder'] );
 
 /**
+ * GET /getFolders
+ * Obtiene las carpetas de un vault específico.
+ *
+ * @see FolderNoteController::getFolders()
+ */
+Route::get( '/getFolders', [FolderNoteController::class, 'getFolders'] );
+
+/**
+ * POST /uploadFile
+ * Sube un archivo y crea una nota a partir de él.
+ *
+ * @see NoteController::uploadFile()
+ */
+Route::post( '/uploadFile', [NoteController::class, 'uploadFile'] );
+
+/**
  * POST /deleteFolder
  * Crea una nueva carpeta de notas.
  *
@@ -146,6 +162,22 @@ Route::get( '/getNotes', [NoteController::class, 'getNotes'] );
  * @see NoteController::deleteNote()
  */
 Route::post( '/deleteNote', [NoteController::class, 'deleteNote'] );
+
+/**
+ * POST /renameNote
+ * Renombra una nota existente.
+ *
+ * @see NoteController::renameNote()
+ */
+Route::post( '/renameNote', [NoteController::class, 'renameNote'] );
+
+/**
+ * POST /renameFolder
+ * Renombra una carpeta existente.
+ *
+ * @see FolderNoteController::renameFolder()
+ */
+Route::post( '/renameFolder', [FolderNoteController::class, 'renameFolder'] );
 
 /**
  * POST /searchNotes

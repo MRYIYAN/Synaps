@@ -14,6 +14,7 @@ import React, { useEffect, useState } from "react";  // Importación de React y 
 import { ReactComponent as SearchIcon }     from "../../../assets/icons/search.svg";      // Icono de búsqueda
 import { ReactComponent as NewNoteIcon }    from "../../../assets/icons/new-file.svg";    // Icono para nuevas notas
 import { ReactComponent as NewFolderIcon }  from "../../../assets/icons/new-folder.svg";  // Icono para nuevas carpetas
+import { ReactComponent as UploadIcon }     from "../../../assets/icons/upload.svg";      // Icono para subir archivos
 import { ReactComponent as FilterIcon }     from "../../../assets/icons/filter-sort.svg"; // Icono para filtrado/ordenación
 import NoteTree from "../../NoteTree/NoteTree.jsx";
 import { http_post, http_get } from '../../../lib/http.js';
@@ -105,13 +106,19 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
   const [visibleInputs, setVisibleInputs] = useState( {
     search: false,    // Campo de búsqueda
     newNote: false,   // Input para crear nueva nota
-    newFolder: false  // Input para crear nueva carpeta
+    newFolder: false, // Input para crear nueva carpeta
+    upload: false     // Input para subir archivos
   } );
 
   // Estados para los valores de los inputs de nueva nota y carpeta
   // Almacenan los nombres ingresados por el usuario para nuevas notas y carpetas
   const [newNoteName, setNewNoteName] = useState( "" );       // Nombre de nueva nota
   const [newFolderName, setNewFolderName] = useState( "" );   // Nombre de nueva carpeta
+
+  // Estados para el manejo de archivos
+  const [selectedFile, setSelectedFile] = useState( null );   // Archivo seleccionado
+  const [uploadProgress, setUploadProgress] = useState( 0 );  // Progreso de subida
+  const [isUploading, setIsUploading] = useState( false );    // Estado de subida
 
   //---------------------------------------------------------------------------//
   //  Handlers para manejar interacciones del usuario                          //
@@ -120,7 +127,17 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
   // Función que se ejecuta cuando el usuario escribe en el campo de búsqueda
   // Actualiza el estado searchQuery con el valor actual del input
   const handleSearchChange = ( e ) => {
-    setSearchQuery( e.target.value );
+    const query = e.target.value;
+    setSearchQuery( query );
+    
+    // Realizar búsqueda en tiempo real si hay texto
+    if( query.trim() ) {
+      performSearch( query.trim() );
+    } else {
+      // Limpiar resultados si el campo está vacío
+      setSearchResults( [] );
+      setIsSearching( false );
+    }
   };
 
   // Función que se ejecuta cuando se envía el formulario de búsqueda
@@ -134,30 +151,47 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
     if( !searchQuery.trim() )
       return;
     
+    await performSearch( searchQuery.trim() );
+  };
+
+  // Función para realizar la búsqueda (reutilizable)
+  const performSearch = async( query ) => {
     // Activa el indicador de carga
     setIsSearching( true );
 
-    // Realizamos la búsqueda
-    // Preparamos los datos para el post
-    let url  = 'http://localhost:8010/api/searchNotes';
-    let body = { searchQuery: searchQuery };
+    try {
+      // Preparamos los datos para el post
+      let url  = 'http://localhost:8010/api/searchNotes';
+      let body = { searchQuery: query };
 
-    // Realizamos la llamada por fetch
-    let http_response = await http_post( url, body );
+      // Realizamos la llamada por fetch
+      let http_response = await http_post( url, body );
 
-    // Añadimos el nuevo item al array
-    let data = http_response.http_data;
+      // Procesamos los resultados de la búsqueda
+      if( http_response.result === 1 ) {
+        const items = http_response.items || [];
+        
+        // Convertimos a formato de resultados de búsqueda
+        const searchResultsFormatted = items.map( (item, index) => ({
+          id: index + 1,
+          fileName: item.title,
+          path: item.type === 'note' ? '/notas' : '/carpetas',
+          line: 1,
+          context: `${item.type === 'note' ? 'Nota' : 'Carpeta'}: ${item.title}`,
+          originalItem: item // Guardamos el item original para navegación
+        }));
 
-    setTimeout( () => {
-
-      // Resultados de ejemplo para demostración
-      setSearchResults([
-        { id: 1, fileName: "index.js", path: "/src", line: 24, context: "const searchQuery = useState('');" },
-        { id: 2, fileName: "FilesPanel.jsx", path: "/components", line: 10, context: "function handleSearch(query) {" },
-        { id: 3, fileName: "README.md", path: "/", line: 56, context: "## How to use the search functionality" },
-      ]);
-      setIsSearching( false );  // Desactiva el indicador de carga al completar
-    }, 800 );  // Retraso simulado de 800ms para simular tiempo de búsqueda
+        setSearchResults( searchResultsFormatted );
+      } else {
+        setSearchResults( [] );
+      }
+    } catch( error ) {
+      console.error( 'Error en búsqueda:', error );
+      setSearchResults( [] );
+    } finally {
+      // Desactiva el indicador de carga al completar
+      setIsSearching( false );
+    }
   };
 
   // Función para mostrar/ocultar un campo de entrada específico
@@ -168,7 +202,8 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
     const newState = {
       search: false,
       newNote: false,
-      newFolder: false
+      newFolder: false,
+      upload: false
     };
     
     // Alternar el estado del input seleccionado
@@ -195,6 +230,12 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
     // Si estamos cerrando el input de nueva carpeta, limpiamos su nombre
     if( visibleInputs.newFolder && !newState.newFolder) {
       setNewFolderName( "" );
+    }
+
+    // Si estamos cerrando el input de upload, limpiamos el archivo seleccionado
+    if( visibleInputs.upload && !newState.upload) {
+      setSelectedFile( null );
+      setUploadProgress( 0 );
     }
   };
 
@@ -285,6 +326,80 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
     setVisibleInputs(prev => ( {...prev, newFolder: false} ));  // Oculta el formulario
   };
 
+  // Función para manejar la selección de archivos
+  const handleFileSelect = ( e ) => {
+    const file = e.target.files[0];
+    if( file ) {
+      setSelectedFile( file );
+      
+      // Auto-upload el archivo seleccionado
+      handleFileUpload( file );
+    }
+  };
+
+  // Función para subir el archivo y crear una nota
+  const handleFileUpload = async( file ) => {
+    if( !file ) return;
+
+    setIsUploading( true );
+    setUploadProgress( 0 );
+
+    try {
+      // Crear FormData para el archivo
+      const formData = new FormData();
+      formData.append( 'file', file );
+      formData.append( 'parent_id2', window.selectedItemId2 || '' );
+
+      // Realizar la subida con seguimiento de progreso
+      const response = await fetch( 'http://localhost:8010/api/uploadFile', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // Si usas autenticación
+        }
+      } );
+
+      if( !response.ok ) {
+        throw new Error( 'Error al subir el archivo' );
+      }
+
+      const result = await response.json();
+      
+      if( result.result === 1 ) {
+        // Crear nota basada en el archivo subido
+        const noteData = result.http_data.note;
+        const note = {
+          id: noteData.note_id,
+          id2: noteData.note_id2,
+          title: noteData.note_title,
+          parent_id: noteData.parent_id,
+          type: 'note'
+        };
+
+        // Actualizar la lista de notas
+        setNotes( prev => {
+          const updated = [...(window.currentNotes || []), note];
+          window.currentNotes = updated;
+
+          // Marcar como seleccionado el nuevo item
+          setSelectedItemId2( noteData.note_id2 );
+          window.readNote( noteData.note_id2 );
+          return updated;
+        } );
+
+        // Limpiar estado de upload
+        setSelectedFile( null );
+        setUploadProgress( 100 );
+        setVisibleInputs( prev => ( {...prev, upload: false} ) );
+      }
+    } catch( error ) {
+      console.error( 'Error al subir archivo:', error );
+      // Aquí podrías mostrar un mensaje de error al usuario
+    } finally {
+      setIsUploading( false );
+    }
+  };
+
   // Función para filtrar
   // Se ejecuta cuando el usuario hace clic en el botón de filtros
   const handleFilter = () => {
@@ -324,6 +439,17 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
             aria-expanded={visibleInputs.newFolder}
           >
             <NewFolderIcon className="toolbar-icon" />
+          </button>
+
+          {/* Botón para subir archivos */}
+          <button 
+            className={`toolbar-button ${visibleInputs.upload ? 'active' : ''}`}
+            onClick={() => toggleInput('upload')}
+            aria-label="Subir archivo"
+            title="Subir archivo"
+            aria-expanded={visibleInputs.upload}
+          >
+            <UploadIcon className="toolbar-icon" />
           </button>
           
           {/* Botón de búsqueda */}
@@ -413,6 +539,48 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
                 />
               </div>
             </form>
+          )}
+
+          {/* Formulario para subir archivos - visible solo cuando se activa */}
+          {visibleInputs.upload && (
+            <div className="upload-form">
+              <div className="upload-input-container">
+                {/* Icono indicador del tipo de acción */}
+                <UploadIcon className="upload-icon" />
+                {/* Campo oculto para seleccionar archivos */}
+                <input
+                  type="file"
+                  onChange={handleFileSelect}
+                  className="upload-file-input"
+                  aria-label="Seleccionar archivo para subir"
+                  accept=".txt,.md,.pdf,.doc,.docx,.rtf"
+                  style={{ display: 'none' }}
+                  id="file-upload-input"
+                />
+                {/* Botón visible para activar la selección */}
+                <label 
+                  htmlFor="file-upload-input" 
+                  className="upload-button"
+                  style={{ 
+                    cursor: 'pointer',
+                    padding: '8px 12px',
+                    border: '2px dashed #ccc',
+                    borderRadius: '4px',
+                    textAlign: 'center',
+                    backgroundColor: '#f9f9f9',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {isUploading ? (
+                    <span>Subiendo... {uploadProgress}%</span>
+                  ) : selectedFile ? (
+                    <span>Archivo: {selectedFile.name}</span>
+                  ) : (
+                    <span>Haz clic para seleccionar archivo</span>
+                  )}
+                </label>
+              </div>
+            </div>
           )}
         </div>
 

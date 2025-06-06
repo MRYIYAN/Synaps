@@ -918,6 +918,33 @@ pre {
   box-shadow: 0 0 0 1px rgba(245, 110, 15, 0.2);
 }
 
+/* Estilos para el label de upload que actúa como input */
+.upload-label {
+  width: 100%;
+  padding: 8px 8px 8px 30px;
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 2px dashed var(--vscode-input-border, #555);
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  display: block;
+  text-align: center;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  user-select: none;
+}
+
+.upload-label:hover {
+  border-color: var(--liquid-lava);
+  background-color: rgba(245, 110, 15, 0.05);
+}
+
+.upload-label:focus {
+  outline: none;
+  border-color: var(--liquid-lava);
+  box-shadow: 0 0 0 1px rgba(245, 110, 15, 0.2);
+}
+
 /* Estilos para evitar que se superpongan múltiples inputs */
 .input-group-container {
   display: flex;
