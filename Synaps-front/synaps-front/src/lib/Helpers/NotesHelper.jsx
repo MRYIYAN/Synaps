@@ -1,165 +1,232 @@
 import { http_post, http_get } from '../http.js';
-import React, { useEffect, useState, useRef } from "react";  // Importación de React y el hook useState
+import { useEffect, useState } from "react";
+import { showErrorNotification } from '../../components/Atomic/Notification/NotificationSystem';
 
+/**
+ * Helper para gestión de notas
+ * Proporciona funciones para CRUD de notas y manejo del estado
+ */
 export function NotesHelper() {
 
-  // Estado para almacenar las notas
-  const [notes, setNotes] = useState( () => window.currentNotes || [] );
+  // =========================================================================
+  // ESTADO LOCAL
+  // =========================================================================
+  
+  // Notas actuales - sincronizado con window.currentNotes
+  const [notes, setNotes] = useState(() => window.currentNotes || []);
 
-  // -----------------------------------------------------------------
-  // Selected Item
-  // -----------------------------------------------------------------
+  // Item seleccionado - sincronizado con window.selectedItemId2  
+  const [selectedItemId2, _setSelectedItemId2] = useState(() => window.selectedItemId2 || '');
 
-  // Inicializamos el item seleccionado
-  const [selectedItemId2, _setSelectedItemId2]  = useState( () => window.selectedItemId2 ||  '' );
+  // =========================================================================
+  // FUNCIONES DE UTILIDAD
+  // =========================================================================
 
-  // setter extendido que también guarda en window
-  const setSelectedItemId2 = ( value ) => {
-    _setSelectedItemId2( value );
+  // Setter extendido que sincroniza con window.selectedItemId2
+  const setSelectedItemId2 = (value) => {
+    _setSelectedItemId2(value);
     window.selectedItemId2 = value;
   };
 
-  useEffect( () => {
-    window.setSelectedItemId2 = setSelectedItemId2;
-  }, [] );
+  // =========================================================================
+  // FUNCIONES PRINCIPALES
+  // =========================================================================
 
-  // -----------------------------------------------------------------
-  // Notes
-  // -----------------------------------------------------------------
-
-  // Función para obtener todas las notas desde la API
+  // Obtener notas de la API para un vault y carpeta específicos
   const getNotes = async (vault_id, parent_id = 0) => {
     vault_id = parseInt(vault_id, 10);
     if (isNaN(vault_id)) {
-      console.error("vault_id inválido");
+      console.error("Invalid vault_id");
       return;
     }
-    console.log("Vault actual:", vault_id);
+    
     try {
       const url = 'http://localhost:8010/api/getNotes';
-      const body = { parent_id, vault_id }; //  Enviar vault_id
-
-      const { result, http_data } = await http_get( url, body );
-      if ( result !== 1 )
-        throw new Error( 'Error al cargar notas' );
-      
-      // Actualizamos los items
-      const newItems = http_data.items.map( item => ( {
-          id       : item.id
-        , id2      : item.id2
-        , title    : item.title
-        , parent_id: item.parent_id
-        , type     : item.type
-      } ) );
-
-      // Actualizamos el estado de notas y la variable global en paralelo
-      setNotes( prev => {
-        const filtered = prev.filter( item => item.parent_id !== parent_id );
-        const updated = [...filtered, ...newItems];
-        window.currentNotes = updated;
-        return updated;
-      } );
-
-    } catch( error ) {
-      console.error( error );
-    }
-  }
-
-  // Leer una nota concreta
-  const readNote = async (note_id2, vault_id) => {
-    try {
-      const url  = 'http://localhost:8010/api/readNote';
-      const body = { note_id2, vault_id }; //  Enviar vault_id
+      const body = { parent_id, vault_id };
 
       const { result, http_data } = await http_get(url, body);
-      if (result !== 1)
-        throw new Error('Error al leer la nota');
+      
+      if (result !== 1) throw new Error('Error loading notes');
+      
+      // Transformar elementos de la API al formato local
+      const newItems = http_data.items.map(item => ({
+        id: item.id,
+        id2: item.id2,
+        title: item.title,
+        parent_id: item.parent_id,
+        type: item.type
+      }));
 
-      window.set_markdown(http_data.note.markdown);
-
-      // Forzamos la recarga del MarkdownEditor
-      window.setKey(k => k + 1);
-
-      // Notifica al editor de que hay nueva nota
-      const event = new CustomEvent('noteSelected', {
-        detail: { note_id2, vault_id }
+      // Actualizar estado local y global preservando las carpetas
+      setNotes(prev => {
+        // Obtener elementos actuales de window (incluye carpetas)
+        const currentItems = window.currentNotes || [];
+        
+        // Filtrar notas existentes con el mismo parent_id pero mantener carpetas
+        const filteredItems = currentItems.filter(item => 
+          item.parent_id !== parent_id || item.type === 'folder'
+        );
+        
+        // Añadir nuevas notas
+        const updated = [...filteredItems, ...newItems];
+        window.currentNotes = updated;
+        
+        return updated;
       });
-      window.dispatchEvent(event);
 
     } catch (error) {
-      console.log(error);
+      console.error('Error cargando notas:', error);
     }
   };
 
-  // -----------------------------------------------------------------
-  // Borrar una nota concreta
-  // -----------------------------------------------------------------
-  const deleteNote = async( note_id2 ) => {
+  // Leer una nota concreta - simplificado
+  const readNote = async (note_id2, vault_id) => {
+    // Solo cargar nota si se proporciona un note_id2 específico
+    if (!note_id2 || note_id2 === '') return;
+
+    console.log('readNote llamado con:', { note_id2, vault_id });
+
+    // Siempre disparar evento para notificar que se debe crear/mostrar el editor
+    console.log('Disparando evento noteSelected...');
+    const event = new CustomEvent('noteSelected', {
+      detail: { note_id2, vault_id }
+    });
+    window.dispatchEvent(event);
+    
+    // Esperar un momento para que se inicialice el editor
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    // Verificar si el editor está disponible ahora
+    if (!window.set_markdown || !window.setKey) {
+      console.warn('Editor markdown aún no está disponible después de disparar evento');
+      // Intentar cargar la nota de todas formas
+    }
+
+    const url = 'http://localhost:8010/api/readNote';
+    const body = { note_id2, vault_id };
+
+    const { result, http_data } = await http_get( url, body );
+    if (result !== 1 || !http_data?.note ) {
+      console.error( 'No se pudo cargar la nota' );
+      return;
+    }
+
+    const note = http_data.note;
+    const markdown = note.note_markdown || note.markdown || '';
+
+    // Solo llamar a set_markdown si está disponible
+    if (window.set_markdown) {
+      window.set_markdown(markdown);
+    }
+    if (window.setKey) {
+      window.setKey(prev => prev + 1);
+    }
+  };
+
+  // Eliminar una nota específica
+  const deleteNote = async (note_id2) => {
     try {
-      const url  = 'http://localhost:8010/api/deleteNote';
+      const url = 'http://localhost:8010/api/deleteNote';
       const body = { note_id2 };
 
-      // Realizamos la petición
-      const { result, http_data } = await http_post( url, body );
-      if( result !== 1 )
-        throw new Error( 'Error al borrar la nota' );
+      const { result } = await http_post(url, body);
+      if (result !== 1) throw new Error('Error al borrar la nota');
 
-      // Eliminamos la nota del array y actualizamos la interfaz
-      setNotes( () => {
-        const filtered = ( window.currentNotes || [] ).filter(
+      // Verificar si la nota eliminada es la actualmente abierta
+      if (window.selectedItemId2 === note_id2) {
+        // Limpiar la selección actual
+        window.selectedItemId2 = '';
+        setSelectedItemId2('');
+        
+        // Notificar al editor para mostrar el menú de VS Code
+        const event = new CustomEvent('noteDeleted', {
+          detail: { deletedNoteId2: note_id2 }
+        });
+        window.dispatchEvent(event);
+      }
+
+      // Actualizar estado local y global eliminando la nota
+      setNotes(() => {
+        const filtered = (window.currentNotes || []).filter(
           node => node.id2 !== note_id2
         );
-
         window.currentNotes = filtered;
         return filtered;
-      } );
+      });
 
-    } catch ( error ) {
-      console.log( error );
+    } catch (error) {
+      console.error('Error eliminando nota:', error);
     }
   };
 
-  // -----------------------------------------------------------------
-  // Renombrar una nota concreta
-  // -----------------------------------------------------------------
-  const renameNote = async( note_id2, new_title ) => {
+  // Renombrar una nota específica
+  const renameNote = async (note_id2, new_title) => {
     try {
-      const url  = 'http://localhost:8010/api/renameNote';
+      // Validación local de nombres duplicados
+      const existingNotes = window.currentNotes || [];
+      const isDuplicate = existingNotes.some(note => 
+        note.title === new_title && note.id2 !== note_id2
+      );
+      
+      if (isDuplicate) {
+        const errorMsg = 'Ya existe una nota con ese nombre';
+        showErrorNotification(errorMsg, 'Error de validación');
+        throw new Error(errorMsg);
+      }
+
+      const url = 'http://localhost:8010/api/renameNote';
       const body = { id2: note_id2, new_title };
 
-      // Realizamos la petición
-      const { result, http_data } = await http_post( url, body );
-      if( result !== 1 )
-        throw new Error( 'Error al renombrar la nota' );
+      const { result, message } = await http_post(url, body);
+      if (result !== 1) {
+        // Mostrar mensaje de error específico si viene del backend
+        const errorMsg = message || 'Error al renombrar la nota';
+        throw new Error(errorMsg);
+      }
 
-      // Actualizamos la nota en el array y la interfaz
-      setNotes( () => {
-        const updated = ( window.currentNotes || [] ).map( node => {
-          if( node.id2 === note_id2 ) {
+      // Actualizar título en estado local y global
+      setNotes(() => {
+        const updated = (window.currentNotes || []).map(node => {
+          if (node.id2 === note_id2) {
             return { ...node, title: new_title };
           }
           return node;
         });
-
         window.currentNotes = updated;
         return updated;
-      } );
+      });
 
-    } catch ( error ) {
-      console.log( error );
+    } catch (error) {
+      console.error('Error renombrando nota:', error);
+      
+      // Mostrar notificación de error al usuario
+      if (!error.message.includes('Ya existe una nota con ese nombre')) {
+        showErrorNotification(error.message, 'Error al renombrar');
+      }
+      
+      // Re-throw para que el componente pueda manejar el error si es necesario
+      throw error;
     }
   };
 
-  // Registrar en window al montar
-  useEffect( () => {
+  // =========================================================================
+  // EXPOSICIÓN GLOBAL
+  // =========================================================================
+  
+  // Registrar funciones en window para acceso global
+  useEffect(() => {
     window.setSelectedItemId2 = setSelectedItemId2;
     window.getNotes = getNotes;
     window.readNote = readNote;
     window.deleteNote = deleteNote;
     window.renameNote = renameNote;
-  }, [] );
+  }, [deleteNote, getNotes, readNote, renameNote]);
 
-  // Devolver API del hook
+  // =========================================================================
+  // API PÚBLICA
+  // =========================================================================
+  
+  // Retornar API del helper para uso en componentes
   return {
     selectedItemId2,
     setSelectedItemId2,

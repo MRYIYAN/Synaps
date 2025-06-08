@@ -53,7 +53,6 @@ class FolderNoteController extends Controller
         throw new Exception( 'Usuario no autenticado' );
       
       $user_id  = $auth_result['user_id'];
-      $user_id2 = $auth_result['user_id2'];
 
       // Inicializamos las conexiones de DB
       $user_db = DatabaseHelper::connect( $user_id );
@@ -139,7 +138,6 @@ class FolderNoteController extends Controller
         throw new Exception( 'Usuario no autenticado' );
       
       $user_id  = $auth_result['user_id'];
-      $user_id2 = $auth_result['user_id2'];
       
       // Inicializamos la conexión de DB
       $user_db = DatabaseHelper::connect( $user_id );
@@ -271,7 +269,6 @@ class FolderNoteController extends Controller
         throw new Exception( 'Usuario no autenticado' );
       
       $user_id  = $auth_result['user_id'];
-      $user_id2 = $auth_result['user_id2'];
 
       // Validamos los datos recibidos
       $data = $request->validate( [
@@ -328,7 +325,6 @@ class FolderNoteController extends Controller
         throw new Exception( 'Usuario no autenticado' );
       
       $user_id  = $auth_result['user_id'];
-      $user_id2 = $auth_result['user_id2'];
 
       // Validamos los datos recibidos
       $data = $request->validate( [

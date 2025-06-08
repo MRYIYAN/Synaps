@@ -46,8 +46,6 @@ const SimpleIcon = ({ size = 24 }) => (
 //  Componente principal de la sección CTA                                   //
 //---------------------------------------------------------------------------//
 const CTASection = () => {
-  // Log para verificar la carga correcta del componente y sus dependencias
-  console.log('Rendering CTASection component with direct icon imports');
   
   return (
     <section className="cta-section landing-section">

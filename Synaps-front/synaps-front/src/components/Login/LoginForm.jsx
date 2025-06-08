@@ -155,9 +155,6 @@ const LoginForm = () => {
 
       const http_data = await response.json();
 
-      // Log temporal para inspeccionar la respuesta del servidor
-      console.log("LOGIN RESPONSE:", http_data);
-
       // Si la consulta ha sido incorrecta, mostramos un mensaje más informativo
       if (!response.ok) {
         const error_message = http_data?.error || http_data?.message || 'Unknown error';

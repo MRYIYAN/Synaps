@@ -17,6 +17,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * Clase que representa a los usuarios del sistema.
  *
  * @property int $user_id
+ * @property string $user_id2
  * @property string $user_email
  * @property string $user_name
  * @property string $user_password
@@ -60,6 +61,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_id2',
         'user_email',
         'user_name',
         'user_password',

@@ -14,6 +14,7 @@
 //====================================================================================//
 // Importaciones de React y sus hooks para manejo de estado y efectos
 import React, { useState, useRef, useEffect } from 'react';
+import { http_post } from '../../../lib/http';
 
 // Iconos SVG utilizados en la interfaz
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close.svg";
@@ -284,29 +285,16 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     setStatusMessage('Creando vault...');
 
     try {
-      const access_token = localStorage.getItem('access_token');
-      console.log(" Enviando petición para crear vault:", {
+      const url = 'http://localhost:8010/api/vaults';
+      const body = {
         vault_title: vaultName.trim(),
         logical_path: logicalPath.trim(),
         is_private: isPrivate
-      });
+      };
 
-      const response = await fetch('http://localhost:8010/api/vaults', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${access_token}`,   //  obligatorio SIEMPRE RECORDAR CHICOS
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          vault_title: vaultName.trim(),
-          logical_path: logicalPath.trim(),
-          is_private: isPrivate
-        }),
-      });
+      const result = await http_post(url, body);
 
       await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const result = await response.json();
 
       if( result.result !== 1 )
         throw new Error( result.message || 'Error desconocido al crear vault' );
@@ -317,8 +305,6 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
 
       // Espera 2 segundos antes de cerrar el popup (ya tienes autoCloseDelay)
       await new Promise(resolve => setTimeout(resolve, 1000));
-
-      console.log(" Vault creada correctamente:", result.data);
 
       // Llama al callback para actualizar el sidebar
       onCreateVault({

@@ -37,8 +37,6 @@ def token():
     grant_type      = request.form.get('grant_type')
     username        = request.form.get('username')
     password        = request.form.get('password')
-    client_id       = request.form.get('client_id')     # Ignorado
-    client_secret   = request.form.get('client_secret') # Ignorado
 
     # Aquí simplemente ignoramos client_id y client_secret, no hacemos nada
 

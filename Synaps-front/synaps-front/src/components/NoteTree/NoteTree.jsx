@@ -9,7 +9,6 @@
 
 import React, { useRef } from "react";
 import NoteBranch from "./NoteBranch";
-import styles from "./NoteTree.css";
 
 export const PanelRefContext = React.createContext( null );
 
@@ -32,7 +31,6 @@ function buildTree( items, parent_id = 0 ) {
 
 export default function NoteTree( { nodes = [] } ) {
   const treeData = buildTree( nodes, 0 );
-
   const panelRef = useRef();
 
   return (

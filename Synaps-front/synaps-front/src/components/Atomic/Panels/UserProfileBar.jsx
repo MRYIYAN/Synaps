@@ -56,7 +56,6 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
    * @param {Object} vault - La vault seleccionada
    */
   const selectVault = (vault) => {
-    console.log('Vault seleccionada:', vault); // Para debug
     if (typeof onVaultSelect === 'function') {
       onVaultSelect(vault);
     }

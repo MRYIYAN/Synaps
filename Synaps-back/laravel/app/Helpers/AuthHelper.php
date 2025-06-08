@@ -8,6 +8,7 @@ namespace App\Helpers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 /**
@@ -18,19 +19,29 @@ class AuthHelper
   /**
    * Obtiene el ID del usuario autenticado con validación.
    *
-   * @return array Retorna ['user_id' => int|null, 'error_response' => JsonResponse|null]
+   * @return array Retorna ['user_id' => int|null, 'user_id2' => string|null, 'error_response' => JsonResponse|null]
    */
   public static function getAuthenticatedUserId(): array
   {
     // Inicializamos los valores a devolver
     $user_id = null;
+    $user_id2 = null;
     $message = '';
 
     try
     {
-      // Obtenemos el identificador del usuario autenticado
-      // $user_id = ( int ) $request->user()->id;
-      $user_id = Auth::id();
+      // Obtenemos el usuario completo autenticado usando el guard por defecto
+      Log::debug('AUTH_HELPER: Intentando obtener usuario con guard por defecto');
+      $user = Auth::user();
+      Log::debug('AUTH_HELPER: Usuario obtenido', ['user' => $user ? $user->toArray() : null]);
+      
+      if( !$user )
+        throw new Exception( 'Usuario no autenticado' );
+
+      $user_id = $user->user_id;
+      $user_id2 = $user->user_id2;
+      
+      Log::debug('AUTH_HELPER: IDs obtenidos', ['user_id' => $user_id, 'user_id2' => $user_id2]);
       
       if( !$user_id )
         throw new Exception( 'Usuario no autenticado' );
@@ -43,6 +54,7 @@ class AuthHelper
     {
       return [
           'user_id' => $user_id
+        , 'user_id2' => $user_id2
         , 'error_response' => $message ? response()->json( [
             'result' => 0
           , 'message' => $message
@@ -65,7 +77,7 @@ class AuthHelper
 
     try
     {
-      // Obtenemos el usuario autenticado completo
+      // Obtenemos el usuario autenticado completo usando el guard por defecto
       // $user = $request->user();
       $user = Auth::user();
       

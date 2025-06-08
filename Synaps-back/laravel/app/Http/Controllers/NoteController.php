@@ -305,18 +305,35 @@ class NoteController extends Controller
       }
       $user_id = $auth_result['user_id'];
 
-      // Recibe ambos parámetros
+      // Recibe los parámetros
       $note_id2 = $request->input( 'note_id2' );
       $vault_id = $request->input( 'vault_id' );
+      $first    = $request->input( 'first' );
 
       // Inicializamos la conexión de DB
       $user_db = DatabaseHelper::connect( $user_id );
 
-      // Filtra por ambos parámetros
-      $note = Note::on( $user_db )
-        ->where( 'note_id2', $note_id2 )
-        ->where( 'vault_id', $vault_id )
-        ->firstOrFail();
+      // Si se solicita la primera nota disponible
+      if( $first == 1 && empty( $note_id2 ) )
+      {
+        $note = Note::on( $user_db )
+          ->where( 'vault_id', $vault_id )
+          ->where( 'parent_id', 0 )
+          ->orderBy( 'note_id', 'asc' )
+          ->first();
+
+        if( !$note ) {
+          throw new Exception( 'No hay notas disponibles' );
+        }
+      }
+      else
+      {
+        // Filtra por note_id2 específico
+        $note = Note::on( $user_db )
+          ->where( 'note_id2', $note_id2 )
+          ->where( 'vault_id', $vault_id )
+          ->firstOrFail();
+      }
 
       // Si llegamos hasta aquí está todo OK
       $result = 1;
@@ -418,7 +435,7 @@ class NoteController extends Controller
     // Inicializamos los valores a devolver
     $result  = 0;
     $message = '';
-    $note    = [];
+    $items   = [];
 
     try
     {
@@ -438,14 +455,8 @@ class NoteController extends Controller
       // Obtenemos todas las notas (propias + compartidas)
       $notes = NoteService::GetNotes( $user_id, $data['searchQuery'] );
 
-      // Obtenemos todas las carpetas del usuario
-      $folders = FolderNote::on( $user_db )
-        ->select( [ 'folder_id', 'folder_id2', 'folder_title', 'parent_id'] )
-        ->where( 'folder_title', '=', $data['searchQuery'] )
-        ->get();
-
       // Mapeamos notas al formato común { id, id2, title, parent_id }
-      $notesArray = $notes
+      $items = $notes
         ->map( fn( $note ) => [
             'id'        => $note->note_id
           , 'id2'       => $note->note_id2
@@ -455,19 +466,7 @@ class NoteController extends Controller
         ] )
         ->toArray();
 
-      // Mapeamos carpetas al mismo formato
-      $foldersArray = $folders
-        ->map( fn( $folder ) => [
-            'id'        => $folder->folder_id
-          , 'id2'       => $folder->folder_id2
-          , 'title'     => $folder->folder_title
-          , 'parent_id' => $folder->parent_id
-          , 'type'      => 'folder'
-        ] )
-        ->toArray();
-
-      // Unimos ambos arrays
-      $items = array_merge( $foldersArray, $notesArray );
+      $result = 1;
     }
     catch( Exception $e )
     {
@@ -649,8 +648,8 @@ class NoteController extends Controller
     if( $auth_result['error_response'] ) {
       throw new Exception( 'Usuario no autenticado' );
     }
+
     $user_id = $auth_result['user_id'];
-    $user_id2 = 'HG8F90HG89H0J8F90GD890FG890B8FDD';
 
     try
     {

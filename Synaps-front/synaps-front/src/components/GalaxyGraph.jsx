@@ -157,6 +157,9 @@ const GalaxyGraph = ( { data } ) => {
         linkWidth       = {1}       // Grosor de los enlaces
         nodeLabel       = 'name'    // Muestra nombre al pasar el ratón
         nodeAutoColorBy = 'group'   // Color automático según grupo
+        
+        // Aumentar el área de clic de los nodos para facilitar la interacción
+        nodeVal         = {node => Math.max(25, 17 + (nodes_count[node.id] * 4.5))} // Tamaño del área de interacción (mayor radio de clic)
 
         // -----------------------------------------------------------------------------------------------
         // EVENTOS DRAG
@@ -174,8 +177,18 @@ const GalaxyGraph = ( { data } ) => {
           graph.d3Force( 'charge' ).strength( -50 );
         } }
 
-        // Evento onClick
-        onNodeClick={ node => setEditorNode( node ) }
+        // Evento onClick - abre modal con editor de solo lectura y sincroniza con sidebar
+        onNodeClick={ node => {
+          console.log('Galaxy Graph: Abriendo nota', node.name, 'con ID:', node.id);
+          
+          // Sincronizar con el sidebar
+          if (window.setSelectedItemId2) {
+            window.setSelectedItemId2(node.id);
+          }
+          
+          // Abrir modal con editor
+          setEditorNode( node );
+        } }
 
         // Ajustamos el zoom al terminar el cálculo
         onEngineStop={ () => graph_pointer.current.zoomToFit( 1000 ) } 
@@ -196,7 +209,12 @@ const GalaxyGraph = ( { data } ) => {
           }}
         >
           <div className="md-editor-wrapper">
-            <MDEditorWS note_id2={editorNode.id} modal={true} options={false} />
+            <MDEditorWS 
+              note_id2={editorNode.id} 
+              vault_id={window.currentVaultId || null}
+              modal={true} 
+              options={false} 
+            />
           </div>
         </MarkdownModal>
       )}
