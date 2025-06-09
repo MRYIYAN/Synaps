@@ -55,6 +55,22 @@ try
          */
         Route::post( '/vaults', [VaultController::class, 'store'] );
 
+        /**
+         * PUT /vaults/{id}
+         * Actualiza un vault existente del usuario autenticado.
+         *
+         * @see VaultController::update()
+         */
+        Route::put( '/vaults/{id}', [VaultController::class, 'update'] );
+
+        /**
+         * POST /vaults/{id}/verify-pin
+         * Verifica el PIN de un vault privado.
+         *
+         * @see VaultController::verifyPin()
+         */
+        Route::post( '/vaults/{id}/verify-pin', [VaultController::class, 'verifyPin'] );
+
         //=======================//
         // NOTES API            //
         //=======================//

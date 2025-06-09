@@ -191,4 +191,218 @@ class VaultController extends Controller
             ], $result ? 201 : 500 );
         }
     }
+
+    //---------------------------------------------------------------------------//
+    //  Actualizar un vault existente                                           //
+    //---------------------------------------------------------------------------//
+
+    /**
+     * Actualizar un vault existente.
+     *
+     * @param  Request $request   La solicitud HTTP con los datos actualizados del vault.
+     * @param  string $vault_id2  El ID del vault a actualizar.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, string $vault_id2): JsonResponse
+    {
+        //=========================//
+        // INICIALIZACIÓN DE VARIABLES DE RESPUESTA
+        //=========================//
+        $result   = 0;
+        $message  = '';
+        $vault    = [];
+
+        try
+        {
+            //=========================//
+            // OBTENER USER_ID Y CONECTAR TENANT
+            //=========================//
+            $user_id = auth()->id(); // Esto lo extrae del token JWT ya validado
+            Log::debug('Actualizando vault:', ['user_id' => $user_id, 'vault_id2' => $vault_id2]);
+
+            DatabaseHelper::connect($user_id); // Conectamos a la base de datos del usuario
+
+            //=========================//
+            // VALIDACIÓN DE USUARIO
+            //=========================//
+            if (!$user_id) {
+                throw new Exception('Usuario no autenticado');
+            }
+
+            //=========================//
+            // VALIDACIÓN DE DATOS DEL VAULT
+            //=========================//
+            $validated = $request->validate([
+                'vault_title'   => 'required|string|max:255',
+                'is_private'    => 'boolean',
+                'pin'           => 'nullable|string|max:8'
+            ]);
+
+            //=========================//
+            // VERIFICAR QUE EL VAULT EXISTE Y PERTENECE AL USUARIO
+            //=========================//
+            $existingVault = DB::connection('tenant')
+                ->table('vaults')
+                ->where('vault_id2', $vault_id2)
+                ->where('user_id', $user_id)
+                ->first();
+
+            if (!$existingVault) {
+                throw new Exception('Vault no encontrado o no tienes permisos para editarlo');
+            }
+
+            //=========================//
+            // PREPARAR DATOS PARA ACTUALIZACIÓN
+            //=========================//
+            $updateData = [
+                'vault_title'   => $validated['vault_title'],
+                'is_private'    => $validated['is_private'] ?? false,
+                'updated_at'    => now()
+            ];
+
+            // Solo actualizar PIN si se proporciona y la vault es privada
+            if ($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
+                $updateData['pin'] = $validated['pin'];
+            } elseif (!$validated['is_private']) {
+                // Si la vault ya no es privada, remover el PIN
+                $updateData['pin'] = null;
+            }
+
+            Log::debug('Datos a actualizar:', $updateData);
+
+            //=========================//
+            // ACTUALIZAR EL VAULT
+            //=========================//
+            $updated = DB::connection('tenant')
+                ->table('vaults')
+                ->where('vault_id2', $vault_id2)
+                ->where('user_id', $user_id)
+                ->update($updateData);
+
+            if ($updated === 0) {
+                throw new Exception('No se pudo actualizar el vault');
+            }
+
+            Log::debug('Update OK');
+
+            //============================================//
+            // RECUPERAR EL VAULT ACTUALIZADO PARA LA RESPUESTA
+            //============================================//
+            $vault = DB::connection('tenant')
+                ->table('vaults')
+                ->where('vault_id2', $vault_id2)
+                ->first();
+
+            $result = 1;
+            $message = 'Vault actualizado exitosamente';
+        }
+        catch (Exception $e) {
+            $message = $e->getMessage();
+            Log::error('Error al actualizar vault:', [
+                'message'   => $message,
+                'trace'     => $e->getTraceAsString(),
+                'request'   => $request->all(),
+                'vault_id2' => $vault_id2,
+            ]);
+        }
+        finally {
+            //=========================//
+            // RESPUESTA JSON FINAL
+            //=========================//
+            return response()->json([
+                'data'    => $vault,
+                'message' => $message,
+                'result'  => $result
+            ], $result ? 200 : 500);
+        }
+    }
+
+    //---------------------------------------------------------------------------//
+    //  Verificar PIN de vault privado                                           //
+    //---------------------------------------------------------------------------//
+
+    /**
+     * Verificar el PIN de acceso a un vault privado.
+     *
+     * @param  Request $request   La solicitud HTTP con el PIN.
+     * @param  string $vault_id2  El ID del vault a verificar.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verifyPin(Request $request, string $vault_id2): JsonResponse
+    {
+        //=========================//
+        // INICIALIZACIÓN DE VARIABLES DE RESPUESTA
+        //=========================//
+        $result   = 0;
+        $message  = '';
+
+        try
+        {
+            //=========================//
+            // OBTENER USER_ID Y CONECTAR TENANT
+            //=========================//
+            $user_id = auth()->id();
+            Log::debug('Verificando PIN para vault:', ['user_id' => $user_id, 'vault_id2' => $vault_id2]);
+
+            DatabaseHelper::connect($user_id);
+
+            //=========================//
+            // VALIDACIÓN DE USUARIO
+            //=========================//
+            if (!$user_id) {
+                throw new Exception('Usuario no autenticado');
+            }
+
+            //=========================//
+            // VALIDACIÓN DE DATOS
+            //=========================//
+            $validated = $request->validate([
+                'pin' => 'required|string|max:8'
+            ]);
+
+            //=========================//
+            // BUSCAR EL VAULT
+            //=========================//
+            $vault = DB::connection('tenant')
+                ->table('vaults')
+                ->where('vault_id2', $vault_id2)
+                ->where('user_id', $user_id)
+                ->where('is_private', true)
+                ->first();
+
+            if (!$vault) {
+                throw new Exception('Vault no encontrado o no es privado');
+            }
+
+            //=========================//
+            // VERIFICAR PIN
+            //=========================//
+            if ($vault->pin === $validated['pin']) {
+                $result = 1;
+                $message = 'PIN correcto';
+            } else {
+                $message = 'PIN incorrecto';
+            }
+
+            Log::debug('Resultado verificación PIN:', ['result' => $result, 'message' => $message]);
+        }
+        catch (Exception $e) {
+            $message = $e->getMessage();
+            Log::error('Error al verificar PIN:', [
+                'message'   => $message,
+                'trace'     => $e->getTraceAsString(),
+                'request'   => $request->all(),
+                'vault_id2' => $vault_id2,
+            ]);
+        }
+        finally {
+            //=========================//
+            // RESPUESTA JSON FINAL  
+            //=========================//
+            return response()->json([
+                'message' => $message,
+                'result'  => $result
+            ], $result ? 200 : 401);
+        }
+    }
 }

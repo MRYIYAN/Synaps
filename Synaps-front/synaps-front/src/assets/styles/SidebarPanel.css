@@ -1031,7 +1031,7 @@ body.modal-open {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   backdrop-filter: blur(2px);
   animation: fade-in 0.3s ease forwards;
 }
@@ -1402,6 +1402,53 @@ body.modal-open {
   opacity: 0; /* Inicialmente invisible */
   animation: fadeInSlideDown 0.2s ease forwards; /* Animación por elemento */
   animation-delay: calc(0.05s * var(--item-index, 0)); /* Retardo basado en posición */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Nombre del vault dentro del item */
+.vault-item-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Contenedor del icono de lock en los items del vault */
+.vault-item-lock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.vault-item-lock svg {
+  width: 14px;
+  height: 14px;
+  color: #ffd700;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.5 !important;
+}
+
+/* Icono de lock en la sección principal de vault */
+.vault-lock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.vault-lock-icon svg {
+  width: 16px;
+  height: 16px;
+  color: #ffd700;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.5 !important;
 }
 
 /* Efecto hover restaurado */
@@ -2406,46 +2453,6 @@ body.modal-open {
   cursor: not-allowed;
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  .file-upload-modal {
-    width: 95vw;
-    max-width: none;
-  }
-  
-  .upload-dropzone {
-    padding: 30px 15px;
-    min-height: 160px;
-  }
-  
-  .upload-icon-large {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .upload-text-primary {
-    font-size: 14px;
-  }
-  
-  .upload-text-secondary {
-    font-size: 13px;
-  }
-  
-  .file-selected {
-    padding: 12px;
-    gap: 12px;
-  }
-  
-  .file-icon {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .file-upload-modal .modal-footer {
-    flex-direction: column;
-  }
-}
-
 /* Focus states for accessibility */
 .upload-dropzone:focus {
   outline: 2px solid var(--vscode-focusBorder);
@@ -2455,4 +2462,37 @@ body.modal-open {
 .clear-file-button:focus {
   outline: 2px solid var(--vscode-focusBorder);
   outline-offset: 2px;
+}
+
+/* Estilos para iconos de lock en vaults privadas */
+.vault-lock-icon svg,
+.vault-item-lock svg {
+  stroke: #F56E0F !important;
+  fill: none !important;
+  color: #F56E0F !important;
+  stroke-width: 1.5 !important;
+}
+
+.vault-lock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+}
+
+.vault-item-lock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+  margin-left: auto;
+}
+
+.vault-lock-icon svg,
+.vault-item-lock svg {
+  width: 14px;
+  height: 14px;
+  stroke: #F56E0F !important;
+  stroke-width: 1.5 !important;
+  fill: none !important;
 }

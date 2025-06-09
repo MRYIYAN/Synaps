@@ -10,6 +10,8 @@ import "../assets/styles/SidebarPanel.css";
 // Importaciones de componentes
 import LogoutConfirmModal from "./Atomic/Modal/LogoutConfirmModal";
 import CreateVaultModal from "./Atomic/Modal/CreateVaultModal";
+import EditVaultModal from "./Atomic/Modal/EditVaultModal";
+import VaultPinModal from "./Atomic/Modal/VaultPinModal";
 import UserProfileBar from "./Atomic/Panels/UserProfileBar";
 import FilesPanel      from './Atomic/Panels/FilesPanel';
 import GalaxyViewPanel  from './Atomic/Panels/GalaxyViewPanel';
@@ -46,6 +48,12 @@ const SidebarPanel = () => {
   const [showLogoutModal, setShowLogoutModal]     = useState(false);
   const [showSettingsMenu, setShowSettingsMenu]   = useState(false);
   const [showCreateVaultModal, setShowCreateVaultModal] = useState(false);
+  const [showEditVaultModal, setShowEditVaultModal] = useState(false);
+  const [editingVault, setEditingVault] = useState(null);
+  
+  // Estados para el modal de PIN de vault privada
+  const [showVaultPinModal, setShowVaultPinModal] = useState(false);
+  const [pendingVault, setPendingVault] = useState(null);
 
   // Estados para los datos del usuario y las vaults
   // TODO: Reemplazar con datos reales de la API
@@ -57,11 +65,29 @@ const SidebarPanel = () => {
   const [vaults, setVaults] = useState([]);
   const [currentVault, setCurrentVault] = useState(null);
 
+  // Estados para manejo de PIN en vaults privadas
+  const [vaultPin, setVaultPin] = useState("");
+  const [vaultPinError, setVaultPinError] = useState("");
+
   // Usar NotesHelper para obtener notas y función getNotes
   const { notes, getNotes } = NotesHelper();
 
   // Función para manejar el selector de vault
   const handleVaultSelect = useCallback((vault) => {
+    // Si la vault es privada y tiene PIN, mostrar modal de autenticación
+    if (vault.is_private && vault.pin) {
+      setPendingVault(vault);
+      setShowVaultPinModal(true);
+      return;
+    }
+    
+    // Si no es privada o no tiene PIN, proceder directamente
+    performVaultSelection(vault);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setCurrentVault]);
+
+  // Función separada para realizar la selección de vault después de autenticación exitosa
+  const performVaultSelection = useCallback((vault) => {
     setCurrentVault(vault);
     window.currentVaultId = parseInt(vault?.vault_id || 0, 10);
 
@@ -73,8 +99,22 @@ const SidebarPanel = () => {
 
     // Opcional: reiniciar nota seleccionada
     window.readNote?.('', vault?.vault_id);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setCurrentVault]);
+  }, [getFolders, getNotes]);
+
+  // Función para manejar autenticación exitosa de PIN
+  const handleVaultPinSuccess = useCallback((vault) => {
+    console.log('PIN authentication successful for vault:', vault);
+    setShowVaultPinModal(false);
+    setPendingVault(null);
+    performVaultSelection(vault);
+  }, [performVaultSelection]);
+
+  // Función para manejar cierre del modal de PIN
+  const handleVaultPinClose = useCallback(() => {
+    console.log('PIN authentication cancelled');
+    setShowVaultPinModal(false);
+    setPendingVault(null);
+  }, []);
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -92,10 +132,18 @@ const SidebarPanel = () => {
         
         if (result === 1) {
           const vaults = http_data || [];
-          setVaults(vaults);
+          console.log('Vaults loaded from API:', vaults);
+          
+          // Asegurar que cada vault tenga una propiedad name
+          const processedVaults = vaults.map((vault, index) => ({
+            ...vault,
+            name: vault.name || vault.vault_title || `Vault ${index + 1}`
+          }));
+          
+          setVaults(processedVaults);
 
-          if (vaults.length > 0) {
-            handleVaultSelect(vaults[0]); //  reutiliza la lógica centralizada
+          if (processedVaults.length > 0) {
+            handleVaultSelect(processedVaults[0]); //  reutiliza la lógica centralizada
           }
         } else {
           console.error("Error al cargar vaults desde la API");
@@ -238,7 +286,63 @@ const handleCreateVault = async (vaultData) => {
   const openCreateVaultModal = () => {
     setShowCreateVaultModal(true);
   };
-  
+
+  // Función para abrir el modal de edición de vault
+  const openEditVaultModal = (vault) => {
+    console.log('openEditVaultModal called with:', vault);
+    console.log('Setting showEditVaultModal to true');
+    setEditingVault(vault);
+    setShowEditVaultModal(true);
+  };
+
+  // Función para manejar la edición de vault
+  const handleEditVault = async (updatedVaultData) => {
+    try {
+      // Actualizar la vault en el estado local
+      setVaults(prevVaults => 
+        prevVaults.map(vault => 
+          vault.vault_id2 === updatedVaultData.vault_id2 ? updatedVaultData : vault
+        )
+      );
+
+      // Actualizar currentVault si es la que se está editando
+      if (currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
+        setCurrentVault(updatedVaultData);
+      }
+
+      // Cerrar modal
+      setShowEditVaultModal(false);
+      setEditingVault(null);
+
+      // Opcional: recargar notas si cambió algo importante
+      if (currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
+        getNotes(updatedVaultData.vault_id);
+      }
+
+    } catch (error) {
+      console.error("Error al actualizar vault:", error);
+    }
+  };
+
+  // Función para manejar el envío del PIN en la vault
+  const handlePinSubmit = (enteredPin) => {
+    setVaultPin(enteredPin);
+
+    // Validar el PIN (simulación, reemplazar con lógica real)
+    const isValidPin = enteredPin === "1234"; // Ejemplo: el PIN correcto es "1234"
+
+    if (isValidPin) {
+      setShowVaultPinModal(false);
+      setVaultPinError("");
+
+      // Aquí puedes continuar con la acción que requería el PIN, como abrir la vault
+      // Por ejemplo, llamar a una función para abrir la vault:
+      // openVault(currentVault);
+    } else {
+      setVaultPinError("PIN incorrecto. Inténtalo de nuevo.");
+    }
+  };
+
   // Determinamos qué componente mostrar en el panel basado en la selección actual
   const CurrentPanelComponent = selectedItem
     ? panelComponents[selectedItem]
@@ -334,6 +438,7 @@ const handleCreateVault = async (vaultData) => {
             onVaultSelect={handleVaultSelect}
             onSettingsClick={handleSettingsClick}
             onCreateVault={openCreateVaultModal}
+            onEditVault={openEditVaultModal}
           />
         </div>
       )}
@@ -350,6 +455,26 @@ const handleCreateVault = async (vaultData) => {
         isOpen={showCreateVaultModal}
         onClose={() => setShowCreateVaultModal(false)}
         onCreateVault={handleCreateVault}
+      />
+
+      {/* Modal para editar vault */}
+      <EditVaultModal 
+        isOpen={showEditVaultModal}
+        onClose={() => {
+          console.log('Closing EditVaultModal');
+          setShowEditVaultModal(false);
+          setEditingVault(null);
+        }}
+        onEditVault={handleEditVault}
+        vault={editingVault}
+      />
+
+      {/* Modal para autenticación por PIN en vaults privadas */}
+      <VaultPinModal
+        isOpen={showVaultPinModal}
+        onClose={handleVaultPinClose}
+        onSuccess={handleVaultPinSuccess}
+        vault={pendingVault}
       />
     </div>
   );
