@@ -33,13 +33,15 @@ const MarkdownEditor = function() {
 
     const noteDeletedHandler = (e) => {
       const { deletedNoteId2 } = e.detail;
-      // Si la nota eliminada es la que está actualmente abierta, 
-      // limpiamos la selección para mostrar el menú de VS Code
       if (deletedNoteId2 === selectedNoteId2) {
         setSelectedNoteId2('');
         setSelectedVaultId(null);
       }
     };
+
+    //  Mostrar el JWT desde localStorage en consola
+    const jwt = localStorage.getItem('access_token');
+    console.debug('[MarkdownEditor.jsx] JWT desde localStorage:', jwt);
 
     window.addEventListener('noteSelected', noteSelectedHandler);
     window.addEventListener('noteDeleted', noteDeletedHandler);

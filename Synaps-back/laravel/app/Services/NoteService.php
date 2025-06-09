@@ -97,16 +97,20 @@ class NoteService
     $redis_key = 'synaps:note:' . $note_id2;
     $cached_md = Redis::get($redis_key);
 
+    // DEBUG: agregar esto por ahora
+    \Log::info("Intentando Redis para nota: $redis_key", ['contenido' => $cached_md]);
+
     if ($cached_md !== null) {
-        dd('[REDIS] Cargando markdown desde cache:', $cached_md);
-        // Crear un objeto simulado con solo lo necesario
+        \Log::info("[Redis HIT] Usando markdown cacheado");
+
         return (object)[
             'note_id2' => $note_id2,
             'note_markdown' => $cached_md
         ];
     }
 
-    // 2. Si no está en Redis, buscar en base de datos
+    \Log::info("[Redis MISS] Buscando en base de datos");
+
     $note = Note::where('note_id2', $note_id2)->first();
 
     return $note;

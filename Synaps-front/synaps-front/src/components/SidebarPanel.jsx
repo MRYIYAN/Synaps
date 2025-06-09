@@ -119,6 +119,12 @@ const SidebarPanel = () => {
 
   // Cargar datos iniciales
   useEffect(() => {
+    console.log('[DEBUG] useEffect de SidebarPanel.jsx ejecutado');
+
+    const jwt = localStorage.getItem('access_token');
+    console.debug('[DEBUG JWT] Variable: access_token');
+    console.debug('[DEBUG JWT] Valor:', jwt);
+
     // Cargar datos del usuario (simulado)
     setCurrentUser({
       name: "Usuario",

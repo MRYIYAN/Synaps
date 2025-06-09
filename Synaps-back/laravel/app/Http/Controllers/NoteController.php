@@ -1,8 +1,10 @@
 <?php
 
-// -------------------------------------------------------------------------------------------
-// NoteController.php
-// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------//
+// NoteController.php                                                                         //
+// -------------------------------------------------------------------------------------------//
+
+
 
 namespace App\Http\Controllers;
 
@@ -781,12 +783,11 @@ class NoteController extends Controller
         // Para RTF podrías usar una librería específica
         // Por ahora devolvemos un placeholder
         return "# " . pathinfo( $file->getClientOriginalName(), PATHINFO_FILENAME ) . "\n\n[Archivo RTF subido: " . $file->getClientOriginalName() . "]\n\nContenido del RTF pendiente de extracción.";
-        
+      // Agrega más casos según sea necesario para otros tipos de archivos     
       default:
         return "# " . pathinfo( $file->getClientOriginalName(), PATHINFO_FILENAME ) . "\n\n[Archivo subido: " . $file->getClientOriginalName() . "]\n\nTipo de archivo no soportado para extracción de contenido.";
     }
   }
-
   /**
    * POST /api/renameNote
    *
@@ -856,6 +857,34 @@ class NoteController extends Controller
         , 'message' => $message
         , 'note'    => $note
       ], $result ? 200 : 500 );
+    }
+  }
+  
+  /**
+   * POST /api/saveMarkdown
+   *
+   * Guarda el markdown de una nota (usado por el bridge WS).
+   *
+   * @param  Request $request
+   * @return JsonResponse
+   */
+  public function saveMarkdown(Request $request): JsonResponse
+  {
+    try {
+      $note_id2 = $request->input('note_id2');
+      $markdown = $request->input('markdown');
+
+      if (!$note_id2 || !$markdown) {
+        throw new Exception('Datos incompletos');
+      }
+
+      $note = Note::where('note_id2', $note_id2)->firstOrFail();
+      $note->note_markdown = $markdown;
+      $note->save();
+
+      return response()->json(['result' => 1]);
+    } catch (Exception $e) {
+      return response()->json(['result' => 0, 'message' => $e->getMessage()], 500);
     }
   }
 }
