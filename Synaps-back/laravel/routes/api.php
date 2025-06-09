@@ -183,6 +183,26 @@ try
          * @see FolderNoteController::renameFolder()
          */
         Route::post( '/renameFolder', [FolderNoteController::class, 'renameFolder'] );
+
+        //=======================//
+        // USER API             //
+        //=======================//
+
+        /**
+         * GET /user
+         * Obtiene la información del usuario autenticado.
+         *
+         * @see UserController::getUser()
+         */
+        Route::get( '/user', [UserController::class, 'getUser'] );
+
+        /**
+         * PUT /user
+         * Actualiza la información del usuario autenticado.
+         *
+         * @see UserController::updateUser()
+         */
+        Route::put( '/user', [UserController::class, 'updateUser'] );
     } );
 }
 catch( Exception $e )

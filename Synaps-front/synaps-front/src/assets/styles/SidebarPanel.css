@@ -1,2498 +1,2489 @@
 /* Variables de color al estilo VS Code */
-:root {
-  --vscode-background: #1e1e1e;
-  --vscode-foreground: #d4d4d4;
-  --vscode-activityBar-background: #333333;
-  --vscode-activityBar-foreground: #ffffff;
-  --vscode-activityBar-inactiveForeground: #ffffff80;
-  --vscode-activityBar-activeBorder: #F56E0F;
-  --vscode-activityBar-activeFocusBorder: #F56E0F;
-  --vscode-sideBar-background: #252526;
-  --vscode-sideBar-foreground: #cccccc;
-  --vscode-sideBarTitle-foreground: #bbbbbb;
-  --vscode-sideBarSectionHeader-background: #252526;
-  --vscode-sideBarSectionHeader-foreground: #cccccc;
-  --vscode-sideBarSectionHeader-border: rgb(64, 64, 66);
-  --vscode-button-background: #F56E0F;
-  --vscode-button-foreground: #ffffff;
-  --vscode-button-hoverBackground: #ff8534;
-  --vscode-focusBorder: #F56E0F;
+  :root {
+    --vscode-background: #1e1e1e;
+    --vscode-foreground: #d4d4d4;
+    --vscode-activityBar-background: #333333;
+    --vscode-activityBar-foreground: #ffffff;
+    --vscode-activityBar-inactiveForeground: #ffffff80;
+    --vscode-activityBar-activeBorder: #F56E0F;
+    --vscode-activityBar-activeFocusBorder: #F56E0F;
+    --vscode-sideBar-background: #252526;
+    --vscode-sideBar-foreground: #cccccc;
+    --vscode-sideBarTitle-foreground: #bbbbbb;
+    --vscode-sideBarSectionHeader-background: #252526;
+    --vscode-sideBarSectionHeader-foreground: #cccccc;
+    --vscode-sideBarSectionHeader-border: rgb(64, 64, 66);
+    --vscode-button-background: #F56E0F;
+    --vscode-button-foreground: #ffffff;
+    --vscode-button-hoverBackground: #ff8534;
+    --vscode-focusBorder: #F56E0F;
 
-  /* Color naranja personalizado */
-  --liquid-lava: #F56E0F;
+    /* Color naranja personalizado */
+    --liquid-lava: #F56E0F;
 
-  /* Anchos fijos */
-  --activity-bar-width: 48px;
-  --side-bar-width: 225px;
+    /* Anchos fijos */
+    --activity-bar-width: 48px;
+    --side-bar-width: 225px;
 
-  /* Variables adicionales para el panel de búsqueda */
-  --vscode-input-background: #3c3c3c;
-  --vscode-input-foreground: #cccccc;
-  --vscode-input-placeholderForeground: #888888;
-  --vscode-input-border: #3c3c3c;
-  --vscode-editor-background: #1e1e1e;
-  --vscode-editor-foreground: #d4d4d4;
-  --vscode-symbolIcon-filesForeground: #d7ba7d;
-  --vscode-editorLineNumber-foreground: #858585;
-  --vscode-descriptionForeground: #8c8c8c;
-  --vscode-list-hoverBackground: #2a2d2e;
-  --vscode-progressBar-background: #F56E0F;
-}
-
-body,
-.app-container,
-.sidebar-panel,
-.sidebar-header,
-.panel-title,
-.panel-title h3,
-.right-options-panel,
-.options-panel-content,
-.options-panel-content h3,
-.search-panel,
-.search-input,
-.searching-indicator,
-.no-results,
-.result-item,
-.result-filename,
-.result-path,
-.result-line-number,
-.task-panel,
-.placeholder-container,
-.placeholder-description,
-.toolbar-button,
-.new-item-input,
-.modal-overlay,
-.modal-content,
-.modal-title,
-.modal-description,
-.modal-button,
-.modal-close-btn {
-  font-family: 'IBM Plex Sans', sans-serif;
-}
-
-.result-context,
-code,
-pre {
-  font-family: 'IBM Plex Mono', Consolas, 'Courier New', monospace;
-}
-
-/* Contenedor principal */
-.app-container {
-  display: flex;
-  height: 100vh;
-  background-color: var(--vscode-background);
-  color: var(--vscode-foreground);
-}
-
-/* Activity Bar - barra vertical con iconos */
-.sidebar-panel {
-  background-color: var(--vscode-activityBar-background);
-  z-index: 10;
-  height: 100vh; /* Altura completa de la ventana */
-  display: flex;
-  flex-direction: column; /* Para apilar los elementos verticalmente */
-  min-width: 48px; /* Ancho fijo para la barra de actividades */
-}
-
-/* Menú principal que contiene los iconos de navegación */
-.main-navigation {
-  flex: 1; /* Toma todo el espacio disponible */
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-/* Menú secundario que contiene acciones como logout */
-.secondary-navigation {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  margin-bottom: 16px; /* Espacio en la parte inferior */
-}
-
-/* Estilo común para todos los elementos de navegación */
-.sidebar-panel li {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-}
-
-.sidebar-panel li:hover {
-  opacity: 1;
-}
-
-.sidebar-panel li.active {
-  opacity: 1;
-}
-
-/* Estilo específico para el botón de logout */
-.logout-item {
-  color: var(--vscode-sideBar-foreground);
-  border-top: 1px solid var(--vscode-sideBarSectionHeader-border); /* Separador sutil */
-  margin-top: 8px; /* Espacio adicional para separar visualmente */
-  padding-top: 8px;
-}
-
-.logout-item svg {
-  width: 20px;
-  height: 20px;
-  color: inherit;
-  stroke: currentColor;
-  stroke-width: 1px;
-  fill: transparent;
-  transition: color 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
-}
-
-.logout-item:hover {
-  color: var(--liquid-lava); /* Color de acento al hacer hover */
-}
-
-.logout-item:hover svg {
-  color: var(--liquid-lava);
-  stroke: var(--liquid-lava);
-  stroke-width: 1.5px;
-  fill: transparent;
-  filter: drop-shadow(0 0 2px rgba(245, 110, 15, 0.3));
-  transform: scale(1.05); /* Ligero efecto de escala para enfatizar */
-}
-
-/* Estilo para el contenedor del logo - ajustado para centrado perfecto */
-.logo-container {
-  height: 48px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 0; /* Eliminado el padding horizontal para evitar desplazamiento */
-  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
-  background-color: var(--vscode-sideBar-background);
-  position: relative; /* Agregado para posicionamiento absoluto del logo */
-}
-
-/* Estilo para el logo - centrado absoluto */
-.header-logo {
-  height: 24px;
-  width: auto;
-  max-width: 70%; /* Reducido para asegurar que esté centrado visualmente */
-  object-fit: contain;
-  position: absolute; /* Posicionamiento absoluto para centrado perfecto */
-  left: 50%;
-  transform: translateX(-50%); /* Desplazamiento para compensar su propio ancho */
-  margin: 0; /* Eliminados los márgenes que podrían afectar el centrado */
-}
-
-/* Estilos para el header del sidebar */
-.sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
-  height: 48px;
-  background-color: var(--vscode-sideBarSectionHeader-background);
-  border-bottom: 1px solid rgba(204, 204, 204, 0.1);
-}
-
-.panel-title {
-  flex: 1;
-}
-
-.panel-title h3 {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--vscode-sideBarSectionHeader-foreground);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.sidebar-logo {
-  width: auto;
-  height: 28px;
-  object-fit: contain;
-  margin-right: 40px;
-  max-width: calc(100% - 60px);
-}
-
-/* Lista de elementos de navegación */
-.sidebar-panel ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-}
-
-/* Ajustamos la lista para que empiece después del header */
-.sidebar-panel ul {
-  margin-top: 0;
-  padding-top: 0;
-}
-
-/* Elementos de navegación */
-.sidebar-panel li {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 48px;
-  width: 100%;
-  color: var(--vscode-activityBar-inactiveForeground);
-  cursor: pointer;
-  transition: color 0.2s, background-color 0.2s;
-  position: relative;
-}
-
-.sidebar-panel li:hover {
-  color: var(--vscode-activityBar-foreground);
-}
-
-/* Elemento activo */
-.sidebar-panel li.active {
-  color: var(--vscode-activityBar-foreground);
-}
-
-/* Estilos para los SVG cuando el ítem está activo */
-.sidebar-panel li.active svg {
-  color: var(--liquid-lava);
-  fill: transparent;
-  stroke: var(--liquid-lava);
-  stroke-width: 1.5px;
-  filter: drop-shadow(0 0 2px rgba(245, 110, 15, 0.3));
-}
-
-/* SVG Icons - estilos base */
-.sidebar-panel li svg {
-  position: relative;
-  z-index: 1;
-  width: 24px;
-  height: 24px;
-  color: var(--vscode-activityBar-inactiveForeground);
-  transition: color 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
-}
-
-.sidebar-panel li:hover svg {
-  color: var(--vscode-activityBar-foreground);
-}
-
-/* Indicador activo deslizante */
-.sidebar-panel .active-indicator {
-  position: absolute;
-  left: 0;
-  width: 2px;
-  height: 48px;
-  background-color: var(--vscode-activityBar-activeBorder);
-  transition: top 0.3s ease-in-out;
-  z-index: 2;
-}
-
-/* Side Bar - panel que aparece a la derecha de la Activity Bar */
-.right-options-panel {
-  width: var(--side-bar-width);
-  height: 100vh;
-  background-color: var(--vscode-sideBar-background);
-  color: var(--vscode-sideBar-foreground);
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  /*
-  position: fixed;
-  top: 0;
-  left: var(--activity-bar-width);
-  */
-  z-index: 5;
-  border-right: 1px solid #1a1a1a;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-  transition: transform 200ms ease-out;
-  display: flex;
-  flex-direction: column;
-  padding-right: 0; /* Eliminar padding derecho */
-}
-
-/* Animación de entrada y salida */
-.right-options-panel {
-  animation: slideInPanel 0.3s ease-out forwards;
-  transform-origin: left center;
-}
-
-.right-options-panel.closing {
-  animation: slideOutPanel 0.3s ease-out forwards;
-}
-
-@keyframes slideInPanel {
-  from {
-    transform: translateX(-20px);
-    opacity: 0;
+    /* Variables adicionales para el panel de búsqueda */
+    --vscode-input-background: #3c3c3c;
+    --vscode-input-foreground: #cccccc;
+    --vscode-input-placeholderForeground: #888888;
+    --vscode-input-border: #3c3c3c;
+    --vscode-editor-background: #1e1e1e;
+    --vscode-editor-foreground: #d4d4d4;
+    --vscode-symbolIcon-filesForeground: #d7ba7d;
+    --vscode-editorLineNumber-foreground: #858585;
+    --vscode-descriptionForeground: #8c8c8c;
+    --vscode-list-hoverBackground: #2a2d2e;
+    --vscode-progressBar-background: #F56E0F;
   }
-  to {
-    transform: translateX(0);
+
+  body,
+  .app-container,
+  .sidebar-panel,
+  .sidebar-header,
+  .panel-title,
+  .panel-title h3,
+  .right-options-panel,
+  .options-panel-content,
+  .options-panel-content h3,
+  .search-panel,
+  .search-input,
+  .searching-indicator,
+  .no-results,
+  .result-item,
+  .result-filename,
+  .result-path,
+  .result-line-number,
+  .task-panel,
+  .placeholder-container,
+  .placeholder-description,
+  .toolbar-button,
+  .new-item-input,
+  .modal-overlay,
+  .modal-content,
+  .modal-title,
+  .modal-description,
+  .modal-button,
+  .modal-close-btn {
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .result-context,
+  code,
+  pre {
+    font-family: 'IBM Plex Mono', Consolas, 'Courier New', monospace;
+  }
+
+  /* Contenedor principal */
+  .app-container {
+    display: flex;
+    height: 100vh;
+    background-color: var(--vscode-background);
+    color: var(--vscode-foreground);
+  }
+
+  /* Activity Bar - barra vertical con iconos */
+  .sidebar-panel {
+    background-color: var(--vscode-activityBar-background);
+    z-index: 10;
+    height: 100vh; /* Altura completa de la ventana */
+    display: flex;
+    flex-direction: column; /* Para apilar los elementos verticalmente */
+    min-width: 48px; /* Ancho fijo para la barra de actividades */
+  }
+
+  /* Menú principal que contiene los iconos de navegación */
+  .main-navigation {
+    flex: 1; /* Toma todo el espacio disponible */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Menú secundario que contiene acciones como logout */
+  .secondary-navigation {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 16px; /* Espacio en la parte inferior */
+  }
+
+  /* Estilo común para todos los elementos de navegación */
+  .sidebar-panel li {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .sidebar-panel li:hover {
     opacity: 1;
   }
-}
 
-@keyframes slideOutPanel {
-  from {
-    transform: translateX(0);
+  .sidebar-panel li.active {
     opacity: 1;
   }
-  to {
-    transform: translateX(-20px);
-    opacity: 0;
+
+  /* Estilo específico para el botón de logout */
+  .logout-item {
+    color: var(--vscode-sideBar-foreground);
+    border-top: 1px solid var(--vscode-sideBarSectionHeader-border); /* Separador sutil */
+    margin-top: 8px; /* Espacio adicional para separar visualmente */
+    padding-top: 8px;
   }
-}
 
-/* Ajustes al panel derecho para acomodar el botón flotante */
-.right-options-panel {
-  /*
-  position: fixed;
-  left: var(--activity-bar-width);
-  top: 0;
-  */
-  height: 100vh;
-  min-width: var(--side-bar-width);
-  background-color: var(--vscode-sideBar-background);
-  z-index: 5;
-  overflow-y: auto;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-  overflow-x: hidden;
-}
-
-/* Header para el panel derecho */
-.right-panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  height: 60px;
-  background-color: var(--vscode-sideBarSectionHeader-background);
-  border-bottom: 1px solid rgba(204, 204, 204, 0.1);
-  position: relative;
-}
-
-/* Título del panel - ahora sin el container adicional */
-.panel-title {
-  margin: 0;
-}
-
-.panel-title h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--vscode-sideBar-foreground);
-}
-
-/* Botón toggle para abrir/cerrar */
-.sidebar-toggle-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background-color: var(--liquid-lava);
-  color: white;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.sidebar-toggle-btn:hover {
-  background-color: #ff8534;
-}
-
-/* Aseguramos que el icono de toggle se vea bien */
-.toggle-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-}
-
-/* Estilo para cuando el sidebar está cerrado */
-.compact-sidebar-header {
-  position: fixed;
-  left: var(--activity-bar-width);
-  top: 16px;
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  background-color: var(--vscode-sideBar-background);
-  border-radius: 4px;
-  z-index: 5;
-}
-
-/* Botón para cerrar el panel de opciones */
-.close-panel-button {
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  width: 24px;
-  height: 24px;
-  background-color: var(--liquid-lava);
-  border: none;
-  color: white;
-  border-radius: 4px;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease;
-  z-index: 100;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  overflow: visible;
-  transform: none;
-  padding: 0;
-}
-
-.close-panel-button:hover {
-  background-color: #ff8534;
-}
-
-/* Botón para cerrar el panel de opciones - versión flotante */
-.close-panel-button.floating-close {
-  position: absolute;
-  right: -15px;
-  top: 30px;
-  width: 32px;
-  height: 32px;
-  background-color: #F56E0F;
-  border: none;
-  color: white;
-  border-radius: 0;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-  transition: background-color 0.2s ease;
-  padding: 0;
-}
-
-.close-panel-button.floating-close:hover {
-  background-color: #ff8534;
-}
-
-.close-panel-button .close-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  line-height: 0;
-  font-size: 24px;
-}
-
-/* Este span debe mostrar el símbolo X */
-.close-icon, 
-.close-panel-button span {
-  display: inline-block;
-  line-height: 1;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.options-panel-content h3 {
-  margin-top: 0;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--vscode-sideBarSectionHeader-foreground);
-  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
-  padding-bottom: 5px;
-  margin-bottom: 10px;
-}
-
-/* Animación para transiciones suaves */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+  .logout-item svg {
+    width: 20px;
+    height: 20px;
+    color: inherit;
+    stroke: currentColor;
+    stroke-width: 1px;
+    fill: transparent;
+    transition: color 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
   }
-  to {
-    opacity: 1;
+
+  .logout-item:hover {
+    color: var(--liquid-lava); /* Color de acento al hacer hover */
   }
-}
 
-.options-panel-content {
-  animation: fadeIn 0.3s ease-in-out;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+  .logout-item:hover svg {
+    color: var(--liquid-lava);
+    stroke: var(--liquid-lava);
+    stroke-width: 1.5px;
+    fill: transparent;
+    filter: drop-shadow(0 0 2px rgba(245, 110, 15, 0.3));
+    transform: scale(1.05); /* Ligero efecto de escala para enfatizar */
+  }
 
-.options-panel {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
-  padding: 4px 0;
-}
+  /* Estilo para el contenedor del logo - ajustado para centrado perfecto */
+  .logo-container {
+    height: 48px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0; /* Eliminado el padding horizontal para evitar desplazamiento */
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+    background-color: var(--vscode-sideBar-background);
+    position: relative; /* Agregado para posicionamiento absoluto del logo */
+  }
 
-.option-panel-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* Estilo para el logo - centrado absoluto */
+  .header-logo {
+    height: 24px;
+    width: auto;
+    max-width: 70%; /* Reducido para asegurar que esté centrado visualmente */
+    object-fit: contain;
+    position: absolute; /* Posicionamiento absoluto para centrado perfecto */
+    left: 50%;
+    transform: translateX(-50%); /* Desplazamiento para compensar su propio ancho */
+    margin: 0; /* Eliminados los márgenes que podrían afectar el centrado */
+  }
 
-  border-radius: 4px;
-  aspect-ratio: 1/1;
-  cursor: pointer;
-  background-color: transparent;
-  border: 0;
-  transition: all 0.3s ease-in-out;
-}
+  /* Estilos para el header del sidebar */
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    height: 48px;
+    background-color: var(--vscode-sideBarSectionHeader-background);
+    border-bottom: 1px solid rgba(204, 204, 204, 0.1);
+  }
 
-.option-panel-button:hover {
-  background-color: var(--vscode-activityBar-background);
-}
+  .panel-title {
+    flex: 1;
+  }
 
-/* Foco y accesibilidad */
-.sidebar-panel li:focus {
-  outline: 1px solid var(--vscode-focusBorder);
-  outline-offset: -1px;
-}
+  .panel-title h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--vscode-sideBarSectionHeader-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-/* Scrollbar estilo VS Code */
-.right-options-panel::-webkit-scrollbar {
-  width: 8px;
-}
+  .sidebar-logo {
+    width: auto;
+    height: 28px;
+    object-fit: contain;
+    margin-right: 40px;
+    max-width: calc(100% - 60px);
+  }
 
-.right-options-panel::-webkit-scrollbar-track {
-  background: var(--vscode-sideBar-background);
-}
+  /* Lista de elementos de navegación */
+  .sidebar-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
 
-.right-options-panel::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 5px;
-}
+  /* Ajustamos la lista para que empiece después del header */
+  .sidebar-panel ul {
+    margin-top: 0;
+    padding-top: 0;
+  }
 
-.right-options-panel::-webkit-scrollbar-thumb:hover {
-  background: #666;
-}
+  /* Elementos de navegación */
+  .sidebar-panel li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    width: 100%;
+    color: var(--vscode-activityBar-inactiveForeground);
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s;
+    position: relative;
+  }
 
-/* Animacion Active Indicator en efecto de deslizamiento */
-@keyframes slideIn {
+  .sidebar-panel li:hover {
+    color: var(--vscode-activityBar-foreground);
+  }
+
+  /* Elemento activo */
+  .sidebar-panel li.active {
+    color: var(--vscode-activityBar-foreground);
+  }
+
+  /* Estilos para los SVG cuando el ítem está activo */
+  .sidebar-panel li.active svg {
+    color: var(--liquid-lava);
+    fill: transparent;
+    stroke: var(--liquid-lava);
+    stroke-width: 1.5px;
+    filter: drop-shadow(0 0 2px rgba(245, 110, 15, 0.3));
+  }
+
+  /* SVG Icons - estilos base */
+  .sidebar-panel li svg {
+    position: relative;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    color: var(--vscode-activityBar-inactiveForeground);
+    transition: color 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
+  }
+
+  .sidebar-panel li:hover svg {
+    color: var(--vscode-activityBar-foreground);
+  }
+
+  /* Indicador activo deslizante */
+  .sidebar-panel .active-indicator {
+    position: absolute;
+    left: 0;
+    width: 2px;
+    height: 48px;
+    background-color: var(--vscode-activityBar-activeBorder);
+    transition: top 0.3s ease-in-out;
+    z-index: 2;
+  }
+
+  /* Side Bar - panel que aparece a la derecha de la Activity Bar */
+  .right-options-panel {
+    width: var(--side-bar-width);
+    height: 100vh;
+    background-color: var(--vscode-sideBar-background);
+    color: var(--vscode-sideBar-foreground);
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /*
+    position: fixed;
+    top: 0;
+    left: var(--activity-bar-width);
+    */
+    z-index: 5;
+    border-right: 1px solid #1a1a1a;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: transform 200ms ease-out;
+    display: flex;
+    flex-direction: column;
+    padding-right: 0; /* Eliminar padding derecho */
+  }
+
+  /* Animación de entrada y salida */
+  .right-options-panel {
+    animation: slideInPanel 0.3s ease-out forwards;
+    transform-origin: left center;
+  }
+
+  .right-options-panel.closing {
+    animation: slideOutPanel 0.3s ease-out forwards;
+  }
+
+  @keyframes slideInPanel {
     from {
-      transform: translateX(-100%);
+      transform: translateX(-20px);
+      opacity: 0;
     }
     to {
       transform: translateX(0);
+      opacity: 1;
     }
   }
-  
-  .active-indicator {
-    position: absolute;
-    left: 0;
-    height: 100%;
-    width: 2px;
-    background-color: var(--vscode-activityBar-activeBorder);
-    animation: slideIn 0.3s ease-in-out;
-  }
-  
 
-/* Responsive para móvil */
-@media (max-width: 768px) {
+  @keyframes slideOutPanel {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(-20px);
+      opacity: 0;
+    }
+  }
+
+  /* Ajustes al panel derecho para acomodar el botón flotante */
   .right-options-panel {
-    transform: translateX(-100%);
-    width: calc(100% - var(--activity-bar-width));
+    /*
+    position: fixed;
+    left: var(--activity-bar-width);
+    top: 0;
+    */
+    height: 100vh;
+    min-width: var(--side-bar-width);
+    background-color: var(--vscode-sideBar-background);
+    z-index: 5;
+    overflow-y: auto;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    overflow-x: hidden;
   }
-  
-  .right-options-panel.visible {
-    transform: translateX(0);
+
+  /* Header para el panel derecho */
+  .right-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    height: 60px;
+    background-color: var(--vscode-sideBarSectionHeader-background);
+    border-bottom: 1px solid rgba(204, 204, 204, 0.1);
+    position: relative;
   }
-}
 
-/* * PANEL DE BUSQUEDA * */
-
-/* Estilos simplificados para el panel de búsqueda */
-
-/* Estilos comunes para barras de herramientas en todos los paneles */
-
-/* Estilos para la barra de herramientas */
-.toolbar-container {
-  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
-  padding: 8px 0;
-  background-color: var(--vscode-sideBar-background);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.toolbar-buttons {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 0 12px;
-}
-
-/* Estilos para los botones de la barra de herramientas */
-.toolbar-button {
-  background: transparent;
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--vscode-sideBar-foreground);
-  opacity: 0.7;
-  transition: all 0.2s ease;
-}
-
-.toolbar-button:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  opacity: 1;
-}
-
-/* Estilo cuando el botón está activo */
-.toolbar-button.active {
-  color: var(--liquid-lava);
-  opacity: 1;
-  background-color: rgba(245, 110, 15, 0.1);
-}
-
-/* Estilos para los iconos */
-.toolbar-icon {
-  width: 20px;
-  height: 20px;
-  color: inherit;
-  stroke: currentColor;
-  stroke-width: 1px;
-  fill: transparent;
-  transition: stroke 0.2s ease, color 0.2s ease, filter 0.2s ease;
-}
-
-/* Estilos específicos para el icono en estado activo */
-.toolbar-button.active .toolbar-icon {
-  color: var(--liquid-lava);
-  stroke: var(--liquid-lava);
-  stroke-width: 1.5px;
-  fill: transparent;
-  filter: drop-shadow(0 0 2px rgba(245, 110, 15, 0.3));
-}
-
-/* Efecto hover para los iconos */
-.toolbar-button:hover .toolbar-icon {
-  opacity: 1;
-}
-
-/* Estilos para el panel de búsqueda modificado */
-.search-panel {
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  overflow-y: auto;
-  color: var(--vscode-sideBar-foreground);
-}
-
-/* Formulario de búsqueda - ahora aparece con animación */
-.search-form {
-  padding: 12px 12px;
-  display: flex;
-  flex-direction: column;
-  animation: slideDown 0.3s ease forwards;
-  overflow: hidden;
-  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
-}
-
-@keyframes slideDown {
-  from {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-10px);
+  /* Título del panel - ahora sin el container adicional */
+  .panel-title {
+    margin: 0;
   }
-  to {
-    max-height: 60px;
+
+  .panel-title h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--vscode-sideBar-foreground);
+  }
+
+  /* Botón toggle para abrir/cerrar */
+  .sidebar-toggle-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--liquid-lava);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+
+  .sidebar-toggle-btn:hover {
+    background-color: #ff8534;
+  }
+
+  /* Aseguramos que el icono de toggle se vea bien */
+  .toggle-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    line-height: 1;
+  }
+
+  /* Estilo para cuando el sidebar está cerrado */
+  .compact-sidebar-header {
+    position: fixed;
+    left: var(--activity-bar-width);
+    top: 16px;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background-color: var(--vscode-sideBar-background);
+    border-radius: 4px;
+    z-index: 5;
+  }
+
+  /* Botón para cerrar el panel de opciones */
+  .close-panel-button {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    width: 24px;
+    height: 24px;
+    background-color: var(--liquid-lava);
+    border: none;
+    color: white;
+    border-radius: 4px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    overflow: visible;
+    transform: none;
+    padding: 0;
+  }
+
+  .close-panel-button:hover {
+    background-color: #ff8534;
+  }
+
+  /* Botón para cerrar el panel de opciones - versión flotante */
+  .close-panel-button.floating-close {
+    position: absolute;
+    right: -15px;
+    top: 30px;
+    width: 32px;
+    height: 32px;
+    background-color: #F56E0F;
+    border: none;
+    color: white;
+    border-radius: 0;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.2s ease;
+    padding: 0;
+  }
+
+  .close-panel-button.floating-close:hover {
+    background-color: #ff8534;
+  }
+
+  .close-panel-button .close-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    line-height: 0;
+    font-size: 24px;
+  }
+
+  /* Este span debe mostrar el símbolo X */
+  .close-icon, 
+  .close-panel-button span {
+    display: inline-block;
+    line-height: 1;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .options-panel-content h3 {
+    margin-top: 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--vscode-sideBarSectionHeader-foreground);
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+  }
+
+  /* Animación para transiciones suaves */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .options-panel-content {
+    animation: fadeIn 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .options-panel {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+    padding: 4px 0;
+  }
+
+  .option-panel-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 4px;
+    aspect-ratio: 1/1;
+    cursor: pointer;
+    background-color: transparent;
+    border: 0;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .option-panel-button:hover {
+    background-color: var(--vscode-activityBar-background);
+  }
+
+  /* Foco y accesibilidad */
+  .sidebar-panel li:focus {
+    outline: 1px solid var(--vscode-focusBorder);
+    outline-offset: -1px;
+  }
+
+  /* Scrollbar estilo VS Code */
+  .right-options-panel::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .right-options-panel::-webkit-scrollbar-track {
+    background: var(--vscode-sideBar-background);
+  }
+
+  .right-options-panel::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 5px;
+  }
+
+  .right-options-panel::-webkit-scrollbar-thumb:hover {
+    background: #666;
+  }
+
+  /* Animacion Active Indicator en efecto de deslizamiento */
+  @keyframes slideIn {
+      from {
+        transform: translateX(-100%);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+    
+    .active-indicator {
+      position: absolute;
+      left: 0;
+      height: 100%;
+      width: 2px;
+      background-color: var(--vscode-activityBar-activeBorder);
+      animation: slideIn 0.3s ease-in-out;
+    }
+    
+
+  /* Responsive para móvil */
+  @media (max-width: 768px) {
+    .right-options-panel {
+      transform: translateX(-100%);
+      width: calc(100% - var(--activity-bar-width));
+    }
+    
+    .right-options-panel.visible {
+      transform: translateX(0);
+    }
+  }
+
+  /* * PANEL DE BUSQUEDA * */
+
+  /* Estilos simplificados para el panel de búsqueda */
+
+  /* Estilos comunes para barras de herramientas en todos los paneles */
+
+  /* Estilos para la barra de herramientas */
+  .toolbar-container {
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+    padding: 8px 0;
+    background-color: var(--vscode-sideBar-background);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .toolbar-buttons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 12px;
+  }
+
+  /* Estilos para los botones de la barra de herramientas */
+  .toolbar-button {
+    background: transparent;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--vscode-sideBar-foreground);
+    opacity: 0.7;
+    transition: all 0.2s ease;
+  }
+
+  .toolbar-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
     opacity: 1;
-    transform: translateY(0);
   }
-}
 
-@keyframes slideUp {
-  from {
-    max-height: 60px;
+  /* Estilo cuando el botón está activo */
+  .toolbar-button.active {
+    color: var(--liquid-lava);
     opacity: 1;
-    transform: translateY(0);
+    background-color: rgba(245, 110, 15, 0.1);
   }
-  to {
-    max-height: 0;
-    opacity: 0;
-    transform: translateY(-10px);
+
+  /* Estilos para los iconos */
+  .toolbar-icon {
+    width: 20px;
+    height: 20px;
+    color: inherit;
+    stroke: currentColor;
+    stroke-width: 1px;
+    fill: transparent;
+    transition: stroke 0.2s ease, color 0.2s ease, filter 0.2s ease;
   }
-}
 
-.search-input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-icon {
-  position: absolute;
-  left: 8px;
-  width: 16px;
-  height: 16px;
-  color: var(--liquid-lava);
-  stroke: var(--liquid-lava);
-}
-
-.search-input {
-  width: 100%;
-  padding: 8px 8px 8px 30px;
-  background-color: var(--vscode-input-background);
-  color: var(--vscode-input-foreground);
-  border: 1px solid var(--vscode-input-border, transparent);
-  border-radius: 3px;
-  font-size: 13px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: var(--liquid-lava);
-  box-shadow: 0 0 0 1px rgba(245, 110, 15, 0.2);
-}
-
-/* Resultados de búsqueda - solo visibles después de buscar */
-.search-results-section {
-  flex: 1;
-  overflow-y: auto;
-  margin-top: 0;
-  animation: fadeIn 0.3s ease forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+  /* Estilos específicos para el icono en estado activo */
+  .toolbar-button.active .toolbar-icon {
+    color: var(--liquid-lava);
+    stroke: var(--liquid-lava);
+    stroke-width: 1.5px;
+    fill: transparent;
+    filter: drop-shadow(0 0 2px rgba(245, 110, 15, 0.3));
   }
-  to {
+
+  /* Efecto hover para los iconos */
+  .toolbar-button:hover .toolbar-icon {
     opacity: 1;
   }
-}
 
-/* Resultados de búsqueda */
-.search-results-section {
-  flex: 1;
-  overflow-y: auto;
-  padding: 4px 0;
-  margin-top: 8px;
-}
-
-.searching-indicator {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  color: var(--vscode-descriptionForeground);
-  font-size: 13px;
-}
-
-.spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-top-color: var(--vscode-progressBar-background);
-  border-radius: 50%;
-  margin-right: 8px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+  /* Estilos para el panel de búsqueda modificado */
+  .search-panel {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    overflow-y: auto;
+    color: var(--vscode-sideBar-foreground);
   }
-}
 
-.no-results {
-  padding: 12px;
-  color: var(--vscode-descriptionForeground);
-  font-size: 13px;
-  font-style: italic;
-}
+  /* Formulario de búsqueda - ahora aparece con animación */
+  .search-form {
+    padding: 12px 12px;
+    display: flex;
+    flex-direction: column;
+    animation: slideDown 0.3s ease forwards;
+    overflow: hidden;
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+  }
 
-.results-list {
-  display: flex;
-  flex-direction: column;
-}
+  @keyframes slideDown {
+    from {
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      max-height: 60px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-.result-item {
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-}
+  @keyframes slideUp {
+    from {
+      max-height: 60px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
 
-.result-item:hover {
-  background-color: var(--vscode-list-hoverBackground);
-}
+  .search-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
 
-.result-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 4px;
-}
+  .search-icon {
+    position: absolute;
+    left: 8px;
+    width: 16px;
+    height: 16px;
+    color: var(--liquid-lava);
+    stroke: var(--liquid-lava);
+  }
 
-.result-filename {
-  font-weight: 600;
-  margin-right: 6px;
-  color: var(--vscode-symbolIcon-filesForeground);
-}
+  .search-input {
+    width: 100%;
+    padding: 8px 8px 8px 30px;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 3px;
+    font-size: 13px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
 
-.result-path {
-  font-size: 11px;
-  opacity: 0.7;
-  color: var(--vscode-descriptionForeground);
-}
+  .search-input:focus {
+    outline: none;
+    border-color: var(--liquid-lava);
+    box-shadow: 0 0 0 1px rgba(245, 110, 15, 0.2);
+  }
 
-.result-line-number {
-  font-size: 11px;
-  color: var(--vscode-editorLineNumber-foreground);
-  margin-bottom: 2px;
-}
+  /* Resultados de búsqueda - solo visibles después de buscar */
+  .search-results-section {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 0;
+    animation: fadeIn 0.3s ease forwards;
+  }
 
-.result-context {
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 12px;
-  background-color: var(--vscode-editor-background);
-  padding: 4px 6px;
-  border-radius: 2px;
-  overflow-x: auto;
-  white-space: pre;
-  margin: 0;
-}
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 
-/* Estilos para los formularios desplegables */
-.new-item-form {
-  padding: 12px 12px;
-  display: flex;
-  flex-direction: column;
-  animation: slideDown 0.3s ease forwards;
-  overflow: hidden;
-  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
-}
+  /* Resultados de búsqueda */
+  .search-results-section {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 0;
+    margin-top: 8px;
+  }
 
-/* Contenedor para los inputs de nuevo archivo/carpeta */
-.new-item-input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+  .searching-indicator {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    color: var(--vscode-descriptionForeground);
+    font-size: 13px;
+  }
 
-.new-item-icon {
-  position: absolute;
-  left: 8px;
-  width: 16px;
-  height: 16px;
-  color: var(--vscode-input-placeholderForeground);
-}
+  .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--vscode-progressBar-background);
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: spin 1s linear infinite;
+  }
 
-.new-item-input {
-  width: 100%;
-  padding: 8px 8px 8px 30px;
-  background-color: var(--vscode-input-background);
-  color: var(--vscode-input-foreground);
-  border: 1px solid var(--vscode-input-border, transparent);
-  border-radius: 3px;
-  font-size: 13px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 
-.new-item-input:focus {
-  outline: none;
-  border-color: var(--liquid-lava);
-  box-shadow: 0 0 0 1px rgba(245, 110, 15, 0.2);
-}
+  .no-results {
+    padding: 12px;
+    color: var(--vscode-descriptionForeground);
+    font-size: 13px;
+    font-style: italic;
+  }
 
-/* Estilos para el label de upload que actúa como input */
-.upload-label {
-  width: 100%;
-  padding: 8px 8px 8px 30px;
-  background-color: var(--vscode-input-background);
-  color: var(--vscode-input-foreground);
-  border: 2px dashed var(--vscode-input-border, #555);
-  border-radius: 4px;
-  font-size: 13px;
-  cursor: pointer;
-  display: block;
-  text-align: center;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-  user-select: none;
-}
+  .results-list {
+    display: flex;
+    flex-direction: column;
+  }
 
-.upload-label:hover {
-  border-color: var(--liquid-lava);
-  background-color: rgba(245, 110, 15, 0.05);
-}
+  .result-item {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
 
-.upload-label:focus {
-  outline: none;
-  border-color: var(--liquid-lava);
-  box-shadow: 0 0 0 1px rgba(245, 110, 15, 0.2);
-}
+  .result-item:hover {
+    background-color: var(--vscode-list-hoverBackground);
+  }
 
-/* Estilos para evitar que se superpongan múltiples inputs */
-.input-group-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+  .result-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+  }
 
-/* Unificación de estilos para los placeholders */
-.placeholder-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: var(--vscode-descriptionForeground);
-  font-size: 16px;
-  text-align: center;
-  padding: 20px;
-}
+  .result-filename {
+    font-weight: 600;
+    margin-right: 6px;
+    color: var(--vscode-symbolIcon-filesForeground);
+  }
 
-.placeholder-description {
-  font-size: 14px;
-  margin-top: 12px;
-  opacity: 0.8;
-  line-height: 1.5;
-}
+  .result-path {
+    font-size: 11px;
+    opacity: 0.7;
+    color: var(--vscode-descriptionForeground);
+  }
 
-/* Estilos mínimos para el panel de tareas (ListTodoPanel) */
+  .result-line-number {
+    font-size: 11px;
+    color: var(--vscode-editorLineNumber-foreground);
+    margin-bottom: 2px;
+  }
 
-/* Contenedor principal del panel de tareas */
-.task-panel {
-  display: flex;
-  flex-direction: column;
-}
+  .result-context {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    background-color: var(--vscode-editor-background);
+    padding: 4px 6px;
+    border-radius: 2px;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 0;
+  }
 
-/* Placeholder para contenido futuro */
-.task-panel-placeholder {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: var(--vscode-descriptionForeground);
-  font-size: 16px;
-  text-align: center;
-  padding: 20px;
-}
+  /* Estilos para los formularios desplegables */
+  .new-item-form {
+    padding: 12px 12px;
+    display: flex;
+    flex-direction: column;
+    animation: slideDown 0.3s ease forwards;
+    overflow: hidden;
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+  }
 
-/* Estilos para el modal de confirmación de cierre de sesión */
+  /* Contenedor para los inputs de nuevo archivo/carpeta */
+  .new-item-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
 
-/* Animaciones simplificadas sin View Transition API */
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+  .new-item-icon {
+    position: absolute;
+    left: 8px;
+    width: 16px;
+    height: 16px;
+    color: var(--vscode-input-placeholderForeground);
+  }
 
-@keyframes fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
+  .new-item-input {
+    width: 100%;
+    padding: 8px 8px 8px 30px;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border, transparent);
+    border-radius: 3px;
+    font-size: 13px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
 
-@keyframes scale-in {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
+  .new-item-input:focus {
+    outline: none;
+    border-color: var(--liquid-lava);
+    box-shadow: 0 0 0 1px rgba(245, 110, 15, 0.2);
+  }
 
-@keyframes scale-out {
-  from { transform: scale(1); opacity: 1; }
-  to { transform: scale(0.8); opacity: 0; }
-}
+  /* Estilos para el label de upload que actúa como input */
+  .upload-label {
+    width: 100%;
+    padding: 8px 8px 8px 30px;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 2px dashed var(--vscode-input-border, #555);
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    user-select: none;
+  }
 
-@keyframes slide-up {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+  .upload-label:hover {
+    border-color: var(--liquid-lava);
+    background-color: rgba(245, 110, 15, 0.05);
+  }
 
-/* Evitar scroll mientras el modal está abierto */
-body.modal-open {
-  overflow: hidden;
-}
+  .upload-label:focus {
+    outline: none;
+    border-color: var(--liquid-lava);
+    box-shadow: 0 0 0 1px rgba(245, 110, 15, 0.2);
+  }
 
-/* Overlay que cubre toda la pantalla */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  backdrop-filter: blur(2px);
-  animation: fade-in 0.3s ease forwards;
-}
+  /* Estilos para evitar que se superpongan múltiples inputs */
+  .input-group-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-/* Contenedor principal del modal */
-.modal-content {
-  background-color: var(--vscode-sideBar-background);
-  border-radius: 8px;
-  padding: 24px;
-  width: 100%;
-  max-width: 400px;
-  position: relative;
-  animation: scale-in 0.3s ease forwards;
-  background-color: #1e1e1e;
-  color: white;
-}
-
-.file-upload-modal .modal-content {
-  max-width: 468px;
-}
-
-/* Botón de cerrar específico para modal de logout */
-.modal-close-btn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border-radius: 4px;
-  transition: all 0.15s ease;
-  font-size: 24px;
-  font-weight: bold;
-  color: #000000; /* Negro */
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.modal-close-btn:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: #000000;
-}
-
-.modal-container.popup .modal-content {
-  max-width: 100%;
-} 
-
-/* Contenedor del modal - Eliminado el borde */
-.modal-container {
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  max-width: 450px;
-  overflow: hidden;
-  border: none; /* Eliminado el borde */
-}
-
-.modal-container.popup {
-  max-width: 700px;
-  height: 80%;
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-
-/* Botón para cerrar el modal - AJUSTADO TAMAÑO Y COLORES */
-.modal-close-button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border-radius: 4px;
-  transition: all 0.15s ease;
-}
-
-.modal-close-button:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.modal-close-button svg {
-  width: 22px;
-  height: 22px;
-  color: #969696; /* Color gris */
-  fill: transparent;
-  stroke: currentColor;
-  stroke-width: 1.5px;
-  transition: color 0.2s ease;
-}
-
-.modal-close-button:hover svg {
-  color: var(--liquid-lava); /* Cambio a color naranja al hacer hover */
-  stroke-width: 1.8px; /* Ligeramente más grueso en hover */
-}
-
-/* Contenedor del icono */
-.modal-icon-container {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(245, 110, 15, 0.1);
-  border-radius: 50%;
-  color: var(--liquid-lava);
-  animation: slide-up 0.3s ease forwards;
-}
-
-.modal-icon {
-  width: 32px;
-  height: 32px;
-  stroke: currentColor;
-  stroke-width: 1.5px;
-  fill: transparent;
-}
-
-/* Título del modal */
-.modal-title {
-  font-size: 18px;
-  font-weight: 600;
-  text-align: center;
-  margin: 0 0 16px;
-  color: var(--vscode-sideBar-foreground);
-  animation: slide-up 0.3s ease forwards;
-  animation-delay: 0.05s;
-}
-
-/* Descripción del modal */
-.modal-description {
-  font-size: 14px;
-  text-align: center;
-  margin: 0 0 24px;
-  color: #c0c0c0;
-  line-height: 1.5;
-  animation: slide-up 0.3s ease forwards;
-  animation-delay: 0.1s;
-}
-
-/* Contenedor de botones */
-.modal-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  animation: slide-up 0.3s ease forwards;
-  animation-delay: 0.15s;
-}
-
-/* Estilos comunes para los botones */
-.modal-button {
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
-  min-width: 100px;
-  border: none;
-  letter-spacing: 0.25px;
-}
-
-.modal-button:hover {
-  transform: translateY(-1px);
-}
-
-.modal-button:active {
-  transform: translateY(1px);
-}
-
-/* Botón principal (confirmar) */
-.modal-button.primary {
-  background-color: var(--liquid-lava);
-  color: white;
-}
-
-.modal-button.primary:hover {
-  background-color: #ff8534;
-}
-
-/* Botón secundario (cancelar) */
-.modal-button.secondary {
-  background-color: transparent;
-  color: var(--vscode-sideBar-foreground);
-  border: 1px solid var(--vscode-sideBarSectionHeader-border);
-}
-
-.modal-button.secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Estilos específicos para el modal de logout */
-.logout-modal {
-  text-align: center;
-}
-
-/* Estilos para diferentes tipos de modales */
-.modal-content.warning .modal-icon-container {
-  background-color: rgba(255, 180, 0, 0.1);
-  color: #ffb400;
-}
-
-.modal-content.error .modal-icon-container {
-  background-color: rgba(255, 70, 70, 0.1);
-  color: #ff4646;
-}
-
-.modal-content.success .modal-icon-container {
-  background-color: rgba(45, 210, 90, 0.1);
-  color: #2dd25a;
-}
-
-/* Ajustes de fuente para diferentes tamaños de pantalla */
-@media (max-width: 480px) {
-  .modal-content {
-    max-width: 320px;
+  /* Unificación de estilos para los placeholders */
+  .placeholder-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--vscode-descriptionForeground);
+    font-size: 16px;
+    text-align: center;
     padding: 20px;
   }
-  
-  .modal-title {
+
+  .placeholder-description {
+    font-size: 14px;
+    margin-top: 12px;
+    opacity: 0.8;
+    line-height: 1.5;
+  }
+
+  /* Estilos mínimos para el panel de tareas (ListTodoPanel) */
+
+  /* Contenedor principal del panel de tareas */
+  .task-panel {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Placeholder para contenido futuro */
+  .task-panel-placeholder {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--vscode-descriptionForeground);
     font-size: 16px;
+    text-align: center;
+    padding: 20px;
   }
-  
+
+  /* Estilos para el modal de confirmación de cierre de sesión */
+
+  /* Animaciones simplificadas sin View Transition API */
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fade-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  @keyframes scale-in {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes scale-out {
+    from { transform: scale(1); opacity: 1; }
+    to { transform: scale(0.8); opacity: 0; }
+  }
+
+  @keyframes slide-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Evitar scroll mientras el modal está abierto */
+  body.modal-open {
+    overflow: hidden;
+  }
+
+  /* Overlay que cubre toda la pantalla */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+    animation: fade-in 0.3s ease forwards;
+  }
+
+  /* Contenedor principal del modal */
+  .modal-content {
+    background-color: var(--vscode-sideBar-background);
+    border-radius: 8px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    animation: scale-in 0.3s ease forwards;
+    background-color: #1e1e1e;
+    color: white;
+  }
+
+  .file-upload-modal .modal-content {
+    max-width: 468px;
+  }
+
+  /* Botón de cerrar específico para modal de logout */
+  .modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000; /* Negro */
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .modal-close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #000000;
+  }
+
+  .modal-container.popup .modal-content {
+    max-width: 100%;
+  } 
+
+  /* Contenedor del modal - Eliminado el borde */
+  .modal-container {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 450px;
+    overflow: hidden;
+    border: none; /* Eliminado el borde */
+  }
+
+  .modal-container.popup {
+    max-width: 700px;
+    height: 80%;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  /* Botón para cerrar el modal - AJUSTADO TAMAÑO Y COLORES */
+  .modal-close-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .modal-close-button:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .modal-close-button svg {
+    width: 22px;
+    height: 22px;
+    color: #969696; /* Color gris */
+    fill: transparent;
+    stroke: currentColor;
+    stroke-width: 1.5px;
+    transition: color 0.2s ease;
+  }
+
+  .modal-close-button:hover svg {
+    color: var(--liquid-lava); /* Cambio a color naranja al hacer hover */
+    stroke-width: 1.8px; /* Ligeramente más grueso en hover */
+  }
+
+  /* Contenedor del icono */
+  .modal-icon-container {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(245, 110, 15, 0.1);
+    border-radius: 50%;
+    color: var(--liquid-lava);
+    animation: slide-up 0.3s ease forwards;
+  }
+
+  .modal-icon {
+    width: 32px;
+    height: 32px;
+    stroke: currentColor;
+    stroke-width: 1.5px;
+    fill: transparent;
+  }
+
+  /* Título del modal */
+  .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    margin: 0 0 16px;
+    color: var(--vscode-sideBar-foreground);
+    animation: slide-up 0.3s ease forwards;
+    animation-delay: 0.05s;
+  }
+
+  /* Descripción del modal */
   .modal-description {
-    font-size: 13px;
+    font-size: 14px;
+    text-align: center;
+    margin: 0 0 24px;
+    color: #c0c0c0;
+    line-height: 1.5;
+    animation: slide-up 0.3s ease forwards;
+    animation-delay: 0.1s;
   }
-  
+
+  /* Contenedor de botones */
+  .modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    animation: slide-up 0.3s ease forwards;
+    animation-delay: 0.15s;
+  }
+
+  /* Estilos comunes para los botones */
   .modal-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    min-width: 100px;
+    border: none;
+    letter-spacing: 0.25px;
+  }
+
+  .modal-button:hover {
+    transform: translateY(-1px);
+  }
+
+  .modal-button:active {
+    transform: translateY(1px);
+  }
+
+  /* Botón principal (confirmar) */
+  .modal-button.primary {
+    background-color: var(--liquid-lava);
+    color: white;
+  }
+
+  .modal-button.primary:hover {
+    background-color: #ff8534;
+  }
+
+  /* Botón secundario (cancelar) */
+  .modal-button.secondary {
+    background-color: transparent;
+    color: var(--vscode-sideBar-foreground);
+    border: 1px solid var(--vscode-sideBarSectionHeader-border);
+  }
+
+  .modal-button.secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Estilos específicos para el modal de logout */
+  .logout-modal {
+    text-align: center;
+  }
+
+  /* Estilos para diferentes tipos de modales */
+  .modal-content.warning .modal-icon-container {
+    background-color: rgba(255, 180, 0, 0.1);
+    color: #ffb400;
+  }
+
+  .modal-content.error .modal-icon-container {
+    background-color: rgba(255, 70, 70, 0.1);
+    color: #ff4646;
+  }
+
+  .modal-content.success .modal-icon-container {
+    background-color: rgba(45, 210, 90, 0.1);
+    color: #2dd25a;
+  }
+
+  /* Ajustes de fuente para diferentes tamaños de pantalla */
+  @media (max-width: 480px) {
+    .modal-content {
+      max-width: 320px;
+      padding: 20px;
+    }
+    
+    .modal-title {
+      font-size: 16px;
+    }
+    
+    .modal-description {
+      font-size: 13px;
+    }
+    
+    .modal-button {
+      font-size: 13px;
+      min-width: 90px;
+      padding: 6px 12px;
+    }
+  }
+
+  /* =========================================================================
+    ESTILOS PARA USER PROFILE BAR Y SELECTOR DE VAULTS
+    ========================================================================= */
+
+  /* Contenedor principal del perfil de usuario */
+  .user-profile-bar {
+    width: 100%;
+    background-color: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+    padding: 8px;
+    padding-right: 0; /* Eliminado padding derecho */
+    box-sizing: border-box;
+    margin-right: 0; /* Asegurar que no haya margen derecho */
+    border-right: none; /* Eliminar posible borde */
+
+    position: sticky;
+    bottom: 0;
+  }
+
+  /* Sección del selector de vault */
+  .vault-section {
+    display: flex;
+    align-items: center;
+    background-color: #252526;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    margin-right: 8px; /* Añadir margen derecho al elemento interno */
+    cursor: pointer;
+    height: 40px;
+    box-sizing: border-box;
+  }
+
+  /* Wrapper para el icono de la vault */
+  .vault-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+  }
+
+  /* Icono de vault */
+  .vault-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--liquid-lava);
+    flex-shrink: 0;
+  }
+
+  /* Selector de vault */
+  .vault-selector {
+    flex: 1;
+  }
+
+  /* Nombre de la vault */
+  .vault-name {
+    font-size: 16px;
+    font-weight: normal;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Animaciones para el dropdown */
+  @keyframes fadeInSlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInScaleUp {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  /* Dropdown container con animación */
+  .vault-dropdown-container {
+    position: absolute;
+    left: 8px;
+    top: -4px;
+    transform: translateY(-100%);
+    z-index: 1000;
+    width: calc(100% - 16px);
+    perspective: 1000px; /* Añade profundidad a la animación */
+    transform-origin: top center; /* Define el punto de origen de la transformación */
+  }
+
+  /* Dropdown ajustado para acomodar los nuevos márgenes */
+  .vault-dropdown {
+    background-color: #252526;
+    border: 1px solid #303031;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    list-style: none;
+    padding: 4px; /* Padding para el contenedor */
+    margin: 0;
+    width: 95%;
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    animation: fadeInScaleUp 0.2s ease forwards; /* Animación suave */
+  }
+
+  /* Elementos de la lista con animación secuencial y efectos hover/active restaurados */
+  .vault-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 2px 4px;
+    border-radius: 4px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    opacity: 0; /* Inicialmente invisible */
+    animation: fadeInSlideDown 0.2s ease forwards; /* Animación por elemento */
+    animation-delay: calc(0.05s * var(--item-index, 0)); /* Retardo basado en posición */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Nombre del vault dentro del item */
+  .vault-item-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Contenedor del icono de lock en los items del vault */
+  .vault-item-lock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    flex-shrink: 0;
+  }
+
+  .vault-item-lock svg {
+    width: 14px;
+    height: 14px;
+    color: #ffd700;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
+  }
+
+  /* Icono de lock en la sección principal de vault */
+  .vault-lock-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    flex-shrink: 0;
+  }
+
+  .vault-lock-icon svg {
+    width: 16px;
+    height: 16px;
+    color: #ffd700;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.5 !important;
+  }
+
+  /* Efecto hover restaurado */
+  .vault-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Elemento activo/seleccionado restaurado */
+  .vault-item.active {
+    background-color: rgba(245, 110, 15, 0.1);
+    color: var(--liquid-lava);
+    font-weight: 500;
+  }
+
+  /* Efecto hover más fuerte cuando el elemento está activo */
+  .vault-item.active:hover {
+    background-color: rgba(245, 110, 15, 0.15);
+  }
+
+  /* Botón para crear nueva vault con animación */
+  .create-vault-button {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    background-color: var(--liquid-lava);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 100;
+    transition: all 0.2s ease;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 32px;
+    box-sizing: border-box;
+    opacity: 0; /* Inicialmente invisible */
+    animation: fadeInSlideDown 0.3s ease forwards; /* Aparece al final */
+    animation-delay: 0.2s; /* Aparece después de los elementos de la lista */
+  }
+
+  /* Primer y último elemento con bordes redondeados */
+  .vault-item:first-child {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  }
+
+  .vault-item:last-child {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+
+  /* Botón para crear nueva vault - AJUSTADO PARA SVG */
+  .create-vault-button {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    background-color: var(--liquid-lava);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 100;
+    transition: background-color 0.2s ease;
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 32px;
+    box-sizing: border-box;
+  }
+
+  .create-vault-button:hover {
+    background-color: #ff8534;
+  }
+
+  /* Contenedor para el icono del botón */
+  .create-vault-button-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 6px; /* Espacio entre el icono y el texto */
+  }
+
+  /* Estilos para el icono SVG en el botón de nueva vault */
+  .create-vault-button-icon svg {
+    width: 16px;
+    height: 16px;
+    color: white;
+    fill: transparent; /* SVG sin relleno */
+    stroke: white; /* Color del contorno blanco */
+    stroke-width: 1.5px; /* Grosor del trazo */
+  }
+
+  /* Texto del botón */
+  .create-vault-button-text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  /* Sección del perfil de usuario */
+  .user-profile-section {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #252526;
+    border-radius: 6px;
+    margin-right: 8px; /* Añadir margen derecho al elemento interno */
+    position: relative;
+  }
+
+  /* Avatar del usuario */
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  /* Placeholder para cuando no hay avatar */
+  .user-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: var(--liquid-lava);
+  }
+
+  /* Información del usuario */
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* Etiqueta "Usuario" */
+  .user-label {
+    font-size: 12px;
+    color: #808080;
+    margin-bottom: 2px;
+  }
+
+  /* Nombre del usuario */
+  .user-name {
+    font-size: 18px;
+    font-weight: normal;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 30px);
+  }
+
+  /* Botón de configuración hexagonal */
+  .settings-button {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .settings-button svg {
+    width: 24px;
+    height: 24px;
+    color: var(--liquid-lava);
+    fill: transparent;
+    stroke: currentColor;
+    stroke-width: 1.5px;
+  }
+
+  /* Estilos para el modal de creación de vault */
+
+  /* Modal de creación de vault */
+  .create-vault-modal {
+    max-width: 400px;
+    animation: modalSlideIn 0.3s ease;
+  }
+
+  /* Overlay del modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .modal-container.popup {
+    border-radius: 10px;
+  }
+
+  /* Contenedor del modal */
+  .modal-container {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 450px;
+    overflow: hidden;
+    border: none; /* Eliminado el borde */
+  }
+
+  .modal-container.popup .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #303031;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 95%;
+    background-color: #1e1e1e;
+  }
+
+  /* Encabezado del modal */
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #303031;
+  }
+
+  /* Contenedor del título */
+  .modal-title-container {
+    display: flex;
+    align-items: center;
+  }
+
+  /* Icono en el modal */
+  .modal-icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
+    color: var(--liquid-lava);
+  }
+
+  /* Título del modal */
+  .modal-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
+    color: white;
+  }
+
+  .modal-controls {
+    display: flex;
+    grid-area: 0.5rem;
+  }
+
+  /* Botón para cerrar el modal */
+  .modal-close-button, .modal-controls button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .modal-close-button:hover, .modal-controls button:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .modal-close-button svg, .modal-controls button svg {
+    width: 22px;
+    height: 22px;
+    color: #969696; /* Color gris */
+    fill: transparent;
+    stroke: currentColor;
+    stroke-width: 1.5px;
+    transition: color 0.2s ease;
+  }
+
+  .modal-close-button:hover svg, .modal-controls button:hover svg {
+    color: var(--liquid-lava); /* Cambio a color naranja al hacer hover */
+    stroke-width: 1.8px; /* Ligeramente más grueso en hover */
+  }
+
+  /* Contenido del modal */
+  .modal-content {
+    width: 100%;
+    padding: 20px 16px;
+    background-color: #1e1e1e;
+    animation: fadeInRight 0.3s ease;
+  }
+
+  /* Descripción en el modal */
+  .modal-description {
+    color: #c0c0c0;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Pie del modal con botones */
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 14px 16px;
+    border-top: 1px solid #303031;
+    gap: 12px;
+    transition: all 0.3s ease;
+  }
+
+  /* Estilos de botones en el modal */
+  .modal-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: none;
+  }
+
+  .modal-button.primary {
+    background-color: var(--liquid-lava);
+    color: white;
+  }
+
+  .modal-button.primary:hover:not(:disabled) {
+    background-color: #ff8534;
+  }
+
+  .modal-button.secondary {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: white;
+  }
+
+  .modal-button.secondary:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .modal-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Grupo de entrada */
+  .input-group {
+    margin-bottom: 16px;
+  }
+
+  /* Etiqueta para el input */
+  .input-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #c0c0c0;
+  }
+
+  /* Campo de entrada - sin borde visible inicialmente */
+  .input-field {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #303031;
+    border-radius: 4px;
+    background-color: #1e1e1e;
+    color: white;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+
+  /* Mantener el efecto de focus para el input */
+  .input-field:focus {
+    outline: none;
+    border-color: var(--liquid-lava);
+    box-shadow: 0 0 0 1px rgba(242, 99, 33, 0.2);
+  }
+
+  .input-field::placeholder {
+    color: #707070;
+  }
+
+  /* Estilos mejorados para el checkbox con icono SVG circular */
+  .checkbox-group {
+    margin: 20px 0;
+  }
+
+  /* Contenedor del checkbox personalizado */
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  /* Ocultamos el checkbox nativo pero mantenemos su funcionalidad */
+  .checkbox-container input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  /* Creamos nuestro checkbox personalizado circular */
+  .custom-checkbox {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease-in-out;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  /* Estilo cuando el cursor está encima */
+  .checkbox-container:hover .custom-checkbox {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* El icono SVG dentro del checkbox - inicialmente oculto */
+  .custom-checkbox svg {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animación con rebote */
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Estilo cuando está marcado - cambio de color de fondo */
+  .checkbox-container input:checked ~ .custom-checkbox {
+    background-color: rgba(245, 110, 15, 0.1);
+    border-color: var(--liquid-lava);
+  }
+
+  /* Mostramos el icono SVG cuando está marcado con animación */
+  .checkbox-container input:checked ~ .custom-checkbox svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Estilos para cuando el checkbox está deshabilitado */
+  .checkbox-container input:disabled ~ .custom-checkbox {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Estilos mejorados para el checkbox */
+  .checkbox-group {
+    margin: 20px 0;
+  }
+
+  /* Contenedor del checkbox personalizado */
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  /* Ocultamos el checkbox nativo pero mantenemos su funcionalidad */
+  .checkbox-container input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  /* Creamos nuestro checkbox personalizado */
+  .custom-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    transition: all 0.2s ease-in-out;
+    flex-shrink: 0;
+  }
+
+  /* Estilo cuando el cursor está encima */
+  .checkbox-container:hover .custom-checkbox {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Estilo cuando está marcado */
+  .checkbox-container input:checked ~ .custom-checkbox {
+    background-color: var(--liquid-lava);
+    border-color: var(--liquid-lava);
+  }
+
+  /* Creamos el indicador de marca (✓) */
+  .custom-checkbox:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 4px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  /* Mostramos el indicador cuando está marcado */
+  .checkbox-container input:checked ~ .custom-checkbox:after {
+    display: block;
+  }
+
+  /* Estilo para el checkbox deshabilitado */
+  .checkbox-container input:disabled ~ .custom-checkbox {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .checkbox-container input:disabled ~ .checkbox-label {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Estilo del texto del checkbox */
+  .checkbox-label {
+    font-size: 14px;
+    color: #c0c0c0;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+  }
+
+  /* Efecto de hover para el texto */
+  .checkbox-container:hover .checkbox-label {
+    color: #e0e0e0;
+  }
+
+  /* Estilo para el icono dentro del label */
+  .checkbox-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    color: #c0c0c0;
+    stroke: currentColor;
+    stroke-width: 1.5px;
+    fill: transparent;
+    transition: color 0.2s;
+  }
+
+  /* Cuando el checkbox está marcado, cambiamos el color del icono */
+  .checkbox-container input:checked ~ .checkbox-label .checkbox-icon {
+    color: var(--liquid-lava);
+  }
+
+  /* Descripción de la opción seleccionada */
+  .checkbox-description {
+    font-size: 12px;
+    color: #a0a0a0;
+    margin-top: 4px;
+    margin-left: 28px; /* Ajustado para alinear con el nuevo checkbox */
+    font-style: italic;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { 
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Estilos para el checkbox en el modal de crear vault */
+  .checkbox-group {
+    margin-bottom: 16px;
+  }
+
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 8px;
+  }
+
+  .checkbox-container input[type="checkbox"] {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--liquid-lava);
+    cursor: pointer;
+  }
+
+  .checkbox-label {
+    font-size: 14px;
+    color: #c0c0c0;
+    display: flex;
+    align-items: center;
+  }
+
+  .checkbox-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    color: #c0c0c0;
+    stroke: currentColor;
+    stroke-width: 1.5px;
+    fill: transparent;
+  }
+
+  .checkbox-description {
+    font-size: 12px;
+    color: #a0a0a0;
+    margin-top: 4px;
+    margin-left: 24px;
+    font-style: italic;
+  }
+
+  /* Nota de seguridad */
+  .security-note {
+    font-size: 12px;
+    color: #f0a060;
+    margin-top: 16px;
+    padding: 8px;
+    background-color: rgba(245, 110, 15, 0.05);
+    border-radius: 4px;
+    border-left: 2px solid var(--liquid-lava);
+  }
+
+  /* Animación para transición entre pasos */
+  .modal-content {
+    animation: fadeInRight 0.3s ease;
+  }
+
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Estilos para los botones del segundo paso */
+  .create-vault-modal .modal-footer {
+    transition: all 0.3s ease;
+  }
+
+  /* Animaciones del modal */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes modalSlideIn {
+    from { 
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to { 
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* Estilos para campos con error */
+  .input-field.error {
+    border-color: #f56e6e;
+    background-color: rgba(245, 110, 110, 0.05);
+  }
+
+  .input-error {
+    color: #f56e6e;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    display: block;
+    animation: fadeIn 0.2s ease;
+  }
+
+  /* Deshabilitar el botón de avanzar */
+  .modal-button.primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* =========================================================================
+    ESTILOS PARA FILE UPLOAD MODAL
+    ========================================================================= */
+
+  /* FileUploadModal Styles */
+  .file-upload-modal {
+    background: var(--vscode-sideBar-background);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    color: var(--vscode-foreground);
+    max-width: 500px;
+    width: 90vw;
+  }
+
+  .file-upload-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
+    background: var(--vscode-sideBarSectionHeader-background);
+    border-radius: 8px 8px 0 0;
+  }
+
+  .file-upload-modal .modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--vscode-sideBarTitle-foreground);
+    margin: 0;
+  }
+
+  .file-upload-modal .modal-close-btn {
+    background: none;
+    border: none;
+    color: var(--vscode-foreground);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    transition: background-color 0.2s ease;
+  }
+
+  .file-upload-modal .modal-close-btn:hover {
+    background: var(--vscode-list-hoverBackground);
+  }
+
+  .file-upload-modal .modal-close-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .file-upload-modal .modal-body {
+    padding: 20px;
+  }
+
+  /* Upload dropzone */
+  .upload-dropzone {
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .upload-dropzone:hover {
+    border-color: rgba(245, 110, 15, 0.6);
+    background-color: rgba(245, 110, 15, 0.08);
+  }
+
+  .upload-dropzone.active {
+    border-color: var(--liquid-lava);
+    background-color: rgba(245, 110, 15, 0.15);
+    transform: scale(1.02);
+  }
+
+  .upload-dropzone.has-file {
+    border-color: rgba(45, 210, 90, 0.6);
+    background-color: rgba(45, 210, 90, 0.08);
+    cursor: default;
+  }
+
+  /* Upload prompt content */
+  .upload-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .upload-icon-large {
+    width: 48px;
+    height: 48px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 8px;
+  }
+
+  .upload-text-primary {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--vscode-foreground);
+    margin: 0;
+  }
+
+  .upload-text-secondary {
+    font-size: 14px;
+    color: var(--vscode-descriptionForeground);
+    margin: 0;
+  }
+
+  .upload-text-info {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* File selected content */
+  .file-selected {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .file-icon {
+    width: 32px;
+    height: 32px;
+    color: #6eb7ff;
+    flex-shrink: 0;
+  }
+
+  .file-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .file-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--vscode-foreground);
+    margin: 0 0 4px 0;
+    word-break: break-word;
+  }
+
+  .file-size {
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+    margin: 0;
+  }
+
+  .clear-file-button {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .clear-file-button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Upload progress */
+  .upload-progress {
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background-color: var(--liquid-lava);
+    transition: width 0.3s ease;
+    border-radius: 4px;
+  }
+
+  .progress-text {
+    font-size: 12px;
+    color: var(--vscode-descriptionForeground);
+    text-align: center;
+    margin: 0;
+  }
+
+  /* Error message */
+  .error-message {
+    background-color: rgba(255, 70, 70, 0.1);
+    border: 1px solid rgba(255, 70, 70, 0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 16px;
+  }
+
+  .error-message p {
+    color: #ff6b6b;
     font-size: 13px;
-    min-width: 90px;
-    padding: 6px 12px;
+    margin: 0;
+    line-height: 1.4;
   }
-}
 
-/* =========================================================================
-   ESTILOS PARA USER PROFILE BAR Y SELECTOR DE VAULTS
-   ========================================================================= */
-
-/* Contenedor principal del perfil de usuario */
-.user-profile-bar {
-  width: 100%;
-  background-color: #1e1e1e;
-  display: flex;
-  flex-direction: column;
-  margin-top: auto;
-  padding: 8px;
-  padding-right: 0; /* Eliminado padding derecho */
-  box-sizing: border-box;
-  margin-right: 0; /* Asegurar que no haya margen derecho */
-  border-right: none; /* Eliminar posible borde */
-
-  position: sticky;
-  bottom: 0;
-}
-
-/* Sección del selector de vault */
-.vault-section {
-  display: flex;
-  align-items: center;
-  background-color: #252526;
-  padding: 8px 12px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  margin-right: 8px; /* Añadir margen derecho al elemento interno */
-  cursor: pointer;
-  height: 40px;
-  box-sizing: border-box;
-}
-
-/* Wrapper para el icono de la vault */
-.vault-icon-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 10px;
-}
-
-/* Icono de vault */
-.vault-icon {
-  width: 20px;
-  height: 20px;
-  color: var(--liquid-lava);
-  flex-shrink: 0;
-}
-
-/* Selector de vault */
-.vault-selector {
-  flex: 1;
-}
-
-/* Nombre de la vault */
-.vault-name {
-  font-size: 16px;
-  font-weight: normal;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Animaciones para el dropdown */
-@keyframes fadeInSlideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+  /* Modal footer */
+  .file-upload-modal .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--vscode-sideBarSectionHeader-border);
+    background: var(--vscode-sideBarSectionHeader-background);
+    border-radius: 0 0 8px 8px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .file-upload-modal .modal-button {
+    background: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-border);
+    color: var(--vscode-foreground);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
   }
-}
 
-@keyframes fadeInScaleUp {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(-10px);
+  .file-upload-modal .modal-button:hover {
+    background: var(--vscode-list-hoverBackground);
+    border-color: var(--vscode-focusBorder);
   }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
+
+  .file-upload-modal .modal-button.primary {
+    background: var(--vscode-button-background);
+       border-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
   }
-}
 
-/* Dropdown container con animación */
-.vault-dropdown-container {
-  position: absolute;
-  left: 8px;
-  top: -4px;
-  transform: translateY(-100%);
-  z-index: 1000;
-  width: calc(100% - 16px);
-  perspective: 1000px; /* Añade profundidad a la animación */
-  transform-origin: top center; /* Define el punto de origen de la transformación */
-}
-
-/* Dropdown ajustado para acomodar los nuevos márgenes */
-.vault-dropdown {
-  background-color: #252526;
-  border: 1px solid #303031;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  list-style: none;
-  padding: 4px; /* Padding para el contenedor */
-  margin: 0;
-  width: 95%;
-  max-height: 200px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  animation: fadeInScaleUp 0.2s ease forwards; /* Animación suave */
-}
-
-/* Elementos de la lista con animación secuencial y efectos hover/active restaurados */
-.vault-item {
-  padding: 10px 12px;
-  cursor: pointer;
-  font-size: 14px;
-  margin: 2px 4px;
-  border-radius: 4px;
-  transition: background-color 0.15s ease, color 0.15s ease;
-  opacity: 0; /* Inicialmente invisible */
-  animation: fadeInSlideDown 0.2s ease forwards; /* Animación por elemento */
-  animation-delay: calc(0.05s * var(--item-index, 0)); /* Retardo basado en posición */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* Nombre del vault dentro del item */
-.vault-item-name {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Contenedor del icono de lock en los items del vault */
-.vault-item-lock {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 8px;
-  flex-shrink: 0;
-}
-
-.vault-item-lock svg {
-  width: 14px;
-  height: 14px;
-  color: #ffd700;
-  fill: none !important;
-  stroke: currentColor !important;
-  stroke-width: 1.5 !important;
-}
-
-/* Icono de lock en la sección principal de vault */
-.vault-lock-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 8px;
-  flex-shrink: 0;
-}
-
-.vault-lock-icon svg {
-  width: 16px;
-  height: 16px;
-  color: #ffd700;
-  fill: none !important;
-  stroke: currentColor !important;
-  stroke-width: 1.5 !important;
-}
-
-/* Efecto hover restaurado */
-.vault-item:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Elemento activo/seleccionado restaurado */
-.vault-item.active {
-  background-color: rgba(245, 110, 15, 0.1);
-  color: var(--liquid-lava);
-  font-weight: 500;
-}
-
-/* Efecto hover más fuerte cuando el elemento está activo */
-.vault-item.active:hover {
-  background-color: rgba(245, 110, 15, 0.15);
-}
-
-/* Botón para crear nueva vault con animación */
-.create-vault-button {
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 12px;
-  background-color: var(--liquid-lava);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 100;
-  transition: all 0.2s ease;
-  width: 95%;
-  margin-left: auto;
-  margin-right: auto;
-  height: 32px;
-  box-sizing: border-box;
-  opacity: 0; /* Inicialmente invisible */
-  animation: fadeInSlideDown 0.3s ease forwards; /* Aparece al final */
-  animation-delay: 0.2s; /* Aparece después de los elementos de la lista */
-}
-
-/* Primer y último elemento con bordes redondeados */
-.vault-item:first-child {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-
-.vault-item:last-child {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-}
-
-/* Botón para crear nueva vault - AJUSTADO PARA SVG */
-.create-vault-button {
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 12px;
-  background-color: var(--liquid-lava);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 100;
-  transition: background-color 0.2s ease;
-  width: 95%;
-  margin-left: auto;
-  margin-right: auto;
-  height: 32px;
-  box-sizing: border-box;
-}
-
-.create-vault-button:hover {
-  background-color: #ff8534;
-}
-
-/* Contenedor para el icono del botón */
-.create-vault-button-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 6px; /* Espacio entre el icono y el texto */
-}
-
-/* Estilos para el icono SVG en el botón de nueva vault */
-.create-vault-button-icon svg {
-  width: 16px;
-  height: 16px;
-  color: white;
-  fill: transparent; /* SVG sin relleno */
-  stroke: white; /* Color del contorno blanco */
-  stroke-width: 1.5px; /* Grosor del trazo */
-}
-
-/* Texto del botón */
-.create-vault-button-text {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-/* Sección del perfil de usuario */
-.user-profile-section {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  background-color: #252526;
-  border-radius: 6px;
-  margin-right: 8px; /* Añadir margen derecho al elemento interno */
-  position: relative;
-}
-
-/* Avatar del usuario */
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-right: 10px;
-  flex-shrink: 0;
-}
-
-/* Placeholder para cuando no hay avatar */
-.user-avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  background-color: var(--liquid-lava);
-}
-
-/* Información del usuario */
-.user-info {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-}
-
-/* Etiqueta "Usuario" */
-.user-label {
-  font-size: 12px;
-  color: #808080;
-  margin-bottom: 2px;
-}
-
-/* Nombre del usuario */
-.user-name {
-  font-size: 18px;
-  font-weight: normal;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: calc(100% - 30px);
-}
-
-/* Botón de configuración hexagonal */
-.settings-button {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.settings-button svg {
-  width: 24px;
-  height: 24px;
-  color: var(--liquid-lava);
-  fill: transparent;
-  stroke: currentColor;
-  stroke-width: 1.5px;
-}
-
-/* Estilos para el modal de creación de vault */
-
-/* Modal de creación de vault */
-.create-vault-modal {
-  max-width: 400px;
-  animation: modalSlideIn 0.3s ease;
-}
-
-/* Overlay del modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.2s ease;
-}
-
-.modal-container.popup {
-  border-radius: 10px;
-}
-
-/* Contenedor del modal */
-.modal-container {
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  max-width: 450px;
-  overflow: hidden;
-  border: none; /* Eliminado el borde */
-}
-
-.modal-container.popup .modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  border-bottom: 1px solid #303031;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  width: 95%;
-  background-color: #1e1e1e;
-}
-
-/* Encabezado del modal */
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  border-bottom: 1px solid #303031;
-}
-
-/* Contenedor del título */
-.modal-title-container {
-  display: flex;
-  align-items: center;
-}
-
-/* Icono en el modal */
-.modal-icon {
-  width: 28px;
-  height: 28px;
-  margin-right: 8px;
-  color: var(--liquid-lava);
-}
-
-/* Título del modal */
-.modal-title {
-  font-size: 18px;
-  font-weight: 500;
-  margin: 0;
-  color: white;
-}
-
-.modal-controls {
-  display: flex;
-  grid-area: 0.5rem;
-}
-
-/* Botón para cerrar el modal */
-.modal-close-button, .modal-controls button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border-radius: 4px;
-  transition: all 0.15s ease;
-}
-
-.modal-close-button:hover, .modal-controls button:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.modal-close-button svg, .modal-controls button svg {
-  width: 22px;
-  height: 22px;
-  color: #969696; /* Color gris */
-  fill: transparent;
-  stroke: currentColor;
-  stroke-width: 1.5px;
-  transition: color 0.2s ease;
-}
-
-.modal-close-button:hover svg, .modal-controls button:hover svg {
-  color: var(--liquid-lava); /* Cambio a color naranja al hacer hover */
-  stroke-width: 1.8px; /* Ligeramente más grueso en hover */
-}
-
-/* Contenido del modal */
-.modal-content {
-  width: 100%;
-  padding: 20px 16px;
-  background-color: #1e1e1e;
-  animation: fadeInRight 0.3s ease;
-}
-
-/* Descripción en el modal */
-.modal-description {
-  color: #c0c0c0;
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* Pie del modal con botones */
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding: 14px 16px;
-  border-top: 1px solid #303031;
-  gap: 12px;
-  transition: all 0.3s ease;
-}
-
-/* Estilos de botones en el modal */
-.modal-button {
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  border: none;
-}
-
-.modal-button.primary {
-  background-color: var(--liquid-lava);
-  color: white;
-}
-
-.modal-button.primary:hover:not(:disabled) {
-  background-color: #ff8534;
-}
-
-.modal-button.secondary {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: white;
-}
-
-.modal-button.secondary:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.modal-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Grupo de entrada */
-.input-group {
-  margin-bottom: 16px;
-}
-
-/* Etiqueta para el input */
-.input-label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 14px;
-  color: #c0c0c0;
-}
-
-/* Campo de entrada - sin borde visible inicialmente */
-.input-field {
-  width: 100%;
-  padding: 10px 12px;
-  font-size: 14px;
-  border: 1px solid #303031;
-  border-radius: 4px;
-  background-color: #1e1e1e;
-  color: white;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
-}
-
-/* Mantener el efecto de focus para el input */
-.input-field:focus {
-  outline: none;
-  border-color: var(--liquid-lava);
-  box-shadow: 0 0 0 1px rgba(242, 99, 33, 0.2);
-}
-
-.input-field::placeholder {
-  color: #707070;
-}
-
-/* Estilos mejorados para el checkbox con icono SVG circular */
-.checkbox-group {
-  margin: 20px 0;
-}
-
-/* Contenedor del checkbox personalizado */
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 8px;
-  position: relative;
-}
-
-/* Ocultamos el checkbox nativo pero mantenemos su funcionalidad */
-.checkbox-container input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-/* Creamos nuestro checkbox personalizado circular */
-.custom-checkbox {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.2s ease-in-out;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-/* Estilo cuando el cursor está encima */
-.checkbox-container:hover .custom-checkbox {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-/* El icono SVG dentro del checkbox - inicialmente oculto */
-.custom-checkbox svg {
-  opacity: 0;
-  transform: scale(0.5);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animación con rebote */
-  width: 20px;
-  height: 20px;
-}
-
-/* Estilo cuando está marcado - cambio de color de fondo */
-.checkbox-container input:checked ~ .custom-checkbox {
-  background-color: rgba(245, 110, 15, 0.1);
-  border-color: var(--liquid-lava);
-}
-
-/* Mostramos el icono SVG cuando está marcado con animación */
-.checkbox-container input:checked ~ .custom-checkbox svg {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Estilos para cuando el checkbox está deshabilitado */
-.checkbox-container input:disabled ~ .custom-checkbox {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Estilos mejorados para el checkbox */
-.checkbox-group {
-  margin: 20px 0;
-}
-
-/* Contenedor del checkbox personalizado */
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 8px;
-  position: relative;
-}
-
-/* Ocultamos el checkbox nativo pero mantenemos su funcionalidad */
-.checkbox-container input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-/* Creamos nuestro checkbox personalizado */
-.custom-checkbox {
-  position: relative;
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  margin-right: 10px;
-  background-color: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-  transition: all 0.2s ease-in-out;
-  flex-shrink: 0;
-}
-
-/* Estilo cuando el cursor está encima */
-.checkbox-container:hover .custom-checkbox {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Estilo cuando está marcado */
-.checkbox-container input:checked ~ .custom-checkbox {
-  background-color: var(--liquid-lava);
-  border-color: var(--liquid-lava);
-}
-
-/* Creamos el indicador de marca (✓) */
-.custom-checkbox:after {
-  content: "";
-  position: absolute;
-  display: none;
-  left: 6px;
-  top: 2px;
-  width: 4px;
-  height: 9px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-
-/* Mostramos el indicador cuando está marcado */
-.checkbox-container input:checked ~ .custom-checkbox:after {
-  display: block;
-}
-
-/* Estilo para el checkbox deshabilitado */
-.checkbox-container input:disabled ~ .custom-checkbox {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.checkbox-container input:disabled ~ .checkbox-label {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Estilo del texto del checkbox */
-.checkbox-label {
-  font-size: 14px;
-  color: #c0c0c0;
-  display: flex;
-  align-items: center;
-  transition: color 0.2s;
-}
-
-/* Efecto de hover para el texto */
-.checkbox-container:hover .checkbox-label {
-  color: #e0e0e0;
-}
-
-/* Estilo para el icono dentro del label */
-.checkbox-icon {
-  width: 14px;
-  height: 14px;
-  margin-right: 6px;
-  color: #c0c0c0;
-  stroke: currentColor;
-  stroke-width: 1.5px;
-  fill: transparent;
-  transition: color 0.2s;
-}
-
-/* Cuando el checkbox está marcado, cambiamos el color del icono */
-.checkbox-container input:checked ~ .checkbox-label .checkbox-icon {
-  color: var(--liquid-lava);
-}
-
-/* Descripción de la opción seleccionada */
-.checkbox-description {
-  font-size: 12px;
-  color: #a0a0a0;
-  margin-top: 4px;
-  margin-left: 28px; /* Ajustado para alinear con el nuevo checkbox */
-  font-style: italic;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { 
-    opacity: 0;
-    transform: translateY(-5px);
+  .file-upload-modal .modal-button.primary:hover {
+    background: var(--vscode-button-hoverBackground);
+    border-color: var(--vscode-button-hoverBackground);
   }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
+
+  .file-upload-modal .modal-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
-}
 
-/* Estilos para el checkbox en el modal de crear vault */
-.checkbox-group {
-  margin-bottom: 16px;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  user-select: none;
-  margin-bottom: 8px;
-}
-
-.checkbox-container input[type="checkbox"] {
-  margin-right: 8px;
-  width: 16px;
-  height: 16px;
-  accent-color: var(--liquid-lava);
-  cursor: pointer;
-}
-
-.checkbox-label {
-  font-size: 14px;
-  color: #c0c0c0;
-  display: flex;
-  align-items: center;
-}
-
-.checkbox-icon {
-  width: 14px;
-  height: 14px;
-  margin-right: 6px;
-  color: #c0c0c0;
-  stroke: currentColor;
-  stroke-width: 1.5px;
-  fill: transparent;
-}
-
-.checkbox-description {
-  font-size: 12px;
-  color: #a0a0a0;
-  margin-top: 4px;
-  margin-left: 24px;
-  font-style: italic;
-}
-
-/* Nota de seguridad */
-.security-note {
-  font-size: 12px;
-  color: #f0a060;
-  margin-top: 16px;
-  padding: 8px;
-  background-color: rgba(245, 110, 15, 0.05);
-  border-radius: 4px;
-  border-left: 2px solid var(--liquid-lava);
-}
-
-/* Animación para transición entre pasos */
-.modal-content {
-  animation: fadeInRight 0.3s ease;
-}
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(10px);
+  /* Focus states for accessibility */
+  .upload-dropzone:focus {
+    outline: 2px solid var(--vscode-focusBorder);
+    outline-offset: 2px;
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+
+  .clear-file-button:focus {
+    outline: 2px solid var(--vscode-focusBorder);
+    outline-offset: 2px;
   }
-}
 
-/* Estilos para los botones del segundo paso */
-.create-vault-modal .modal-footer {
-  transition: all 0.3s ease;
-}
-
-/* Animaciones del modal */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes modalSlideIn {
-  from { 
-    transform: translateY(-20px);
-    opacity: 0;
+  /* Estilos para iconos de lock en vaults privadas */
+  .vault-lock-icon svg,
+  .vault-item-lock svg {
+    stroke: #F56E0F !important;
+    fill: none !important;
+    color: #F56E0F !important;
+    stroke-width: 1.5 !important;
   }
-  to { 
-    transform: translateY(0);
-    opacity: 1;
+
+  .vault-lock-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.9;
   }
-}
 
-/* Estilos para campos con error */
-.input-field.error {
-  border-color: #f56e6e;
-  background-color: rgba(245, 110, 110, 0.05);
-}
-
-.input-error {
-  color: #f56e6e;
-  font-size: 0.75rem;
-  margin-top: 4px;
-  display: block;
-  animation: fadeIn 0.2s ease;
-}
-
-/* Deshabilitar el botón de avanzar */
-.modal-button.primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* =========================================================================
-   ESTILOS PARA FILE UPLOAD MODAL
-   ========================================================================= */
-
-/* FileUploadModal Styles */
-.file-upload-modal {
-  background: var(--vscode-sideBar-background);
-  border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  color: var(--vscode-foreground);
-  max-width: 500px;
-  width: 90vw;
-}
-
-.file-upload-modal .modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--vscode-sideBarSectionHeader-border);
-  background: var(--vscode-sideBarSectionHeader-background);
-  border-radius: 8px 8px 0 0;
-}
-
-.file-upload-modal .modal-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--vscode-sideBarTitle-foreground);
-  margin: 0;
-}
-
-.file-upload-modal .modal-close-btn {
-  background: none;
-  border: none;
-  color: var(--vscode-foreground);
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  transition: background-color 0.2s ease;
-}
-
-.file-upload-modal .modal-close-btn:hover {
-  background: var(--vscode-list-hoverBackground);
-}
-
-.file-upload-modal .modal-close-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
-.file-upload-modal .modal-body {
-  padding: 20px;
-}
-
-/* Upload dropzone */
-.upload-dropzone {
-  border: 2px dashed rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  padding: 40px 20px;
-  text-align: center;
-  background-color: rgba(255, 255, 255, 0.02);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  position: relative;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.upload-dropzone:hover {
-  border-color: rgba(245, 110, 15, 0.6);
-  background-color: rgba(245, 110, 15, 0.08);
-}
-
-.upload-dropzone.active {
-  border-color: var(--liquid-lava);
-  background-color: rgba(245, 110, 15, 0.15);
-  transform: scale(1.02);
-}
-
-.upload-dropzone.has-file {
-  border-color: rgba(45, 210, 90, 0.6);
-  background-color: rgba(45, 210, 90, 0.08);
-  cursor: default;
-}
-
-/* Upload prompt content */
-.upload-prompt {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.upload-icon-large {
-  width: 48px;
-  height: 48px;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 8px;
-}
-
-.upload-text-primary {
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--vscode-foreground);
-  margin: 0;
-}
-
-.upload-text-secondary {
-  font-size: 14px;
-  color: var(--vscode-descriptionForeground);
-  margin: 0;
-}
-
-.upload-text-info {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0;
-  font-style: italic;
-}
-
-/* File selected content */
-.file-selected {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background-color: rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 16px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.file-icon {
-  width: 32px;
-  height: 32px;
-  color: #6eb7ff;
-  flex-shrink: 0;
-}
-
-.file-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.file-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--vscode-foreground);
-  margin: 0 0 4px 0;
-  word-break: break-word;
-}
-
-.file-size {
-  font-size: 12px;
-  color: var(--vscode-descriptionForeground);
-  margin: 0;
-}
-
-.clear-file-button {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 20px;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.clear-file-button:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* Upload progress */
-.upload-progress {
-  margin-top: 20px;
-  width: 100%;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-.progress-fill {
-  height: 100%;
-  background-color: var(--liquid-lava);
-  transition: width 0.3s ease;
-  border-radius: 4px;
-}
-
-.progress-text {
-  font-size: 12px;
-  color: var(--vscode-descriptionForeground);
-  text-align: center;
-  margin: 0;
-}
-
-/* Error message */
-.error-message {
-  background-color: rgba(255, 70, 70, 0.1);
-  border: 1px solid rgba(255, 70, 70, 0.3);
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-top: 16px;
-}
-
-.error-message p {
-  color: #ff6b6b;
-  font-size: 13px;
-  margin: 0;
-  line-height: 1.4;
-}
-
-/* Modal footer */
-.file-upload-modal .modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 16px 20px;
-  border-top: 1px solid var(--vscode-sideBarSectionHeader-border);
-  background: var(--vscode-sideBarSectionHeader-background);
-  border-radius: 0 0 8px 8px;
-}
-
-.file-upload-modal .modal-button {
-  background: var(--vscode-input-background);
-  border: 1px solid var(--vscode-input-border);
-  color: var(--vscode-foreground);
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.2s ease;
-}
-
-.file-upload-modal .modal-button:hover {
-  background: var(--vscode-list-hoverBackground);
-  border-color: var(--vscode-focusBorder);
-}
-
-.file-upload-modal .modal-button.primary {
-  background: var(--vscode-button-background);
-  border-color: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
-}
-
-.file-upload-modal .modal-button.primary:hover {
-  background: var(--vscode-button-hoverBackground);
-  border-color: var(--vscode-button-hoverBackground);
-}
-
-.file-upload-modal .modal-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Focus states for accessibility */
-.upload-dropzone:focus {
-  outline: 2px solid var(--vscode-focusBorder);
-  outline-offset: 2px;
-}
-
-.clear-file-button:focus {
-  outline: 2px solid var(--vscode-focusBorder);
-  outline-offset: 2px;
-}
-
-/* Estilos para iconos de lock en vaults privadas */
-.vault-lock-icon svg,
-.vault-item-lock svg {
-  stroke: #F56E0F !important;
-  fill: none !important;
-  color: #F56E0F !important;
-  stroke-width: 1.5 !important;
-}
-
-.vault-lock-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.9;
-}
-
-.vault-item-lock {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.9;
-  margin-left: auto;
-}
-
-.vault-lock-icon svg,
-.vault-item-lock svg {
-  width: 14px;
-  height: 14px;
-  stroke: #F56E0F !important;
-  stroke-width: 1.5 !important;
-  fill: none !important;
-}
+  .vault-item-lock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.9;
+    margin-left: auto;
+  }

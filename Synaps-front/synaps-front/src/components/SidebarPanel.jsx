@@ -19,6 +19,7 @@ import ListTodoPanel    from './Atomic/Panels/ListTodoPanel';
 import { NotesHelper } from '../lib/Helpers/NotesHelper.jsx';
 import { FoldersHelper } from '../lib/Helpers/FoldersHelper.jsx';
 import { http_get, http_post } from '../lib/http.js';
+
 const { getFolders } = FoldersHelper(); 
 
 // Configuración de los elementos de navegación
