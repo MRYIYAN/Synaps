@@ -25,15 +25,30 @@ const MarkdownEditor = function() {
   const [selectedVaultId, setSelectedVaultId] = useState(window.currentVaultId || null);
 
   useEffect(() => {
-    const handler = (e) => {
+    const noteSelectedHandler = (e) => {
       const { note_id2, vault_id } = e.detail;
       setSelectedNoteId2(note_id2);
       setSelectedVaultId(vault_id);
     };
 
-    window.addEventListener('noteSelected', handler);
-    return () => window.removeEventListener('noteSelected', handler);
-  }, []);
+    const noteDeletedHandler = (e) => {
+      const { deletedNoteId2 } = e.detail;
+      // Si la nota eliminada es la que está actualmente abierta, 
+      // limpiamos la selección para mostrar el menú de VS Code
+      if (deletedNoteId2 === selectedNoteId2) {
+        setSelectedNoteId2('');
+        setSelectedVaultId(null);
+      }
+    };
+
+    window.addEventListener('noteSelected', noteSelectedHandler);
+    window.addEventListener('noteDeleted', noteDeletedHandler);
+    
+    return () => {
+      window.removeEventListener('noteSelected', noteSelectedHandler);
+      window.removeEventListener('noteDeleted', noteDeletedHandler);
+    };
+  }, [selectedNoteId2]);
 
   return (
     <div className="layout-markdown-editor">

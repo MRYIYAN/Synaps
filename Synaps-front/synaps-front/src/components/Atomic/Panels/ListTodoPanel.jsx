@@ -148,16 +148,6 @@ const ListTodoPanel = () => {
           >
             <SearchIcon className="toolbar-icon" />
           </button>
-          
-          {/* Botón de filtro - en la misma posición que en FilesPanel */}
-          <button 
-            className="toolbar-button"
-            onClick={handleFilter}
-            aria-label="Filtrar y ordenar"
-            title="Filtrar y ordenar"
-          >
-            <FilterIcon className="toolbar-icon" />
-          </button>
         </div>
       </div>
 

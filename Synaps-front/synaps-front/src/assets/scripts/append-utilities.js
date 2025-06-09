@@ -98,7 +98,6 @@ ${generateSizes()}
 
 // Añade el bloque generado al final del archivo global.css
   fs.appendFileSync(path, generatedCSS.trimStart());
-  console.log(`✅ Utilidades añadidas a ${path}`);
 };
 
 main();

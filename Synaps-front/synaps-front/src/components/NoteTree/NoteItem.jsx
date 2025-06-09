@@ -71,13 +71,19 @@ export default function NoteItem( {
     closeMenu();
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if( editTitle.trim() !== title && editTitle.trim() !== '' ) {
-      // Llamar a la función para renombrar
-      if( hasChildren && typeof window.renameFolder === 'function' ) {
-        window.renameFolder( id2, editTitle.trim() );
-      } else if( !hasChildren && typeof window.renameNote === 'function' ) {
-        window.renameNote( id2, editTitle.trim() );
+      try {
+        // Llamar a la función para renombrar
+        if( hasChildren && typeof window.renameFolder === 'function' ) {
+          await window.renameFolder( id2, editTitle.trim() );
+        } else if( !hasChildren && typeof window.renameNote === 'function' ) {
+          await window.renameNote( id2, editTitle.trim() );
+        }
+      } catch (error) {
+        // Si hay error, mantener el modo de edición para que el usuario pueda corregir
+        setEditTitle( title ); // Revertir al título original
+        return; // No salir del modo edición
       }
     }
     setIsEditMode( false );
@@ -101,7 +107,14 @@ export default function NoteItem( {
   // -----------------------------------------------------------------
 
   // Función para manejar los eventos de los items
-  function handleClick() {
+  function handleClick(e) {
+
+    // Si estamos en galaxy view y es una nota, el Link se encarga de la navegación
+    // No ejecutamos nada más para evitar doble petición
+    if( isGalaxyView && !hasChildren ) {
+      window.setSelectedItemId2( id2 );
+      return;
+    }
 
     // Seleccionamos el item
     window.setSelectedItemId2( id2 );

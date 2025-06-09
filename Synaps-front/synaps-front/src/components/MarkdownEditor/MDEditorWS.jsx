@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import MDEditor from './MDEditor';
+import DefaultMenu from './DefaultMenu';
 import { http_get } from '../../lib/http';
 
 
@@ -35,38 +36,43 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
   // -------------------------------------------------------------------------
   useEffect(() => {
     const fetchNote = async () => {
-      console.log('MDEditorWS: usando vault_id', vault_id);
+      // Solo cargar nota si se proporciona un note_id2 específico
+      if (!note_id2 || note_id2 === '') return;
 
-      const url = 'http://localhost:8010/api/readNote';
-      let body = {};
-
-      if (!modal && note_id2 === '') {
-        body = { first: 1, vault_id };
-      } else {
-        body = { note_id2, vault_id };
+      // Verificar si existe el editor markdown, si no existe, crearlo
+      if (!set_markdown || !setKey) {
+        console.log('Editor markdown no existe, inicializando...');
+        
+        // Disparar evento para notificar que se debe crear/mostrar el editor
+        const event = new CustomEvent('noteSelected', {
+          detail: { note_id2, vault_id }
+        });
+        window.dispatchEvent(event);
+        
+        // Esperar un momento para que se inicialice el editor
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
 
-      const { result, http_data } = await http_get(url, body);
-      if (result !== 1 || !http_data?.note) {
-        console.error(' No se pudo cargar la nota');
+      const url = 'http://localhost:8010/api/readNote';
+      const body = { note_id2, vault_id };
+
+      const { result, http_data } = await http_get( url, body );
+      if (result !== 1 || !http_data?.note ) {
+        console.error( 'No se pudo cargar la nota' );
         return;
       }
 
       const note = http_data.note;
-      console.log('Nota recibida:', note);
-
       const markdown = note.note_markdown || note.markdown || '';
-      console.log('Contenido del markdown:', markdown);
 
       set_markdown(markdown);
       setKey(prev => prev + 1);
     };
 
-    const skip_initial_fetch = note_id2 === '' && !modal;
-    if (!skip_initial_fetch && vault_id !== null) {
+    if (note_id2 && vault_id !== null) {
       fetchNote();
     }
-  }, [note_id2, vault_id]);
+  }, [note_id2, vault_id, modal]);
   // -------------------------------------------------------------------------
   // Conexión y suscripción WebSocket
   // -------------------------------------------------------------------------
@@ -126,7 +132,11 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
   // -------------------------------------------------------------------------
   // Renderizado del editor
   // -------------------------------------------------------------------------
-  console.log('[MDEditorWS] ha renderizado: ', { note_id2, vault_id });
+
+  // Si no hay nota seleccionada, mostrar el menú por defecto
+  if (!note_id2 || note_id2 === '') {
+    return <DefaultMenu />;
+  }
 
   return (
     <MDEditor

@@ -41,9 +41,9 @@ class NoteService
     // Inicializamos la consulta filtrando por las notas del usuario
     // Recorremos cada nota y añade el atributo source = 'own'
     $own_notes = Note::on( $user_db )
-      ->get()
-      ->when( !empty( $query ), fn( $q ) => $q->where( 'note_title', 'LIKE', "$query" ) )
+      ->when( !empty( $query ), fn( $q ) => $q->where( 'note_markdown', 'LIKE', "%$query%" ) )
       ->when( $parent_id != 0, fn( $q ) => $q->where( 'parent_id', '=', $parent_id ) )
+      ->get()
       ->each( fn( $note ) => $note->setAttribute( 'source', 'own' ) );
 
     // Inicializamos una consulta sobre note_shares en la DB central

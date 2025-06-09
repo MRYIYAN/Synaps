@@ -7,7 +7,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\VaultController;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FolderNoteController;
 use App\Http\Controllers\NoteController;
@@ -55,6 +54,135 @@ try
          * @see VaultController::store()
          */
         Route::post( '/vaults', [VaultController::class, 'store'] );
+
+        /**
+         * PUT /vaults/{id}
+         * Actualiza un vault existente del usuario autenticado.
+         *
+         * @see VaultController::update()
+         */
+        Route::put( '/vaults/{id}', [VaultController::class, 'update'] );
+
+        /**
+         * POST /vaults/{id}/verify-pin
+         * Verifica el PIN de un vault privado.
+         *
+         * @see VaultController::verifyPin()
+         */
+        Route::post( '/vaults/{id}/verify-pin', [VaultController::class, 'verifyPin'] );
+
+        //=======================//
+        // NOTES API            //
+        //=======================//
+
+        /**
+         * GET /readNote
+         * Lee una nota concreta por su identificador.
+         *
+         * @see NoteController::readNote()
+         */
+        Route::get( '/readNote', [NoteController::class, 'readNote'] );
+
+        /**
+         * POST /addNote
+         * Crea una nueva nota.
+         *
+         * @see NoteController::addNote()
+         */
+        Route::post( '/addNote', [NoteController::class, 'addNote'] );
+
+        /**
+         * GET /getNotes
+         * Recupera todas las notas del usuario.
+         *
+         * @see NoteController::getNotes()
+         */
+        Route::get( '/getNotes', [NoteController::class, 'getNotes'] );
+
+        /**
+         * POST /deleteNote
+         * Elimina una nota.
+         *
+         * @see NoteController::deleteNote()
+         */
+        Route::post( '/deleteNote', [NoteController::class, 'deleteNote'] );
+
+        /**
+         * POST /renameNote
+         * Renombra una nota existente.
+         *
+         * @see NoteController::renameNote()
+         */
+        Route::post( '/renameNote', [NoteController::class, 'renameNote'] );
+
+        /**
+         * POST /searchNotes
+         * Busca notas por término o filtro.
+         *
+         * @see NoteController::searchNotes()
+         */
+        Route::post( '/searchNotes', [NoteController::class, 'searchNotes'] );
+
+        /**
+         * PATCH /notes/{note_id2}
+         * Guarda los cambios de una nota.
+         *
+         * @see NoteController::saveNote()
+         * @param string $note_id2
+         */
+        Route::patch( '/notes/{note_id2}', [NoteController::class, 'saveNote'] );
+
+        /**
+         * POST /uploadFile
+         * Sube un archivo y crea una nota a partir de él.
+         *
+         * @see NoteController::uploadFile()
+         */
+        Route::post( '/uploadFile', [NoteController::class, 'uploadFile'] );
+
+        /**
+         * GET /galaxyGraph
+         * Devuelve la estructura gráfica de las notas.
+         *
+         * @see NoteController::galaxyGraph()
+         */
+        Route::get( '/galaxyGraph', [NoteController::class, 'galaxyGraph'] );
+
+        //=======================//
+        // FOLDERS API          //
+        //=======================//
+
+        /**
+         * POST /addFolder
+         * Crea una nueva carpeta de notas.
+         *
+         * @see FolderNoteController::addFolder()
+         */
+        Route::post( '/addFolder', [FolderNoteController::class, 'addFolder'] );
+
+        /**
+         * GET /getFolders
+         * Obtiene las carpetas de un vault específico.
+         *
+         * @see FolderNoteController::getFolders()
+         */
+        Route::get( '/getFolders', [FolderNoteController::class, 'getFolders'] );
+
+        /**
+         * POST /deleteFolder
+         * Crea una nueva carpeta de notas.
+         *
+         * @see FolderNoteController::deleteFolder()
+         */
+        Route::post( '/deleteFolder', [FolderNoteController::class, 'deleteFolder'] );
+
+        /**
+         * POST /renameFolder
+         * Renombra una carpeta existente.
+         *
+         * @see FolderNoteController::renameFolder()
+         */
+        Route::post( '/renameFolder', [FolderNoteController::class, 'renameFolder'] );
 
         //=======================//
         // USER API             //
@@ -104,112 +232,5 @@ Route::post( '/login', [AuthController::class, 'login'] )->middleware( ['api', S
 Route::post( '/register', [AuthController::class, 'register'] );
 
 //===========================================================================//
-//  GESTIÓN DE NOTAS Y CARPETAS                                              //
-//===========================================================================//
-
-/**
- * POST /addNote
- * Crea una nueva nota.
- *
- * @see NoteController::addNote()
- */
-Route::post( '/addNote', [NoteController::class, 'addNote'] );
-
-/**
- * POST /addFolder
- * Crea una nueva carpeta de notas.
- *
- * @see FolderNoteController::addFolder()
- */
-Route::post( '/addFolder', [FolderNoteController::class, 'addFolder'] );
-
-/**
- * GET /getFolders
- * Obtiene las carpetas de un vault específico.
- *
- * @see FolderNoteController::getFolders()
- */
-Route::get( '/getFolders', [FolderNoteController::class, 'getFolders'] );
-
-/**
- * POST /uploadFile
- * Sube un archivo y crea una nota a partir de él.
- *
- * @see NoteController::uploadFile()
- */
-Route::post( '/uploadFile', [NoteController::class, 'uploadFile'] );
-
-/**
- * POST /deleteFolder
- * Crea una nueva carpeta de notas.
- *
- * @see FolderNoteController::deleteFolder()
- */
-Route::post( '/deleteFolder', [FolderNoteController::class, 'deleteFolder'] );
-
-/**
- * GET /getNotes
- * Recupera todas las notas del usuario.
- *
- * @see NoteController::getNotes()
- */
-Route::get( '/getNotes', [NoteController::class, 'getNotes'] );
-
-/**
- * POST /deleteNote
- * Elimina una nota.
- *
- * @see NoteController::deleteNote()
- */
-Route::post( '/deleteNote', [NoteController::class, 'deleteNote'] );
-
-/**
- * POST /renameNote
- * Renombra una nota existente.
- *
- * @see NoteController::renameNote()
- */
-Route::post( '/renameNote', [NoteController::class, 'renameNote'] );
-
-/**
- * POST /renameFolder
- * Renombra una carpeta existente.
- *
- * @see FolderNoteController::renameFolder()
- */
-Route::post( '/renameFolder', [FolderNoteController::class, 'renameFolder'] );
-
-/**
- * POST /searchNotes
- * Busca notas por término o filtro.
- *
- * @see NoteController::searchNotes()
- */
-Route::post( '/searchNotes', [NoteController::class, 'searchNotes'] );
-
-/**
- * GET /readNote
- * Lee una nota concreta por su identificador.
- *
- * @see NoteController::readNote()
- */
-Route::get( '/readNote', [NoteController::class, 'readNote'] );
-
-/**
- * PATCH /notes/{note_id2}
- * Guarda los cambios de una nota.
- *
- * @see NoteController::saveNote()
- * @param string $note_id2
- */
-Route::patch( '/notes/{note_id2}', [NoteController::class, 'saveNote'] );
-
-/**
- * GET /galaxyGraph
- * Devuelve la estructura gráfica de las notas.
- *
- * @see NoteController::galaxyGraph()
- */
-Route::get( '/galaxyGraph', [NoteController::class, 'galaxyGraph'] );
-
+//  AUTENTICACIÓN (RUTAS PÚBLICAS)                                          //
 //===========================================================================//

@@ -14,8 +14,8 @@ import styles from "./NoteTree.css";
 
 export default function NoteBranch({ node, depth, selectedId2 }) {
 
-  // Estado para controlar si está colapsado
-  const [collapsed, setCollapsed] = useState( false );
+  // Estado para controlar si está colapsado - iniciamos colapsado
+  const [collapsed, setCollapsed] = useState( true );
 
   // Comprueba si este nodo tiene hijos
   const hasChildren = ( node.type === 'folder' );

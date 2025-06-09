@@ -3,6 +3,29 @@
 // Librería de funciones destinadas a ejecutar llamadas por HTTP
 // ----------------------------------------------------------------------
 
+// Función helper para mostrar notificaciones de error
+const showHttpErrorNotification = (message, status) => {
+  if (window.showNotification) {
+    let title = 'Error HTTP';
+    
+    // Personalizar título según el status
+    if (status >= 400 && status < 500) {
+      title = 'Error del Cliente';
+    } else if (status >= 500) {
+      title = 'Error del Servidor';
+    } else if (status === 0) {
+      title = 'Error de Conexión';
+    }
+    
+    window.showNotification({
+      type: 'error',
+      title,
+      message: message || 'Ha ocurrido un error en la petición HTTP',
+      duration: 5000
+    });
+  }
+};
+
 export async function http_post( url, body, headers, credentials = 'include' ) {
 
   // Inicializamos los valores a devolver
@@ -21,6 +44,12 @@ export async function http_post( url, body, headers, credentials = 'include' ) {
       }; 
     }
 
+    // Agregar token de autorización si existe
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    }
+
     // Ejecutamos la solicitud a la ruta backend especificada
     let http_response = await fetch( url, {
         method     : 'POST'
@@ -33,8 +62,11 @@ export async function http_post( url, body, headers, credentials = 'include' ) {
     http_data = await http_response.json();
 
     // Si la petición ha sido incorrecta, salimos del flujo
-    if( !http_response.ok )
+    if( !http_response.ok ) {
       message = http_data.message || http_response.statusText || 'Error';
+      // Mostrar notificación de error
+      showHttpErrorNotification(message, http_response.status);
+    }
 
     // Caso de éxito
     else {
@@ -46,6 +78,8 @@ export async function http_post( url, body, headers, credentials = 'include' ) {
 
     // Mensaje de error
     message = error.message || 'Network error';
+    // Mostrar notificación de error de red
+    showHttpErrorNotification(message, 0);
   }
   finally
   {
@@ -59,14 +93,6 @@ export async function http_post( url, body, headers, credentials = 'include' ) {
 // Helper para GET con Bearer
 export async function http_get( url, body = {} ) {
 
-  // Log para verificar los parámetros enviados
-  Object.entries(body).forEach(([k, v]) => {
-    if (k === 'vault_id') {
-      console.log('Tipo de vault_id:', typeof v, 'Valor:', v);
-    }
-  });
-  console.log("Query params:", new URLSearchParams( body ).toString());
-
   // Inicializamos el valor a devolver
   let result    = 0;
   let message   = '';
@@ -76,6 +102,13 @@ export async function http_get( url, body = {} ) {
   let headers = {
     Accept: 'application/json'
   };
+
+  // Agregar token de autorización si existe
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    headers['Authorization'] = 'Bearer ' + token;
+  }
+
   let credentials = 'include';
 
   try {
@@ -96,8 +129,11 @@ export async function http_get( url, body = {} ) {
     http_data = await http_response.json();
 
     // Si la petición ha sido incorrecta, registramos el mensaje de error
-    if( !http_response.ok )
+    if( !http_response.ok ) {
       message = http_data.message || http_response.statusText || 'Error';
+      // Mostrar notificación de error
+      showHttpErrorNotification(message, http_response.status);
+    }
     
     // Caso de éxito
     else {
@@ -109,6 +145,8 @@ export async function http_get( url, body = {} ) {
 
     // Mensaje de error de red u otra excepción
     message = error.message || 'Network error';
+    // Mostrar notificación de error de red
+    showHttpErrorNotification(message, 0);
 
   } finally {
     

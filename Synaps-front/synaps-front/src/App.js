@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ReactKeycloakProvider } from "@react-keycloak/web";
 import keycloak, { keycloakInitOptions } from "./keycloak";
 
+// Sistema de notificaciones
+import NotificationSystem from "./components/Atomic/Notification/NotificationSystem";
+
 
 // ---------------------------------------------
 // Importamos las páginas de la aplicación
@@ -36,6 +39,9 @@ function App() {
       initOptions={keycloakInitOptions}
     >
       <div className="view-root">
+        {/* Sistema de notificaciones global */}
+        <NotificationSystem />
+        
         {/* Enrutador */}
         <BrowserRouter>
           <Routes>

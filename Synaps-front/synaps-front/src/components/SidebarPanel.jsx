@@ -1,27 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from 'react-router-dom';
-import { ReactComponent as SearchIcon } from "../assets/icons/search.svg";
 import { ReactComponent as FoldersIcon } from "../assets/icons/folders.svg";
 import { ReactComponent as GalaxyViewIcon } from "../assets/icons/waypoints.svg";
 import { ReactComponent as ListTodoIcon } from "../assets/icons/list-todo.svg";
-import { ReactComponent as SecretNotesIcon } from "../assets/icons/lock.svg";
 import { ReactComponent as LogoutIcon } from "../assets/icons/logout.svg";
 
-
-import logo_header from "../assets/icons/logo_header_sidebar.svg";
 import "../assets/styles/SidebarPanel.css";
 
 // Importaciones de componentes
 import LogoutConfirmModal from "./Atomic/Modal/LogoutConfirmModal";
 import CreateVaultModal from "./Atomic/Modal/CreateVaultModal";
-import UserSettingsModal from "./Atomic/Modal/UserSettingsModal";
+import EditVaultModal from "./Atomic/Modal/EditVaultModal";
+import VaultPinModal from "./Atomic/Modal/VaultPinModal";
 import UserProfileBar from "./Atomic/Panels/UserProfileBar";
 import FilesPanel      from './Atomic/Panels/FilesPanel';
 import GalaxyViewPanel  from './Atomic/Panels/GalaxyViewPanel';
 import ListTodoPanel    from './Atomic/Panels/ListTodoPanel';
-import SecretNotesPanel from './Atomic/Panels/SecretNotesPanel';
 import { NotesHelper } from '../lib/Helpers/NotesHelper.jsx';
 import { FoldersHelper } from '../lib/Helpers/FoldersHelper.jsx';
+import { http_get, http_post } from '../lib/http.js';
+
+const { getFolders } = FoldersHelper(); 
 
 // Configuración de los elementos de navegación
 const navigationItems = [
@@ -40,92 +39,116 @@ const panelComponents = {
 };
 
 const SidebarPanel = () => {
-
-  // Usar React Router hook para obtener la ubicación actual
   const location = useLocation();
-
-  // Usar los helpers
-  const { getFolders } = FoldersHelper();
-  const { getNotes, notes } = NotesHelper();
-
-
   
   // Estados para la interfaz de usuario
   const [rightPanelOpen, setRightPanelOpen]       = useState(true);
   const [selectedItem, setSelectedItem]           = useState('files');
   const [indicatorPosition, setIndicatorPosition] = useState(0);
-  const [isClosing, setIsClosing]                 = useState(false);  
+  const [isClosing, setIsClosing]                 = useState(false);
   const [showLogoutModal, setShowLogoutModal]     = useState(false);
   const [showSettingsMenu, setShowSettingsMenu]   = useState(false);
   const [showCreateVaultModal, setShowCreateVaultModal] = useState(false);
-  const [showUserSettingsModal, setShowUserSettingsModal] = useState(false);
+  const [showEditVaultModal, setShowEditVaultModal] = useState(false);
+  const [editingVault, setEditingVault] = useState(null);
+  
+  // Estados para el modal de PIN de vault privada
+  const [showVaultPinModal, setShowVaultPinModal] = useState(false);
+  const [pendingVault, setPendingVault] = useState(null);
+
   // Estados para los datos del usuario y las vaults
+  // TODO: Reemplazar con datos reales de la API
   const [currentUser, setCurrentUser] = useState({
     name: "",
-    email: "",
     avatar: null
   });
 
   const [vaults, setVaults] = useState([]);
   const [currentVault, setCurrentVault] = useState(null);
-  
+
+  // Estados para manejo de PIN en vaults privadas
+  const [vaultPin, setVaultPin] = useState("");
+  const [vaultPinError, setVaultPinError] = useState("");
+
+  // Usar NotesHelper para obtener notas y función getNotes
+  const { notes, getNotes } = NotesHelper();
+
+  // Función para manejar el selector de vault
+  const handleVaultSelect = useCallback((vault) => {
+    // Si la vault es privada y tiene PIN, mostrar modal de autenticación
+    if (vault.is_private && vault.pin) {
+      setPendingVault(vault);
+      setShowVaultPinModal(true);
+      return;
+    }
+    
+    // Si no es privada o no tiene PIN, proceder directamente
+    performVaultSelection(vault);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setCurrentVault]);
+
+  // Función separada para realizar la selección de vault después de autenticación exitosa
+  const performVaultSelection = useCallback((vault) => {
+    setCurrentVault(vault);
+    window.currentVaultId = parseInt(vault?.vault_id || 0, 10);
+
+    // Notificar a FilesPanel que cambió la vault
+    window.dispatchEvent(new Event("vaultChanged"));
+
+    getFolders(vault?.vault_id); 
+    getNotes(vault?.vault_id);  // Cargar notas de la vault seleccionada
+
+    // Opcional: reiniciar nota seleccionada
+    window.readNote?.('', vault?.vault_id);
+  }, [getFolders, getNotes]);
+
+  // Función para manejar autenticación exitosa de PIN
+  const handleVaultPinSuccess = useCallback((vault) => {
+    console.log('PIN authentication successful for vault:', vault);
+    setShowVaultPinModal(false);
+    setPendingVault(null);
+    performVaultSelection(vault);
+  }, [performVaultSelection]);
+
+  // Función para manejar cierre del modal de PIN
+  const handleVaultPinClose = useCallback(() => {
+    console.log('PIN authentication cancelled');
+    setShowVaultPinModal(false);
+    setPendingVault(null);
+  }, []);
+
   // Cargar datos iniciales
   useEffect(() => {
-    // Cargar datos del usuario desde la API
-    const fetchUserData = async () => {
-      try {
-        console.log("🔍 Solicitando datos del usuario desde la API...");
-        const accessToken = localStorage.getItem('access_token');
-        const response = await fetch('http://localhost:8010/api/user', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        const userData = await response.json();
-        
-        if (userData.result === 1 && userData.user) {
-          console.log("👤 Datos del usuario cargados:", userData.user);
-          setCurrentUser({
-            name: userData.user.name || "",
-            email: userData.user.email || "",
-            avatar: null
-          });
-        } else {
-          console.error("❌ Error al cargar usuario:", userData.message);
-          // Fallback a datos por defecto
-          setCurrentUser({
-            name: "Usuario",
-            email: "",
-            avatar: null
-          });
-        }
-      } catch (e) {
-        console.error("❌ Error al cargar datos del usuario:", e);
-        // Fallback a datos por defecto
-        setCurrentUser({
-          name: "Usuario", 
-          email: "",
-          avatar: null
-        });
-      }
-    };    fetchUserData();
+    // Cargar datos del usuario (simulado)
+    setCurrentUser({
+      name: "Usuario",
+      avatar: null
+    });
 
     // Cargar vaults reales desde la API
     const fetchVaults = async () => {
       try {
-        console.log(" Solicitando vaults desde la API...");
-        const accessToken = localStorage.getItem('access_token');
-        const response = await fetch('http://localhost:8010/api/vaults', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        const vaults = await response.json();
-        console.log(' Vaults cargados de la DB:', vaults);
-        setVaults(vaults);
+        const url = 'http://localhost:8010/api/vaults';
+        const { result, http_data } = await http_get(url);
+        
+        if (result === 1) {
+          const vaults = http_data || [];
+          console.log('Vaults loaded from API:', vaults);
+          
+          // Asegurar que cada vault tenga una propiedad name
+          const processedVaults = vaults.map((vault, index) => ({
+            ...vault,
+            name: vault.name || vault.vault_title || `Vault ${index + 1}`
+          }));
+          
+          setVaults(processedVaults);
 
-        if (vaults.length > 0) {
-          handleVaultSelect(vaults[0]); //  reutiliza la lógica centralizada
+          if (processedVaults.length > 0) {
+            handleVaultSelect(processedVaults[0]); //  reutiliza la lógica centralizada
+          }
+        } else {
+          console.error("Error al cargar vaults desde la API");
+          setVaults([]);
         }
 
       } catch (e) {
@@ -135,7 +158,7 @@ const SidebarPanel = () => {
     };
 
     fetchVaults();
-  }, []);
+  }, [handleVaultSelect]); // Include handleVaultSelect in dependency array
 
   // Manejo de clics en la barra de navegación
   const handleIconClick = (itemId, index) => {
@@ -169,14 +192,19 @@ const SidebarPanel = () => {
   
   // Función para confirmar el cierre de sesión
   const confirmLogout = () => {
-    console.log("Cerrando sesión confirmado...");
-    // TODO: Implementar la lógica real de cierre de sesión
-    // - Eliminación de tokens de autenticación
-    // - Redirección a la página de login
-    // - Limpieza de datos de sesión, etc.
+    // Limpiar datos de sesión
+    localStorage.removeItem('access_token');
     
-    // Cerrar el modal una vez completado
+    // Limpiar datos globales
+    window.currentNotes = [];
+    window.currentVaultId = 0;
+    window.selectedItemId2 = '';
+    
+    // Cerrar el modal
     setShowLogoutModal(false);
+    
+    // Redirigir a la página de login
+    window.location.href = '/login';
   };
   
   // Función para cancelar el cierre de sesión
@@ -184,60 +212,10 @@ const SidebarPanel = () => {
     setShowLogoutModal(false);
   };
   
-  // Función para manejar el selector de vaults
-  const handleVaultSelect = (vault) => {
-    setCurrentVault(vault);
-    window.currentVaultId = parseInt(vault?.vault_id || 0, 10);
-
-    // Notificar a FilesPanel que cambió el vault
-    window.dispatchEvent(new Event("vaultChanged"));
-
-    getFolders(vault?.vault_id); 
-    getNotes(vault?.vault_id);  // Cargar notas del vault seleccionado
-
-    // Opcional: resetear nota seleccionada
-    window.readNote?.('', vault?.vault_id);
-  };
-    // Nueva función para manejar el menú de configuración
+  // Nueva función para manejar el menú de configuración
   const handleSettingsClick = () => {
-    setShowUserSettingsModal(true);
-  };
-
-  // Función para manejar el guardado de datos del usuario
-  const handleSaveUser = async (userData) => {
-    try {
-      console.log("💾 Guardando datos del usuario:", userData);
-      const accessToken = localStorage.getItem('access_token');
-      
-      const response = await fetch('http://localhost:8010/api/user', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(userData),
-      });
-
-      const result = await response.json();
-      
-      if (result.result === 1 && result.user) {
-        console.log("✅ Usuario actualizado exitosamente:", result.user);
-        
-        // Actualizar el estado local con los nuevos datos
-        setCurrentUser({
-          name: result.user.name || "",
-          email: result.user.email || "",
-          avatar: null
-        });
-        
-        return result;
-      } else {
-        throw new Error(result.message || 'Error al actualizar el usuario');
-      }
-    } catch (error) {
-      console.error("❌ Error al guardar usuario:", error);
-      throw error;
-    }
+    setShowSettingsMenu(!showSettingsMenu);
+    // TODO: Implementar el menú de configuración
   };
   
   /**
@@ -269,29 +247,21 @@ const handleCreateVault = async (vaultData) => {
           return;
         }
 
-        // Obtener el token de autenticación desde localStorage
-        const token = localStorage.getItem("access_token"); //Token de Keycloak
-
-        // Realizar la solicitud POST al backend usando fetch
-        const response = await fetch("http://localhost:8010/api/vaults", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` // El token de Keycloak se envía aquí
-          },
-          body: JSON.stringify(vaultData),
-        });
+        // Preparar datos para http_post
+        const url = "http://localhost:8010/api/vaults";
+        const body = vaultData;
+        
+        // Realizar la solicitud POST al backend usando http_post
+        const http_response = await http_post(url, body);
 
         // Verificar si la respuesta es exitosa
-        if(!response.ok) {
-          const errorData = await response.json();
-          reject(new Error(errorData.message || "Error al crear la vault."));
+        if(http_response.result !== 1) {
+          reject(new Error(http_response.message || "Error al crear la vault."));
           return;
         }
 
         // Obtener la vault creada desde la respuesta
-        const responseData = await response.json();
-        console.log(" Vault creado en:", responseData.data.real_path); 
+        const responseData = http_response.http_data;
         const newVault = {
           ...responseData.data,
           name: responseData.data.vault_title,
@@ -313,19 +283,67 @@ const handleCreateVault = async (vaultData) => {
   });
 };
 
-// evitar duplicados al crear una vault
-const handleVaultCreated = (vault) => {
-  setVaults((prev) => {
-    const exists = prev.some(v => v.id === vault.id);
-    return exists ? prev : [...prev, vault];
-  });
-};
-
   // Función para abrir el modal de creación de vault
   const openCreateVaultModal = () => {
     setShowCreateVaultModal(true);
   };
-  
+
+  // Función para abrir el modal de edición de vault
+  const openEditVaultModal = (vault) => {
+    console.log('openEditVaultModal called with:', vault);
+    console.log('Setting showEditVaultModal to true');
+    setEditingVault(vault);
+    setShowEditVaultModal(true);
+  };
+
+  // Función para manejar la edición de vault
+  const handleEditVault = async (updatedVaultData) => {
+    try {
+      // Actualizar la vault en el estado local
+      setVaults(prevVaults => 
+        prevVaults.map(vault => 
+          vault.vault_id2 === updatedVaultData.vault_id2 ? updatedVaultData : vault
+        )
+      );
+
+      // Actualizar currentVault si es la que se está editando
+      if (currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
+        setCurrentVault(updatedVaultData);
+      }
+
+      // Cerrar modal
+      setShowEditVaultModal(false);
+      setEditingVault(null);
+
+      // Opcional: recargar notas si cambió algo importante
+      if (currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
+        getNotes(updatedVaultData.vault_id);
+      }
+
+    } catch (error) {
+      console.error("Error al actualizar vault:", error);
+    }
+  };
+
+  // Función para manejar el envío del PIN en la vault
+  const handlePinSubmit = (enteredPin) => {
+    setVaultPin(enteredPin);
+
+    // Validar el PIN (simulación, reemplazar con lógica real)
+    const isValidPin = enteredPin === "1234"; // Ejemplo: el PIN correcto es "1234"
+
+    if (isValidPin) {
+      setShowVaultPinModal(false);
+      setVaultPinError("");
+
+      // Aquí puedes continuar con la acción que requería el PIN, como abrir la vault
+      // Por ejemplo, llamar a una función para abrir la vault:
+      // openVault(currentVault);
+    } else {
+      setVaultPinError("PIN incorrecto. Inténtalo de nuevo.");
+    }
+  };
+
   // Determinamos qué componente mostrar en el panel basado en la selección actual
   const CurrentPanelComponent = selectedItem
     ? panelComponents[selectedItem]
@@ -421,6 +439,7 @@ const handleVaultCreated = (vault) => {
             onVaultSelect={handleVaultSelect}
             onSettingsClick={handleSettingsClick}
             onCreateVault={openCreateVaultModal}
+            onEditVault={openEditVaultModal}
           />
         </div>
       )}
@@ -436,15 +455,27 @@ const handleVaultCreated = (vault) => {
       <CreateVaultModal 
         isOpen={showCreateVaultModal}
         onClose={() => setShowCreateVaultModal(false)}
-        onCreateVault={handleVaultCreated}
+        onCreateVault={handleCreateVault}
       />
 
-      {/* Modal de configuración de usuario */}
-      <UserSettingsModal 
-        isOpen={showUserSettingsModal}
-        onClose={() => setShowUserSettingsModal(false)}
-        currentUser={currentUser}
-        onSaveUser={handleSaveUser}
+      {/* Modal para editar vault */}
+      <EditVaultModal 
+        isOpen={showEditVaultModal}
+        onClose={() => {
+          console.log('Closing EditVaultModal');
+          setShowEditVaultModal(false);
+          setEditingVault(null);
+        }}
+        onEditVault={handleEditVault}
+        vault={editingVault}
+      />
+
+      {/* Modal para autenticación por PIN en vaults privadas */}
+      <VaultPinModal
+        isOpen={showVaultPinModal}
+        onClose={handleVaultPinClose}
+        onSuccess={handleVaultPinSuccess}
+        vault={pendingVault}
       />
     </div>
   );
