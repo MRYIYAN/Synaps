@@ -14,6 +14,7 @@ import Modal      from "../components/Modal";
 
 import SidebarPanel from "../components/SidebarPanel";
 import MDEditorWS from "../components/MarkdownEditor/MDEditorWS";
+import { MultiUserButton } from "../components/Atomic/Multiuser/MultiUser";
 
 // ------------------------------------------------------------
 // APP
@@ -55,6 +56,9 @@ const MarkdownEditor = function() {
       <SidebarPanel />
       <div className="md-editor-wrapper">
         <MDEditorWS note_id2={selectedNoteId2} vault_id={selectedVaultId} />
+        {selectedNoteId2 && (
+          <MultiUserButton documentTitle="Documento de Synaps" />
+        )}
       </div>
     </div>
   );
