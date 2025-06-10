@@ -68,6 +68,12 @@ class VaultController extends Controller
             //==============================//
             // CONEXIÓN DINÁMICA AL TENANT  //
             //==============================//
+            Log::info('VAULT_CONTROLLER: Antes de conectar a tenant', [
+                'user_id' => $user_id,
+                'user_id_type' => gettype($user_id),
+                'user_object' => $user ? $user->toArray() : null
+            ]);
+            
             $connection = DatabaseHelper::connect( $user_id );
 
             Log::debug( 'Conectado a DB', [
@@ -77,7 +83,24 @@ class VaultController extends Controller
             //=======================//
             // CONSULTA DE VAULTS    //
             //=======================//
-            $vaults = Vault::all();
+            try {
+                // Usar la conexión apropiada (tenant o default)
+                if ($connection === 'tenant') {
+                    $vaults = \DB::connection('tenant')->table('vaults')->get();
+                } else {
+                    // Fallback a la BD principal si no hay tenant disponible
+                    $vaults = Vault::all();
+                }
+            } catch (\Exception $dbError) {
+                Log::warning('VAULT_CONTROLLER: Error accediendo a BD tenant, usando BD principal', [
+                    'user_id' => $user_id,
+                    'connection' => $connection,
+                    'error' => $dbError->getMessage()
+                ]);
+                
+                // Fallback a la BD principal
+                $vaults = Vault::all();
+            }
 
             //=========================//
             // RESPUESTA JSON          //

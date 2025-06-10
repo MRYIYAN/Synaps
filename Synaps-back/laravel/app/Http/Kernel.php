@@ -67,5 +67,8 @@ class Kernel extends HttpKernel
         ,   'cache.headers'     => \Illuminate\Http\Middleware\SetCacheHeaders::class
         ,   'auth.bearer'       => \App\Http\Middleware\AuthenticateWithBearerToken::class
         
+        // Tenant
+        ,   'ensure.tenant'     => \App\Http\Middleware\EnsureTenantDatabase::class
+        
     ];
 }

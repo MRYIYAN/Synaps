@@ -28,6 +28,8 @@ const RegisterForm = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationDirection, setAnimationDirection] = useState('');
   const [error_msg, set_error_msg] = useState('');
+  const [success_msg, set_success_msg] = useState('');
+  const [countdown, setCountdown] = useState(null);
 
   //---------------------------------------------------------------------------//
   //  Estados para los campos de entrada del formulario                        //
@@ -61,6 +63,12 @@ const RegisterForm = () => {
   //---------------------------------------------------------------------------//
   const [isStep1Valid, setIsStep1Valid] = useState(false);
   const [isStep2Valid, setIsStep2Valid] = useState(false);
+
+  //---------------------------------------------------------------------------//
+  //  Estados para mostrar/ocultar contraseñas                                 //
+  //---------------------------------------------------------------------------//
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   //---------------------------------------------------------------------------//
   //  Función para validar el nombre completo del usuario                      //
@@ -519,17 +527,49 @@ const RegisterForm = () => {
       return;
     }
 
-    // Configuración de la petición HTTP, no se si esta bien xd
+    console.log('🚀 FRONTEND: Iniciando proceso de registro');
+    console.log('📤 FRONTEND: Enviando datos:', { name, username, email, password_length: password.length });
+
+    // Configuración de la petición HTTP
     let url = 'http://localhost:8010/api/register';
     let body = { name, username, email, password };
 
     try {
       // Enviar datos al servidor
+      console.log('📡 FRONTEND: Enviando petición HTTP a:', url);
       let http_response = await http_post(url, body);
-      console.log(http_response);
-      // TODO: Implementar redirección o mensaje de éxito :)
+      console.log('📨 FRONTEND: Respuesta recibida del servidor:', http_response);
+      
+      // Verificar si el registro fue exitoso
+      if (http_response && http_response.result === 1) {
+        // Registro exitoso - mostrar mensaje y redirigir después de un delay
+        console.log('✅ FRONTEND: Registro exitoso!');
+        console.log('🎉 FRONTEND: Usuario registrado correctamente');
+        set_error_msg(''); // Limpiar mensajes de error
+        set_success_msg('¡Registro exitoso! Redirigiendo al login en');
+        setCountdown(3); // Inicializar countdown
+        
+        // Crear intervalo para la cuenta regresiva
+        const countdownInterval = setInterval(() => {
+          setCountdown(prevCount => {
+            if (prevCount <= 1) {
+              clearInterval(countdownInterval);
+              console.log('🔄 FRONTEND: Redirigiendo al login...');
+              window.location.href = '/login';
+              return 0;
+            }
+            return prevCount - 1;
+          });
+        }, 1000);
+      } else {
+        // Mostrar mensaje de error del servidor
+        const errorMessage = http_response?.message || 'Error al crear la cuenta. Inténtalo de nuevo.';
+        console.log('❌ FRONTEND: Error en el registro:', errorMessage);
+        set_success_msg(''); // Limpiar mensajes de éxito
+        set_error_msg(errorMessage);
+      }
     } catch (error) {
-      console.error('Error al registrar:', error);
+      console.error('💥 FRONTEND: Excepción capturada:', error);
       set_error_msg('Error al crear la cuenta. Inténtalo de nuevo.');
     }
   };
@@ -620,30 +660,74 @@ const RegisterForm = () => {
               {/* Campo: Contraseña */}
               <div className="form-group">
                 <label htmlFor="password">Contraseña</label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  onBlur={handlePasswordBlur}
-                  className={passwordTouched && passwordError ? 'error' : ''}
-                  required
-                />
+                <div className="password-input-container">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={handlePasswordChange}
+                    onBlur={handlePasswordBlur}
+                    className={`password-input ${passwordTouched && passwordError ? 'error' : ''}`}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  >
+                    {showPassword ? (
+                      <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/>
+                        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/>
+                        <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/>
+                        <path d="m2 2 20 20"/>
+                      </svg>
+                    ) : (
+                      <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 {passwordTouched && passwordError && <div className="field-error">{passwordError}</div>}
               </div>
               
               {/* Campo: Confirmación de contraseña */}
               <div className="form-group">
                 <label htmlFor="confirmPassword">Confirmar contraseña</label>
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
-                  onBlur={handleConfirmPasswordBlur}
-                  className={confirmPasswordTouched && confirmPasswordError ? 'error' : ''}
-                  required
-                />
+                <div className="password-input-container">
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    onBlur={handleConfirmPasswordBlur}
+                    className={`password-input ${confirmPasswordTouched && confirmPasswordError ? 'error' : ''}`}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={showConfirmPassword ? "Ocultar confirmación de contraseña" : "Mostrar confirmación de contraseña"}
+                  >
+                    {showConfirmPassword ? (
+                      <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/>
+                        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/>
+                        <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/>
+                        <path d="m2 2 20 20"/>
+                      </svg>
+                    ) : (
+                      <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 {confirmPasswordTouched && confirmPasswordError && 
                   <div className="field-error">{confirmPasswordError}</div>
                 }
@@ -671,7 +755,32 @@ const RegisterForm = () => {
       
       {/* Mensaje de error general */}
       {error_msg && <div className="error-message">{error_msg}</div>}
+      
+      {/* Mensaje de éxito */}
+      {success_msg && (
+        <div className="success-message">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span>
+            {success_msg} {countdown !== null && (
+              <span className="countdown-number">{countdown}</span>
+            )} {countdown !== null && countdown > 1 ? 'segundos...' : countdown === 1 ? 'segundo...' : ''}
+          </span>
+        </div>
+      )}
+      
+      {/* Enlace para login */}
+      <div className="auth-link-container">
+        <p className="auth-link-text">
+          ¿Ya tienes una cuenta?{' '}
+          <a href="/login" className="auth-link">
+            Inicia sesión aquí
+          </a>
+        </p>
+      </div>
     </div>
+
   );
 };
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\VaultController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FolderNoteController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\DiagnosticController;
 use Illuminate\Session\Middleware\StartSession;
 
 //===========================================================================//
@@ -34,7 +35,7 @@ Route::get( '/hello', function( Request $request ): \Illuminate\Http\JsonRespons
 //===========================================================================//
 try
 {
-    Route::middleware( ['auth.bearer'] )->group(function() {
+    Route::middleware( ['auth.bearer', 'ensure.tenant'] )->group(function() {
         //=======================//
         // VAULTS API           //
         //=======================//
@@ -232,5 +233,51 @@ Route::post( '/login', [AuthController::class, 'login'] )->middleware( ['api', S
 Route::post( '/register', [AuthController::class, 'register'] );
 
 //===========================================================================//
-//  AUTENTICACIÓN (RUTAS PÚBLICAS)                                          //
+//  DIAGNÓSTICO (RUTAS PÚBLICAS TEMPORALES)                                //
 //===========================================================================//
+
+/**
+ * GET /diagnostic/database
+ * Verifica el estado de la base de datos y la estructura de la tabla users.
+ */
+Route::get( '/diagnostic/database', [DiagnosticController::class, 'checkDatabase'] );
+
+/**
+ * GET /diagnostic/test-insert
+ * Prueba inserción directa en la tabla users.
+ */
+Route::get( '/diagnostic/test-insert', [DiagnosticController::class, 'testInsert'] );
+
+/**
+ * GET /diagnostic/fix-autoincrement
+ * Corrige el AUTO_INCREMENT en la tabla users.
+ */
+Route::get( '/diagnostic/fix-autoincrement', [DiagnosticController::class, 'fixAutoIncrement'] );
+
+/**
+ * GET /diagnostic/test-insert
+ * Prueba inserción directa en la tabla users.
+ */
+Route::get( '/diagnostic/test-insert', [DiagnosticController::class, 'testInsert'] );
+
+/**
+ * GET /diagnostic/fix-autoincrement
+ * Corrige el AUTO_INCREMENT en la tabla users.
+ */
+Route::get( '/diagnostic/fix-autoincrement', [DiagnosticController::class, 'fixAutoIncrement'] );
+
+//===========================================================================//
+//  RUTAS DE DIAGNÓSTICO Y MANTENIMIENTO                                     //
+//===========================================================================//
+
+/**
+ * GET /diagnostic/tenant
+ * Endpoint de diagnóstico para verificar el estado del sistema de tenants
+ */
+Route::get('/diagnostic/tenant', [AuthController::class, 'tenantDiagnostic']);
+
+/**
+ * GET /diagnostic/register-test  
+ * Endpoint para probar el proceso de registro completo (para testing)
+ */
+Route::get('/diagnostic/register-test', [DiagnosticController::class, 'registerTest']);

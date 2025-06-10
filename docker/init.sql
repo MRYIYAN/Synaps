@@ -10,15 +10,16 @@ CREATE TABLE `note_shares` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 CREATE TABLE `users` (
-  `user_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id2` varchar(32) NOT NULL,
   `user_email` varchar(255) NOT NULL,
   `user_name` varchar(255) NOT NULL,
+  `user_full_name` varchar(255) DEFAULT NULL,
   `user_password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-INSERT INTO `users` (`user_id`, `user_id2`, `user_email`, `user_name`, `user_password`) VALUES
-(1, 'F7D8S9FG78F9DG78D9F7G89DF789FDGU', 'test@example.com', 'Usuario de prueba', '$2y$12$423rSF4V2fqyddNr6AuCUeM1BiuIifLAEldi49Wr9tEwG5kX0azb.');
+INSERT INTO `users` (`user_id`, `user_id2`, `user_email`, `user_name`, `user_full_name`,`user_password`) VALUES
+(1, 'F7D8S9FG78F9DG78D9F7G89DF789FDGU', 'test@example.com', 'Usuario de prueba', 'Usuario de Prueba Test', '$2y$12$423rSF4V2fqyddNr6AuCUeM1BiuIifLAEldi49Wr9tEwG5kX0azb.');
 
 ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`);
@@ -27,7 +28,6 @@ ALTER TABLE `users`
 CREATE DATABASE IF NOT EXISTS synaps_0001;
 
 USE synaps_0001;
-
 
 CREATE TABLE `docs` (
   `doc_id` int(11) NOT NULL,
