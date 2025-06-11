@@ -24,7 +24,7 @@ const http_post_file = async(url, formData) => {
     const headers = {};
     
     // Add authorization token if exists
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem( 'access_token' );
     if(token) {
       headers['Authorization'] = 'Bearer ' + token;
     }
@@ -48,7 +48,7 @@ const http_post_file = async(url, formData) => {
       http_data = responseData.http_data || responseData; // Si no hay http_data, usar la respuesta completa
     }
 
-  } catch (error) {
+  } catch ( error ) {
     message = error.message || 'Network error';
     showErrorNotification(message);
   }
@@ -73,7 +73,7 @@ const FileUploadModal = ({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dragActive, setDragActive] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState( '' );
   const fileInputRef = useRef(null);
 
   // Efecto para enfocar el modal cuando se abre
@@ -81,7 +81,7 @@ const FileUploadModal = ({
     if(isOpen && !selectedFile) {
       // Auto-click del dropzone si no hay archivo seleccionado
       setTimeout(() => {
-        const dropzone = document.querySelector('.upload-dropzone');
+        const dropzone = document.querySelector( '.upload-dropzone' );
         if(dropzone) {
           dropzone.focus();
         }
@@ -90,10 +90,10 @@ const FileUploadModal = ({
   }, [isOpen, selectedFile]);
 
   // Manejar tecla Escape y Enter
-  const handleKeyDown = (e) => {
-    if(e.key === 'Escape' && !isUploading) {
+  const handleKeyDown = ( e) => {
+    if( e.key === 'Escape' && !isUploading) {
       handleClose();
-    } else if(e.key === 'Enter' && selectedFile && !isUploading) {
+    } else if( e.key === 'Enter' && selectedFile && !isUploading) {
       handleUpload();
     }
   };
@@ -102,7 +102,7 @@ const FileUploadModal = ({
   const handleClose = () => {
     if(!isUploading) {
       setSelectedFile(null);
-      setError('');
+      setError( '' );
       setUploadProgress(0);
       setDragActive(false);
       if(fileInputRef.current) {
@@ -119,9 +119,9 @@ const FileUploadModal = ({
     const allowedTypes = ['.md'];
     const maxSize = 10 * 1024 * 1024; // 10MB
     
-    const extension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+    const extension = file.name.toLowerCase().substring(file.name.lastIndexOf( '.' ));
     
-    if(!allowedTypes.includes(extension)) {
+    if(!allowedTypes.includes( extension)) {
       return 'Solo se permiten archivos .md';
     }
     
@@ -135,17 +135,17 @@ const FileUploadModal = ({
   // Manejar selección de archivo
   const handleFileSelect = (file) => {
     const error = validateFile(file);
-    if(error) {
-      setError(error);
+    if( error ) {
+      setError( error );
       return;
     }
     
-    setError('');
+    setError( '' );
     setSelectedFile(file);
   };
 
   // Manejar cambio en input de archivo
-  const handleFileInputChange = (e) => {
+  const handleFileInputChange = ( e) => {
     const file = e.target.files[0];
     if(file) {
       handleFileSelect(file);
@@ -153,24 +153,24 @@ const FileUploadModal = ({
   };
 
   // Manejar drag and drop
-  const handleDragEnter = (e) => {
+  const handleDragEnter = ( e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(true);
   };
 
-  const handleDragLeave = (e) => {
+  const handleDragLeave = ( e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
   };
 
-  const handleDragOver = (e) => {
+  const handleDragOver = ( e) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = ( e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -187,22 +187,23 @@ const FileUploadModal = ({
 
     setIsUploading(true);
     setUploadProgress(0);
-    setError('');
+    setError( '' );
 
     try {
       // Crear FormData para el archivo
       const formData = new FormData();
-      formData.append('file', selectedFile);
-      formData.append('parent_id2', window.selectedItemId2 || '');
+      formData.append( 'file', selectedFile);
+      formData.append( 'parent_id2', window.selectedItemId2 || '' );
+      formData.append( 'vault_id', window.currentVaultId || 1 );
 
       // Realizar la subida con seguimiento de progreso
-      const { result, http_data } = await http_post_file('http://localhost:8010/api/uploadFile', formData);
+      const { result, http_data } = await http_post_file( 'http://localhost:8010/api/uploadFile', formData);
 
       if(result !== 1) {
-        throw new Error(http_data.message || 'Error al subir el archivo');
+        throw new Error(http_data.message || 'Error al subir el archivo' );
       }
        if(result !== 1) {
-        throw new Error(http_data.message || 'Error al subir el archivo');
+        throw new Error(http_data.message || 'Error al subir el archivo' );
       }
       
       // Crear nota basada en el archivo subido
@@ -216,21 +217,21 @@ const FileUploadModal = ({
       };
 
       // Actualizar la lista de notas globalmente evitando duplicados
-      if(window.currentNotes) {
-        const noteExists = window.currentNotes.some(existingNote => existingNote.id2 === note.id2);
+      if( window.currentNotes ) {
+        const noteExists = window.currentNotes.some( existingNote => existingNote.id2 === note.id2 );
         
-        if(!noteExists) {
+        if(!noteExists ) {
           window.currentNotes = [...window.currentNotes, note];
         }
       }
 
       // Marcar como seleccionado el nuevo item
-      if(window.setSelectedItemId2) {
-        window.setSelectedItemId2(noteData.note_id2);
+      if( window.setSelectedItemId2 ) {
+        window.setSelectedItemId2(noteData.note_id2 );
       }
       
       // Abrir la nota
-      if(window.readNote) {
+      if( window.readNote) {
         window.readNote(noteData.note_id2, window.currentVaultId);
       }
 
@@ -240,9 +241,9 @@ const FileUploadModal = ({
       // Limpiar estado
       setSelectedFile(null);
       setUploadProgress(100);
-    } catch (error) {
-      console.error('Error al subir archivo:', error);
-      setError(error.message || 'Error al subir el archivo');
+    } catch ( error ) {
+      console.error( 'Error al subir archivo:', error );
+      setError( error.message || 'Error al subir el archivo' );
     } finally {
       setIsUploading(false);
     }
@@ -251,7 +252,7 @@ const FileUploadModal = ({
   // Limpiar selección de archivo
   const handleClearFile = () => {
     setSelectedFile(null);
-    setError('');
+    setError( '' );
     if(fileInputRef.current) {
       fileInputRef.current.value = '';
     }

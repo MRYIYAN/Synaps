@@ -45,9 +45,6 @@ class NoteController extends Controller
     $message = '';
     $note    = [];
 
-    $vault['vault_id']  = 1;
-    $vault['vault_id2'] = 'F7D8FDG78D9SF789G789D7S89F7S';
-
     try
     {
       // Obtenemos el identificador del usuario autenticado
@@ -61,7 +58,11 @@ class NoteController extends Controller
       $data = $request->validate( [
           'newNoteName' => 'required|string|max:255'
         , 'parent_id2'  => 'nullable|string'
+        , 'vault_id'    => 'required|integer'
       ] );
+
+      // Capturamos el vault_id del request
+      $vault_id = ( int ) $data['vault_id'];
 
       // Conectamos a la base de datos del usuario
       $user_db = DatabaseHelper::connect( $user_id );
@@ -112,7 +113,7 @@ class NoteController extends Controller
             'note_id2'         => Str::random( 32 )
           , 'note_title'       => $data['newNoteName']
           , 'note_markdown'    => '# ' . ucfirst( $data['newNoteName'] )
-          , 'vault_id'         => $vault['vault_id']
+          , 'vault_id'         => $vault_id
           , 'insert_date'      => now()
           , 'last_update_date' => now()
           , 'parent_id'        => $parent_id
@@ -644,9 +645,6 @@ class NoteController extends Controller
     $message = '';
     $note    = [];
 
-    $vault['vault_id']  = 1;
-    $vault['vault_id2'] = 'F7D8FDG78D9SF789G789D7S89F7S';
-
     // Obtenemos el identificador del usuario autenticado
     $auth_result = AuthHelper::getAuthenticatedUserId();
     if( $auth_result['error_response'] ) {
@@ -661,7 +659,11 @@ class NoteController extends Controller
       $request->validate( [
           'file'       => 'required|file|max:10240|mimes:txt,md,pdf,doc,docx,rtf'  // Max 10MB
         , 'parent_id2' => 'nullable|string'
+        , 'vault_id'   => 'required|integer'
       ] );
+
+      // Capturamos el vault_id del request
+      $vault_id = ( int ) $request->input( 'vault_id' );
 
       $file = $request->file( 'file' );
       $parent_id2 = $request->input( 'parent_id2', '' );
@@ -733,7 +735,7 @@ class NoteController extends Controller
             'note_id2'         => Str::random( 32 )
           , 'note_title'       => $noteName
           , 'note_markdown'    => $content
-          , 'vault_id'         => $vault['vault_id']
+          , 'vault_id'         => $vault_id
           , 'insert_date'      => now()
           , 'last_update_date' => now()
           , 'parent_id'        => $parent_id

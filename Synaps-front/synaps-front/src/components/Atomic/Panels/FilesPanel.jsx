@@ -278,7 +278,8 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
     let url  = 'http://localhost:8010/api/addNote';
     let body = {
       newNoteName: newNoteName,
-      parent_id2: window.selectedItemId2
+      parent_id2: window.selectedItemId2,
+      vault_id: window.currentVaultId
     };
 
     // Realizamos la llamada por fetch
@@ -317,7 +318,8 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
     let url  = 'http://localhost:8010/api/addFolder';
     let body = {
       newFolderName: newFolderName,
-      parent_id2: window.selectedItemId2
+      parent_id2: window.selectedItemId2,
+      vault_id: window.currentVaultId
     };
 
     // Realizamos la llamada por fetch
