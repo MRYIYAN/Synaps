@@ -22,10 +22,8 @@ import { ReactComponent as VaultIcon } from "../../../assets/icons/vault.svg";
 import { ReactComponent as LockIcon } from "../../../assets/icons/lock.svg";
 import { ReactComponent as FolderIcon } from "../../../assets/icons/folder.svg";
 import { ReactComponent as CheckIcon } from "../../../assets/icons/check.svg";
-import ArchiveIcon from '../Icons/ArchiveIcon';
 
 // Componentes personalizados para funcionalidades específicas
-import FolderPickerButton from '../Buttons/FolderPickerButton'; 
 import VaultStatusPopup, { STATUS } from "../PopUp/VaultStatusPopup";
 
 //====================================================================================//
@@ -50,7 +48,6 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   const [confirmPin, setConfirmPin] = useState('');            // Confirmación del PIN
   const [step, setStep] = useState(1);                         // Paso actual del proceso (1: info básica, 2: configurar PIN)
   const [isCreating, setIsCreating] = useState(false);         // Si está en proceso de creación
-  const [logicalPath, setLogicalPath] = useState('');          // Ruta lógica
 
   // Estados para el popup de estado (éxito, error, cargando)
   const [statusPopup, setStatusPopup] = useState(null);
@@ -59,13 +56,11 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
 
   // Estados para los mensajes de error de validación
   const [nameError, setNameError] = useState('');
-  const [folderPathError, setFolderPathError] = useState('');
   const [pinError, setPinError] = useState('');
   const [confirmPinError, setConfirmPinError] = useState('');
 
   // Referencias para enfocar automáticamente ciertos campos
   const nameInputRef = useRef(null);
-  const folderPathInputRef = useRef(null);
   const pinInputRef = useRef(null);
 
   //====================================================================================//
@@ -126,29 +121,6 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   };
 
   /**
-   * Valida la ruta del directorio seleccionado para la vault
-   * @param {string} path - Ruta a validar
-   * @returns {Object} - Resultado de la validación {isValid, errorMessage}
-   */
-  const validateFolderPath = (path) => {
-    // Validar que no esté vacío
-    if (!path || path.trim() === '') {
-      return { isValid: false, errorMessage: 'Debes seleccionar un directorio' };
-    }
-    
-    // Validación simulada de existencia de directorio
-    // En un entorno real, esto sería una verificación asíncrona al sistema de archivos
-    // TODO: Implementar verificación real de existencia de directorio en entorno de producción
-    const pathExistsSimulation = path.toLowerCase() !== 'invalid';
-    if (!pathExistsSimulation) {
-      return { isValid: false, errorMessage: 'El directorio no existe o no es accesible' };
-    }
-    
-    // Si pasa todas las validaciones
-    return { isValid: true, errorMessage: '' };
-  };
-
-  /**
    * Valida el PIN de acceso para vault privada
    * @param {string} pin - PIN a validar
    * @returns {Object} - Resultado de la validación {isValid, errorMessage}
@@ -186,15 +158,13 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   const validateForm = () => {
     // Validar campos comunes para ambos pasos
     const nameValidation = validateVaultName(vaultName);
-    const folderValidation = validateFolderPath(logicalPath);
 
     // Actualizar estados de error
     setNameError(nameValidation.errorMessage);
-    setFolderPathError(folderValidation.errorMessage);
 
-    // Si estamos en el paso 1, solo validamos nombre y directorio
+    // Si estamos en el paso 1, solo validamos nombre
     if (step === 1) {
-      return nameValidation.isValid && folderValidation.isValid;
+      return nameValidation.isValid;
     }
 
     // Si estamos en el paso 2, también validamos PIN y su confirmación
@@ -206,8 +176,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     setConfirmPinError(pinsMatch ? '' : 'Los PINs no coinciden');
 
     // Validamos todo el formulario
-    return nameValidation.isValid && folderValidation.isValid && 
-           pinValidation.isValid && pinsMatch;
+    return nameValidation.isValid && pinValidation.isValid && pinsMatch;
   };
 
   //====================================================================================//
@@ -223,12 +192,10 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     setPin('');
     setConfirmPin('');
     setStep(1);
-    setLogicalPath('');
     setStatusPopup(null);
     setStatusMessage('');
     setErrorMessage('');
     setNameError('');
-    setFolderPathError('');
     setPinError('');
     setConfirmPinError('');
     onClose();
@@ -241,14 +208,12 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     if (step === 1) {
       // Validar los campos del paso 1
       const nameValidation = validateVaultName(vaultName);
-      const folderValidation = validateFolderPath(logicalPath);
 
       // Actualizar estados de error
       setNameError(nameValidation.errorMessage);
-      setFolderPathError(folderValidation.errorMessage);
 
       // Solo avanzar si los campos son válidos
-      if (nameValidation.isValid && folderValidation.isValid) {
+      if (nameValidation.isValid) {
         setStep(2); // Avanzar al paso de configuración del PIN
       } else {
         // Mostrar mensaje de error general
@@ -288,7 +253,6 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       const url = 'http://localhost:8010/api/vaults';
       const body = {
         vault_title: vaultName.trim(),
-        logical_path: logicalPath.trim(),
         is_private: isPrivate
       };
 
@@ -376,29 +340,6 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   };
 
   /**
-   * Maneja el cambio en el campo de ruta del directorio
-   * y valida en tiempo real
-   * @param {Event} e - Evento de cambio
-   */
-  const handleFolderPathChange = (e) => {
-    const newPath = e.target.value;
-    setLogicalPath(newPath);
-
-    // Validar ruta y actualizar estado de error
-    const { isValid, errorMessage } = validateFolderPath(newPath);
-    setFolderPathError(isValid ? '' : errorMessage);
-  };
-
-  /**
-   * Maneja la selección de directorio desde el componente FolderPickerButton
-   * @param {string} folderPath - Ruta del directorio seleccionado
-   */
-  const handleFolderSelected = (folderPath) => {
-    setLogicalPath(folderPath);
-    setFolderPathError('');
-  };
-
-  /**
    * Maneja el cambio en el campo de PIN y filtra caracteres no numéricos
    * @param {Event} e - Evento de cambio
    */
@@ -458,14 +399,6 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   const handleNameBlur = () => {
     const { isValid, errorMessage } = validateVaultName(vaultName);
     setNameError(isValid ? '' : errorMessage);
-  };
-
-  /**
-   * Valida la ruta cuando el campo pierde el foco
-   */
-  const handleFolderPathBlur = () => {
-    const { isValid, errorMessage } = validateFolderPath(logicalPath);
-    setFolderPathError(isValid ? '' : errorMessage);
   };
 
   /**
@@ -547,11 +480,6 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
                   onChange={(e) => {
                     const newName = e.target.value;
                     setVaultName(newName);
-
-                    // Si la ruta lógica empieza por /SynapsVaults/, actualízala dinámicamente
-                    if (logicalPath.startsWith('/SynapsVaults/')) {
-                      setLogicalPath(`/SynapsVaults/${newName}`);
-                    }
                   }}
                   onBlur={handleNameBlur}
                   disabled={isCreating}
@@ -561,40 +489,6 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
                 {/* Mensaje de error para el campo de nombre */}
                 {nameError && (
                   <span className="input-error">{nameError}</span>
-                )}
-              </div>
-              
-              {/* Campo para la ruta lógica */}
-              <div className="input-group">
-                <label className="input-label">Ruta lógica</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <input
-                    type="text"
-                    placeholder="Ej: /Trabajo/2025"
-                    value={logicalPath}
-                    onChange={(e) => setLogicalPath(e.target.value)}
-                    className="input-field"
-                  />
-                  <button
-                    type="button"
-                    className="icon-button"
-                    onClick={() => {
-                      const name = vaultName.trim() || '';
-                      setLogicalPath(`/SynapsVaults/${name}`);
-                    }}
-                  >
-                    <ArchiveIcon size={20} />
-                  </button>
-                </div>
-                {/* Mensaje de error o ayuda */}
-                {folderPathError ? (
-                  <span className="input-error">{folderPathError}</span>
-                ) : (
-                  <span style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.25rem", display: "block" }}>
-                    {logicalPath ? 
-                      "Ubicación seleccionada." : 
-                      "Selecciona una ruta lógica para guardar los archivos de la vault."}
-                  </span>
                 )}
               </div>
 
@@ -701,7 +595,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
               <button 
                 className="modal-button primary" 
                 onClick={isPrivate ? handleNextStep : handleCreateVault}
-                disabled={isCreating || !vaultName.trim() || nameError || !logicalPath.trim() || folderPathError}
+                disabled={isCreating || !vaultName.trim() || nameError}
               >
                 {isPrivate ? "Siguiente" : (isCreating ? "Creando..." : "Crear Vault")}
               </button>

@@ -108,10 +108,14 @@ function handle_ws_connection( ws )
 {
   let token = null;
 
+  const set_token_callback = (new_token) => {
+    token = new_token;
+  };
+
   // Si se recibe un evento message, lo procesamos
   ws.on( 'message', async message =>
   {
-    handle_ws_message( ws, message, token => token );
+    handle_ws_message( ws, message, set_token_callback );
   } );
 
   // Si se recibe un evento close, lo procesamos
@@ -145,14 +149,32 @@ function handle_ws_message( ws, message, set_token_callback )
 
     // Actualización: frontend -> backend
     if (data.type === 'update' && data.token && data.updates) {
-      log('INFO', `Actualización recibida`, { token: data.token });
+      // --- NUEVO BLOQUE ---
+      const token = data.token;
+      const updates = data.updates;
+      const markdown = updates.markdown || '';
+      const redis_key = `synaps:note:${token}`;
+      const jwt = data.jwt || '';  // Obtener JWT del mensaje
 
       // Guardar en Redis
-      const note_id2 = data.token;
-      const markdown = data.updates.markdown;
-      save_note_to_redis(note_id2, markdown);
+      redis.set(redis_key, markdown);
+      log('INFO', 'Actualización recibida', { token });
 
-      publish_to_backend(data.token, data.updates);
+      // Reiniciar timer si ya existe
+      if (global.persist_timers && global.persist_timers.has(token)) {
+        clearTimeout(global.persist_timers.get(token));
+      }
+
+      // Nuevo timer para guardar en DB en 5s
+      if (!global.persist_timers) global.persist_timers = new Map();
+      const timer = setTimeout(() => {
+        persistToDatabase(token, markdown, jwt);
+        global.persist_timers.delete(token);
+      }, 5000);
+
+      global.persist_timers.set(token, timer);
+
+      publish_to_backend(token, updates);
       return;
     }
 
@@ -253,9 +275,9 @@ function subscribe_backend_updates()
   } );
 }
 
-// ---------------------------------------------------------------------
-// Heartbeat para mantener conexiones WebSocket vivas
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------//
+// Heartbeat para mantener conexiones WebSocket vivas                   //    
+// ---------------------------------------------------------------------//
 
 /**
  * Envía ping a todos los clientes cada 30 segundos.
@@ -297,9 +319,9 @@ function start_bridge()
 
 start_bridge();
 
-//----------------------------------------------------------------------
-// Funciones adicionales para guardar notas en Redis
-//----------------------------------------------------------------------
+//----------------------------------------------------------------------//
+// Funciones adicionales para guardar notas en Redis y persistir en DB  //
+//----------------------------------------------------------------------//
 
 /**
  * Guarda el contenido de una nota en Redis.
@@ -309,4 +331,33 @@ start_bridge();
 function save_note_to_redis(note_id2, markdown) {
   const key = `synaps:note:${note_id2}`;
   redis.set(key, markdown);
+}
+
+/**
+ * Envía la nota al backend para guardarla en la base de datos.
+ * @param {string} token
+ * @param {string} markdown
+ * @param {string} [jwt]
+ */
+async function persistToDatabase(token, markdown, jwt = '') {
+  console.log('[persistToDatabase] JWT recibido:', jwt);
+  const url = `http://synaps-back:80/api/saveMarkdown`;
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwt}`
+    };
+    const res = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        token: token,
+        markdown: markdown
+      }),
+    });
+    const json = await res.json();
+    console.log('[SYNC] Nota persistida a DB:', token, json);
+  } catch (error) {
+    console.error('[SYNC] Error al persistir nota:', token, error.message);
+  }
 }
