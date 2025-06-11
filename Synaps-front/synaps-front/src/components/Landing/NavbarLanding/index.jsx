@@ -38,7 +38,7 @@ const NavbarLanding = () => {
     // Función que actualiza el estado basado en la posición de scroll
     const handleScroll = () => {
       const offset = window.scrollY;
-      if (offset > 50) {
+      if(offset > 50) {
         setScrolled(true);                 // Activa el estilo de navbar con scroll
       } else {
         setScrolled(false);                // Restaura el estilo normal

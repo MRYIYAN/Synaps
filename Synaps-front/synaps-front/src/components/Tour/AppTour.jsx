@@ -49,7 +49,7 @@ const AppTour = ({ run, onFinish }) => {
   ];
 
   useEffect(() => {
-    if (run) {
+    if(run) {
       setIsVisible(true);
       setCurrentStep(0);
     } else {
@@ -58,7 +58,7 @@ const AppTour = ({ run, onFinish }) => {
   }, [run]);
 
   const handleNext = () => {
-    if (currentStep < steps.length - 1) {
+    if(currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
       handleFinish();
@@ -66,7 +66,7 @@ const AppTour = ({ run, onFinish }) => {
   };
 
   const handlePrev = () => {
-    if (currentStep > 0) {
+    if(currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
@@ -77,14 +77,14 @@ const AppTour = ({ run, onFinish }) => {
 
   const handleFinish = () => {
     setIsVisible(false);
-    if (onFinish) {
+    if(onFinish) {
       onFinish();
     }
   };
 
   const getTooltipPosition = (targetSelector) => {
     // Si no hay target (último paso), centrar en pantalla
-    if (!targetSelector) {
+    if(!targetSelector) {
       return {
         top: `${window.innerHeight / 2 - 150}px`,
         left: `${window.innerWidth / 2 - 190}px`,
@@ -92,7 +92,7 @@ const AppTour = ({ run, onFinish }) => {
     }
 
     const target = document.querySelector(targetSelector);
-    if (!target) return { top: '50%', left: '50%' };
+    if(!target) return { top: '50%', left: '50%' };
 
     const rect = target.getBoundingClientRect();
     let tooltip = {
@@ -101,21 +101,21 @@ const AppTour = ({ run, onFinish }) => {
     };
 
     // Ajuste específico para el paso de usuarios (perfil y vaults) - posición más arriba
-    if (targetSelector === '.user-profile-bar') {
+    if(targetSelector === '.user-profile-bar') {
       tooltip.top = rect.top - 250; // Mueve el tooltip 250px más arriba
     }
 
     // Ajustar si se sale de la pantalla
-    if (tooltip.left + 380 > window.innerWidth) {
+    if(tooltip.left + 380 > window.innerWidth) {
       tooltip.left = rect.left - 400;
     }
 
-    if (tooltip.top + 250 > window.innerHeight) {
+    if(tooltip.top + 250 > window.innerHeight) {
       tooltip.top = window.innerHeight - 270;
     }
 
     // Asegurar que no se salga por arriba
-    if (tooltip.top < 20) {
+    if(tooltip.top < 20) {
       tooltip.top = 20;
     }
 
@@ -132,19 +132,19 @@ const AppTour = ({ run, onFinish }) => {
     });
 
     // Si no hay target (último paso), no agregar highlight
-    if (!targetSelector) {
+    if(!targetSelector) {
       return;
     }
 
     // Agregar highlight al elemento actual
     const target = document.querySelector(targetSelector);
-    if (target) {
+    if(target) {
       target.classList.add('tour-highlight');
     }
   };
 
   useEffect(() => {
-    if (isVisible && steps[currentStep]) {
+    if(isVisible && steps[currentStep]) {
       highlightTarget(steps[currentStep].target);
     }
 
@@ -155,7 +155,7 @@ const AppTour = ({ run, onFinish }) => {
     };
   }, [currentStep, isVisible, steps]);
 
-  if (!isVisible || !steps[currentStep]) return null;
+  if(!isVisible || !steps[currentStep]) return null;
 
   const position = getTooltipPosition(steps[currentStep].target);
   const isLastStep = currentStep === steps.length - 1;

@@ -5,15 +5,15 @@
 
 // Función helper para mostrar notificaciones de error
 const showHttpErrorNotification = (message, status) => {
-  if (window.showNotification) {
+  if(window.showNotification) {
     let title = 'Error HTTP';
     
     // Personalizar título según el status
-    if (status >= 400 && status < 500) {
+    if(status >= 400 && status < 500) {
       title = 'Error del Cliente';
-    } else if (status >= 500) {
+    } else if(status >= 500) {
       title = 'Error del Servidor';
-    } else if (status === 0) {
+    } else if(status === 0) {
       title = 'Error de Conexión';
     }
     
@@ -46,7 +46,7 @@ export async function http_post( url, body, headers, credentials = 'include' ) {
 
     // Agregar token de autorización si existe
     const token = localStorage.getItem('access_token');
-    if (token) {
+    if(token) {
       headers['Authorization'] = 'Bearer ' + token;
     }
 
@@ -105,7 +105,7 @@ export async function http_get( url, body = {} ) {
 
   // Agregar token de autorización si existe
   const token = localStorage.getItem('access_token');
-  if (token) {
+  if(token) {
     headers['Authorization'] = 'Bearer ' + token;
   }
 
@@ -176,7 +176,7 @@ export async function http_put( url, body, headers, credentials = 'include' ) {
 
     // Agregar token de autorización si existe
     const token = localStorage.getItem('access_token');
-    if (token) {
+    if(token) {
       headers['Authorization'] = 'Bearer ' + token;
     }
 
@@ -237,7 +237,7 @@ export async function http_put_multipart( url, formData, credentials = 'include'
 
     // Agregar token de autorización si existe
     const token = localStorage.getItem('access_token');
-    if (token) {
+    if(token) {
       headers['Authorization'] = 'Bearer ' + token;
     }
 
@@ -297,7 +297,7 @@ export async function http_post_multipart( url, formData, credentials = 'include
 
     // Agregar token de autorización si existe
     const token = localStorage.getItem('access_token');
-    if (token) {
+    if(token) {
       headers['Authorization'] = 'Bearer ' + token;
     }
 
@@ -331,6 +331,69 @@ export async function http_post_multipart( url, formData, credentials = 'include
     message = error.message || 'Network error';
     // Mostrar notificación de error de red
     showHttpErrorNotification(message, 0);
+
+  } finally {
+    
+    // Calculamos el objeto a devolver
+    return { result, message, http_data };
+    
+  }
+}
+
+// Helper para DELETE con Bearer
+export async function http_delete( url, headers, credentials = 'include' ) {
+
+  // Inicializamos los valores a devolver
+  let result    = 0;
+  let message   = '';
+  let http_data = [];
+
+  try {
+    
+    // Si no se han especificado cabeceras, insertamos las de JSON por defecto
+    if( !headers ) {
+      headers = {
+          'Content-Type': 'application/json'
+        , Accept        : 'application/json'
+      }; 
+    }
+
+    // Agregar token de autorización si existe
+    const token = localStorage.getItem('access_token');
+    if(token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    }
+
+    // Ejecutamos la solicitud DELETE a la ruta backend especificada
+    let http_response = await fetch( url, {
+        method     : 'DELETE'
+      , headers    : headers
+      , credentials: credentials
+    } );
+
+    // Capturamos los datos de la respuesta
+    http_data = await http_response.json();
+
+    // Si la petición ha sido incorrecta, registramos el mensaje de error
+    if( !http_response.ok ) {
+      message = http_data.message || http_response.statusText || 'Error';
+      // Mostrar notificación de error
+      showHttpErrorNotification(message, http_response.status);
+    }
+    
+    // Caso de éxito
+    else {
+      result = 1;
+      message = http_data.message || 'OK';
+    }
+
+  } catch( error ) {
+
+    // Mensaje de error de red u otra excepción
+    message = error.message || 'Network error';
+    
+    // Mostrar notificación de error de red
+    showHttpErrorNotification( message, 0 );
 
   } finally {
     

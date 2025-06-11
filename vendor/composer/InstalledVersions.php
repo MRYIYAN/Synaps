@@ -61,7 +61,7 @@ class InstalledVersions
             $packages[] = array_keys($installed['versions']);
         }
 
-        if (1 === \count($packages)) {
+        if(1 === \count($packages)) {
             return $packages[0];
         }
 
@@ -81,7 +81,7 @@ class InstalledVersions
 
         foreach (self::getInstalled() as $installed) {
             foreach ($installed['versions'] as $name => $package) {
-                if (isset($package['type']) && $package['type'] === $type) {
+                if(isset($package['type']) && $package['type'] === $type) {
                     $packagesByType[] = $name;
                 }
             }
@@ -102,7 +102,7 @@ class InstalledVersions
     public static function isInstalled($packageName, $includeDevRequirements = true)
     {
         foreach (self::getInstalled() as $installed) {
-            if (isset($installed['versions'][$packageName])) {
+            if(isset($installed['versions'][$packageName])) {
                 return $includeDevRequirements || !isset($installed['versions'][$packageName]['dev_requirement']) || $installed['versions'][$packageName]['dev_requirement'] === false;
             }
         }
@@ -142,21 +142,21 @@ class InstalledVersions
     public static function getVersionRanges($packageName)
     {
         foreach (self::getInstalled() as $installed) {
-            if (!isset($installed['versions'][$packageName])) {
+            if(!isset($installed['versions'][$packageName])) {
                 continue;
             }
 
             $ranges = array();
-            if (isset($installed['versions'][$packageName]['pretty_version'])) {
+            if(isset($installed['versions'][$packageName]['pretty_version'])) {
                 $ranges[] = $installed['versions'][$packageName]['pretty_version'];
             }
-            if (array_key_exists('aliases', $installed['versions'][$packageName])) {
+            if(array_key_exists('aliases', $installed['versions'][$packageName])) {
                 $ranges = array_merge($ranges, $installed['versions'][$packageName]['aliases']);
             }
-            if (array_key_exists('replaced', $installed['versions'][$packageName])) {
+            if(array_key_exists('replaced', $installed['versions'][$packageName])) {
                 $ranges = array_merge($ranges, $installed['versions'][$packageName]['replaced']);
             }
-            if (array_key_exists('provided', $installed['versions'][$packageName])) {
+            if(array_key_exists('provided', $installed['versions'][$packageName])) {
                 $ranges = array_merge($ranges, $installed['versions'][$packageName]['provided']);
             }
 
@@ -173,11 +173,11 @@ class InstalledVersions
     public static function getVersion($packageName)
     {
         foreach (self::getInstalled() as $installed) {
-            if (!isset($installed['versions'][$packageName])) {
+            if(!isset($installed['versions'][$packageName])) {
                 continue;
             }
 
-            if (!isset($installed['versions'][$packageName]['version'])) {
+            if(!isset($installed['versions'][$packageName]['version'])) {
                 return null;
             }
 
@@ -194,11 +194,11 @@ class InstalledVersions
     public static function getPrettyVersion($packageName)
     {
         foreach (self::getInstalled() as $installed) {
-            if (!isset($installed['versions'][$packageName])) {
+            if(!isset($installed['versions'][$packageName])) {
                 continue;
             }
 
-            if (!isset($installed['versions'][$packageName]['pretty_version'])) {
+            if(!isset($installed['versions'][$packageName]['pretty_version'])) {
                 return null;
             }
 
@@ -215,11 +215,11 @@ class InstalledVersions
     public static function getReference($packageName)
     {
         foreach (self::getInstalled() as $installed) {
-            if (!isset($installed['versions'][$packageName])) {
+            if(!isset($installed['versions'][$packageName])) {
                 continue;
             }
 
-            if (!isset($installed['versions'][$packageName]['reference'])) {
+            if(!isset($installed['versions'][$packageName]['reference'])) {
                 return null;
             }
 
@@ -236,7 +236,7 @@ class InstalledVersions
     public static function getInstallPath($packageName)
     {
         foreach (self::getInstalled() as $installed) {
-            if (!isset($installed['versions'][$packageName])) {
+            if(!isset($installed['versions'][$packageName])) {
                 continue;
             }
 
@@ -268,10 +268,10 @@ class InstalledVersions
     {
         @trigger_error('getRawData only returns the first dataset loaded, which may not be what you expect. Use getAllRawData() instead which returns all datasets for all autoloaders present in the process.', E_USER_DEPRECATED);
 
-        if (null === self::$installed) {
+        if(null === self::$installed) {
             // only require the installed.php file if this file is loaded from its dumped location,
             // and not from its source location in the composer/composer package, see https://github.com/composer/composer/issues/9937
-            if (substr(__DIR__, -8, 1) !== 'C') {
+            if(substr(__DIR__, -8, 1) !== 'C') {
                 self::$installed = include __DIR__ . '/installed.php';
             } else {
                 self::$installed = array();
@@ -328,39 +328,39 @@ class InstalledVersions
      */
     private static function getInstalled()
     {
-        if (null === self::$canGetVendors) {
+        if(null === self::$canGetVendors) {
             self::$canGetVendors = method_exists('Composer\Autoload\ClassLoader', 'getRegisteredLoaders');
         }
 
         $installed = array();
         $copiedLocalDir = false;
 
-        if (self::$canGetVendors) {
+        if(self::$canGetVendors) {
             $selfDir = strtr(__DIR__, '\\', '/');
             foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $loader) {
                 $vendorDir = strtr($vendorDir, '\\', '/');
-                if (isset(self::$installedByVendor[$vendorDir])) {
+                if(isset(self::$installedByVendor[$vendorDir])) {
                     $installed[] = self::$installedByVendor[$vendorDir];
-                } elseif (is_file($vendorDir.'/composer/installed.php')) {
+                } elseif(is_file($vendorDir.'/composer/installed.php')) {
                     /** @var array{root: array{name: string, pretty_version: string, version: string, reference: string|null, type: string, install_path: string, aliases: string[], dev: bool}, versions: array<string, array{pretty_version?: string, version?: string, reference?: string|null, type?: string, install_path?: string, aliases?: string[], dev_requirement: bool, replaced?: string[], provided?: string[]}>} $required */
                     $required = require $vendorDir.'/composer/installed.php';
                     self::$installedByVendor[$vendorDir] = $required;
                     $installed[] = $required;
-                    if (self::$installed === null && $vendorDir.'/composer' === $selfDir) {
+                    if(self::$installed === null && $vendorDir.'/composer' === $selfDir) {
                         self::$installed = $required;
                         self::$installedIsLocalDir = true;
                     }
                 }
-                if (self::$installedIsLocalDir && $vendorDir.'/composer' === $selfDir) {
+                if(self::$installedIsLocalDir && $vendorDir.'/composer' === $selfDir) {
                     $copiedLocalDir = true;
                 }
             }
         }
 
-        if (null === self::$installed) {
+        if(null === self::$installed) {
             // only require the installed.php file if this file is loaded from its dumped location,
             // and not from its source location in the composer/composer package, see https://github.com/composer/composer/issues/9937
-            if (substr(__DIR__, -8, 1) !== 'C') {
+            if(substr(__DIR__, -8, 1) !== 'C') {
                 /** @var array{root: array{name: string, pretty_version: string, version: string, reference: string|null, type: string, install_path: string, aliases: string[], dev: bool}, versions: array<string, array{pretty_version?: string, version?: string, reference?: string|null, type?: string, install_path?: string, aliases?: string[], dev_requirement: bool, replaced?: string[], provided?: string[]}>} $required */
                 $required = require __DIR__ . '/installed.php';
                 self::$installed = $required;
@@ -369,7 +369,7 @@ class InstalledVersions
             }
         }
 
-        if (self::$installed !== array() && !$copiedLocalDir) {
+        if(self::$installed !== array() && !$copiedLocalDir) {
             $installed[] = self::$installed;
         }
 

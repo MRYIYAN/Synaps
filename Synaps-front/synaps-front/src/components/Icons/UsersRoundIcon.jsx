@@ -14,7 +14,7 @@ const UsersRoundIcon = ({
     setIsHovered(true);
     
     // Animación de spring
-    if (animationRef.current) clearTimeout(animationRef.current);
+    if(animationRef.current) clearTimeout(animationRef.current);
     
     // Valor inicial
     setAnimatedX(-5);

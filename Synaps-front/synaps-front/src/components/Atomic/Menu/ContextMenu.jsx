@@ -19,7 +19,7 @@ export default function ContextMenu( { options, x, y, onClose } ) {
 
   }, [onClose] );
 
-  if ( x === null || y === null )
+  if( x === null || y === null )
     return null;
 
   return (

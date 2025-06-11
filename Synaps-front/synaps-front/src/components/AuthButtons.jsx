@@ -15,7 +15,7 @@ const AuthButtons = () => {
   const { keycloak, initialized } = useKeycloak();
   
   // Si no se ha inicializado Keycloak, mostramos un mensaje de carga
-  if (!initialized)
+  if(!initialized)
     return <div>Cargando autenticación...</div>;
 
   // Según si el usuario está autenticado o no, mostramos el botón de inicio de sesión 

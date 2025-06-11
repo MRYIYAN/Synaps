@@ -64,7 +64,7 @@ class FolderNote extends Model
       $folder->folder_id2 = ( string ) Str::random( 32 );
         
       // Inicializamos children_count a 0 si no está definido
-      if ( is_null( $folder->children_count ) )
+      if( is_null( $folder->children_count ) )
         $folder->children_count = 0;
     } );
   }

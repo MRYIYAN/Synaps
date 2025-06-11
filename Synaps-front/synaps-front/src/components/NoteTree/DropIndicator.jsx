@@ -11,7 +11,7 @@ import styles from "./NoteTree.css";
 
 export default function DropIndicator({ visible }) {
   // Si no está visible, no renderizamos nada
-  if (!visible) return null;
+  if(!visible) return null;
 
   // Renderizamos la línea de indicación
   return <div className={styles.drop_indicator} role="presentation" />;

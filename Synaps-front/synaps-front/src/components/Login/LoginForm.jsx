@@ -33,19 +33,19 @@ const LoginForm = () => {
 
   // Función para validar correo electrónico
   const validateEmail = (value) => {
-    if (!value) {
+    if(!value) {
       return 'El correo electrónico no puede estar vacío';
     }
     
     // Comprobar si contiene emojis (rango unicode básico de emojis)
     const emojiRegex = /[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
-    if (emojiRegex.test(value)) {
+    if(emojiRegex.test(value)) {
       return 'El correo electrónico no puede contener emojis';
     }
     
     // Verificar formato de email
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    if (!emailRegex.test(value)) {
+    if(!emailRegex.test(value)) {
       return 'Formato de correo electrónico inválido';
     }
     
@@ -54,18 +54,18 @@ const LoginForm = () => {
   
   // Función para validar contraseña
   const validatePassword = (value) => {
-    if (!value) {
+    if(!value) {
       return 'La contraseña no puede estar vacía';
     }
     
     // Comprobar si contiene emojis
     const emojiRegex = /[\u{1F300}-\u{1F6FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
-    if (emojiRegex.test(value)) {
+    if(emojiRegex.test(value)) {
       return 'La contraseña no puede contener emojis';
     }
     
     // Verificar si contiene espacios
-    if (value.includes(' ')) {
+    if(value.includes(' ')) {
       return 'La contraseña no puede contener espacios';
     }
     
@@ -77,7 +77,7 @@ const LoginForm = () => {
     const newValue = e.target.value;
     setEmail(newValue);
     
-    if (isEmailTouched) {
+    if(isEmailTouched) {
       setEmailError(validateEmail(newValue));
     }
   };
@@ -86,7 +86,7 @@ const LoginForm = () => {
     const newValue = e.target.value;
     setPassword(newValue);
     
-    if (isPasswordTouched) {
+    if(isPasswordTouched) {
       setPasswordError(validatePassword(newValue));
     }
   };
@@ -106,7 +106,7 @@ const LoginForm = () => {
   //  Función para manejar el envío del formulario. Realiza una solicitud      //
   //  POST al backend con las credenciales del usuario.                        //
   //---------------------------------------------------------------------------//
-  const handleSubmit = async (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -123,7 +123,7 @@ const LoginForm = () => {
     setPasswordError(passwordErrorMsg);
     
     // Detener el envío si hay errores de validación
-    if (emailErrorMsg || passwordErrorMsg) {
+    if(emailErrorMsg || passwordErrorMsg) {
       setError('Por favor, corrige los errores antes de continuar.');
       return;
     }
@@ -157,14 +157,14 @@ const LoginForm = () => {
       const http_data = await response.json();
 
       // Si la consulta ha sido incorrecta, mostramos un mensaje más informativo
-      if (!response.ok) {
+      if(!response.ok) {
         const error_message = http_data?.error || http_data?.message || 'Unknown error';
         
         // Personalizar mensajes de error comunes
-        if (error_message.toLowerCase().includes('invalid_grant')) {
+        if(error_message.toLowerCase().includes('invalid_grant')) {
           throw new Error('Contraseña incorrecta. Por favor, verifica tus credenciales.');
         }
-        else if (error_message.toLowerCase().includes('invalid_username') || 
+        else if(error_message.toLowerCase().includes('invalid_username') || 
             error_message.toLowerCase().includes('incorrect')) {
           throw new Error('Credenciales incorrectas. Por favor, verifica tu correo y contraseña.');
         }
@@ -173,7 +173,7 @@ const LoginForm = () => {
       }
       
       // Si la consulta ha sido correcta, guardamos el access_token y redirigimos
-      if (http_data.access_token) {
+      if(http_data.access_token) {
         console.log('[LOGIN] Token JWT recibido:', http_data.access_token);
         localStorage.setItem('access_token', http_data.access_token);
         window.location.href = '/markdowneditor'; // Redirigir a Markdown Editor

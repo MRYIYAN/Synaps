@@ -37,7 +37,7 @@ const VaultStatusPopup = ({
     let timeoutId;
     let exitTimeoutId;
     
-    if ((status === STATUS.SUCCESS || status === STATUS.ERROR) && autoCloseDelay > 0) {
+    if((status === STATUS.SUCCESS || status === STATUS.ERROR) && autoCloseDelay > 0) {
       // Iniciar animación de salida antes de que termine el tiempo completo
       timeoutId = setTimeout(() => {
         // Iniciar la animación de salida
@@ -52,8 +52,8 @@ const VaultStatusPopup = ({
     
     // Limpiar todos los timeouts al desmontar
     return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      if (exitTimeoutId) clearTimeout(exitTimeoutId);
+      if(timeoutId) clearTimeout(timeoutId);
+      if(exitTimeoutId) clearTimeout(exitTimeoutId);
     };
   }, [status, autoCloseDelay, onComplete]);
   
@@ -75,7 +75,7 @@ const VaultStatusPopup = ({
     const classes = ['vault-status-popup', status];
     
     // Añadir clase de animación de salida si corresponde
-    if (isExiting) {
+    if(isExiting) {
       classes.push('exiting');
     }
     

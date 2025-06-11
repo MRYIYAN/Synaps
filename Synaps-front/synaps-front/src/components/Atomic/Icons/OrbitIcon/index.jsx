@@ -8,7 +8,7 @@ const OrbitIcon = ({ color = 'currentColor', size = 24, strokeWidth = 2, classNa
   // Efecto para resetear el estado de hover después de 3 segundos
   useEffect(() => {
     let timeout;
-    if (isHovered) {
+    if(isHovered) {
       timeout = setTimeout(() => {
         setIsHovered(false);
       }, 3000);

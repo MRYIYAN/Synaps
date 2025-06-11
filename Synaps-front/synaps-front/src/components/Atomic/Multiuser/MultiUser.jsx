@@ -45,7 +45,7 @@ const MultiUserModal = ({ isOpen, onClose, documentTitle = "Documento sin títul
 
   const linkUrl = `http://localhost:3000/collaborator`;
 
-  const handleCopyLink = async () => {
+  const handleCopyLink = async() => {
     try {
       await navigator.clipboard.writeText(linkUrl);
       setLinkCopied(true);
@@ -55,7 +55,7 @@ const MultiUserModal = ({ isOpen, onClose, documentTitle = "Documento sin títul
     }
   };
 
-  if (!isOpen) return null;
+  if(!isOpen) return null;
 
   const modalContent = (
     <div className="multiuser-modal-overlay" onClick={onClose}>
@@ -156,12 +156,12 @@ const MultiUserButton = ({ documentTitle }) => {
   // Cerrar dropdown al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (userListRef.current && !userListRef.current.contains(event.target)) {
+      if(userListRef.current && !userListRef.current.contains(event.target)) {
         setIsUserListOpen(false);
       }
     };
 
-    if (isUserListOpen) {
+    if(isUserListOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 

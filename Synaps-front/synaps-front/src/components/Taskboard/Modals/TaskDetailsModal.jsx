@@ -5,7 +5,7 @@ import '../Taskboard.css';
 const TaskDetailsModal = ({ isOpen, onClose, task }) => {
   // Función para formatear la fecha
   const formatDate = (dateString) => {
-    if (!dateString) return 'No disponible';
+    if(!dateString) return 'No disponible';
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', {
       day: '2-digit',
@@ -26,20 +26,35 @@ const TaskDetailsModal = ({ isOpen, onClose, task }) => {
     return statusMap[status] || status;
   };
 
+  // Función para formatear la prioridad
+  const formatPriority = (priority) => {
+    const priorityMap = {
+      'low': 'Baja',
+      'medium': 'Media',
+      'high': 'Alta'
+    };
+    return priorityMap[priority] || priority;
+  };
+
   // Función para obtener la clase CSS del estado
   const getStatusClass = (status) => {
     return `task-status-badge ${status}`;
   };
 
+  // Función para obtener la clase CSS de la prioridad
+  const getPriorityClass = (priority) => {
+    return `task-priority-badge ${priority}`;
+  };
+
   // Manejar tecla Escape
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
+    if(e.key === 'Escape') {
       onClose();
     }
   };
 
   // No renderizar si el modal no está abierto o no hay tarea
-  if (!isOpen || !task) return null;
+  if(!isOpen || !task) return null;
 
   // Renderizar el modal usando Portal para que aparezca fuera del contexto del sidebar
   return ReactDOM.createPortal(
@@ -82,6 +97,26 @@ const TaskDetailsModal = ({ isOpen, onClose, task }) => {
             </span>
           </div>
 
+          {/* Prioridad de la tarea */}
+          {task.priority && (
+            <div className="detail-section">
+              <label className="detail-label">Prioridad</label>
+              <span className={getPriorityClass(task.priority)}>
+                {formatPriority(task.priority)}
+              </span>
+            </div>
+          )}
+
+          {/* Fecha de vencimiento */}
+          {task.due_date && (
+            <div className="detail-section">
+              <label className="detail-label">Fecha de vencimiento</label>
+              <div className="task-detail-date">
+                {new Date(task.due_date).toLocaleDateString('es-ES')}
+              </div>
+            </div>
+          )}
+
           {/* Descripción de la tarea */}
           {task.description && (
             <div className="detail-section">
@@ -96,15 +131,15 @@ const TaskDetailsModal = ({ isOpen, onClose, task }) => {
           <div className="detail-section">
             <label className="detail-label">Fecha de creación</label>
             <div className="task-detail-date">
-              {formatDate(task.createdAt)}
+              {formatDate(task.created_at)}
             </div>
           </div>
 
-          {task.updatedAt && task.updatedAt !== task.createdAt && (
+          {task.updated_at && task.updated_at !== task.created_at && (
             <div className="detail-section">
               <label className="detail-label">Última modificación</label>
               <div className="task-detail-date">
-                {formatDate(task.updatedAt)}
+                {formatDate(task.updated_at)}
               </div>
             </div>
           )}

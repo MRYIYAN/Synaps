@@ -45,26 +45,26 @@ const PageTransition = ({ children, delay = 0, style = {} }) => {
       return new Promise(resolve => {
         const navbarImages = document.querySelectorAll('nav img, header img');
         
-        if (navbarImages.length > 0) {
+        if(navbarImages.length > 0) {
           let loadedCount = 0;
           const totalImages = navbarImages.length;
           
           navbarImages.forEach(img => {
             // Si la imagen ya está cargada
-            if (img.complete) {
+            if(img.complete) {
               loadedCount++;
-              if (loadedCount === totalImages) resolve();
+              if(loadedCount === totalImages) resolve();
             } else {
               // Si la imagen aún está cargando
               img.onload = () => {
                 loadedCount++;
-                if (loadedCount === totalImages) resolve();
+                if(loadedCount === totalImages) resolve();
               };
               
               // En caso de error, seguir adelante
               img.onerror = () => {
                 loadedCount++;
-                if (loadedCount === totalImages) resolve();
+                if(loadedCount === totalImages) resolve();
               };
             }
           });
@@ -78,9 +78,9 @@ const PageTransition = ({ children, delay = 0, style = {} }) => {
       });
     };
     
-    if (isInitialMount) {
+    if(isInitialMount) {
       // Fase 1: Preparación - forzar la posición de scroll al inicio
-      if (originalScrollY !== 0) {
+      if(originalScrollY !== 0) {
         window.scrollTo(0, 0);
       }
       

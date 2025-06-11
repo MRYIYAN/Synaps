@@ -71,7 +71,7 @@ export default function NoteItem( {
     closeMenu();
   };
 
-  const handleSaveEdit = async () => {
+  const handleSaveEdit = async() => {
     if( editTitle.trim() !== title && editTitle.trim() !== '' ) {
       try {
         // Llamar a la función para renombrar
@@ -120,10 +120,33 @@ export default function NoteItem( {
     window.setSelectedItemId2( id2 );
 
     if( hasChildren ) {
-
-      // Si es carpeta, solo expandir/colapsar - el contenido ya está cargado en el árbol
-      if( typeof onToggle === 'function' )
-        onToggle();
+      // Para carpetas: verificar si ya está expandida
+      const isCurrentlyExpanded = window.expandedFolders && window.expandedFolders.has(id2);
+      
+      if(!isCurrentlyExpanded) {
+        // Si no está expandida, expandir y cargar contenido si es necesario
+        if( typeof onToggle === 'function' ) {
+          onToggle();
+        }
+        
+        // Cargar contenido solo si no se ha cargado antes
+        if(!window.loadedFolders) {
+          window.loadedFolders = new Set();
+        }
+        
+        if(!window.loadedFolders.has(id2) && typeof window.getNotes === 'function') {
+          window.loadedFolders.add(id2);
+          console.log(`[NoteItem] Cargando contenido de carpeta: ${title} (ID: ${id})`);
+          window.getNotes(window.currentVaultId, id).catch((error) => {
+            console.error('Error cargando contenido de carpeta:', error);
+          });
+        }
+      } else {
+        // Si ya está expandida, solo colapsar
+        if( typeof onToggle === 'function' ) {
+          onToggle();
+        }
+      }
     } else {
 
       // Si es nota, carga el Markdown en el editor

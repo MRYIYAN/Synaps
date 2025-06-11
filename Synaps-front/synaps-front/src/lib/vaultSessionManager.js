@@ -23,7 +23,7 @@ class VaultSessionManager {
    */
   static isVaultAuthenticated(vaultId2) {
     try {
-      if (!vaultId2) return false;
+      if(!vaultId2) return false;
       
       const authenticatedVaults = this.getAuthenticatedVaults();
       return authenticatedVaults.includes(vaultId2);
@@ -39,7 +39,7 @@ class VaultSessionManager {
    */
   static markVaultAsAuthenticated(vaultId2) {
     try {
-      if (!vaultId2) {
+      if(!vaultId2) {
         console.warn('No se puede marcar vault sin ID como autenticada');
         return;
       }
@@ -47,7 +47,7 @@ class VaultSessionManager {
       const authenticatedVaults = this.getAuthenticatedVaults();
       
       // Solo agregar si no está ya en la lista
-      if (!authenticatedVaults.includes(vaultId2)) {
+      if(!authenticatedVaults.includes(vaultId2)) {
         authenticatedVaults.push(vaultId2);
         this.saveAuthenticatedVaults(authenticatedVaults);
         console.log(`Vault ${vaultId2} marcada como autenticada para esta sesión`);
@@ -116,20 +116,20 @@ class VaultSessionManager {
    * @returns {boolean} - true si necesita PIN, false si no
    */
   static vaultNeedsAuthentication(vault) {
-    if (!vault) {
+    if(!vault) {
       console.warn('No se puede verificar autenticación de vault undefined/null');
       return false;
     }
 
-    if (!vault.is_private) {
+    if(!vault.is_private) {
       return false; // No es privada
     }
 
-    if (!vault.pin) {
+    if(!vault.pin) {
       return false; // No tiene PIN configurado
     }
 
-    if (!vault.vault_id2) {
+    if(!vault.vault_id2) {
       console.warn('Vault privada sin vault_id2, no se puede verificar autenticación');
       return true; // Por seguridad, requerir autenticación
     }

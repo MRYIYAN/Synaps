@@ -2,28 +2,37 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import '../Taskboard.css';
 
-const CreateTaskModal = ({ isOpen, onClose, onCreateTask }) => {
-  const [taskData, setTaskData] = useState({
-    title: '',
-    description: ''
-  });
+const CreateTaskModal = ( { isOpen, onClose, onCreateTask, currentVaultId } ) => {
 
-  const [errors, setErrors] = useState({});
+  // Función para obtener la fecha actual en formato YYYY-MM-DD
+  const getCurrentDate = () => {
+    return new Date().toISOString().split('T')[0];
+  };
+
+  const [taskData, setTaskData] = useState( {
+    title: '',
+    description: '',
+    priority: 'medium',
+    due_date: getCurrentDate() // Establecer fecha actual por defecto
+  } );
+
+  const [errors, setErrors] = useState( {} );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Manejar cambios en los inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setTaskData(prev => ({
+    setTaskData(prev => ( {
       ...prev,
       [name]: value
-    }));
+    } ));
     
     // Limpiar error del campo cuando el usuario empiece a escribir
-    if (errors[name]) {
-      setErrors(prev => ({
+    if(errors[name]) {
+      setErrors(prev => ( {
         ...prev,
         [name]: ''
-      }));
+      } ));
     }
   };
 
@@ -31,16 +40,20 @@ const CreateTaskModal = ({ isOpen, onClose, onCreateTask }) => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!taskData.title.trim()) {
+    if(!taskData.title.trim()) {
       newErrors.title = 'El título es obligatorio';
     }
     
-    if (taskData.title.length > 100) {
-      newErrors.title = 'El título no puede tener más de 100 caracteres';
+    if(taskData.title.length > 255) {
+      newErrors.title = 'El título no puede tener más de 255 caracteres';
     }
     
-    if (taskData.description.length > 500) {
-      newErrors.description = 'La descripción no puede tener más de 500 caracteres';
+    if(taskData.description.length > 1000) {
+      newErrors.description = 'La descripción no puede tener más de 1000 caracteres';
+    }
+
+    if(!currentVaultId) {
+      newErrors.general = 'Debe seleccionar un vault antes de crear una tarea';
     }
     
     setErrors(newErrors);
@@ -48,46 +61,62 @@ const CreateTaskModal = ({ isOpen, onClose, onCreateTask }) => {
   };
 
   // Manejar envío del formulario
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    if(!validateForm()) {
       return;
     }
     
-    // Crear la nueva tarea
-    const newTask = {
-      id: Date.now(), // ID temporal, en producción vendría del backend
-      title: taskData.title.trim(),
-      description: taskData.description.trim(),
-      status: 'todo', // Por defecto va a la columna "Por hacer"
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+    setIsSubmitting(true);
     
-    onCreateTask(newTask);
-    handleClose();
+    try {
+      // Preparar datos para enviar al backend
+      const newTaskData = {
+        title: taskData.title.trim(),
+        priority: taskData.priority,
+        vault_id: currentVaultId,
+        due_date: taskData.due_date || null,
+        status: 'todo' // Establecer explícitamente el estado
+      };
+
+      // Solo incluir descripción si tiene contenido
+      if (taskData.description.trim()) {
+        newTaskData.description = taskData.description.trim();
+      }
+      
+      await onCreateTask(newTaskData);
+      handleClose();
+    } catch (error) {
+      console.error('Error al crear tarea:', error);
+      setErrors( { general: 'Error al crear la tarea. Inténtelo de nuevo.' } );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Cerrar modal y limpiar formulario
   const handleClose = () => {
-    setTaskData({
+    setTaskData( {
       title: '',
-      description: ''
-    });
-    setErrors({});
+      description: '',
+      priority: 'medium',
+      due_date: getCurrentDate()
+    } );
+    setErrors( {} );
+    setIsSubmitting(false);
     onClose();
   };
 
   // Manejar tecla Escape
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
+    if(e.key === 'Escape') {
       handleClose();
     }
   };
 
   // No renderizar si el modal no está abierto
-  if (!isOpen) return null;
+  if(!isOpen) return null;
 
   // Renderizar el modal usando Portal para que aparezca fuera del contexto del sidebar
   return ReactDOM.createPortal(
@@ -116,6 +145,13 @@ const CreateTaskModal = ({ isOpen, onClose, onCreateTask }) => {
 
         {/* Formulario */}
         <form className="task-form" onSubmit={handleSubmit}>
+          {/* Error general */}
+          {errors.general && (
+            <div className="form-error-general">
+              {errors.general}
+            </div>
+          )}
+
           {/* Título */}
           <div className="form-group">
             <label htmlFor="taskTitle" className="form-label">
@@ -129,8 +165,9 @@ const CreateTaskModal = ({ isOpen, onClose, onCreateTask }) => {
               placeholder="Ingresa el título de la tarea..."
               value={taskData.title}
               onChange={handleInputChange}
-              maxLength={100}
+              maxLength={255}
               autoFocus
+              disabled={isSubmitting}
             />
             {errors.title && (
               <span className="form-error">{errors.title}</span>
@@ -149,15 +186,63 @@ const CreateTaskModal = ({ isOpen, onClose, onCreateTask }) => {
               placeholder="Describe la tarea (opcional)..."
               value={taskData.description}
               onChange={handleInputChange}
-              maxLength={500}
+              maxLength={1000}
               rows={4}
+              disabled={isSubmitting}
             />
             {errors.description && (
               <span className="form-error">{errors.description}</span>
             )}
             <span className="form-helper">
-              {taskData.description.length}/500 caracteres
+              {taskData.description.length}/1000 caracteres
             </span>
+          </div>
+
+          {/* Prioridad */}
+          <div className="form-group">
+            <label htmlFor="taskPriority" className="form-label">
+              Prioridad
+            </label>
+            <select
+              id="taskPriority"
+              name="priority"
+              className="form-select"
+              value={taskData.priority}
+              onChange={handleInputChange}
+              disabled={isSubmitting}
+            >
+              <option value="low">Baja</option>
+              <option value="medium">Media</option>
+              <option value="high">Alta</option>
+            </select>
+          </div>
+
+          {/* Fecha de vencimiento */}
+          <div className="form-group">
+            <label htmlFor="taskDueDate" className="form-label">
+              Fecha de vencimiento
+            </label>
+            <input
+              id="taskDueDate"
+              name="due_date"
+              type="date"
+              className="form-input"
+              value={taskData.due_date}
+              onChange={handleInputChange}
+              min={new Date().toISOString().split('T')[0]}
+              disabled={isSubmitting}
+            />
+          </div>
+
+          {/* Estado - Solo informativo */}
+          <div className="form-group">
+            <label className="form-label">Estado inicial</label>
+            <div className="form-info">
+              <span className="status-badge status-todo">Por Hacer</span>
+              <span className="form-helper">
+                Las nuevas tareas se añaden automáticamente a la columna "Por Hacer"
+              </span>
+            </div>
           </div>
 
           {/* Fecha de creación - Solo informativa */}
@@ -189,9 +274,9 @@ const CreateTaskModal = ({ isOpen, onClose, onCreateTask }) => {
             <button 
               type="submit" 
               className="btn-primary"
-              disabled={!taskData.title.trim()}
+              disabled={!taskData.title.trim() || isSubmitting}
             >
-              Crear Tarea
+              {isSubmitting ? 'Creando...' : 'Crear Tarea'}
             </button>
           </div>
         </form>

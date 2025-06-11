@@ -182,7 +182,7 @@ const GalaxyGraph = ( { data } ) => {
           console.log('Galaxy Graph: Abriendo nota', node.name, 'con ID:', node.id);
           
           // Sincronizar con el sidebar
-          if (window.setSelectedItemId2) {
+          if(window.setSelectedItemId2) {
             window.setSelectedItemId2(node.id);
           }
           

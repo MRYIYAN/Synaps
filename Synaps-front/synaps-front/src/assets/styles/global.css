@@ -1630,3 +1630,7 @@ rect {
     font-size: 12px;
   }
 }
+
+.status-badge.status-todo {
+  color: white;
+}

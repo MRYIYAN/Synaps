@@ -130,25 +130,25 @@ const RegisterForm = () => {
    */
   const validateUsername = (value) => {
     // Verificar que el usuario no esté vacío
-    if (value.trim() === '') {
+    if(value.trim() === '') {
       setUsernameError('El nombre de usuario no puede estar vacío');
       return false;
     }
     
     // Los usernames no pueden contener espacios para evitar ambigüedad
-    if (/\s/.test(value)) {
+    if(/\s/.test(value)) {
       setUsernameError('El nombre de usuario no puede contener espacios');
       return false;
     }
     
     // Solo permitir letras, números, guiones y subrayados
-    if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
+    if(!/^[a-zA-Z0-9_-]+$/.test(value)) {
       setUsernameError('El nombre de usuario no puede contener caracteres especiales');
       return false;
     }
     
     // Detección de emojis para mantener compatibilidad con sistemas
-    if (/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(value)) {
+    if(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(value)) {
       setUsernameError('El nombre de usuario no puede contener emojis');
       return false;
     }
@@ -168,26 +168,26 @@ const RegisterForm = () => {
    */
   const validateEmail = (value) => {
     // Verificar que el email no esté vacío
-    if (value.trim() === '') {
+    if(value.trim() === '') {
       setEmailError('El correo electrónico no puede estar vacío');
       return false;
     }
     
     // Los emails no pueden contener espacios según RFC
-    if (/\s/.test(value)) {
+    if(/\s/.test(value)) {
       setEmailError('El correo electrónico no puede contener espacios');
       return false;
     }
     
     // Validación de formato básico de email con regex RFC-like
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) {
+    if(!emailRegex.test(value)) {
       setEmailError('Formato de correo incorrecto (ejemplo: usuario@dominio.com)');
       return false;
     }
     
     // Detección de emojis para evitar problemas de compatibilidad
-    if (/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(value)) {
+    if(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(value)) {
       setEmailError('El correo electrónico no puede contener emojis');
       return false;
     }
@@ -207,49 +207,49 @@ const RegisterForm = () => {
    */
   const validatePassword = (value) => {
     // Verificar que la contraseña no esté vacía
-    if (value === '') {
+    if(value === '') {
       setPasswordError('La contraseña no puede estar vacía');
       return false;
     }
     
     // Las contraseñas no pueden contener espacios por seguridad
-    if (/\s/.test(value)) {
+    if(/\s/.test(value)) {
       setPasswordError('La contraseña no puede contener espacios');
       return false;
     }
     
     // Longitud mínima de 6 caracteres para seguridad básica
-    if (value.length < 6) {
+    if(value.length < 6) {
       setPasswordError('La contraseña debe tener al menos 6 caracteres');
       return false;
     }
     
     // Debe contener al menos una letra mayúscula
-    if (!/[A-Z]/.test(value)) {
+    if(!/[A-Z]/.test(value)) {
       setPasswordError('La contraseña debe contener al menos una mayúscula');
       return false;
     }
     
     // Debe contener al menos una letra minúscula
-    if (!/[a-z]/.test(value)) {
+    if(!/[a-z]/.test(value)) {
       setPasswordError('La contraseña debe contener al menos una minúscula');
       return false;
     }
     
     // Debe contener al menos un dígito numérico
-    if (!/\d/.test(value)) {
+    if(!/\d/.test(value)) {
       setPasswordError('La contraseña debe contener al menos un número');
       return false;
     }
     
     // Debe contener al menos un carácter especial para mayor seguridad
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(value)) {
+    if(!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(value)) {
       setPasswordError('La contraseña debe contener al menos un carácter especial');
       return false;
     }
     
     // Detección de emojis para evitar problemas de codificación
-    if (/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(value)) {
+    if(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(value)) {
       setPasswordError('La contraseña no puede contener emojis');
       return false;
     }
@@ -269,19 +269,19 @@ const RegisterForm = () => {
    */
   const validateConfirmPassword = (value) => {
     // Verificar que la confirmación no esté vacía
-    if (value === '') {
+    if(value === '') {
       setConfirmPasswordError('Debe confirmar la contraseña');
       return false;
     }
     
     // Detección de emojis en la confirmación
-    if (/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(value)) {
+    if(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(value)) {
       setConfirmPasswordError('La confirmación de contraseña no puede contener emojis');
       return false;
     }
     
     // Verificar que las contraseñas coincidan exactamente
-    if (value !== password) {
+    if(value !== password) {
       setConfirmPasswordError('Las contraseñas no coinciden');
       return false;
     }
@@ -343,7 +343,7 @@ const RegisterForm = () => {
     const value = e.target.value;
     setName(value);
     // Solo validar si el campo ya ha sido tocado previamente
-    if (nameTouched) {
+    if(nameTouched) {
       validateName(value);
     }
   };
@@ -355,7 +355,7 @@ const RegisterForm = () => {
     const value = e.target.value;
     setUsername(value);
     // Solo validar si el campo ya ha sido tocado previamente
-    if (usernameTouched) {
+    if(usernameTouched) {
       validateUsername(value);
     }
   };
@@ -367,7 +367,7 @@ const RegisterForm = () => {
     const value = e.target.value;
     setEmail(value);
     // Solo validar si el campo ya ha sido tocado previamente
-    if (emailTouched) {
+    if(emailTouched) {
       validateEmail(value);
     }
   };
@@ -379,12 +379,12 @@ const RegisterForm = () => {
     const value = e.target.value;
     setPassword(value);
     // Solo validar si el campo ya ha sido tocado previamente
-    if (passwordTouched) {
+    if(passwordTouched) {
       validatePassword(value);
     }
     
     // Re-validar confirmación si ya ha sido completada
-    if (confirmPasswordTouched && confirmPassword) {
+    if(confirmPasswordTouched && confirmPassword) {
       validateConfirmPassword(confirmPassword);
     }
   };
@@ -396,7 +396,7 @@ const RegisterForm = () => {
     const value = e.target.value;
     setConfirmPassword(value);
     // Solo validar si el campo ya ha sido tocado previamente
-    if (confirmPasswordTouched) {
+    if(confirmPasswordTouched) {
       validateConfirmPassword(value);
     }
   };

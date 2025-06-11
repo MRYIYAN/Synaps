@@ -53,7 +53,7 @@ const MarkdownEditor = function() {
     return value;
   }, [] );
 
-  const checkFirstLogin = async () => {
+  const checkFirstLogin = async() => {
     let value = false;
     
     try {

@@ -29,7 +29,7 @@ const FolderPickerButton = ({ onFolderSelected, disabled = false }) => {
   // Manejar el clic en el botón 
   //----------------------------------//
   const handleButtonClick = () => {
-    if (fileInputRef.current) {
+    if(fileInputRef.current) {
       fileInputRef.current.click();
     }
   };
@@ -50,7 +50,7 @@ const FolderPickerButton = ({ onFolderSelected, disabled = false }) => {
   //---------------------------------------------//
   const handleFolderChange = (event) => {
     const files = event.target.files;
-    if (files.length > 0) {
+    if(files.length > 0) {
       try {
         // Obtener el nombre de la carpeta
         const folderName = files[0].webkitRelativePath.split('/')[0];
@@ -64,7 +64,7 @@ const FolderPickerButton = ({ onFolderSelected, disabled = false }) => {
       } catch (error) {
         console.error('Error al procesar la carpeta seleccionada:', error);
         // En caso de error, al menos devolvemos el nombre del archivo sin ruta
-        if (files[0] && files[0].name) {
+        if(files[0] && files[0].name) {
           onFolderSelected(`/Synaps/Vaults/${files[0].name}`);
         }
       }

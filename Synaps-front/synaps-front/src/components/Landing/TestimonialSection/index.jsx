@@ -84,7 +84,7 @@ const TestimonialSection = () => {
   //  Previene transiciones durante animaciones en curso                        //
   //---------------------------------------------------------------------------//
   const nextSlide = useCallback(() => {
-    if (animating) return;                 // Si está animando, no hace nada
+    if(animating) return;                 // Si está animando, no hace nada
     setAnimating(true);                    // Marca como animando para prevenir otras transiciones
     const nextIndex = activeIndex === testimonials.length - 1 ? 0 : activeIndex + 1; // Calcula el siguiente índice con vuelta circular
     setActiveIndex(nextIndex);             // Actualiza el índice activo
@@ -96,7 +96,7 @@ const TestimonialSection = () => {
   //  Similar a nextSlide pero en dirección inversa                             //
   //---------------------------------------------------------------------------//
   const prevSlide = useCallback(() => {
-    if (animating) return;                 // Si está animando, no hace nada
+    if(animating) return;                 // Si está animando, no hace nada
     setAnimating(true);                    // Marca como animando para prevenir otras transiciones
     const nextIndex = activeIndex === 0 ? testimonials.length - 1 : activeIndex - 1; // Calcula el índice anterior con vuelta circular
     setActiveIndex(nextIndex);             // Actualiza el índice activo
@@ -108,7 +108,7 @@ const TestimonialSection = () => {
   //  Usada por los indicadores circulares (bullets)                            //
   //---------------------------------------------------------------------------//
   const goToSlide = (index) => {
-    if (animating || index === activeIndex) return; // No hace nada si está animando o ya es el índice activo
+    if(animating || index === activeIndex) return; // No hace nada si está animando o ya es el índice activo
     setAnimating(true);                    // Marca como animando
     setActiveIndex(index);                 // Salta al índice indicado
     setTimeout(() => setAnimating(false), 700); // Reducido de 4000ms a 700ms
@@ -129,7 +129,7 @@ const TestimonialSection = () => {
     play();                                // Inicia la reproducción automática
     
     return () => {
-      if (autoPlayRef.current) {
+      if(autoPlayRef.current) {
         clearTimeout(autoPlayRef.current); // Limpia el temporizador al desmontar
       }
     };

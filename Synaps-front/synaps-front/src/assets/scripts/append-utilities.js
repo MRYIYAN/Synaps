@@ -71,7 +71,7 @@ const generateSizes = () => {
 // Función principal del script
 const main = () => {
   // Verifica si el archivo existe
-  if (!fs.existsSync(path)) {
+  if(!fs.existsSync(path)) {
     console.error(`❌ No se encontró ${path}`);
     return;
   }

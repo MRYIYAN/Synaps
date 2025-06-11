@@ -85,7 +85,7 @@ class VaultController extends Controller
             //=======================//
             try {
                 // Usar la conexión apropiada (tenant o default)
-                if ($connection === 'tenant') {
+                if($connection === 'tenant') {
                     $vaults = DB::connection('tenant')->table('vaults')->get();
                 } else {
                     // Fallback a la BD principal si no hay tenant disponible
@@ -171,8 +171,8 @@ class VaultController extends Controller
             //=========================//
             // VALIDACIÓN DE PIN SI ES VAULT PRIVADA
             //=========================//
-            if ($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
-                if (strlen($validated['pin']) < 4) {
+            if($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
+                if(strlen($validated['pin']) < 4) {
                     throw new Exception('El PIN debe tener al menos 4 dígitos');
                 }
             }
@@ -186,7 +186,7 @@ class VaultController extends Controller
                 ->where('user_id', $user_id)
                 ->first();
 
-            if ($duplicateVault) {
+            if($duplicateVault) {
                 throw new Exception('Ya existe un vault con ese nombre');
             }
 
@@ -201,7 +201,7 @@ class VaultController extends Controller
             ];
 
             // Solo incluir PIN si se proporciona y la vault es privada
-            if ($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
+            if($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
                 $insertData['pin'] = $validated['pin'];
             }
 
@@ -276,7 +276,7 @@ class VaultController extends Controller
             //=========================//
             // VALIDACIÓN DE USUARIO
             //=========================//
-            if (!$user_id) {
+            if(!$user_id) {
                 throw new Exception('Usuario no autenticado');
             }
 
@@ -292,8 +292,8 @@ class VaultController extends Controller
             //=========================//
             // VALIDACIÓN DE PIN SI ES VAULT PRIVADA
             //=========================//
-            if ($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
-                if (strlen($validated['pin']) < 4) {
+            if($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
+                if(strlen($validated['pin']) < 4) {
                     throw new Exception('El PIN debe tener al menos 4 dígitos');
                 }
             }
@@ -307,7 +307,7 @@ class VaultController extends Controller
                 ->where('user_id', $user_id)
                 ->first();
 
-            if (!$existingVault) {
+            if(!$existingVault) {
                 throw new Exception('Vault no encontrado o no tienes permisos para editarlo');
             }
 
@@ -321,7 +321,7 @@ class VaultController extends Controller
                 ->where('vault_id2', '!=', $vault_id2) // Excluir el vault actual
                 ->first();
 
-            if ($duplicateVault) {
+            if($duplicateVault) {
                 throw new Exception('Ya existe un vault con ese nombre');
             }
 
@@ -334,9 +334,9 @@ class VaultController extends Controller
             ];
 
             // Solo actualizar PIN si se proporciona y la vault es privada
-            if ($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
+            if($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
                 $updateData['pin'] = $validated['pin'];
-            } elseif (!$validated['is_private']) {
+            } elseif(!$validated['is_private']) {
                 // Si la vault ya no es privada, remover el PIN
                 $updateData['pin'] = null;
             }
@@ -352,7 +352,7 @@ class VaultController extends Controller
                 ->where('user_id', $user_id)
                 ->update($updateData);
 
-            if ($updated === 0) {
+            if($updated === 0) {
                 throw new Exception('No se pudo actualizar el vault');
             }
 
@@ -422,7 +422,7 @@ class VaultController extends Controller
             //=========================//
             // VALIDACIÓN DE USUARIO
             //=========================//
-            if (!$user_id) {
+            if(!$user_id) {
                 throw new Exception('Usuario no autenticado');
             }
 
@@ -443,14 +443,14 @@ class VaultController extends Controller
                 ->where('is_private', true)
                 ->first();
 
-            if (!$vault) {
+            if(!$vault) {
                 throw new Exception('Vault no encontrado o no es privado');
             }
 
             //=========================//
             // VERIFICAR PIN
             //=========================//
-            if ((int)$vault->pin === (int)$validated['pin']) {
+            if((int)$vault->pin === (int)$validated['pin']) {
                 $result = 1;
                 $message = 'PIN correcto';
             } else {

@@ -7,7 +7,7 @@ const UsersIcon = ({ color = 'currentColor', size = 24, strokeWidth = 2, classNa
 
   useEffect(() => {
     let timeout;
-    if (isHovered) {
+    if(isHovered) {
       setAnimatedX(-6);
       timeout = setTimeout(() => {
         setIsHovered(false);

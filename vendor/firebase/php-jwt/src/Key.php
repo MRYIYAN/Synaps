@@ -17,7 +17,7 @@ class Key
         private $keyMaterial,
         private string $algorithm
     ) {
-        if (
+        if(
             !\is_string($keyMaterial)
             && !$keyMaterial instanceof OpenSSLAsymmetricKey
             && !$keyMaterial instanceof OpenSSLCertificate
@@ -26,11 +26,11 @@ class Key
             throw new TypeError('Key material must be a string, resource, or OpenSSLAsymmetricKey');
         }
 
-        if (empty($keyMaterial)) {
+        if(empty($keyMaterial)) {
             throw new InvalidArgumentException('Key material must not be empty');
         }
 
-        if (empty($algorithm)) {
+        if(empty($algorithm)) {
             throw new InvalidArgumentException('Algorithm must not be empty');
         }
     }

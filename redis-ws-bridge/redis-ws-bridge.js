@@ -148,7 +148,7 @@ function handle_ws_message( ws, message, set_token_callback )
     }
 
     // Actualización: frontend -> backend
-    if (data.type === 'update' && data.token && data.updates) {
+    if(data.type === 'update' && data.token && data.updates) {
       // --- NUEVO BLOQUE ---
       const token = data.token;
       const updates = data.updates;
@@ -161,12 +161,12 @@ function handle_ws_message( ws, message, set_token_callback )
       log('INFO', 'Actualización recibida', { token });
 
       // Reiniciar timer si ya existe
-      if (global.persist_timers && global.persist_timers.has(token)) {
+      if(global.persist_timers && global.persist_timers.has(token)) {
         clearTimeout(global.persist_timers.get(token));
       }
 
       // Nuevo timer para guardar en DB en 5s
-      if (!global.persist_timers) global.persist_timers = new Map();
+      if(!global.persist_timers) global.persist_timers = new Map();
       const timer = setTimeout(() => {
         persistToDatabase(token, markdown, jwt);
         global.persist_timers.delete(token);
@@ -260,10 +260,10 @@ function subscribe_backend_updates()
       log( 'INFO', `Mensaje recibido de Redis`, { channel, connectedClients: sockets?.size || 0 } );
 
       // Si hay sockets suscritos a ese token, reenvía el mensaje a cada uno
-      if ( sockets )
+      if( sockets )
       {
         for ( const ws of sockets ) {
-          if ( ws.readyState === WebSocket.OPEN )
+          if( ws.readyState === WebSocket.OPEN )
             ws.send( message );
         }
       }

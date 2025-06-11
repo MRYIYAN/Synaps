@@ -10,12 +10,19 @@
 
 import React, { useState } from "react";
 import NoteItem from "./NoteItem";
-import styles from "./NoteTree.css";
+
+// Estado global para mantener el estado de expansión de las carpetas
+if(!window.expandedFolders) {
+  window.expandedFolders = new Set();
+}
 
 export default function NoteBranch({ node, depth, selectedId2 }) {
 
-  // Estado para controlar si está colapsado - iniciamos colapsado
-  const [collapsed, setCollapsed] = useState( true );
+  // Usar directamente el estado global para determinar si está expandido
+  const isExpanded = window.expandedFolders.has(node.id2);
+  
+  // Estado local solo para forzar re-render cuando cambie el estado global
+  const [, forceUpdate] = useState(0);
 
   // Validar que node sea un objeto válido
   if( !node || typeof node !== 'object' || !node.id2 ) {
@@ -31,7 +38,13 @@ export default function NoteBranch({ node, depth, selectedId2 }) {
 
   // Callback para alternar estado colapsado (se pasa al hijo)
   function handleToggle() {
-    setCollapsed( ( collapsed ) => !collapsed );
+    if(isExpanded) {
+      window.expandedFolders.delete(node.id2);
+    } else {
+      window.expandedFolders.add(node.id2);
+    }
+    // Forzar re-render
+    forceUpdate(prev => prev + 1);
   }
 
   return (
@@ -42,14 +55,14 @@ export default function NoteBranch({ node, depth, selectedId2 }) {
         title={node.title}
         depth={depth}
         hasChildren={hasChildren}
-        collapsed={collapsed}
+        collapsed={!isExpanded}
         selected={node.id2 === window.selectedItemId2}
         onToggle={handleToggle}
       />  
 
       {/* Si no está colapsado y tiene hijos, renderiza recursivamente */}
-      {hasChildren && !collapsed && validChildren.length > 0 && (
-        <div className={`node-branch ${collapsed ? 'collapsed' : ''}`}>
+      {hasChildren && isExpanded && validChildren.length > 0 && (
+        <div className={`node-branch ${!isExpanded ? 'collapsed' : ''}`}>
           {validChildren.map( ( child ) => {
             // Verificar que cada hijo tenga id2 válido
             if( !child || !child.id2 ) {

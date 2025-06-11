@@ -72,12 +72,12 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    // Cuando el modal se abre, enfoca el campo de nombre en el paso 1 o el PIN en el paso 2
   //----------------------------------------------------------------------------------//
   useEffect(() => {
-    if (isOpen) {
+    if(isOpen) {
       // Pequeño timeout para asegurar que los elementos ya estén renderizados
       setTimeout(() => {
-        if (step === 1 && nameInputRef.current) {
+        if(step === 1 && nameInputRef.current) {
           nameInputRef.current.focus();  // Enfoca el campo de nombre en el paso 1
-        } else if (step === 2 && pinInputRef.current) {
+        } else if(step === 2 && pinInputRef.current) {
           pinInputRef.current.focus();   // Enfoca el campo de PIN en el paso 2
         }
       }, 100);
@@ -95,24 +95,24 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    */
   const validateVaultName = (name) => {
     // Validar que no esté vacío
-    if (!name || name.trim() === '') {
+    if(!name || name.trim() === '') {
       return { isValid: false, errorMessage: 'El nombre no puede estar vacío' };
     }
     
     // Validar que no contenga espacios
-    if (name.includes(' ')) {
+    if(name.includes(' ')) {
       return { isValid: false, errorMessage: 'El nombre no puede contener espacios' };
     }
     
     // Validar que no contenga caracteres especiales (solo letras, números, guiones y guiones bajos)
     const specialCharsRegex = /[^a-zA-Z0-9\-_]/;
-    if (specialCharsRegex.test(name)) {
+    if(specialCharsRegex.test(name)) {
       return { isValid: false, errorMessage: 'El nombre solo puede contener letras, números, guiones y guiones bajos' };
     }
     
     // Validar que no contenga emojis
     const emojiRegex = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/u;
-    if (emojiRegex.test(name)) {
+    if(emojiRegex.test(name)) {
       return { isValid: false, errorMessage: 'El nombre no puede contener emojis' };
     }
     
@@ -127,23 +127,23 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    */
   const validatePin = (pin) => {
     // Validar que no esté vacío
-    if (!pin || pin.trim() === '') {
+    if(!pin || pin.trim() === '') {
       return { isValid: false, errorMessage: 'El PIN no puede estar vacío' };
     }
     
     // Validar que solo contenga números
     const numbersOnlyRegex = /^\d+$/;
-    if (!numbersOnlyRegex.test(pin)) {
+    if(!numbersOnlyRegex.test(pin)) {
       return { isValid: false, errorMessage: 'El PIN solo puede contener números' };
     }
     
     // Validar longitud mínima (4 dígitos)
-    if (pin.length < 4) {
+    if(pin.length < 4) {
       return { isValid: false, errorMessage: 'El PIN debe tener al menos 4 dígitos' };
     }
     
     // Validar longitud máxima (8 dígitos)
-    if (pin.length > 8) {
+    if(pin.length > 8) {
       return { isValid: false, errorMessage: 'El PIN no puede tener más de 8 dígitos' };
     }
     
@@ -163,7 +163,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     setNameError(nameValidation.errorMessage);
 
     // Si estamos en el paso 1, solo validamos nombre
-    if (step === 1) {
+    if(step === 1) {
       return nameValidation.isValid;
     }
 
@@ -205,7 +205,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    // Avanza al siguiente paso del formulario después de validar los campos del paso actual
   //----------------------------------------------------------------------------------//
   const handleNextStep = () => {
-    if (step === 1) {
+    if(step === 1) {
       // Validar los campos del paso 1
       const nameValidation = validateVaultName(vaultName);
 
@@ -213,7 +213,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
       setNameError(nameValidation.errorMessage);
 
       // Solo avanzar si los campos son válidos
-      if (nameValidation.isValid) {
+      if(nameValidation.isValid) {
         setStep(2); // Avanzar al paso de configuración del PIN
       } else {
         // Mostrar mensaje de error general
@@ -234,11 +234,11 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   //----------------------------------------------------------------------------------//
   // Inicia el proceso de creación de vault después de validar  todos los campos necesarios
   //----------------------------------------------------------------------------------//
-  const handleCreateVault = async () => {
-    if (isCreating) return;
+  const handleCreateVault = async() => {
+    if(isCreating) return;
     setIsCreating(true); // <- Bloquea de inmediato para evitar doble click
 
-    if (!validateForm()) {
+    if(!validateForm()) {
       setStatusPopup(STATUS.ERROR);
       setStatusMessage('Error en el formulario');
       setErrorMessage('Por favor corrige los errores antes de continuar');
@@ -291,7 +291,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    // Maneja la finalización del mensaje de estado (éxito o error)
   //----------------------------------------------------------------------------------//
   const handleStatusComplete = () => {
-    if (statusPopup === STATUS.SUCCESS) {
+    if(statusPopup === STATUS.SUCCESS) {
       // Si fue exitoso, cerrar el modal
       handleClose();
     } else {
@@ -305,17 +305,17 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    * @param {KeyboardEvent} e - Evento de teclado
    */
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
+    if(e.key === 'Escape') {
       // Cerrar modal con Escape
       handleClose();
-    } else if (e.key === 'Enter' && !isCreating) {
+    } else if(e.key === 'Enter' && !isCreating) {
       e.preventDefault(); // Previene un submit doble
-      if (step === 1 && !isPrivate) {
+      if(step === 1 && !isPrivate) {
        
         // Solo se crea desde el botón
-      } else if (step === 1 && isPrivate) {
+      } else if(step === 1 && isPrivate) {
         handleNextStep();
-      } else if (step === 2) {
+      } else if(step === 2) {
         handleCreateVault();
       }
     }
@@ -349,7 +349,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     const numericValue = originalValue.replace(/\D/g, '');
 
     // Si se eliminaron caracteres no numéricos, mostrar error
-    if (originalValue !== numericValue) {
+    if(originalValue !== numericValue) {
       setPin(numericValue);
       setPinError('El PIN solo puede contener números');
       return;
@@ -362,7 +362,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     setPinError(isValid ? '' : errorMessage);
 
     // Validar coincidencia con confirmación si ya existe
-    if (confirmPin) {
+    if(confirmPin) {
       setConfirmPinError(numericValue === confirmPin ? '' : 'Los PINs no coinciden');
     }
   };
@@ -377,7 +377,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
     const numericValue = originalValue.replace(/\D/g, '');
 
     // Si se eliminaron caracteres no numéricos, mostrar error
-    if (originalValue !== numericValue) {
+    if(originalValue !== numericValue) {
       setConfirmPin(numericValue);
       setConfirmPinError('El PIN solo puede contener números');
       return;
@@ -413,10 +413,10 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
    * Valida la coincidencia de PINs cuando el campo de confirmación pierde el foco
    */
   const handleConfirmPinBlur = () => {
-    if (confirmPin) {
+    if(confirmPin) {
       // Verificar que los PINs coincidan
       setConfirmPinError(pin === confirmPin ? '' : 'Los PINs no coinciden');
-    } else if (pin) {
+    } else if(pin) {
       // Si hay pin principal pero no de confirmación
       setConfirmPinError('Debes confirmar el PIN');
     }
@@ -427,7 +427,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
   //====================================================================================//
 
   // No renderizar nada si el modal está cerrado
-  if (!isOpen) return null;
+  if(!isOpen) return null;
 
   return (
     <div className="modal-overlay" onKeyDown={handleKeyDown}>
@@ -628,7 +628,7 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
 //=====================================================================================//
 const getUsernameFromEmail = () => {
   const token = localStorage.getItem('token');
-  if (!token) return 'usuario';
+  if(!token) return 'usuario';
 
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));

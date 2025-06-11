@@ -37,7 +37,7 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
    */
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
+      if(
         showVaultSelector &&
         vaultSelectorRef.current &&
         vaultButtonRef.current &&
@@ -48,7 +48,7 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
       }
       
       // Cerrar menú contextual
-      if (contextMenu.visible) {
+      if(contextMenu.visible) {
         setContextMenu({ visible: false, x: 0, y: 0, vault: null });
       }
     };
@@ -74,7 +74,7 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
    * @param {Object} vault - La vault seleccionada
    */
   const selectVault = (vault) => {
-    if (typeof onVaultSelect === 'function') {
+    if(typeof onVaultSelect === 'function') {
       onVaultSelect(vault);
     }
     setShowVaultSelector(false);
@@ -84,7 +84,7 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
    * Maneja la creación de una nueva vault
    */
   const handleCreateNewVault = () => {
-    if (typeof onCreateVault === 'function') {
+    if(typeof onCreateVault === 'function') {
       onCreateVault();
     }
     setShowVaultSelector(false);
@@ -105,12 +105,12 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
     let y = e.clientY;
     
     // If too close to the right edge, position to the left of the cursor
-    if (x + 200 > window.innerWidth) {
+    if(x + 200 > window.innerWidth) {
       x = Math.max(10, x - 200);
     }
     
     // If too close to the bottom, position above
-    if (y + 100 > window.innerHeight) {
+    if(y + 100 > window.innerHeight) {
       y = Math.max(10, y - 100);
     }
     
@@ -136,7 +136,7 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
       (vault.id && currentVault.id && vault.id === currentVault.id)
     );
     
-    if (isActive && typeof onEditVault === 'function') {
+    if(isActive && typeof onEditVault === 'function') {
       console.log('Opening edit modal for active vault:', vault);
       onEditVault(vault);
       setShowVaultSelector(false);
@@ -151,7 +151,7 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
    */
   const handleContextMenuAction = (action) => {
     console.log('handleContextMenuAction called with:', action, contextMenu.vault);
-    if (action === 'edit' && contextMenu.vault && typeof onEditVault === 'function') {
+    if(action === 'edit' && contextMenu.vault && typeof onEditVault === 'function') {
       console.log('Calling onEditVault with vault:', contextMenu.vault);
       onEditVault(contextMenu.vault);
     }
@@ -190,7 +190,7 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
             className="vault-edit-button"
             onClick={(e) => {
               e.stopPropagation();
-              if (typeof onEditVault === 'function') {
+              if(typeof onEditVault === 'function') {
                 onEditVault(currentVault);
               }
             }}

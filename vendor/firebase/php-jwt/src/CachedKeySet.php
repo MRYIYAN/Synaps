@@ -100,7 +100,7 @@ class CachedKeySet implements ArrayAccess
      */
     public function offsetGet($keyId): Key
     {
-        if (!$this->keyIdExists($keyId)) {
+        if(!$this->keyIdExists($keyId)) {
             throw new OutOfBoundsException('Key ID not found');
         }
         return JWK::parseKey($this->keySet[$keyId], $this->defaultAlg);
@@ -139,11 +139,11 @@ class CachedKeySet implements ArrayAccess
     {
         $jwks = json_decode($jwks, true);
 
-        if (!isset($jwks['keys'])) {
+        if(!isset($jwks['keys'])) {
             throw new UnexpectedValueException('"keys" member must exist in the JWK Set');
         }
 
-        if (empty($jwks['keys'])) {
+        if(empty($jwks['keys'])) {
             throw new InvalidArgumentException('JWK Set did not contain any keys');
         }
 
@@ -158,27 +158,27 @@ class CachedKeySet implements ArrayAccess
 
     private function keyIdExists(string $keyId): bool
     {
-        if (null === $this->keySet) {
+        if(null === $this->keySet) {
             $item = $this->getCacheItem();
             // Try to load keys from cache
-            if ($item->isHit()) {
+            if($item->isHit()) {
                 // item found! retrieve it
                 $this->keySet = $item->get();
                 // If the cached item is a string, the JWKS response was cached (previous behavior).
                 // Parse this into expected format array<kid, jwk> instead.
-                if (\is_string($this->keySet)) {
+                if(\is_string($this->keySet)) {
                     $this->keySet = $this->formatJwksForCache($this->keySet);
                 }
             }
         }
 
-        if (!isset($this->keySet[$keyId])) {
-            if ($this->rateLimitExceeded()) {
+        if(!isset($this->keySet[$keyId])) {
+            if($this->rateLimitExceeded()) {
                 return false;
             }
             $request = $this->httpFactory->createRequest('GET', $this->jwksUri);
             $jwksResponse = $this->httpClient->sendRequest($request);
-            if ($jwksResponse->getStatusCode() !== 200) {
+            if($jwksResponse->getStatusCode() !== 200) {
                 throw new UnexpectedValueException(
                     \sprintf('HTTP Error: %d %s for URI "%s"',
                         $jwksResponse->getStatusCode(),
@@ -190,13 +190,13 @@ class CachedKeySet implements ArrayAccess
             }
             $this->keySet = $this->formatJwksForCache((string) $jwksResponse->getBody());
 
-            if (!isset($this->keySet[$keyId])) {
+            if(!isset($this->keySet[$keyId])) {
                 return false;
             }
 
             $item = $this->getCacheItem();
             $item->set($this->keySet);
-            if ($this->expiresAfter) {
+            if($this->expiresAfter) {
                 $item->expiresAfter($this->expiresAfter);
             }
             $this->cache->save($item);
@@ -207,21 +207,21 @@ class CachedKeySet implements ArrayAccess
 
     private function rateLimitExceeded(): bool
     {
-        if (!$this->rateLimit) {
+        if(!$this->rateLimit) {
             return false;
         }
 
         $cacheItem = $this->cache->getItem($this->rateLimitCacheKey);
 
         $cacheItemData = [];
-        if ($cacheItem->isHit() && \is_array($data = $cacheItem->get())) {
+        if($cacheItem->isHit() && \is_array($data = $cacheItem->get())) {
             $cacheItemData = $data;
         }
 
         $callsPerMinute = $cacheItemData['callsPerMinute'] ?? 0;
         $expiry = $cacheItemData['expiry'] ?? new \DateTime('+60 seconds', new \DateTimeZone('UTC'));
 
-        if (++$callsPerMinute > $this->maxCallsPerMinute) {
+        if(++$callsPerMinute > $this->maxCallsPerMinute) {
             return true;
         }
 
@@ -233,7 +233,7 @@ class CachedKeySet implements ArrayAccess
 
     private function getCacheItem(): CacheItemInterface
     {
-        if (\is_null($this->cacheItem)) {
+        if(\is_null($this->cacheItem)) {
             $this->cacheItem = $this->cache->getItem($this->cacheKey);
         }
 
@@ -242,7 +242,7 @@ class CachedKeySet implements ArrayAccess
 
     private function setCacheKeys(): void
     {
-        if (empty($this->jwksUri)) {
+        if(empty($this->jwksUri)) {
             throw new RuntimeException('JWKS URI is empty');
         }
 
@@ -253,18 +253,18 @@ class CachedKeySet implements ArrayAccess
         $key = $this->cacheKeyPrefix . $key;
 
         // Hash keys if they exceed $maxKeyLength of 64
-        if (\strlen($key) > $this->maxKeyLength) {
+        if(\strlen($key) > $this->maxKeyLength) {
             $key = substr(hash('sha256', $key), 0, $this->maxKeyLength);
         }
 
         $this->cacheKey = $key;
 
-        if ($this->rateLimit) {
+        if($this->rateLimit) {
             // add prefix
             $rateLimitKey = $this->cacheKeyPrefix . 'ratelimit' . $key;
 
             // Hash keys if they exceed $maxKeyLength of 64
-            if (\strlen($rateLimitKey) > $this->maxKeyLength) {
+            if(\strlen($rateLimitKey) > $this->maxKeyLength) {
                 $rateLimitKey = substr(hash('sha256', $rateLimitKey), 0, $this->maxKeyLength);
             }
 

@@ -33,7 +33,7 @@ const VaultPinModal = ({ isOpen, onClose, onSuccess, vault }) => {
 
   // Efecto para limpiar el estado cuando se abre/cierra el modal
   useEffect(() => {
-    if (isOpen) {
+    if(isOpen) {
       setPin('');
       setErrorMessage('');
       setAttempts(0);
@@ -41,7 +41,7 @@ const VaultPinModal = ({ isOpen, onClose, onSuccess, vault }) => {
       
       // Enfocar el campo de PIN
       setTimeout(() => {
-        if (pinInputRef.current) {
+        if(pinInputRef.current) {
           pinInputRef.current.focus();
         }
       }, 100);
@@ -59,7 +59,7 @@ const VaultPinModal = ({ isOpen, onClose, onSuccess, vault }) => {
     setPin(numericValue);
     
     // Limpiar error al empezar a escribir
-    if (errorMessage) {
+    if(errorMessage) {
       setErrorMessage('');
     }
   };
@@ -68,15 +68,15 @@ const VaultPinModal = ({ isOpen, onClose, onSuccess, vault }) => {
    * Maneja el envío del formulario
    * @param {Event} e - Evento de envío
    */
-  const handleSubmit = async (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     
-    if (!pin.trim()) {
+    if(!pin.trim()) {
       setErrorMessage('Por favor ingresa el PIN');
       return;
     }
 
-    if (pin.length < 4) {
+    if(pin.length < 4) {
       setErrorMessage('El PIN debe tener al menos 4 dígitos');
       return;
     }
@@ -87,7 +87,7 @@ const VaultPinModal = ({ isOpen, onClose, onSuccess, vault }) => {
   /**
    * Verifica el PIN con el servidor
    */
-  const verifyPin = async () => {
+  const verifyPin = async() => {
     setIsVerifying(true);
     setErrorMessage('');
 
@@ -97,7 +97,7 @@ const VaultPinModal = ({ isOpen, onClose, onSuccess, vault }) => {
       
       const result = await http_post(url, body);
 
-      if (result.result === 1) {
+      if(result.result === 1) {
         // PIN correcto
         onSuccess(vault);
         handleClose();
@@ -106,7 +106,7 @@ const VaultPinModal = ({ isOpen, onClose, onSuccess, vault }) => {
         const newAttempts = attempts + 1;
         setAttempts(newAttempts);
         
-        if (newAttempts >= 3) {
+        if(newAttempts >= 3) {
           setErrorMessage('Demasiados intentos fallidos. Inténtalo más tarde.');
           setTimeout(() => {
             handleClose();
@@ -116,7 +116,7 @@ const VaultPinModal = ({ isOpen, onClose, onSuccess, vault }) => {
           setPin('');
           // Reenfocar el campo
           setTimeout(() => {
-            if (pinInputRef.current) {
+            if(pinInputRef.current) {
               pinInputRef.current.focus();
             }
           }, 100);
@@ -146,13 +146,13 @@ const VaultPinModal = ({ isOpen, onClose, onSuccess, vault }) => {
    * @param {KeyboardEvent} e - Evento de teclado
    */
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
+    if(e.key === 'Escape') {
       handleClose();
     }
   };
 
   // No renderizar si está cerrado
-  if (!isOpen || !vault) return null;
+  if(!isOpen || !vault) return null;
 
   return (
     <div className="modal-overlay" onKeyDown={handleKeyDown}>

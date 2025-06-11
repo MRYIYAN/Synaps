@@ -18,7 +18,7 @@ const ParticlesBackground = ({ className, isLoginPage }) => {
   
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if(!canvas) return;
     
     // Mantener estilos inline para asegurar visibilidad
     canvas.style.position = 'fixed';
@@ -30,7 +30,7 @@ const ParticlesBackground = ({ className, isLoginPage }) => {
     canvas.style.pointerEvents = 'none';
     
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if(!ctx) return;
     
     // Configurar tamaño del canvas
     const setCanvasSize = () => {
@@ -68,12 +68,12 @@ const ParticlesBackground = ({ className, isLoginPage }) => {
       
       update() {
         // Influencia del cursor
-        if (mousePosition.x !== undefined && mousePosition.y !== undefined) {
+        if(mousePosition.x !== undefined && mousePosition.y !== undefined) {
           const dx = this.x - mousePosition.x;
           const dy = this.y - mousePosition.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
           
-          if (distance < 180) { // Radio de influencia aumentado
+          if(distance < 180) { // Radio de influencia aumentado
             const angle = Math.atan2(dy, dx);
             const force = (180 - distance) / 180;
             
@@ -101,7 +101,7 @@ const ParticlesBackground = ({ className, isLoginPage }) => {
         const randomBoost = 0.08; // Impulso aleatorio para variación en rebotes
         
         // Rebote en bordes horizontales
-        if (this.x >= canvas.width - margin) {
+        if(this.x >= canvas.width - margin) {
           this.x = canvas.width - margin - 1; // Moverlo ligeramente dentro del borde
           
           // Invertir dirección y reducir velocidad
@@ -111,13 +111,13 @@ const ParticlesBackground = ({ className, isLoginPage }) => {
           this.speedY += (Math.random() - 0.5) * randomBoost;
           
           // Aplicar un pequeño impulso aleatorio para evitar estancamiento
-          if (Math.abs(this.speedX) < minSpeed) {
+          if(Math.abs(this.speedX) < minSpeed) {
             this.speedX = -minSpeed - Math.random() * 0.1;
           }
           
           // Actualizar velocidad original
           this.originalSpeedX = this.speedX;
-        } else if (this.x <= margin) {
+        } else if(this.x <= margin) {
           this.x = margin + 1; // Moverlo ligeramente dentro del borde
           
           // Invertir dirección y reducir velocidad
@@ -127,7 +127,7 @@ const ParticlesBackground = ({ className, isLoginPage }) => {
           this.speedY += (Math.random() - 0.5) * randomBoost;
           
           // Aplicar impulso mínimo
-          if (Math.abs(this.speedX) < minSpeed) {
+          if(Math.abs(this.speedX) < minSpeed) {
             this.speedX = minSpeed + Math.random() * 0.1;
           }
           
@@ -136,7 +136,7 @@ const ParticlesBackground = ({ className, isLoginPage }) => {
         }
         
         // Rebote en bordes verticales
-        if (this.y >= canvas.height - margin) {
+        if(this.y >= canvas.height - margin) {
           this.y = canvas.height - margin - 1; // Moverlo ligeramente dentro del borde
           
           // Invertir dirección y reducir velocidad
@@ -146,13 +146,13 @@ const ParticlesBackground = ({ className, isLoginPage }) => {
           this.speedX += (Math.random() - 0.5) * randomBoost;
           
           // Aplicar un pequeño impulso aleatorio para evitar estancamiento
-          if (Math.abs(this.speedY) < minSpeed) {
+          if(Math.abs(this.speedY) < minSpeed) {
             this.speedY = -minSpeed - Math.random() * 0.1;
           }
           
           // Actualizar velocidad original
           this.originalSpeedY = this.speedY;
-        } else if (this.y <= margin) {
+        } else if(this.y <= margin) {
           this.y = margin + 1; // Moverlo ligeramente dentro del borde
           
           // Invertir dirección y reducir velocidad
@@ -162,7 +162,7 @@ const ParticlesBackground = ({ className, isLoginPage }) => {
           this.speedX += (Math.random() - 0.5) * randomBoost;
           
           // Aplicar impulso mínimo
-          if (Math.abs(this.speedY) < minSpeed) {
+          if(Math.abs(this.speedY) < minSpeed) {
             this.speedY = minSpeed + Math.random() * 0.1;
           }
           
@@ -203,7 +203,7 @@ const ParticlesBackground = ({ className, isLoginPage }) => {
           // Conexiones más largas y más visibles
           const connectionDistance = 160; // Aumentado de 150 a 160
           
-          if (distance < connectionDistance) {
+          if(distance < connectionDistance) {
             // Calcular opacidad basada en distancia - más consistente
             // Mínimo 0.15, máximo 0.4
             const opacity = 0.15 + (0.25 * (1 - distance / connectionDistance));

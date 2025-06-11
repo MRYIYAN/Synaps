@@ -12,7 +12,7 @@ const TaskCard = ({
   
   // Formatear fecha de creación
   const formatDate = (dateString) => {
-    if (!dateString) return '';
+    if(!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', {
       day: '2-digit',
@@ -22,7 +22,7 @@ const TaskCard = ({
   };
 
   const isDueSoon = (dueDate) => {
-    if (!dueDate) return false;
+    if(!dueDate) return false;
     const today = new Date();
     const due = new Date(dueDate);
     const diffTime = due - today;
@@ -32,16 +32,16 @@ const TaskCard = ({
 
   // Manejar inicio de arrastre
   const handleDragStart = (e) => {
-    e.dataTransfer.setData('text/plain', task.id);
+    e.dataTransfer.setData('text/plain', task.task_id2);
     e.dataTransfer.effectAllowed = 'move';
-    if (onDragStart) {
+    if(onDragStart) {
       onDragStart(task);
     }
   };
 
   // Manejar fin de arrastre
   const handleDragEnd = (e) => {
-    if (onDragEnd) {
+    if(onDragEnd) {
       onDragEnd();
     }
   };
@@ -73,7 +73,7 @@ const TaskCard = ({
             className="task-menu-button delete-button"
             onClick={(e) => {
               e.stopPropagation();
-              onDeleteTask && onDeleteTask(task.id);
+              onDeleteTask && onDeleteTask(task);
             }}
             title="Eliminar tarea"
           >
@@ -94,10 +94,28 @@ const TaskCard = ({
         </p>
       )}
 
-      {/* Footer de la tarjeta - Solo fecha de creación */}
+      {/* Prioridad */}
+      {task.priority && (
+        <div className="task-card-priority">
+          <span className={`priority-badge ${task.priority}`}>
+            {task.priority === 'low' && 'Baja'}
+            {task.priority === 'medium' && 'Media'}
+            {task.priority === 'high' && 'Alta'}
+          </span>
+        </div>
+      )}
+
+      {/* Fecha de vencimiento */}
+      {task.due_date && (
+        <div className={`task-card-due ${isDueSoon(task.due_date) ? 'due-soon' : ''}`}>
+          Vence: {formatDate(task.due_date)}
+        </div>
+      )}
+
+      {/* Footer de la tarjeta */}
       <div className="task-card-footer">
         <div className="task-card-date">
-          Creada: {formatDate(task.createdAt)}
+          Creada: {formatDate(task.created_at)}
         </div>
       </div>
     </div>

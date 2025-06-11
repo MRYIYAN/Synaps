@@ -198,4 +198,149 @@ ALTER TABLE `notifications`
 
 ALTER TABLE `vaults`
   MODIFY `vault_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+-- ============================================
+-- TABLAS DE TAREAS (TASK MANAGEMENT SYSTEM)
+-- ============================================
+
+-- Tabla principal de tareas
+CREATE TABLE `tasks` (
+  `task_id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id2` varchar(32) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('todo', 'in-progress', 'done') NOT NULL DEFAULT 'todo',
+  `priority` enum('low', 'medium', 'high') DEFAULT 'medium',
+  `vault_id` int(11) NOT NULL,
+  `folder_id` int(11) DEFAULT NULL,
+  `assigned_to` int(11) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
+  `due_date` datetime DEFAULT NULL,
+  `completed_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`task_id`),
+  UNIQUE KEY `task_id2` (`task_id2`),
+  KEY `idx_vault_status` (`vault_id`, `status`),
+  KEY `idx_assigned_status` (`assigned_to`, `status`),
+  KEY `idx_created_by` (`created_by`),
+  KEY `idx_folder_id` (`folder_id`),
+  KEY `idx_due_date` (`due_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- Tabla de etiquetas para tareas
+CREATE TABLE `task_tags` (
+  `tag_id` int(11) NOT NULL AUTO_INCREMENT,
+  `tag_id2` varchar(32) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `color` varchar(7) DEFAULT '#F56E0F',
+  `vault_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`tag_id`),
+  UNIQUE KEY `tag_id2` (`tag_id2`),
+  UNIQUE KEY `unique_tag_vault` (`name`, `vault_id`),
+  KEY `idx_vault_id` (`vault_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- Tabla de relación muchos a muchos para etiquetas
+CREATE TABLE `task_tag_relations` (
+  `task_id` int(11) NOT NULL,
+  `tag_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`task_id`, `tag_id`),
+  KEY `idx_task_id` (`task_id`),
+  KEY `idx_tag_id` (`tag_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- Tabla de comentarios en tareas
+CREATE TABLE `task_comments` (
+  `comment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `comment_id2` varchar(32) NOT NULL,
+  `task_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `content` text NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`comment_id`),
+  UNIQUE KEY `comment_id2` (`comment_id2`),
+  KEY `idx_task_created` (`task_id`, `created_at`),
+  KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- Tabla de archivos adjuntos
+CREATE TABLE `task_attachments` (
+  `attachment_id` int(11) NOT NULL AUTO_INCREMENT,
+  `attachment_id2` varchar(32) NOT NULL,
+  `task_id` int(11) NOT NULL,
+  `original_name` varchar(255) NOT NULL,
+  `stored_name` varchar(255) NOT NULL,
+  `file_path` varchar(500) NOT NULL,
+  `mime_type` varchar(100) NOT NULL,
+  `file_size` bigint(20) NOT NULL,
+  `uploaded_by` int(11) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`attachment_id`),
+  UNIQUE KEY `attachment_id2` (`attachment_id2`),
+  KEY `idx_task_id` (`task_id`),
+  KEY `idx_uploaded_by` (`uploaded_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- Tabla de historial de cambios (auditoría)
+CREATE TABLE `task_history` (
+  `history_id` int(11) NOT NULL AUTO_INCREMENT,
+  `task_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `action` enum('created', 'updated', 'status_changed', 'assigned', 'commented', 'deleted') NOT NULL,
+  `field_changed` varchar(50) DEFAULT NULL,
+  `old_value` text DEFAULT NULL,
+  `new_value` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`history_id`),
+  KEY `idx_task_created` (`task_id`, `created_at`),
+  KEY `idx_user_action` (`user_id`, `action`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- Insertar etiquetas de ejemplo
+INSERT INTO `task_tags` (`tag_id2`, `name`, `color`, `vault_id`, `created_at`) VALUES
+('EJ1TAG001URGENT00000000000000000', 'Urgente', '#FF4444', 1, NOW()),
+('EJ2TAG002IMPORTANT000000000000000', 'Importante', '#FF8800', 1, NOW()),
+('EJ3TAG003PERSONAL0000000000000000', 'Personal', '#4CAF50', 1, NOW()),
+('EJ4TAG004WORK00000000000000000000', 'Trabajo', '#2196F3', 1, NOW()),
+('EJ5TAG005IDEA00000000000000000000', 'Ideas', '#9C27B0', 1, NOW());
+
+-- Insertar tareas de ejemplo
+INSERT INTO `tasks` (`task_id2`, `title`, `description`, `status`, `priority`, `vault_id`, `folder_id`, `created_by`, `due_date`, `created_at`, `updated_at`) VALUES
+('TSK001WELCOME00000000000000000000', '¡Bienvenido al sistema de tareas!', 'Esta es tu primera tarea en Synaps. Aquí puedes organizar todos tus pendientes y proyectos.\n\n## Funcionalidades principales:\n- ✅ Crear tareas con diferentes prioridades\n- 🏷️ Organizar con etiquetas\n- 📂 Agrupar por carpetas\n- 💬 Añadir comentarios\n- 📎 Adjuntar archivos\n\n¡Explora todas las funcionalidades!', 'todo', 'high', 1, 1, 1, DATE_ADD(NOW(), INTERVAL 7 DAY), NOW(), NOW()),
+('TSK002ORGANIZE000000000000000000000', 'Organizar mi espacio de trabajo', 'Configurar las carpetas y estructura inicial para mis proyectos.', 'todo', 'medium', 1, 1, 1, DATE_ADD(NOW(), INTERVAL 3 DAY), NOW(), NOW()),
+('TSK003EXAMPLE0000000000000000000000', 'Tarea de ejemplo completada', 'Esta tarea muestra cómo se ve una tarea completada en el sistema.', 'done', 'low', 1, 1, 1, NOW(), NOW(), NOW());
+
+-- Insertar relaciones de etiquetas con tareas
+INSERT INTO `task_tag_relations` (`task_id`, `tag_id`, `created_at`) VALUES
+(1, 2, NOW()),  -- Tarea 1 con etiqueta "Importante"
+(1, 5, NOW()),  -- Tarea 1 con etiqueta "Ideas"
+(2, 4, NOW()),  -- Tarea 2 con etiqueta "Trabajo"
+(3, 3, NOW());  -- Tarea 3 con etiqueta "Personal"
+
+-- Insertar comentario de ejemplo
+INSERT INTO `task_comments` (`comment_id2`, `task_id`, `user_id`, `content`, `created_at`, `updated_at`) VALUES
+('CMT001WELCOME00000000000000000000', 1, 1, '¡Perfecto! Ya tienes tu primer comentario en una tarea. Los comentarios son ideales para hacer seguimiento del progreso.', NOW(), NOW());
+
+-- Auto increment para las nuevas tablas
+ALTER TABLE `tasks`
+  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+ALTER TABLE `task_tags`
+  MODIFY `tag_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+ALTER TABLE `task_comments`
+  MODIFY `comment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+ALTER TABLE `task_attachments`
+  MODIFY `attachment_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `task_history`
+  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT;
+
 COMMIT;

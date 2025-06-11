@@ -20,7 +20,7 @@ class LogAuthorizationHeader
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->hasHeader('Authorization')) {
+        if($request->hasHeader('Authorization')) {
             Log::info('Authorization Header:', [
                 'token' => $request->header('Authorization')
             ]);

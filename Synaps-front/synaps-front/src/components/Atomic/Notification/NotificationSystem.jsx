@@ -65,7 +65,7 @@ const NotificationSystem = () => {
     }
   };
 
-  if (notifications.length === 0) return null;
+  if(notifications.length === 0) return null;
 
   return (
     <div className="notification-container">
@@ -98,7 +98,7 @@ const NotificationSystem = () => {
 
 // Funciones helper para mostrar notificaciones específicas
 export const showErrorNotification = (message, title = 'Error') => {
-  if (window.showNotification) {
+  if(window.showNotification) {
     window.showNotification({
       type: 'error',
       title,
@@ -109,7 +109,7 @@ export const showErrorNotification = (message, title = 'Error') => {
 };
 
 export const showWarningNotification = (message, title = 'Advertencia') => {
-  if (window.showNotification) {
+  if(window.showNotification) {
     window.showNotification({
       type: 'warning',
       title,
@@ -120,7 +120,7 @@ export const showWarningNotification = (message, title = 'Advertencia') => {
 };
 
 export const showInfoNotification = (message, title = 'Información') => {
-  if (window.showNotification) {
+  if(window.showNotification) {
     window.showNotification({
       type: 'info',
       title,

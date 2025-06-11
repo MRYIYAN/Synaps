@@ -1,31 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import '../Taskboard.css';
 
 const DeleteTaskModal = ({ isOpen, onClose, onDeleteTask, task }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState('');
   // Manejar confirmación de eliminación
-  const handleConfirmDelete = () => {
-    if (task && onDeleteTask) {
-      onDeleteTask(task.id);
-      onClose();
+  const handleConfirmDelete = async() => {
+    if(!task || !onDeleteTask) return;
+    
+    setIsDeleting(true);
+    setError('');
+    
+    try {
+      const result = await onDeleteTask(task.task_id2);
+      
+      if(result && result.success) {
+        onClose();
+      } else {
+        setError(result?.message || 'Error al eliminar la tarea');
+      }
+    } catch (error) {
+      console.error('Error al eliminar tarea:', error);
+      setError('Error al eliminar la tarea. Inténtelo de nuevo.');
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  // Manejar cierre del modal
+  const handleClose = () => {
+    if(isDeleting) return; // No permitir cerrar mientras se está eliminando
+    setError('');
+    onClose();
   };
 
   // Manejar tecla Escape
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      onClose();
+    if(e.key === 'Escape' && !isDeleting) {
+      handleClose();
     }
   };
 
   // No renderizar si el modal no está abierto o no hay tarea
-  if (!isOpen || !task) return null;
+  if(!isOpen || !task) return null;
 
   // Renderizar el modal usando Portal para que aparezca fuera del contexto del sidebar
   return ReactDOM.createPortal(
     <div 
       className="task-modal-overlay" 
-      onClick={onClose}
+      onClick={isDeleting ? undefined : handleClose}
       onKeyDown={handleKeyDown}
       tabIndex={-1}
     >
@@ -38,9 +62,10 @@ const DeleteTaskModal = ({ isOpen, onClose, onDeleteTask, task }) => {
           <h2 className="task-modal-title">Eliminar Tarea</h2>
           <button 
             className="task-modal-close" 
-            onClick={onClose}
+            onClick={handleClose}
             type="button"
             aria-label="Cerrar modal"
+            disabled={isDeleting}
           >
             ×
           </button>
@@ -48,6 +73,12 @@ const DeleteTaskModal = ({ isOpen, onClose, onDeleteTask, task }) => {
 
         {/* Contenido del modal */}
         <div className="delete-modal-content">
+          {/* Error */}
+          {error && (
+            <div className="form-error-general" style={{ marginBottom: '16px' }}>
+              {error}
+            </div>
+          )}
           <div className="delete-warning-icon">
             <svg 
               width="48" 
@@ -81,7 +112,7 @@ const DeleteTaskModal = ({ isOpen, onClose, onDeleteTask, task }) => {
               </p>
             )}
             <span className="task-preview-date">
-              Creada el {new Date(task.createdAt).toLocaleDateString('es-ES')}
+              Creada el {new Date(task.created_at).toLocaleDateString('es-ES')}
             </span>
           </div>
           
@@ -95,7 +126,8 @@ const DeleteTaskModal = ({ isOpen, onClose, onDeleteTask, task }) => {
           <button 
             type="button" 
             className="btn-secondary"
-            onClick={onClose}
+            onClick={handleClose}
+            disabled={isDeleting}
           >
             Cancelar
           </button>
@@ -103,8 +135,9 @@ const DeleteTaskModal = ({ isOpen, onClose, onDeleteTask, task }) => {
             type="button" 
             className="btn-danger"
             onClick={handleConfirmDelete}
+            disabled={isDeleting}
           >
-            Eliminar Tarea
+            {isDeleting ? 'Eliminando...' : 'Eliminar Tarea'}
           </button>
         </div>
       </div>

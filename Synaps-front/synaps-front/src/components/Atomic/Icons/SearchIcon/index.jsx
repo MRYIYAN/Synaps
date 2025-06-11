@@ -14,7 +14,7 @@ const SearchIcon = ({ color = 'currentColor', size = 24, strokeWidth = 2, classN
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
+      if(timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };

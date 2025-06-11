@@ -45,9 +45,9 @@ const useScrollAnimation = ({
       // Callback que se ejecuta cuando cambia la visibilidad del elemento
       ([entry]) => {
         // Cuando el elemento intersecta con el viewport según el umbral definido
-        if (entry.isIntersecting) {
+        if(entry.isIntersecting) {
           // Si hay retraso configurado, aplicamos un timeout antes de actualizar el estado
-          if (delay) {
+          if(delay) {
             setTimeout(() => setIsVisible(true), delay);
           } else {
             // Sin retraso, actualizamos el estado inmediatamente
@@ -69,14 +69,14 @@ const useScrollAnimation = ({
     const currentRef = ref.current;
     
     // Si existe un elemento en la referencia, comenzamos a observarlo
-    if (currentRef) {
+    if(currentRef) {
       observer.observe(currentRef);
     }
 
     // Función de limpieza que se ejecuta al desmontar el componente
     return () => {
       // Dejamos de observar el elemento para evitar memory leaks
-      if (currentRef) {
+      if(currentRef) {
         observer.unobserve(currentRef);
       }
     };

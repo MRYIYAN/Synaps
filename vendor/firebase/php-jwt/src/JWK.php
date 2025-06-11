@@ -56,22 +56,22 @@ class JWK
     {
         $keys = [];
 
-        if (!isset($jwks['keys'])) {
+        if(!isset($jwks['keys'])) {
             throw new UnexpectedValueException('"keys" member must exist in the JWK Set');
         }
 
-        if (empty($jwks['keys'])) {
+        if(empty($jwks['keys'])) {
             throw new InvalidArgumentException('JWK Set did not contain any keys');
         }
 
         foreach ($jwks['keys'] as $k => $v) {
             $kid = isset($v['kid']) ? $v['kid'] : $k;
-            if ($key = self::parseKey($v, $defaultAlg)) {
+            if($key = self::parseKey($v, $defaultAlg)) {
                 $keys[(string) $kid] = $key;
             }
         }
 
-        if (0 === \count($keys)) {
+        if(0 === \count($keys)) {
             throw new UnexpectedValueException('No supported algorithms found in JWK Set');
         }
 
@@ -95,16 +95,16 @@ class JWK
      */
     public static function parseKey(array $jwk, ?string $defaultAlg = null): ?Key
     {
-        if (empty($jwk)) {
+        if(empty($jwk)) {
             throw new InvalidArgumentException('JWK must not be empty');
         }
 
-        if (!isset($jwk['kty'])) {
+        if(!isset($jwk['kty'])) {
             throw new UnexpectedValueException('JWK must contain a "kty" parameter');
         }
 
-        if (!isset($jwk['alg'])) {
-            if (\is_null($defaultAlg)) {
+        if(!isset($jwk['alg'])) {
+            if(\is_null($defaultAlg)) {
                 // The "alg" parameter is optional in a KTY, but an algorithm is required
                 // for parsing in this library. Use the $defaultAlg parameter when parsing the
                 // key set in order to prevent this error.
@@ -116,56 +116,56 @@ class JWK
 
         switch ($jwk['kty']) {
             case 'RSA':
-                if (!empty($jwk['d'])) {
+                if(!empty($jwk['d'])) {
                     throw new UnexpectedValueException('RSA private keys are not supported');
                 }
-                if (!isset($jwk['n']) || !isset($jwk['e'])) {
+                if(!isset($jwk['n']) || !isset($jwk['e'])) {
                     throw new UnexpectedValueException('RSA keys must contain values for both "n" and "e"');
                 }
 
                 $pem = self::createPemFromModulusAndExponent($jwk['n'], $jwk['e']);
                 $publicKey = \openssl_pkey_get_public($pem);
-                if (false === $publicKey) {
+                if(false === $publicKey) {
                     throw new DomainException(
                         'OpenSSL error: ' . \openssl_error_string()
                     );
                 }
                 return new Key($publicKey, $jwk['alg']);
             case 'EC':
-                if (isset($jwk['d'])) {
+                if(isset($jwk['d'])) {
                     // The key is actually a private key
                     throw new UnexpectedValueException('Key data must be for a public key');
                 }
 
-                if (empty($jwk['crv'])) {
+                if(empty($jwk['crv'])) {
                     throw new UnexpectedValueException('crv not set');
                 }
 
-                if (!isset(self::EC_CURVES[$jwk['crv']])) {
+                if(!isset(self::EC_CURVES[$jwk['crv']])) {
                     throw new DomainException('Unrecognised or unsupported EC curve');
                 }
 
-                if (empty($jwk['x']) || empty($jwk['y'])) {
+                if(empty($jwk['x']) || empty($jwk['y'])) {
                     throw new UnexpectedValueException('x and y not set');
                 }
 
                 $publicKey = self::createPemFromCrvAndXYCoordinates($jwk['crv'], $jwk['x'], $jwk['y']);
                 return new Key($publicKey, $jwk['alg']);
             case 'OKP':
-                if (isset($jwk['d'])) {
+                if(isset($jwk['d'])) {
                     // The key is actually a private key
                     throw new UnexpectedValueException('Key data must be for a public key');
                 }
 
-                if (!isset($jwk['crv'])) {
+                if(!isset($jwk['crv'])) {
                     throw new UnexpectedValueException('crv not set');
                 }
 
-                if (empty(self::OKP_SUBTYPES[$jwk['crv']])) {
+                if(empty(self::OKP_SUBTYPES[$jwk['crv']])) {
                     throw new DomainException('Unrecognised or unsupported OKP key subtype');
                 }
 
-                if (empty($jwk['x'])) {
+                if(empty($jwk['x'])) {
                     throw new UnexpectedValueException('x not set');
                 }
 
@@ -173,7 +173,7 @@ class JWK
                 $publicKey = JWT::convertBase64urlToBase64($jwk['x']);
                 return new Key($publicKey, $jwk['alg']);
             case 'oct':
-                if (!isset($jwk['k'])) {
+                if(!isset($jwk['k'])) {
                     throw new UnexpectedValueException('k not set');
                 }
 
@@ -280,7 +280,7 @@ class JWK
      */
     private static function encodeLength(int $length): string
     {
-        if ($length <= 0x7F) {
+        if($length <= 0x7F) {
             return \chr($length);
         }
 
@@ -300,7 +300,7 @@ class JWK
     private static function encodeDER(int $type, string $value): string
     {
         $tag_header = 0;
-        if ($type === self::ASN1_SEQUENCE) {
+        if($type === self::ASN1_SEQUENCE) {
             $tag_header |= 0x20;
         }
 
@@ -330,7 +330,7 @@ class JWK
 
         // Iterate over subsequent octets
         foreach ($octets as $octet) {
-            if ($octet == 0) {
+            if($octet == 0) {
                 $oid .= \chr(0x00);
                 continue;
             }
@@ -343,7 +343,7 @@ class JWK
             $bin[0] = $bin[0] & \chr(0x7f);
 
             // Convert to big endian if necessary
-            if (pack('V', 65534) == pack('L', 65534)) {
+            if(pack('V', 65534) == pack('L', 65534)) {
                 $oid .= strrev($bin);
             } else {
                 $oid .= $bin;

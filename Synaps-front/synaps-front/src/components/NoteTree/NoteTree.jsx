@@ -39,11 +39,16 @@ function buildTree( items, parent_id = 0, visited = new Set() ) {
       return false;
     }
 
-    // Convertir parent_id a número para comparación
-    const itemParentId = parseInt( item.parent_id, 10 );
-    const targetParentId = parseInt( parent_id, 10 );
+    // Manejar parent_id como string o número
+    const itemParentId = item.parent_id;
     
-    return itemParentId === targetParentId;
+    // Si parent_id es 0 o "0", buscar elementos de nivel raíz (parent_id es 0, null, undefined, o "0")
+    if( parent_id === 0 || parent_id === "0" ) {
+      return itemParentId === 0 || itemParentId === "0" || itemParentId === null || itemParentId === undefined;
+    }
+    
+    // Para otros casos, comparar directamente
+    return itemParentId === parent_id || itemParentId === String(parent_id);
   } );
 
   return children.map( item => {

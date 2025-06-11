@@ -5,17 +5,17 @@ import { showErrorNotification } from '../../components/Atomic/Notification/Noti
 export function FoldersHelper() {
 
   // Borrar una carpeta concreta
-  const deleteFolder = async (folder_id2) => {
+  const deleteFolder = async(folder_id2) => {
     try {
       const url = 'http://localhost:8010/api/deleteFolder';
       const body = { folder_id2 };
 
       const { result } = await http_post(url, body);
-      if (result !== 1)
+      if(result !== 1)
         throw new Error('Error al borrar la carpeta');
 
       // Verificar si la carpeta eliminada es la actualmente seleccionada
-      if (window.selectedItemId2 === folder_id2) {
+      if(window.selectedItemId2 === folder_id2) {
         // Limpiar la selección actual
         window.selectedItemId2 = '';
         
@@ -37,7 +37,7 @@ export function FoldersHelper() {
   };
 
   // Renombrar una carpeta concreta
-  const renameFolder = async (folder_id2, new_title) => {
+  const renameFolder = async(folder_id2, new_title) => {
     try {
       // Validación local de nombres duplicados
       const existingItems = window.currentNotes || [];
@@ -45,7 +45,7 @@ export function FoldersHelper() {
         item.title === new_title && item.id2 !== folder_id2
       );
       
-      if (isDuplicate) {
+      if(isDuplicate) {
         const errorMsg = 'Ya existe una carpeta con ese nombre';
         showErrorNotification(errorMsg, 'Error de validación');
         throw new Error(errorMsg);
@@ -55,7 +55,7 @@ export function FoldersHelper() {
       const body = { id2: folder_id2, new_title };
 
       const { result, message } = await http_post(url, body);
-      if (result !== 1) {
+      if(result !== 1) {
         // Mostrar mensaje de error específico si viene del backend
         const errorMsg = message || 'Error al renombrar la carpeta';
         throw new Error(errorMsg);
@@ -63,7 +63,7 @@ export function FoldersHelper() {
 
       // Actualizamos la carpeta en el array y la interfaz
       const updated = (window.currentNotes || []).map(node => {
-        if (node.id2 === folder_id2) {
+        if(node.id2 === folder_id2) {
           return { ...node, title: new_title };
         }
         return node;
@@ -75,7 +75,7 @@ export function FoldersHelper() {
       console.log(error);
       
       // Mostrar notificación de error al usuario
-      if (!error.message.includes('Ya existe una carpeta con ese nombre')) {
+      if(!error.message.includes('Ya existe una carpeta con ese nombre')) {
         showErrorNotification(error.message, 'Error al renombrar');
       }
       
@@ -85,9 +85,9 @@ export function FoldersHelper() {
   };
 
   // Obtener carpetas por vault
-  const getFolders = async (vault_id, parent_id = 0) => {
+  const getFolders = async(vault_id, parent_id = 0) => {
     vault_id = parseInt(vault_id, 10);
-    if (isNaN(vault_id)) {
+    if(isNaN(vault_id)) {
       console.error("Invalid vault_id");
       return;
     }
@@ -98,7 +98,7 @@ export function FoldersHelper() {
 
       const { result, http_data } = await http_get(url, body);
       
-      if (result !== 1)
+      if(result !== 1)
         throw new Error('Error loading folders');
 
       // Guardar carpetas en window.currentNotes y disparar actualización React

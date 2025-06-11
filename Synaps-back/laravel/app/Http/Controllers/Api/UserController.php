@@ -111,8 +111,8 @@ class UserController extends Controller
             ]);
 
             // Verificar contraseña actual si se está cambiando
-            if (isset($validatedData['currentPassword']) && isset($validatedData['newPassword'])) {
-                if (!Hash::check($validatedData['currentPassword'], $user->user_password)) {
+            if(isset($validatedData['currentPassword']) && isset($validatedData['newPassword'])) {
+                if(!Hash::check($validatedData['currentPassword'], $user->user_password)) {
                     $value = response()->json([
                         'result' => 0,
                         'message' => 'La contraseña actual es incorrecta'
@@ -124,27 +124,27 @@ class UserController extends Controller
             // Actualizar los campos modificados
             $updated = false;
 
-            if (isset($validatedData['name']) && $validatedData['name'] !== $user->user_name) {
+            if(isset($validatedData['name']) && $validatedData['name'] !== $user->user_name) {
                 $user->user_name = $validatedData['name'];
                 $updated = true;
             }
 
-            if (isset($validatedData['full_name']) && $validatedData['full_name'] !== $user->user_full_name) {
+            if(isset($validatedData['full_name']) && $validatedData['full_name'] !== $user->user_full_name) {
                 $user->user_full_name = $validatedData['full_name'];
                 $updated = true;
             }
 
-            if (isset($validatedData['email']) && $validatedData['email'] !== $user->user_email) {
+            if(isset($validatedData['email']) && $validatedData['email'] !== $user->user_email) {
                 $user->user_email = $validatedData['email'];
                 $updated = true;
             }
 
-            if (isset($validatedData['newPassword'])) {
+            if(isset($validatedData['newPassword'])) {
                 $user->user_password = Hash::make($validatedData['newPassword']);
                 $updated = true;
             }
 
-            if ($updated) {
+            if($updated) {
                 $user->save();
             }
 

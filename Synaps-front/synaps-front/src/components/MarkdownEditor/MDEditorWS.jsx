@@ -35,12 +35,12 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
   // Carga inicial de la nota vía HTTP
   // -------------------------------------------------------------------------
   useEffect(() => {
-    const fetchNote = async () => {
+    const fetchNote = async() => {
       // Solo cargar nota si se proporciona un note_id2 específico
-      if (!note_id2 || note_id2 === '') return;
+      if(!note_id2 || note_id2 === '') return;
 
       // Verificar si existe el editor markdown, si no existe, crearlo
-      if (!set_markdown || !setKey) {
+      if(!set_markdown || !setKey) {
         console.log('Editor markdown no existe, inicializando...');
         
         // Disparar evento para notificar que se debe crear/mostrar el editor
@@ -59,7 +59,7 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
       console.log('[MDEditorWS] FETCH con Nota:', { url, body });
 
       const { result, http_data } = await http_get( url, body );
-      if (result !== 1 || !http_data?.note ) {
+      if(result !== 1 || !http_data?.note ) {
         console.error( 'No se pudo cargar la nota' );
         return;
       }
@@ -71,7 +71,7 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
       setKey(prev => prev + 1);
     };
 
-    if (note_id2 && vault_id !== null) {
+    if(note_id2 && vault_id !== null) {
       fetchNote();
     }
   }, [note_id2, vault_id, modal]);
@@ -80,6 +80,9 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
   // -------------------------------------------------------------------------
   useEffect( () =>
   {
+    // Solo crear conexión WebSocket si hay un note_id2 válido
+    if(!note_id2 || note_id2 === '') return;
+
     // Establecemos la conexión con el WS
     const ws        = new WebSocket( `ws://${ WS_HOST }:${ WS_PORT }` );
     ws_ref.current  = ws;
@@ -99,7 +102,7 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
       try
       {
         const msg = JSON.parse( data );
-        if ( msg.user_id && msg.user_id === 1 ) return;
+        if( msg.user_id && msg.user_id === 1 ) return;
         set_markdown( msg.markdown );
       }
       catch ( err )
@@ -110,7 +113,12 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
 
     ws.onclose = () => console.log( `WS cerrado para nota ${ note_id2 }` );
 
-    return () => ws.close();
+    // Cleanup function que verifica si ws existe y tiene el método close
+    return () => {
+      if(ws && typeof ws.close === 'function') {
+        ws.close();
+      }
+    };
   }, [ note_id2 ] );
 
   // -------------------------------------------------------------------------
@@ -122,7 +130,9 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
     const ws = ws_ref.current;
     const jwt = localStorage.getItem('access_token');
     console.log('[MDEditorWS] Token recuperado de localStorage:', jwt);
-    if ( ws && ws.readyState === WebSocket.OPEN )
+    
+    // Verificar que el WebSocket existe, está conectado y tiene readyState
+    if( ws && ws.readyState === WebSocket.OPEN && typeof ws.send === 'function' )
     {
       ws.send( JSON.stringify( {
           type:    'update'
@@ -139,7 +149,7 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
   // -------------------------------------------------------------------------
 
   // Si no hay nota seleccionada, mostrar el menú por defecto
-  if (!note_id2 || note_id2 === '') {
+  if(!note_id2 || note_id2 === '') {
     return <DefaultMenu />;
   }
 

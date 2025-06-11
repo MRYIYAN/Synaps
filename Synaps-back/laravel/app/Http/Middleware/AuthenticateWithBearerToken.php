@@ -36,14 +36,14 @@ class AuthenticateWithBearerToken
         
         $token = null;
 
-        if ($request->hasHeader('Authorization')) {
+        if($request->hasHeader('Authorization')) {
             $authHeader = $request->header('Authorization');
-            if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+            if(preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
                 $token = $matches[1];
             }
         }
 
-        if (!$token) {
+        if(!$token) {
             return new JsonResponse(['error' => 'Token no proporcionado'], 401);
         }
 
@@ -60,7 +60,7 @@ class AuthenticateWithBearerToken
             $user_id = $payload['sub'] ?? null;
             Log::debug('USER_ID_FROM_TOKEN:', [$user_id]);
             
-            if (!$user_id) {
+            if(!$user_id) {
                 return new JsonResponse(['error' => 'Token inválido: sin ID'], 401);
             }
 
@@ -75,12 +75,12 @@ class AuthenticateWithBearerToken
                 return new JsonResponse(['error' => 'Token inválido o expirado: ' . $e->getMessage()], 401);
             }
 
-            if (!$user) {
+            if(!$user) {
                 return new JsonResponse(['error' => 'Usuario no encontrado'], 401);
             }
 
             // Asegurar que el usuario es una instancia válida del modelo User
-            if (!($user instanceof User)) {
+            if(!($user instanceof User)) {
                 Log::error('USER_NOT_INSTANCE:', ['type' => gettype($user), 'class' => get_class($user)]);
                 return new JsonResponse(['error' => 'Error interno de autenticación'], 500);
             }

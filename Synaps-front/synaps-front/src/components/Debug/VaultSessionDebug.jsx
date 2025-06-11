@@ -18,7 +18,7 @@ const VaultSessionDebug = ({ vaults = [] }) => {
 
   // Actualizar información de debug cada segundo
   useEffect(() => {
-    if (!isVisible) return;
+    if(!isVisible) return;
 
     const updateDebugInfo = () => {
       setDebugInfo(VaultSessionManager.getDebugInfo());
@@ -31,7 +31,7 @@ const VaultSessionDebug = ({ vaults = [] }) => {
   }, [isVisible]);
 
   // Solo mostrar en desarrollo
-  if (process.env.NODE_ENV !== 'development') {
+  if(process.env.NODE_ENV !== 'development') {
     return null;
   }
 

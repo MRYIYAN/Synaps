@@ -51,19 +51,19 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
 
   // Cargar datos del usuario cuando se abre el modal
   useEffect(() => {
-    if (isOpen) {
+    if(isOpen) {
       fetchUserProfile();
     }
   }, [isOpen]);
 
   // Función para obtener el perfil del usuario usando http_get
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = async() => {
     setIsLoading(true);
     try {
       const url = `http://localhost:8010/api/user`;
       const { result, http_data } = await http_get(url);
 
-      if (result === 1 && http_data.user) {
+      if(result === 1 && http_data.user) {
         setUserData(http_data.user);
         setUserFullName(http_data.user.user_full_name || '');
         setUserEmail(http_data.user.user_email || '');
@@ -80,7 +80,7 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
       }
     } catch (error) {
       console.error('Error al cargar perfil:', error);
-      if (window.showNotification) {
+      if(window.showNotification) {
         window.showNotification({
           type: 'error',
           title: 'Error',
@@ -94,7 +94,7 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
 
   // Verificar si hay cambios
   useEffect(() => {
-    if (userData) {
+    if(userData) {
       const usernameChanged = username !== (userData.user_name || '');
       const fullNameChanged = userFullName !== (userData.user_full_name || '');
       const passwordChanged = newPassword.length > 0;
@@ -106,26 +106,26 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
   // Funciones de validación
   const validatePassword = (password) => {
     const errors = [];
-    if (password.length < 8) {
+    if(password.length < 8) {
       errors.push('Mínimo 8 caracteres');
     }
-    if (!/[A-Z]/.test(password)) {
+    if(!/[A-Z]/.test(password)) {
       errors.push('Al menos una mayúscula');
     }
-    if (!/[a-z]/.test(password)) {
+    if(!/[a-z]/.test(password)) {
       errors.push('Al menos una minúscula');
     }
-    if (!/[0-9]/.test(password)) {
+    if(!/[0-9]/.test(password)) {
       errors.push('Al menos un número');
     }
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    if(!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
       errors.push('Al menos un símbolo especial');
     }
     return errors;
   };
 
   // Manejar envío del formulario
-  const handleSubmit = async (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
     // Limpiar errores previos
@@ -137,31 +137,31 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
     const newErrors = {};
     const newMessages = {};
 
-    if (newPassword && newPassword !== confirmPassword) {
+    if(newPassword && newPassword !== confirmPassword) {
       hasValidationErrors = true;
       newErrors.confirmPassword = true;
       newMessages.confirmPassword = 'Las contraseñas no coinciden';
     }
 
-    if (newPassword) {
+    if(newPassword) {
       const passwordErrors = validatePassword(newPassword);
-      if (passwordErrors.length > 0) {
+      if(passwordErrors.length > 0) {
         hasValidationErrors = true;
         newErrors.newPassword = true;
         newMessages.newPassword = passwordErrors.join(', ');
       }
     }
 
-    if (newPassword && !currentPassword) {
+    if(newPassword && !currentPassword) {
       hasValidationErrors = true;
       newErrors.currentPassword = true;
       newMessages.currentPassword = 'Debes ingresar tu contraseña actual';
     }
 
-    if (hasValidationErrors) {
+    if(hasValidationErrors) {
       setErrors(newErrors);
       setValidationMessages(newMessages);
-      if (window.showNotification) {
+      if(window.showNotification) {
         window.showNotification({
           type: 'error',
           title: 'Error de validación',
@@ -178,16 +178,16 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
       const updateData = {};
 
       // Solo incluir campos que cambiaron
-      if (username.trim() !== (userData.user_name || '')) {
+      if(username.trim() !== (userData.user_name || '')) {
         updateData.name = username.trim(); // El backend espera 'name' para user_name
       }
 
-      if (userFullName.trim() !== (userData.user_full_name || '')) {
+      if(userFullName.trim() !== (userData.user_full_name || '')) {
         updateData.full_name = userFullName.trim(); // El backend espera 'full_name' para user_full_name
       }
 
       // Solo incluir contraseña si se está cambiando
-      if (newPassword.length > 0) {
+      if(newPassword.length > 0) {
         updateData.currentPassword = currentPassword;
         updateData.newPassword = newPassword;
       }
@@ -196,11 +196,11 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
       const result = response.result;
       const http_data = response.http_data;
 
-      if (result !== 1) {
+      if(result !== 1) {
         throw new Error(http_data?.message || 'Error al actualizar perfil');
       }
 
-      if (window.showNotification) {
+      if(window.showNotification) {
         window.showNotification({
           type: 'success',
           title: 'Éxito',
@@ -209,9 +209,9 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
       }
       
       // Actualizar datos locales si se proporciona callback
-      if (onSaveUser) {
+      if(onSaveUser) {
         // Si la respuesta incluye los datos actualizados del usuario, usarlos
-        if (http_data && http_data.user) {
+        if(http_data && http_data.user) {
           const updatedUserData = {
             ...userData,
             user_name: http_data.user.name || username.trim(),
@@ -232,7 +232,7 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
       onClose();
     } catch (error) {
       console.error('Error al guardar usuario:', error);
-      if (window.showNotification) {
+      if(window.showNotification) {
         window.showNotification({
           type: 'error',
           title: 'Error',
@@ -246,16 +246,16 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
 
   // Manejar cancelación
   const handleCancel = () => {
-    if (hasChanges) {
+    if(hasChanges) {
       const confirmClose = window.confirm('¿Estás seguro de que quieres cerrar? Se perderán los cambios no guardados.');
-      if (!confirmClose) return;
+      if(!confirmClose) return;
     }
     onClose();
   };
 
-  if (!isOpen) return null;
+  if(!isOpen) return null;
 
-  if (isLoading) {
+  if(isLoading) {
     return (
       <div className="modal-overlay">
         <div className="modal-content user-settings-modal">

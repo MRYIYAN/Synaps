@@ -59,16 +59,16 @@ class Pixel {
   appear() {
     this.isIdle = false;
 
-    if (this.counter <= this.delay) {
+    if(this.counter <= this.delay) {
       this.counter += this.counterStep;
       return;
     }
 
-    if (this.size >= this.maxSize) {
+    if(this.size >= this.maxSize) {
       this.isShimmer = true;
     }
 
-    if (this.isShimmer) {
+    if(this.isShimmer) {
       this.shimmer();
     } else {
       this.size += this.sizeStep;
@@ -82,7 +82,7 @@ class Pixel {
     this.isShimmer = false;
     this.counter = 0;
 
-    if (this.size <= 0) {
+    if(this.size <= 0) {
       this.isIdle = true;
       return;
     } else {
@@ -94,13 +94,13 @@ class Pixel {
 
   // Crea un efecto de brillo oscilando el tamaño del píxel
   shimmer() {
-    if (this.size >= this.maxSize) {
+    if(this.size >= this.maxSize) {
       this.isReverse = true;
-    } else if (this.size <= this.minSize) {
+    } else if(this.size <= this.minSize) {
       this.isReverse = false;
     }
 
-    if (this.isReverse) {
+    if(this.isReverse) {
       this.size -= this.speed;
     } else {
       this.size += this.speed;
@@ -118,7 +118,7 @@ class Pixel {
 class PixelCanvas extends HTMLElement {
   // Registra el componente en el navegador con el nombre de etiqueta especificado
   static register(tag = "pixel-canvas") {
-    if ("customElements" in window) {
+    if("customElements" in window) {
       customElements.define(tag, this);
     }
   }
@@ -144,9 +144,9 @@ class PixelCanvas extends HTMLElement {
     const min = 4;
     const max = 50;
 
-    if (value <= min) {
+    if(value <= min) {
       return min;
-    } else if (value >= max) {
+    } else if(value >= max) {
       return max;
     } else {
       return parseInt(value);
@@ -160,9 +160,9 @@ class PixelCanvas extends HTMLElement {
     const max = 100;
     const throttle = 0.001;
 
-    if (value <= min || this.reducedMotion) {
+    if(value <= min || this.reducedMotion) {
       return min;
-    } else if (value >= max) {
+    } else if(value >= max) {
       return max * throttle;
     } else {
       return parseInt(value) * throttle;
@@ -201,7 +201,7 @@ class PixelCanvas extends HTMLElement {
     this._parent.addEventListener("mouseenter", this);
     this._parent.addEventListener("mouseleave", this);
 
-    if (!this.noFocus) {
+    if(!this.noFocus) {
       this._parent.addEventListener("focusin", this);
       this._parent.addEventListener("focusout", this);
     }
@@ -213,7 +213,7 @@ class PixelCanvas extends HTMLElement {
     this._parent.removeEventListener("mouseenter", this);
     this._parent.removeEventListener("mouseleave", this);
 
-    if (!this.noFocus) {
+    if(!this.noFocus) {
       this._parent.removeEventListener("focusin", this);
       this._parent.removeEventListener("focusout", this);
     }
@@ -238,13 +238,13 @@ class PixelCanvas extends HTMLElement {
 
   // Maneja el evento de enfoque
   onfocusin(e) {
-    if (e.currentTarget.contains(e.relatedTarget)) return;
+    if(e.currentTarget.contains(e.relatedTarget)) return;
     this.handleAnimation("appear");
   }
 
   // Maneja el evento de pérdida de enfoque
   onfocusout(e) {
-    if (e.currentTarget.contains(e.relatedTarget)) return;
+    if(e.currentTarget.contains(e.relatedTarget)) return;
     this.handleAnimation("disappear");
   }
 
@@ -302,7 +302,7 @@ class PixelCanvas extends HTMLElement {
     const timeNow = performance.now();
     const timePassed = timeNow - this.timePrevious;
 
-    if (timePassed < this.timeInterval) return;
+    if(timePassed < this.timeInterval) return;
 
     this.timePrevious = timeNow - (timePassed % this.timeInterval);
 
@@ -312,7 +312,7 @@ class PixelCanvas extends HTMLElement {
       this.pixels[i][fnName]();
     }
 
-    if (this.pixels.every((pixel) => pixel.isIdle)) {
+    if(this.pixels.every((pixel) => pixel.isIdle)) {
       cancelAnimationFrame(this.animation);
     }
   }

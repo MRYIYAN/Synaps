@@ -887,7 +887,7 @@ class NoteController extends Controller
         $payload = (array)$payload;
         $user_id = $payload['sub'] ?? null;
 
-        if (!$user_id) {
+        if(!$user_id) {
             throw new Exception('Token JWT inválido: sin user_id');
         }
 
@@ -899,7 +899,7 @@ class NoteController extends Controller
             ->where('note_id2', $token)
             ->first();
 
-        if (!$note) {
+        if(!$note) {
             throw new Exception('Nota no encontrada');
         }
 

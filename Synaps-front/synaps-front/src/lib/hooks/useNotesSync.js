@@ -10,14 +10,14 @@ export function useNotesSync(notes, setNotes, enabled = true) {
   const timeoutRef = useRef(null);
 
   useEffect(() => {
-    if (!enabled) return;
+    if(!enabled) return;
 
     const syncNotes = () => {
       const currentNotes = window.currentNotes || [];
       const currentNotesString = JSON.stringify(currentNotes);
       
       // Solo sincronizar si hay cambios reales
-      if (lastSyncRef.current !== currentNotesString) {
+      if(lastSyncRef.current !== currentNotesString) {
         lastSyncRef.current = currentNotesString;
         
         // Limpiar duplicados antes de actualizar
@@ -28,7 +28,7 @@ export function useNotesSync(notes, setNotes, enabled = true) {
           const cleanedString = JSON.stringify(cleanedNotes);
           
           // Solo actualizar si hay diferencias
-          if (prevString !== cleanedString) {
+          if(prevString !== cleanedString) {
             // Actualizar window.currentNotes con la versión limpia
             window.currentNotes = cleanedNotes;
             return cleanedNotes;
@@ -43,7 +43,7 @@ export function useNotesSync(notes, setNotes, enabled = true) {
 
     // Configurar sincronización periódica con debounce
     const scheduleSync = () => {
-      if (timeoutRef.current) {
+      if(timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
       timeoutRef.current = setTimeout(syncNotes, 1000);
@@ -56,7 +56,7 @@ export function useNotesSync(notes, setNotes, enabled = true) {
     const interval = setInterval(syncNotes, 5000);
     
     return () => {
-      if (timeoutRef.current) {
+      if(timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
       clearInterval(interval);

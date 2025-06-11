@@ -34,26 +34,22 @@ export function NotesHelper() {
   // =========================================================================
 
   // Obtener notas de la API para un vault específico
-  const getNotes = async (vault_id, parent_id = 0) => {
+  const getNotes = async(vault_id, parent_id = 0) => {
     vault_id = parseInt(vault_id, 10);
-    if (isNaN(vault_id)) {
+    if(isNaN(vault_id)) {
       console.error("Invalid vault_id");
       return;
     }
     
     try {
       const url = 'http://localhost:8010/api/getNotes';
-      // SIEMPRE cargar toda la estructura del vault (parent_id = 0)
-      // Esto permite construir el árbol jerárquico completo donde:
-      // - Las carpetas se pueden expandir/colapsar localmente
-      // - No se pierde el contexto de navegación
-      // - El sidebar no se "recarga" al hacer clic en carpetas
-      const body = { parent_id: 0, vault_id };
+      // Si parent_id es 0, cargar nivel raíz; de lo contrario cargar contenido específico de la carpeta
+      const body = { parent_id, vault_id };
 
-      console.log('Cargando estructura completa del vault:', vault_id);
+      console.log('Cargando notas para vault:', vault_id, 'parent_id:', parent_id);
       const { result, http_data } = await http_get(url, body);
       
-      if (result !== 1) throw new Error('Error loading notes');
+      if(result !== 1) throw new Error('Error loading notes');
       
       // Transformar elementos de la API al formato local
       const newItems = http_data.items.map(item => ({
@@ -69,20 +65,28 @@ export function NotesHelper() {
         // Obtener elementos actuales de window
         const currentItems = window.currentNotes || [];
         
-        // Remover todos los elementos del parent_id actual para reemplazarlos
-        const filteredItems = currentItems.filter(item => {
-          return item.parent_id !== parent_id;
-        });
-        
-        // Combinar elementos filtrados con nuevos elementos evitando duplicados
-        const updated = mergeWithoutDuplicates(filteredItems, newItems);
-        
-        // Aplicar limpieza final para eliminar cualquier duplicado restante
-        const cleanedItems = removeDuplicates(updated);
-        
-        window.currentNotes = cleanedItems;
-        
-        return cleanedItems;
+        // Si estamos cargando el nivel raíz (parent_id = 0), reemplazar todo
+        if(parent_id === 0) {
+          // Limpiar completamente y cargar solo los nuevos elementos del nivel raíz
+          window.currentNotes = newItems;
+          return newItems;
+        } else {
+          // Si estamos cargando contenido de una carpeta específica, añadir a los existentes
+          // Remover cualquier elemento existente con el mismo parent_id para evitar duplicados
+          const filteredItems = currentItems.filter(item => {
+            return item.parent_id !== parent_id;
+          });
+          
+          // Combinar elementos filtrados con nuevos elementos evitando duplicados
+          const updated = mergeWithoutDuplicates(filteredItems, newItems);
+          
+          // Aplicar limpieza final para eliminar cualquier duplicado restante
+          const cleanedItems = removeDuplicates(updated);
+          
+          window.currentNotes = cleanedItems;
+          
+          return cleanedItems;
+        }
       });
 
     } catch (error) {
@@ -91,9 +95,9 @@ export function NotesHelper() {
   };
 
   // Leer una nota concreta - simplificado
-  const readNote = async (note_id2, vault_id) => {
+  const readNote = async(note_id2, vault_id) => {
     // Solo cargar nota si se proporciona un note_id2 específico
-    if (!note_id2 || note_id2 === '') return;
+    if(!note_id2 || note_id2 === '') return;
 
     console.log('readNote llamado con:', { note_id2, vault_id });
 
@@ -108,7 +112,7 @@ export function NotesHelper() {
     await new Promise(resolve => setTimeout(resolve, 200));
     
     // Verificar si el editor está disponible ahora
-    if (!window.set_markdown || !window.setKey) {
+    if(!window.set_markdown || !window.setKey) {
       console.warn('Editor markdown aún no está disponible después de disparar evento');
       // Intentar cargar la nota de todas formas
     }
@@ -117,7 +121,7 @@ export function NotesHelper() {
     const body = { note_id2, vault_id };
 
     const { result, http_data } = await http_get( url, body );
-    if (result !== 1 || !http_data?.note ) {
+    if(result !== 1 || !http_data?.note ) {
       console.error( 'No se pudo cargar la nota' );
       return;
     }
@@ -126,25 +130,25 @@ export function NotesHelper() {
     const markdown = note.note_markdown || note.markdown || '';
 
     // Solo llamar a set_markdown si está disponible
-    if (window.set_markdown) {
+    if(window.set_markdown) {
       window.set_markdown(markdown);
     }
-    if (window.setKey) {
+    if(window.setKey) {
       window.setKey(prev => prev + 1);
     }
   };
 
   // Eliminar una nota específica
-  const deleteNote = async (note_id2) => {
+  const deleteNote = async(note_id2) => {
     try {
       const url = 'http://localhost:8010/api/deleteNote';
       const body = { note_id2 };
 
       const { result } = await http_post(url, body);
-      if (result !== 1) throw new Error('Error al borrar la nota');
+      if(result !== 1) throw new Error('Error al borrar la nota');
 
       // Verificar si la nota eliminada es la actualmente abierta
-      if (window.selectedItemId2 === note_id2) {
+      if(window.selectedItemId2 === note_id2) {
         // Limpiar la selección actual
         window.selectedItemId2 = '';
         setSelectedItemId2('');
@@ -171,7 +175,7 @@ export function NotesHelper() {
   };
 
   // Renombrar una nota específica
-  const renameNote = async (note_id2, new_title) => {
+  const renameNote = async(note_id2, new_title) => {
     try {
       // Validación local de nombres duplicados
       const existingNotes = window.currentNotes || [];
@@ -179,7 +183,7 @@ export function NotesHelper() {
         note.title === new_title && note.id2 !== note_id2
       );
       
-      if (isDuplicate) {
+      if(isDuplicate) {
         const errorMsg = 'Ya existe una nota con ese nombre';
         showErrorNotification(errorMsg, 'Error de validación');
         throw new Error(errorMsg);
@@ -189,7 +193,7 @@ export function NotesHelper() {
       const body = { id2: note_id2, new_title };
 
       const { result, message } = await http_post(url, body);
-      if (result !== 1) {
+      if(result !== 1) {
         // Mostrar mensaje de error específico si viene del backend
         const errorMsg = message || 'Error al renombrar la nota';
         throw new Error(errorMsg);
@@ -198,7 +202,7 @@ export function NotesHelper() {
       // Actualizar título en estado local y global
       setNotes(() => {
         const updated = (window.currentNotes || []).map(node => {
-          if (node.id2 === note_id2) {
+          if(node.id2 === note_id2) {
             return { ...node, title: new_title };
           }
           return node;
@@ -211,7 +215,7 @@ export function NotesHelper() {
       console.error('Error renombrando nota:', error);
       
       // Mostrar notificación de error al usuario
-      if (!error.message.includes('Ya existe una nota con ese nombre')) {
+      if(!error.message.includes('Ya existe una nota con ese nombre')) {
         showErrorNotification(error.message, 'Error al renombrar');
       }
       

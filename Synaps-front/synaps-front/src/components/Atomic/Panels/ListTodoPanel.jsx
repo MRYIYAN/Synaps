@@ -2,21 +2,22 @@
 //                             PANEL DE TAREAS DE SYNAPS                        //
 //===========================================================================   //
 //  Este componente implementa un panel organizador de tareas con tablero       //
-//  Kanban drag & drop de 3 columnas.                                          //
+//  Kanban drag & drop de 3 columnas. Integrado con la API backend.            //
 //===========================================================================   //
 
 //===========================================================================//
 //                             IMPORTS                                       //
 //===========================================================================//
-import React, { useState } from "react"; // Importamos useState para manejar los estados
-import { ReactComponent as AddTaskIcon } from "../../../assets/icons/add-board.svg"; // Icono para crear nueva tarea
+import React, { useState, useEffect } from "react"; 
 import CreateTaskModal from "../../Taskboard/Modals/CreateTaskModal";
 import EditTaskModal from "../../Taskboard/Modals/EditTaskModal";
 import DeleteTaskModal from "../../Taskboard/Modals/DeleteTaskModal";
 import TaskDetailsModal from "../../Taskboard/Modals/TaskDetailsModal";
 import KanbanBoard from "../../Taskboard/KanbanBoard/KanbanBoard";
 import TaskList from "../../Taskboard/TaskList/TaskList";
+import useTasks from "../../../hooks/useTasks";
 import "../../Taskboard/Taskboard.css";
+
 //===========================================================================//
 
 //===========================================================================//
@@ -29,53 +30,87 @@ const ListTodoPanel = ({ viewType = "kanban" }) => {
   //---------------------------------------------------------------------------//
   //  Estados para manejar la interfaz                                        //
   //---------------------------------------------------------------------------//
-  // Estado para controlar la visibilidad del modal de crear tarea
   const [showCreateModal, setShowCreateModal] = useState(false);
-  
-  // Estado para controlar la visibilidad del modal de editar tarea
   const [showEditModal, setShowEditModal] = useState(false);
-  
-  // Estado para controlar la visibilidad del modal de eliminar tarea
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
-  // Estado para controlar la visibilidad del modal de detalles de tarea
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  
-  // Estado para almacenar la tarea que se está editando/eliminando/viendo
   const [selectedTask, setSelectedTask] = useState(null);
+  const [currentVaultId, setCurrentVaultId] = useState(null);
 
-  // Estado para almacenar todas las tareas
-  const [tasks, setTasks] = useState([
-    // Datos de ejemplo para desarrollo
-    {
-      id: 1,
-      title: "Diseñar interfaz de usuario",
-      description: "Crear mockups y wireframes para la nueva funcionalidad",
-      status: "todo",
-      createdAt: "2025-06-11T10:00:00Z",
-      updatedAt: "2025-06-11T10:00:00Z"
-    },
-    {
-      id: 2,
-      title: "Implementar API REST",
-      description: "Desarrollar endpoints para CRUD de tareas",
-      status: "in-progress",
-      createdAt: "2025-06-11T11:00:00Z",
-      updatedAt: "2025-06-11T11:00:00Z"
-    },
-    {
-      id: 3,
-      title: "Configurar base de datos",
-      description: "Configurar esquemas y migraciones",
-      status: "done",
-      createdAt: "2025-06-10T09:00:00Z",
-      updatedAt: "2025-06-11T09:00:00Z"
+  //---------------------------------------------------------------------------//
+  //  Hook personalizado para gestión de tareas                               //
+  //---------------------------------------------------------------------------//
+  const {
+    tasks,
+    loading,
+    error,
+    stats,
+    createTask,
+    updateTask,
+    deleteTask,
+    changeTaskStatus,
+    clearError,
+    fetchTasks
+  } = useTasks(currentVaultId);
+
+  // Exponer función loadTasks globalmente y cargar tareas automáticamente
+  useEffect(() => {
+    window.loadTasks = async(vaultId) => {
+      if(vaultId && typeof vaultId === 'number' && vaultId > 0) {
+        console.log('[ListTodoPanel] Cargando tareas para vault:', vaultId);
+        try {
+          await fetchTasks();
+        } catch (error) {
+          console.error('[ListTodoPanel] Error cargando tareas:', error);
+        }
+      }
+    };
+
+    // Cargar tareas iniciales si hay vault actual
+    if(currentVaultId && typeof currentVaultId === 'number' && currentVaultId > 0) {
+      fetchTasks();
     }
-  ]);
+
+    return () => {
+      delete window.loadTasks;
+    };
+  }, [fetchTasks, currentVaultId]);
+
+  //---------------------------------------------------------------------------//
+  //  Efectos para sincronización con vault global                            //
+  //---------------------------------------------------------------------------//
+  useEffect(() => {
+    // Obtener el vault ID actual desde el contexto global
+    const getCurrentVaultId = () => {
+      return window.currentVaultId || null;
+    };
+
+    // Inicializar con vault actual
+    setCurrentVaultId(getCurrentVaultId());
+
+    // Escuchar cambios de vault
+    const handleVaultChange = () => {
+      const newVaultId = getCurrentVaultId();
+      setCurrentVaultId(newVaultId);
+      if(error) clearError(); // Limpiar errores al cambiar vault
+      
+      // Cargar tareas para el nuevo vault
+      if(newVaultId && typeof newVaultId === 'number' && newVaultId > 0) {
+        fetchTasks();
+      }
+    };
+
+    window.addEventListener('vaultChanged', handleVaultChange);
+    
+    return () => {
+      window.removeEventListener('vaultChanged', handleVaultChange);
+    };
+  }, [error, clearError, fetchTasks]);
 
   //---------------------------------------------------------------------------//
   //  Handlers para manejar interacciones del usuario                         //
   //---------------------------------------------------------------------------//
+  
   // Función para abrir el modal de crear tarea
   const handleOpenCreateModal = () => {
     setShowCreateModal(true);
@@ -87,40 +122,88 @@ const ListTodoPanel = ({ viewType = "kanban" }) => {
   };
 
   // Función para crear una nueva tarea
-  const handleCreateTask = (newTask) => {
-    setTasks(prevTasks => [...prevTasks, newTask]);
-    console.log("Nueva tarea creada:", newTask);
-    // TODO: Aquí se enviaría la tarea al backend
-  };
-
-  // Función para actualizar una tarea (cambiar estado, etc.)
-  const handleUpdateTask = (updatedTask) => {
-    setTasks(prevTasks => 
-      prevTasks.map(task => 
-        task.id === updatedTask.id ? updatedTask : task
-      )
-    );
-    console.log("Tarea actualizada:", updatedTask);
-    // TODO: Aquí se enviaría la actualización al backend
-  };
-
-  // Función para eliminar una tarea
-  const handleDeleteTask = (taskId) => {
-    // Buscar la tarea para mostrarla en el modal de confirmación
-    const taskToDelete = tasks.find(task => task.id === taskId);
-    if (taskToDelete) {
-      setSelectedTask(taskToDelete);
-      setShowDeleteModal(true);
+  const handleCreateTask = async(newTaskData) => {
+    try {
+      const result = await createTask(newTaskData);
+      if(result.success) {
+        console.log("Nueva tarea creada:", result.task);
+        // El estado se actualiza automáticamente a través del hook
+        handleCloseCreateModal();
+        
+        // Mostrar notificación de éxito
+        if(window.showNotification) {
+          window.showNotification({
+            type: 'success',
+            title: 'Tarea creada',
+            message: `"${result.task.title}" se ha añadido a la columna "Por Hacer"`,
+            duration: 3000
+          });
+        }
+      } else {
+        // Error manejado por el hook y mostrado automáticamente
+        console.error("Error al crear tarea:", result.message);
+      }
+    } catch (err) {
+      console.error("Error al crear tarea:", err);
     }
   };
 
+  // Función para actualizar una tarea (cambiar estado, etc.)
+  const handleUpdateTask = async(updatedTask) => {
+    try {
+      const result = await updateTask(updatedTask.task_id2, updatedTask);
+      if(result.success) {
+        console.log("Tarea actualizada:", result.task);
+        
+        // Mostrar notificación si cambió el estado
+        if(updatedTask.status && window.showNotification) {
+          const statusNames = {
+            'todo': 'Por Hacer',
+            'in-progress': 'En Progreso', 
+            'done': 'Completada'
+          };
+          
+          window.showNotification({
+            type: 'success',
+            title: 'Tarea actualizada',
+            message: `"${result.task.title}" → ${statusNames[updatedTask.status]}`,
+            duration: 3000
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Error al actualizar tarea:", err);
+    }
+  };
+
+  // Función para eliminar una tarea
+  const handleDeleteTask = (task) => {
+    setSelectedTask(task);
+    setShowDeleteModal(true);
+  };
+
   // Función para confirmar eliminación de tarea (desde el modal)
-  const handleConfirmDeleteTask = (taskId) => {
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-    console.log("Tarea eliminada:", taskId);
-    setShowDeleteModal(false);
-    setSelectedTask(null);
-    // TODO: Aquí se enviaría la eliminación al backend
+  const handleConfirmDeleteTask = async(task) => {
+    try {
+      const result = await deleteTask(task.task_id2);
+      if(result.success) {
+        console.log("Tarea eliminada:", task.task_id2);
+        setShowDeleteModal(false);
+        setSelectedTask(null);
+        
+        // Mostrar notificación de éxito
+        if(window.showNotification) {
+          window.showNotification({
+            type: 'success',
+            title: 'Tarea eliminada',
+            message: `"${task.title}" ha sido eliminada`,
+            duration: 3000
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Error al eliminar tarea:", err);
+    }
   };
 
   // Función para editar una tarea (abrir modal de edición)
@@ -130,16 +213,30 @@ const ListTodoPanel = ({ viewType = "kanban" }) => {
   };
 
   // Función para guardar cambios de edición de tarea
-  const handleSaveEditTask = (updatedTask) => {
-    setTasks(prevTasks => 
-      prevTasks.map(task => 
-        task.id === updatedTask.id ? updatedTask : task
-      )
-    );
-    console.log("Tarea editada:", updatedTask);
-    setShowEditModal(false);
-    setSelectedTask(null);
-    // TODO: Aquí se enviaría la actualización al backend
+  const handleSaveEditTask = async(taskId2, updateData) => {
+    try {
+      const result = await updateTask(taskId2, updateData);
+      if(result.success) {
+        console.log("Tarea editada:", result.task);
+        setShowEditModal(false);
+        setSelectedTask(null);
+        
+        // Mostrar notificación de éxito
+        if(window.showNotification) {
+          window.showNotification({
+            type: 'success',
+            title: 'Tarea guardada',
+            message: `Los cambios en "${result.task.title}" se han guardado`,
+            duration: 3000
+          });
+        }
+        
+        return result;
+      }
+    } catch (err) {
+      console.error("Error al editar tarea:", err);
+      throw err;
+    }
   };
 
   // Función para cerrar modales
@@ -160,8 +257,7 @@ const ListTodoPanel = ({ viewType = "kanban" }) => {
 
   // Función para manejar clics en tareas de la lista (para vista de sidebar)
   const handleTaskClick = (task) => {
-    if (viewType === "list") {
-      // En vista de lista, al hacer clic se abre el modal de detalles
+    if(viewType === "list") {
       setSelectedTask(task);
       setShowDetailsModal(true);
     }
@@ -170,8 +266,41 @@ const ListTodoPanel = ({ viewType = "kanban" }) => {
   //---------------------------------------------------------------------------//
   //  Renderizado del componente ListTodoPanel                                //
   //---------------------------------------------------------------------------//
+  
+  // Mostrar mensaje si no hay vault seleccionado
+  if(!currentVaultId) {
+    return (
+      <div className={`search-panel task-panel ${viewType === "list" ? "task-panel-sidebar" : "task-panel-full"}`}>
+        <div className="task-panel-empty-state">
+          <p>Selecciona un vault para ver las tareas</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar estado de carga
+  if(loading && tasks.length === 0) {
+    return (
+      <div className={`search-panel task-panel ${viewType === "list" ? "task-panel-sidebar" : "task-panel-full"}`}>
+        <div className="task-panel-loading">
+          <p>Cargando tareas...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`search-panel task-panel ${viewType === "list" ? "task-panel-sidebar" : "task-panel-full"}`}>
+      {/* Mostrar mensaje de error si existe */}
+      {error && (
+        <div className="task-panel-error">
+          <p>Error: {error}</p>
+          <button onClick={clearError} className="error-dismiss-btn">
+            Cerrar
+          </button>
+        </div>
+      )}
+
       {/* Renderizado condicional basado en el tipo de vista */}
       {viewType === "list" ? (
         // Vista de lista para sidebar
@@ -179,6 +308,8 @@ const ListTodoPanel = ({ viewType = "kanban" }) => {
           tasks={tasks}
           onTaskClick={handleTaskClick}
           onCreateTask={handleOpenCreateModal}
+          loading={loading}
+          stats={stats}
         />
       ) : (
         // Vista de tablero Kanban para página completa
@@ -187,6 +318,9 @@ const ListTodoPanel = ({ viewType = "kanban" }) => {
           onUpdateTask={handleUpdateTask}
           onDeleteTask={handleDeleteTask}
           onEditTask={handleEditTask}
+          onChangeTaskStatus={changeTaskStatus}
+          loading={loading}
+          stats={stats}
         />
       )}
 
@@ -195,6 +329,7 @@ const ListTodoPanel = ({ viewType = "kanban" }) => {
         isOpen={showCreateModal}
         onClose={handleCloseCreateModal}
         onCreateTask={handleCreateTask}
+        currentVaultId={currentVaultId}
       />
 
       {/* Modal para editar tarea */}
@@ -218,6 +353,9 @@ const ListTodoPanel = ({ viewType = "kanban" }) => {
         isOpen={showDetailsModal}
         onClose={handleCloseDetailsModal}
         task={selectedTask}
+        onEditTask={handleEditTask}
+        onDeleteTask={handleDeleteTask}
+        onUpdateStatus={handleUpdateTask}
       />
     </div>
   );

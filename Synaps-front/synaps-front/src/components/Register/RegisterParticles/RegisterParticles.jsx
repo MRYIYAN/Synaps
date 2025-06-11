@@ -69,7 +69,7 @@ const RegisterParticles = () => {
         const distance = Math.sqrt(dx * dx + dy * dy);
         
         // Si está dentro del radio de influencia, huir del ratón
-        if (distance < mouseRadius) {
+        if(distance < mouseRadius) {
           // Factor de repulsión: más cercano = huida más rápida
           const repulsionFactor = 1 - distance / mouseRadius;
           
@@ -82,14 +82,14 @@ const RegisterParticles = () => {
           
           // Limitar velocidad máxima durante la huida
           const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-          if (currentSpeed > this.maxSpeed) {
+          if(currentSpeed > this.maxSpeed) {
             this.vx = (this.vx / currentSpeed) * this.maxSpeed;
             this.vy = (this.vy / currentSpeed) * this.maxSpeed;
           }
         } else {
           // Gradualmente volver a la velocidad base si no está huyendo
           const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-          if (currentSpeed > this.baseSpeed) {
+          if(currentSpeed > this.baseSpeed) {
             this.vx *= 0.98;
             this.vy *= 0.98;
           }
@@ -100,11 +100,11 @@ const RegisterParticles = () => {
         this.y += this.vy;
         
         // Rebote en bordes
-        if (this.x < 0 || this.x > canvas.width) {
+        if(this.x < 0 || this.x > canvas.width) {
           this.vx *= -1;
           this.x = this.x < 0 ? 0 : canvas.width;
         }
-        if (this.y < 0 || this.y > canvas.height) {
+        if(this.y < 0 || this.y > canvas.height) {
           this.vy *= -1;
           this.y = this.y < 0 ? 0 : canvas.height;
         }
@@ -148,7 +148,7 @@ const RegisterParticles = () => {
           // Aumentar la distancia máxima para mostrar líneas
           const maxDistance = 150; // Aumentar de ~100 a 150
           
-          if (distance < maxDistance) {
+          if(distance < maxDistance) {
             // Calcular opacidad basada en la distancia
             const opacity = 1 - (distance / maxDistance);
             

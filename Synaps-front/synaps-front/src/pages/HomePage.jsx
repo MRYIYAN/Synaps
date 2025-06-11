@@ -20,7 +20,7 @@ const Home = function() {
 
   useEffect(() => {
     const token = localStorage.getItem("access_token"); 
-    if (token) {
+    if(token) {
       console.log("Access Token JWT:", token); 
     } else {
       console.warn("No token found in localStorage.");

@@ -7,7 +7,7 @@ import reportWebVitals from './reportWebVitals';
 // FILTRO para quitar basura de aitopia.ai en consola
 const originalConsoleError = console.error;
 console.error = function (...args) {
-    if (args.some(arg => typeof arg === 'string' && arg.includes('aitopia.ai'))) {
+    if(args.some(arg => typeof arg === 'string' && arg.includes('aitopia.ai'))) {
         return;
     }
     originalConsoleError.apply(console, args);

@@ -25,7 +25,7 @@ const CalendarIcon = ({ color = 'currentColor', size = 24, strokeWidth = 2, clas
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
+      if(timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };

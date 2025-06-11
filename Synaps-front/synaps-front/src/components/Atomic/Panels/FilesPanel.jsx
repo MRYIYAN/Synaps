@@ -19,6 +19,7 @@ import NoteTree from "../../NoteTree/NoteTree.jsx";
 import { http_post } from '../../../lib/http.js';
 import FileUploadModal from '../Modal/FileUploadModal';
 import { updateOrAdd } from '../../../lib/utils/notesDedupe.js';
+import { NotesHelper } from '../../../lib/Helpers/NotesHelper.jsx';
 
 
 
@@ -30,6 +31,9 @@ import { updateOrAdd } from '../../../lib/utils/notesDedupe.js';
 
 // Este componente implementa un panel de búsqueda interactivo con múltiples funciones
 const FilesPanel = ({ notes: notesProp, getNotes }) => {
+  // Inicializar NotesHelper para registrar funciones globales
+  NotesHelper(); // Esto registra las funciones en window
+  
   // Usar directamente window.currentNotes como fuente de verdad
   const [notes, setNotes] = useState(() => window.currentNotes || notesProp || []);
   const [currentVaultId, setCurrentVaultId] = useState(window.currentVaultId || 0);
@@ -40,7 +44,7 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
       const currentNotes = window.currentNotes || notesProp || [];
       // Solo actualizar si realmente hay cambios para evitar re-renders innecesarios
       setNotes(prev => {
-        if (JSON.stringify(prev) !== JSON.stringify(currentNotes)) {
+        if(JSON.stringify(prev) !== JSON.stringify(currentNotes)) {
           return currentNotes;
         }
         return prev;
@@ -60,16 +64,15 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
 
   // Exponer la función global para cargar notas por carpeta (deprecada - ya no necesaria)
   useEffect(() => {
-    // Función de compatibilidad - ya no se usa para navegación de carpetas
-    // La navegación se maneja directamente en el árbol con expand/collapse
+    // Función para cargar contenido de carpetas específicas
     window.getNotesForFolder = (parent_id) => {
-      if (!currentVaultId) {
+      if(!currentVaultId) {
         console.error("No hay vault seleccionado");
         return;
       }
-      // Por compatibilidad, simplemente recargar todo el vault
-      console.log("getNotesForFolder llamada - recargando vault completo");
-      getNotes(currentVaultId, 0);
+      // Cargar contenido de la carpeta específica
+      console.log("getNotesForFolder llamada para parent_id:", parent_id);
+      getNotes(currentVaultId, parent_id);
     };
 
     // Actualiza currentVaultId si cambia globalmente
@@ -144,7 +147,7 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
       
       window.currentNotes = updated;
       
-      if (shouldSelect) {
+      if(shouldSelect) {
         setSelectedItemId2(newItem.id2);
       }
       
@@ -211,7 +214,7 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
   // Esta función gestiona qué input está visible en cada momento
   const toggleInput = useCallback((inputType ) => {
     // Si es upload, abrir el modal en lugar de toggle input
-    if (inputType === 'upload') {
+    if(inputType === 'upload') {
       setShowUploadModal(true);
       return;
     }
@@ -295,7 +298,7 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
     updateNotesWithoutDuplicates(note, true);
     
     // Abrir la nota en el editor
-    if (window.readNote) {
+    if(window.readNote) {
       window.readNote( data.note_id2, window.currentVaultId );
     }
     
@@ -342,19 +345,20 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
   const handleSearchResultClick = (result) => {
     const item = result.originalItem;
     
-    if (item) {
+    if(item) {
       // Marcar como seleccionado globalmente
       setSelectedItemId2(item.id2);
       window.selectedItemId2 = item.id2;
       
       // Si es una nota, abrirla en el editor
-      if (item.type === 'note' && window.readNote) {
+      if(item.type === 'note' && window.readNote) {
         window.readNote(item.id2, window.currentVaultId);
       }
       
       // Si es una carpeta, cargar su contenido
-      if (item.type === 'folder' && window.getNotesForFolder) {
-        window.getNotesForFolder(item.id2);
+      if(item.type === 'folder' && window.getNotes) {
+        // Usar getNotes directamente con el ID numérico de la carpeta
+        window.getNotes(window.currentVaultId, item.id);
       }
       
       // NO cerrar la búsqueda - mantener los resultados visibles
@@ -368,7 +372,7 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
     updateNotesWithoutDuplicates(note, true);
     
     // Abrir la nota en el editor
-    if (window.readNote) {
+    if(window.readNote) {
       window.readNote( note.id2, window.currentVaultId );
     }
 

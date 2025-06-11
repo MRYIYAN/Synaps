@@ -80,7 +80,7 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
   // Función para manejar el selector de vault
   const handleVaultSelect = useCallback((vault) => {
     // Verificar si la vault necesita autenticación por PIN
-    if (VaultSessionManager.vaultNeedsAuthentication(vault)) {
+    if(VaultSessionManager.vaultNeedsAuthentication(vault)) {
       setPendingVault(vault);
       setShowVaultPinModal(true);
       return;
@@ -129,10 +129,10 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
   // Cargar datos iniciales
   useEffect(() => {
     // Función para cargar datos del usuario desde la API
-    const fetchUserData = async () => {
+    const fetchUserData = async() => {
       try {
         const token = localStorage.getItem('access_token');
-        if (!token) {
+        if(!token) {
           console.warn('No hay token de autenticación');
           setCurrentUser({
             name: "Usuario",
@@ -149,9 +149,9 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
           }
         });
 
-        if (response.ok) {
+        if(response.ok) {
           const data = await response.json();
-          if (data.result === 1 && data.user) {
+          if(data.result === 1 && data.user) {
             setCurrentUser({
               name: data.user.user_full_name || data.user.user_name || "Usuario",
               email: data.user.user_email || "usuario@ejemplo.com",
@@ -187,12 +187,12 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
     fetchUserData();
 
     // Cargar vaults reales desde la API
-    const fetchVaults = async () => {
+    const fetchVaults = async() => {
       try {
         const url = 'http://localhost:8010/api/vaults';
         const { result, http_data } = await http_get(url);
         
-        if (result === 1) {
+        if(result === 1) {
           const vaults = http_data || [];
           console.log('Vaults loaded from API:', vaults);
           
@@ -204,7 +204,7 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
           
           setVaults(processedVaults);
 
-          if (processedVaults.length > 0) {
+          if(processedVaults.length > 0) {
             handleVaultSelect(processedVaults[0]); //  reutiliza la lógica centralizada
           }
         } else {
@@ -224,7 +224,7 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
   // Establecer la posición inicial del indicador basada en defaultSelectedItem
   useEffect(() => {
     const itemIndex = navigationItems.findIndex(item => item.id === defaultSelectedItem);
-    if (itemIndex !== -1) {
+    if(itemIndex !== -1) {
       setIndicatorPosition(itemIndex * 48);
     }
   }, [defaultSelectedItem]);
@@ -234,13 +234,13 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
     const currentPath = location.pathname;
     const currentItem = navigationItems.find(item => item.url === currentPath);
     
-    if (currentItem && currentItem.id !== selectedItem) {
+    if(currentItem && currentItem.id !== selectedItem) {
       setSelectedItem(currentItem.id);
       const itemIndex = navigationItems.findIndex(item => item.id === currentItem.id);
       setIndicatorPosition(itemIndex * 48);
       
       // Solo mostrar panel si no es galaxy view
-      if (currentItem.id !== 'galaxyview') {
+      if(currentItem.id !== 'galaxyview') {
         setRightPanelOpen(true);
       } else {
         setRightPanelOpen(false);
@@ -334,11 +334,11 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
  * Realiza validaciones frontend y luego llama al backend usando fetch.
  * Retorna una Promise para que el modal pueda usar async/await y mostrar animaciones.
  */
-const handleCreateVault = async (vaultData) => {
+const handleCreateVault = async(vaultData) => {
   // Retornamos Promise para poder usar async/await desde el modal
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async(resolve, reject) => {
     // Simular un retraso para ver la animación de carga
-    setTimeout(async () => {
+    setTimeout(async() => {
       try {
         // 1. Caso especial para demostración: "Error" provoca error
         if(vaultData.name && vaultData.name.toLowerCase() === "error") {
@@ -408,14 +408,14 @@ const handleCreateVault = async (vaultData) => {
   };
 
   // Función para manejar la edición de vault
-  const handleEditVault = async (updatedVaultData) => {
+  const handleEditVault = async(updatedVaultData) => {
     try {
       // Si se cambió el PIN o se removió la privacidad, limpiar autenticación
-      if (currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
+      if(currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
         const pinChanged = currentVault.pin !== updatedVaultData.pin;
         const privacyChanged = currentVault.is_private !== updatedVaultData.is_private;
         
-        if (pinChanged || privacyChanged) {
+        if(pinChanged || privacyChanged) {
           VaultSessionManager.removeVaultAuthentication(updatedVaultData.vault_id2);
         }
       }
@@ -428,7 +428,7 @@ const handleCreateVault = async (vaultData) => {
       );
 
       // Actualizar currentVault si es la que se está editando
-      if (currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
+      if(currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
         setCurrentVault(updatedVaultData);
       }
 
@@ -437,7 +437,7 @@ const handleCreateVault = async (vaultData) => {
       setEditingVault(null);
 
       // Opcional: recargar notas si cambió algo importante
-      if (currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
+      if(currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
         getNotes(updatedVaultData.vault_id);
       }
 

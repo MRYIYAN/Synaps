@@ -7,8 +7,8 @@
 
 .node-branch {
   overflow: hidden;
-  max-height: 300px;
-  transition: max-height 0.2s ease-out;
+  max-height: 1000px; /* Altura suficiente para la mayoría de casos */
+  transition: max-height 0.3s ease-out;
 }
 .node-branch.collapsed {
   max-height: 0;

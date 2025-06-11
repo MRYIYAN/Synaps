@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\VaultController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\TaskTagController;
+use App\Http\Controllers\Api\TaskCommentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FolderNoteController;
 use App\Http\Controllers\NoteController;
@@ -165,7 +168,7 @@ try
          *
          * @see NoteController::saveMarkdown()
          */
-        Route::post('/saveMarkdown', [NoteController::class, 'saveMarkdown']);
+        Route::post( '/saveMarkdown', [NoteController::class, 'saveMarkdown'] );
 
         //=======================//
         // FOLDERS API          //
@@ -246,6 +249,119 @@ try
          * @see AuthController::updateUserProfile()
          */
         Route::put( '/user/profile', [AuthController::class, 'updateUserProfile'] );
+
+        //-----------------------------------------------------------------------//
+        //                           SISTEMA DE TAREAS                           //
+        //-----------------------------------------------------------------------//
+        
+        /**
+         * GET /tasks
+         * Listar tareas con filtros y paginación
+         * Parámetros: vault_id, status, priority, assigned_to, folder_id, search, page, limit
+         */
+        Route::get( '/tasks', [TaskController::class, 'index'] );
+        
+        /**
+         * POST /tasks
+         * Crear nueva tarea (automáticamente en estado 'todo')
+         * Body: title, description, priority, vault_id, folder_id, assigned_to, due_date, tag_ids
+         */
+        Route::post( '/tasks', [TaskController::class, 'store'] );
+        
+        /**
+         * GET /tasks/{task_id2}
+         * Obtener tarea específica con todos sus detalles
+         */
+        Route::get( '/tasks/{task_id2}', [TaskController::class, 'show'] );
+        
+        /**
+         * PUT /tasks/{task_id2}
+         * Actualizar tarea completa
+         * Body: title, description, status, priority, folder_id, assigned_to, due_date, tag_ids
+         */
+        Route::put( '/tasks/{task_id2}', [TaskController::class, 'update'] );
+        
+        /**
+         * DELETE /tasks/{task_id2}
+         * Eliminar tarea (soft delete)
+         */
+        Route::delete( '/tasks/{task_id2}', [TaskController::class, 'destroy'] );
+        
+        /**
+         * GET /tasks/stats
+         * Obtener estadísticas de tareas por vault
+         * Parámetros: vault_id
+         */
+        Route::get( '/tasks/stats', [TaskController::class, 'stats'] );
+        
+        /**
+         * POST /tasks/bulk/update-status
+         * Actualización masiva de estado de tareas
+         * Body: task_ids[], status
+         */
+        Route::post( '/tasks/bulk/update-status', [TaskController::class, 'bulkUpdateStatus'] );
+        
+        //-----------------------------------------------------------------------//
+        //                           ETIQUETAS DE TAREAS                         //
+        //-----------------------------------------------------------------------//
+        
+        /**
+         * GET /task-tags
+         * Listar etiquetas del vault
+         * Parámetros: vault_id
+         */
+        Route::get( '/task-tags', [TaskTagController::class, 'index'] );
+        
+        /**
+         * POST /task-tags
+         * Crear nueva etiqueta
+         * Body: name, color, vault_id
+         */
+        Route::post( '/task-tags', [TaskTagController::class, 'store'] );
+        
+        /**
+         * PUT /task-tags/{tag_id2}
+         * Actualizar etiqueta
+         * Body: name, color
+         */
+        Route::put( '/task-tags/{tag_id2}', [TaskTagController::class, 'update'] );
+        
+        /**
+         * DELETE /task-tags/{tag_id2}
+         * Eliminar etiqueta
+         */
+        Route::delete( '/task-tags/{tag_id2}', [TaskTagController::class, 'destroy'] );
+        
+        //-----------------------------------------------------------------------//
+        //                         COMENTARIOS EN TAREAS                         //
+        //-----------------------------------------------------------------------//
+        
+        /**
+         * GET /tasks/{task_id2}/comments
+         * Listar comentarios de una tarea
+         */
+        Route::get( '/tasks/{task_id2}/comments', [TaskCommentController::class, 'index'] );
+        
+        /**
+         * POST /tasks/{task_id2}/comments
+         * Crear nuevo comentario en una tarea
+         * Body: content
+         */
+        Route::post( '/tasks/{task_id2}/comments', [TaskCommentController::class, 'store'] );
+        
+        /**
+         * PUT /task-comments/{comment_id2}
+         * Actualizar comentario (solo el autor)
+         * Body: content
+         */
+        Route::put( '/task-comments/{comment_id2}', [TaskCommentController::class, 'update'] );
+        
+        /**
+         * DELETE /task-comments/{comment_id2}
+         * Eliminar comentario (solo el autor)
+         */
+        Route::delete( '/task-comments/{comment_id2}', [TaskCommentController::class, 'destroy'] );
+
     } );
 }
 catch( Exception $e )
@@ -273,53 +389,3 @@ Route::post( '/login', [AuthController::class, 'login'] )->middleware( ['api', S
  * @see AuthController::register()
  */
 Route::post( '/register', [AuthController::class, 'register'] );
-
-//===========================================================================//
-//  DIAGNÓSTICO (RUTAS PÚBLICAS TEMPORALES)                                //
-//===========================================================================//
-
-/**
- * GET /diagnostic/database
- * Verifica el estado de la base de datos y la estructura de la tabla users.
- */
-Route::get( '/diagnostic/database', [DiagnosticController::class, 'checkDatabase'] );
-
-/**
- * GET /diagnostic/test-insert
- * Prueba inserción directa en la tabla users.
- */
-Route::get( '/diagnostic/test-insert', [DiagnosticController::class, 'testInsert'] );
-
-/**
- * GET /diagnostic/fix-autoincrement
- * Corrige el AUTO_INCREMENT en la tabla users.
- */
-Route::get( '/diagnostic/fix-autoincrement', [DiagnosticController::class, 'fixAutoIncrement'] );
-
-/**
- * GET /diagnostic/test-insert
- * Prueba inserción directa en la tabla users.
- */
-Route::get( '/diagnostic/test-insert', [DiagnosticController::class, 'testInsert'] );
-
-/**
- * GET /diagnostic/fix-autoincrement
- * Corrige el AUTO_INCREMENT en la tabla users.
- */
-Route::get( '/diagnostic/fix-autoincrement', [DiagnosticController::class, 'fixAutoIncrement'] );
-
-//===========================================================================//
-//  RUTAS DE DIAGNÓSTICO Y MANTENIMIENTO                                     //
-//===========================================================================//
-
-/**
- * GET /diagnostic/tenant
- * Endpoint de diagnóstico para verificar el estado del sistema de tenants
- */
-Route::get('/diagnostic/tenant', [AuthController::class, 'tenantDiagnostic']);
-
-/**
- * GET /diagnostic/register-test  
- * Endpoint para probar el proceso de registro completo (para testing)
- */
-Route::get('/diagnostic/register-test', [DiagnosticController::class, 'registerTest']);

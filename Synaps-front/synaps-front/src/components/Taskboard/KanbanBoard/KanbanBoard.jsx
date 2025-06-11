@@ -2,9 +2,9 @@ import React, { useState, useCallback } from 'react';
 import TaskCard from '../TaskCard/TaskCard';
 import '../Taskboard.css';
 
-const KanbanBoard = ({ tasks, onUpdateTask, onDeleteTask, onEditTask }) => {
-  const [draggedTask, setDraggedTask] = useState(null);
-  const [dragOverColumn, setDragOverColumn] = useState(null);
+const KanbanBoard = ({ tasks, onUpdateTask, onDeleteTask, onEditTask, onChangeTaskStatus } ) => {
+  const [draggedTask, setDraggedTask] = useState( null );
+  const [dragOverColumn, setDragOverColumn] = useState( null );
 
   // Definir las columnas del tablero
   const columns = [
@@ -28,71 +28,82 @@ const KanbanBoard = ({ tasks, onUpdateTask, onDeleteTask, onEditTask }) => {
     }
   ];
 
-  // Filtrar tareas por estado
-  const getTasksByStatus = useCallback((status) => {
-    return tasks.filter(task => task.status === status);
+  // Filtrar tareas por estado - Las nuevas tareas aparecen automáticamente en "Por Hacer" ( todo)
+  const getTasksByStatus = useCallback( (status ) => {
+    const filteredTasks = tasks.filter( task => task.status === status );
+    
+    // Debug: mostrar cuántas tareas hay en cada columna
+    if(process.env.NODE_ENV === 'development') {
+      console.log(`[KanbanBoard] Tareas en columna "${status}":`, filteredTasks.length);
+    }
+    
+    return filteredTasks;
   }, [tasks]);
 
   // Manejar inicio de arrastre
-  const handleDragStart = useCallback((task) => {
-    setDraggedTask(task);
+  const handleDragStart = useCallback( ( task ) => {
+    setDraggedTask( task );
   }, []);
 
   // Manejar fin de arrastre
-  const handleDragEnd = useCallback(() => {
-    setDraggedTask(null);
-    setDragOverColumn(null);
+  const handleDragEnd = useCallback( () => {
+    setDraggedTask( null );
+    setDragOverColumn( null );
   }, []);
 
   // Manejar drag over en columna
-  const handleDragOver = useCallback((e, columnStatus) => {
+  const handleDragOver = useCallback( ( e, columnStatus ) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-    setDragOverColumn(columnStatus);
+    setDragOverColumn( columnStatus );
   }, []);
 
   // Manejar drag leave en columna
-  const handleDragLeave = useCallback((e) => {
+  const handleDragLeave = useCallback( ( e) => {
     // Solo limpiar si realmente salimos de la columna
-    if (!e.currentTarget.contains(e.relatedTarget)) {
-      setDragOverColumn(null);
+    if(!e.currentTarget.contains( e.relatedTarget)) {
+      setDragOverColumn( null );
     }
   }, []);
 
   // Manejar drop en columna
-  const handleDrop = useCallback((e, newStatus) => {
+  const handleDrop = useCallback(async ( e, newStatus ) => {
     e.preventDefault();
     
-    if (!draggedTask || draggedTask.status === newStatus) {
-      setDraggedTask(null);
-      setDragOverColumn(null);
+    if(!draggedTask || draggedTask.status === newStatus ) {
+      setDraggedTask( null );
+      setDragOverColumn( null );
       return;
     }
 
-    // Actualizar el estado de la tarea
-    const updatedTask = {
-      ...draggedTask,
-      status: newStatus,
-      updatedAt: new Date().toISOString()
-    };
-
-    onUpdateTask(updatedTask);
-    setDraggedTask(null);
-    setDragOverColumn(null);
-  }, [draggedTask, onUpdateTask]);
+    try {
+      // Usar la función específica para cambiar estado si está disponible
+      if(onChangeTaskStatus ) {
+        await onChangeTaskStatus( draggedTask.task_id2, newStatus );
+      } else if(onUpdateTask ) {
+        // Fallback al método de actualización general
+        await onUpdateTask( draggedTask.task_id2, { status: newStatus } );
+      }
+    } catch ( error ) {
+      console.error( 'Error al cambiar estado de tarea:', error );
+    } finally {
+      setDraggedTask( null );
+      setDragOverColumn( null );
+    }
+  }, [draggedTask, onUpdateTask, onChangeTaskStatus]);
 
   // Renderizar una columna
-  const renderColumn = (column) => {
-    const columnTasks = getTasksByStatus(column.status);
+  const renderColumn = ( column) => {
+    const columnTasks = getTasksByStatus( column.status );
     const isDragOver = dragOverColumn === column.status;
 
     return (
       <div
         key={column.id}
         className={`kanban-column ${column.className} ${isDragOver ? 'drag-over' : ''}`}
-        onDragOver={(e) => handleDragOver(e, column.status)}
+        onDragOver={( e) => handleDragOver( e, column.status )}
         onDragLeave={handleDragLeave}
-        onDrop={(e) => handleDrop(e, column.status)}
+        onDrop={( e) => handleDrop( e, column.status )}
       >
         {/* Header de la columna */}
         <div className="kanban-column-header">
@@ -107,11 +118,11 @@ const KanbanBoard = ({ tasks, onUpdateTask, onDeleteTask, onEditTask }) => {
         {/* Lista de tareas */}
         <div className="kanban-tasks">
           {columnTasks.length > 0 ? (
-            columnTasks.map(task => (
+            columnTasks.map( task => (
               <TaskCard
-                key={task.id}
+                key={task.task_id2}
                 task={task}
-                isDragging={draggedTask?.id === task.id}
+                isDragging={draggedTask?.task_id2 === task.task_id2}
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onEditTask={onEditTask}

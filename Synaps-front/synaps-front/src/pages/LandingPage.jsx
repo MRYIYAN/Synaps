@@ -20,7 +20,7 @@ const LandingPage = function() {
       anchor.addEventListener('click', function(e) {
         e.preventDefault();
         const targetId = this.getAttribute('href');
-        if (targetId === '#') return;
+        if(targetId === '#') return;
         
         document.querySelector(targetId)?.scrollIntoView({
           behavior: 'smooth'

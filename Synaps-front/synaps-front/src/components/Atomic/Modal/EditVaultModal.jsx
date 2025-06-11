@@ -75,13 +75,13 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
    * @returns {Object} - Objeto con isValid y errorMessage
    */
   const validateVaultName = (name) => {
-    if (!name.trim()) {
+    if(!name.trim()) {
       return { isValid: false, errorMessage: 'El nombre es obligatorio' };
     }
-    if (name.trim().length < 2) {
+    if(name.trim().length < 2) {
       return { isValid: false, errorMessage: 'El nombre debe tener al menos 2 caracteres' };
     }
-    if (name.trim().length > 50) {
+    if(name.trim().length > 50) {
       return { isValid: false, errorMessage: 'El nombre no puede exceder 50 caracteres' };
     }
     return { isValid: true, errorMessage: '' };
@@ -93,17 +93,17 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
    * @returns {Object} - Objeto con isValid y errorMessage
    */
   const validatePin = (pinValue) => {
-    if (isPrivate && !removePIN) {
-      if (!pinValue) {
+    if(isPrivate && !removePIN) {
+      if(!pinValue) {
         return { isValid: false, errorMessage: 'El PIN es obligatorio para vaults privadas' };
       }
-      if (pinValue.length < 4) {
+      if(pinValue.length < 4) {
         return { isValid: false, errorMessage: 'El PIN debe tener al menos 4 dígitos' };
       }
-      if (pinValue.length > 8) {
+      if(pinValue.length > 8) {
         return { isValid: false, errorMessage: 'El PIN no puede exceder 8 dígitos' };
       }
-      if (!/^\d+$/.test(pinValue)) {
+      if(!/^\d+$/.test(pinValue)) {
         return { isValid: false, errorMessage: 'El PIN solo puede contener números' };
       }
     }
@@ -125,7 +125,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
 
     // Verificar que los PINs coincidan si es vault privada y no se está removiendo el PIN
     let pinsMatch = true;
-    if (isPrivate && !removePIN && pin) {
+    if(isPrivate && !removePIN && pin) {
       pinsMatch = pin === confirmPin;
       setConfirmPinError(pinsMatch ? '' : 'Los PINs no coinciden');
     } else {
@@ -167,7 +167,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
     setVaultName(newName);
     
     // Limpiar error si existe
-    if (nameError) {
+    if(nameError) {
       setNameError('');
     }
   };
@@ -181,7 +181,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
     setPin(value);
     
     // Limpiar error si existe
-    if (pinError) {
+    if(pinError) {
       setPinError('');
     }
   };
@@ -195,7 +195,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
     setConfirmPin(value);
     
     // Limpiar error si existe
-    if (confirmPinError) {
+    if(confirmPinError) {
       setConfirmPinError('');
     }
   };
@@ -220,7 +220,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
    * Valida la coincidencia de PINs cuando el campo de confirmación pierde el foco
    */
   const handleConfirmPinBlur = () => {
-    if (confirmPin && isPrivate && !removePIN) {
+    if(confirmPin && isPrivate && !removePIN) {
       setConfirmPinError(pin === confirmPin ? '' : 'Los PINs no coinciden');
     }
   };
@@ -233,7 +233,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
     setIsPrivate(checked);
     
     // Si se desactiva vault privada, limpiar PIN y errores
-    if (!checked) {
+    if(!checked) {
       setPin('');
       setConfirmPin('');
       setPinError('');
@@ -250,7 +250,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
     setRemovePIN(checked);
     
     // Si se va a remover PIN, limpiar campos y errores
-    if (checked) {
+    if(checked) {
       setPin('');
       setConfirmPin('');
       setPinError('');
@@ -263,7 +263,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
    * @param {KeyboardEvent} e - Evento de teclado
    */
   const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
+    if(e.key === 'Escape') {
       handleClose();
     }
   };
@@ -272,7 +272,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
    * Función que se ejecuta cuando se completa la animación del popup de estado
    */
   const handleStatusComplete = () => {
-    if (statusPopup === STATUS.SUCCESS) {
+    if(statusPopup === STATUS.SUCCESS) {
       handleClose(); // Cerrar modal tras éxito
     }
     setStatusPopup(null);
@@ -281,11 +281,11 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
   //----------------------------------------------------------------------------------//
   // Inicia el proceso de edición de vault después de validar todos los campos necesarios
   //----------------------------------------------------------------------------------//
-  const handleEditVault = async () => {
-    if (isEditing) return;
+  const handleEditVault = async() => {
+    if(isEditing) return;
     setIsEditing(true);
 
-    if (!validateForm()) {
+    if(!validateForm()) {
       setStatusPopup(STATUS.ERROR);
       setStatusMessage('Error en el formulario');
       setErrorMessage('Por favor corrige los errores antes de continuar');
@@ -308,7 +308,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
 
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      if (result.result !== 1) {
+      if(result.result !== 1) {
         throw new Error(result.message || 'Error desconocido al actualizar vault');
       }
 
@@ -343,7 +343,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
 
   // Efecto para cargar datos de la vault cuando se abre el modal
   useEffect(() => {
-    if (isOpen && vault) {
+    if(isOpen && vault) {
       setVaultName(vault.vault_title || vault.name || '');
       setIsPrivate(Boolean(vault.is_private));
       setPin('');
@@ -360,7 +360,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
       
       // Enfocar el campo de nombre
       setTimeout(() => {
-        if (nameInputRef.current) {
+        if(nameInputRef.current) {
           nameInputRef.current.focus();
         }
       }, 100);
@@ -372,7 +372,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
   //====================================================================================//
 
   // No renderizar nada si el modal está cerrado
-  if (!isOpen || !vault) return null;
+  if(!isOpen || !vault) return null;
 
   return (
     <div className="modal-overlay" onKeyDown={handleKeyDown}>

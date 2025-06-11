@@ -100,7 +100,7 @@ class NoteService
     // DEBUG: agregar esto por ahora
     \Log::info("Intentando Redis para nota: $redis_key", ['contenido' => $cached_md]);
 
-    if ($cached_md !== null) {
+    if($cached_md !== null) {
         \Log::info("[Redis HIT] Usando markdown cacheado");
 
         return (object)[

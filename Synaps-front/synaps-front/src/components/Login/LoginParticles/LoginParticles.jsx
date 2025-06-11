@@ -113,7 +113,7 @@ const LoginParticles = () => {
         const distance = Math.sqrt(dx * dx + dy * dy);
         
         // Si la partícula está dentro del radio de influencia del cursor
-        if (distance < mouseRadius) {
+        if(distance < mouseRadius) {
           // Factor de repulsión: partículas más cercanas huyen más rápido
           const repulsionFactor = 1 - distance / mouseRadius;
           
@@ -126,14 +126,14 @@ const LoginParticles = () => {
           
           // Limitar velocidad máxima durante la huida para evitar movimiento errático
           const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-          if (currentSpeed > this.maxSpeed) {
+          if(currentSpeed > this.maxSpeed) {
             this.vx = (this.vx / currentSpeed) * this.maxSpeed;
             this.vy = (this.vy / currentSpeed) * this.maxSpeed;
           }
         } else {
           // Gradualmente volver a la velocidad base cuando no hay interacción
           const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-          if (currentSpeed > this.baseSpeed) {
+          if(currentSpeed > this.baseSpeed) {
             this.vx *= 0.98;
             this.vy *= 0.98;
           }
@@ -144,11 +144,11 @@ const LoginParticles = () => {
         this.y += this.vy;
         
         // Sistema de rebote en los bordes del canvas
-        if (this.x < 0 || this.x > canvas.width) {
+        if(this.x < 0 || this.x > canvas.width) {
           this.vx *= -1;
           this.x = this.x < 0 ? 0 : canvas.width;
         }
-        if (this.y < 0 || this.y > canvas.height) {
+        if(this.y < 0 || this.y > canvas.height) {
           this.vy *= -1;
           this.y = this.y < 0 ? 0 : canvas.height;
         }
@@ -204,7 +204,7 @@ const LoginParticles = () => {
           const maxDistance = 150; // Aumentado para mayor conectividad visual
           
           // Si las partículas están lo suficientemente cerca, dibujar conexión
-          if (distance < maxDistance) {
+          if(distance < maxDistance) {
             // Calcular opacidad basada en la distancia - más cerca = más visible
             const opacity = 1 - (distance / maxDistance);
             

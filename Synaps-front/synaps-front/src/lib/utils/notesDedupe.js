@@ -9,13 +9,13 @@
  * @returns {Array} - Array sin duplicados
  */
 export function removeDuplicates(items) {
-  if (!Array.isArray(items)) return [];
+  if(!Array.isArray(items)) return [];
   
   const seen = new Set();
   return items.filter(item => {
-    if (!item || !item.id2) return false;
+    if(!item || !item.id2) return false;
     
-    if (seen.has(item.id2)) {
+    if(seen.has(item.id2)) {
       return false;
     }
     
@@ -37,7 +37,7 @@ export function mergeWithoutDuplicates(existingItems, newItems) {
   // Crear un map de elementos existentes para búsqueda rápida
   const existingMap = new Map();
   existing.forEach(item => {
-    if (item && item.id2) {
+    if(item && item.id2) {
       existingMap.set(item.id2, item);
     }
   });
@@ -45,7 +45,7 @@ export function mergeWithoutDuplicates(existingItems, newItems) {
   // Agregar nuevos elementos solo si no existen
   const result = [...existing];
   newOnes.forEach(newItem => {
-    if (newItem && newItem.id2 && !existingMap.has(newItem.id2)) {
+    if(newItem && newItem.id2 && !existingMap.has(newItem.id2)) {
       result.push(newItem);
     }
   });
@@ -60,12 +60,12 @@ export function mergeWithoutDuplicates(existingItems, newItems) {
  * @returns {Array} - Array actualizado
  */
 export function updateOrAdd(items, newItem) {
-  if (!newItem || !newItem.id2) return items;
+  if(!newItem || !newItem.id2) return items;
   
   const existing = Array.isArray(items) ? items : [];
   const index = existing.findIndex(item => item && item.id2 === newItem.id2);
   
-  if (index >= 0) {
+  if(index >= 0) {
     // Actualizar elemento existente
     const updated = [...existing];
     updated[index] = newItem;
@@ -82,7 +82,7 @@ export function updateOrAdd(items, newItem) {
  * @returns {Array} - Array validado y sin duplicados
  */
 export function validateAndClean(items) {
-  if (!Array.isArray(items)) return [];
+  if(!Array.isArray(items)) return [];
   
   // Filtrar elementos válidos y eliminar duplicados
   const validItems = items.filter(item => 

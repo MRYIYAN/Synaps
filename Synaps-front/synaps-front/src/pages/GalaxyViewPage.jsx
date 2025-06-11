@@ -20,7 +20,7 @@ const GalaxyView = function() {
   useEffect( () => {
 
     // Llamada para capturar datos de la DB
-    const fetchData = async () => {
+    const fetchData = async() => {
       let url = 'http://localhost:8010/api/galaxyGraph';
       const { result, http_data } = await http_get( url );
 

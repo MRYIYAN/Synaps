@@ -22,20 +22,20 @@ const LogoutConfirmModal = ({ isOpen, onClose, onConfirm }) => {
   useEffect(() => {
     // Handler para cerrar con tecla Escape
     const handleEscKey = (event) => {
-      if (event.key === "Escape" && isOpen) {
+      if(event.key === "Escape" && isOpen) {
         onClose();
       }
     };
 
     // Control del estado de la página cuando se abre el modal
-    if (isOpen) {
+    if(isOpen) {
       // Añadimos la clase para evitar el scroll en el body mientras el modal está abierto
       document.body.classList.add("modal-open");
       
       // Enfocamos el primer botón al abrir para mejorar la accesibilidad
       setTimeout(() => {
         const closeButton = document.querySelector(".modal-close-btn");
-        if (closeButton) closeButton.focus();
+        if(closeButton) closeButton.focus();
       }, 100);
       
       // Añadimos el event listener para tecla Escape
@@ -77,7 +77,7 @@ const LogoutConfirmModal = ({ isOpen, onClose, onConfirm }) => {
   //  Renderizado condicional del modal                                       //
   //---------------------------------------------------------------------------//
   // Si no está abierto, no renderizar nada
-  if (!isOpen) return null;
+  if(!isOpen) return null;
 
   return (
     <div 

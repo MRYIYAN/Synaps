@@ -18,14 +18,14 @@ export default function DefaultMenu() {
   
   const handleNewNote = () => {
     // Crear nueva nota usando la función global
-    if (typeof window.toggleInput === 'function') {
+    if(typeof window.toggleInput === 'function') {
       window.toggleInput('newNote');
     }
   };
 
   const handleNewFolder = () => {
     // Crear nueva carpeta usando la función global
-    if (typeof window.toggleInput === 'function') {
+    if(typeof window.toggleInput === 'function') {
       window.toggleInput('newFolder');
     }
   };
