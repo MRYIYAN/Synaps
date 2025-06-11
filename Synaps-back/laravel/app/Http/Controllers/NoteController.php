@@ -1,8 +1,10 @@
 <?php
 
-// -------------------------------------------------------------------------------------------
-// NoteController.php
-// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------//
+// NoteController.php                                                                         //
+// -------------------------------------------------------------------------------------------//
+
+
 
 namespace App\Http\Controllers;
 
@@ -22,6 +24,8 @@ use App\Events\NoteUpdated;
 
 use App\Helpers\DatabaseHelper;
 use App\Helpers\AuthHelper;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 /**
  * Controlador para crear notas y carpetas en Synaps.
@@ -781,12 +785,11 @@ class NoteController extends Controller
         // Para RTF podrías usar una librería específica
         // Por ahora devolvemos un placeholder
         return "# " . pathinfo( $file->getClientOriginalName(), PATHINFO_FILENAME ) . "\n\n[Archivo RTF subido: " . $file->getClientOriginalName() . "]\n\nContenido del RTF pendiente de extracción.";
-        
+      // Agrega más casos según sea necesario para otros tipos de archivos     
       default:
         return "# " . pathinfo( $file->getClientOriginalName(), PATHINFO_FILENAME ) . "\n\n[Archivo subido: " . $file->getClientOriginalName() . "]\n\nTipo de archivo no soportado para extracción de contenido.";
     }
   }
-
   /**
    * POST /api/renameNote
    *
@@ -856,6 +859,59 @@ class NoteController extends Controller
         , 'message' => $message
         , 'note'    => $note
       ], $result ? 200 : 500 );
+    }
+  }
+  
+  /**
+   * POST /api/saveMarkdown
+   *
+   * Guarda el markdown de una nota (usado por el bridge WS).
+   *
+   * @param  Request $request
+   * @return JsonResponse
+   */
+  public function saveMarkdown(Request $request): JsonResponse
+  {
+    $token     = $request->input('token');
+    $markdown  = $request->input('markdown');
+    $jwt       = $request->bearerToken();
+    $user_id   = null;
+
+    try {
+        // Decodificar el JWT
+        $key = env('FLASK_SECRET_KEY');
+        $payload = JWT::decode($jwt, new Key($key, 'HS256'));
+        $payload = (array)$payload;
+        $user_id = $payload['sub'] ?? null;
+
+        if (!$user_id) {
+            throw new Exception('Token JWT inválido: sin user_id');
+        }
+
+        // Conectar a la base del usuario
+        $user_db = DatabaseHelper::connect($user_id);
+
+        // Buscar la nota (vault_id opcional ahora)
+        $note = Note::on($user_db)
+            ->where('note_id2', $token)
+            ->first();
+
+        if (!$note) {
+            throw new Exception('Nota no encontrada');
+        }
+
+        $note->note_markdown = $markdown;
+        $note->save();
+
+        return response()->json([
+            'result' => 1,
+            'message' => 'Nota guardada correctamente'
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'result' => 0,
+            'message' => $e->getMessage()
+        ], 500);
     }
   }
 }

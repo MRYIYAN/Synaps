@@ -148,6 +148,14 @@ try
          */
         Route::get( '/galaxyGraph', [NoteController::class, 'galaxyGraph'] );
 
+        /**
+         * POST /saveMarkdown
+         * Guarda el contenido Markdown de una nota.
+         *
+         * @see NoteController::saveMarkdown()
+         */
+        Route::post('/saveMarkdown', [NoteController::class, 'saveMarkdown']);
+
         //=======================//
         // FOLDERS API          //
         //=======================//

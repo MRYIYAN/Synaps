@@ -56,6 +56,8 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
       const url = 'http://localhost:8010/api/readNote';
       const body = { note_id2, vault_id };
 
+      console.log('[MDEditorWS] FETCH con Nota:', { url, body });
+
       const { result, http_data } = await http_get( url, body );
       if (result !== 1 || !http_data?.note ) {
         console.error( 'No se pudo cargar la nota' );
@@ -118,6 +120,8 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
   {
     set_markdown( new_md );
     const ws = ws_ref.current;
+    const jwt = localStorage.getItem('access_token');
+    console.log('[MDEditorWS] Token recuperado de localStorage:', jwt);
     if ( ws && ws.readyState === WebSocket.OPEN )
     {
       ws.send( JSON.stringify( {
@@ -125,6 +129,7 @@ export default function MDEditorWS({ note_id2 = '', vault_id = null, modal = fal
         , prefix:  'frontend:updates'
         , token:   note_id2
         , updates: { markdown: new_md }
+        , jwt     // <-- lo incluimos en el payload
       } ) );
     }
   };
