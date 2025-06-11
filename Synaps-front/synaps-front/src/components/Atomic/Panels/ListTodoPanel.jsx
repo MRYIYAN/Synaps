@@ -1,203 +1,224 @@
 //===========================================================================   //
 //                             PANEL DE TAREAS DE SYNAPS                        //
 //===========================================================================   //
-//  Este componente implementa un panel organizador de tareas con una barra     //
-//  de herramientas horizontal que permite crear, filtrar y gestionar paneles   //
-//  de tareas. Los botones de crear panel y buscar muestran inputs interactivos.//
+//  Este componente implementa un panel organizador de tareas con tablero       //
+//  Kanban drag & drop de 3 columnas.                                          //
 //===========================================================================   //
 
 //===========================================================================//
 //                             IMPORTS                                       //
 //===========================================================================//
 import React, { useState } from "react"; // Importamos useState para manejar los estados
-import { ReactComponent as NewPanelIcon } from "../../../assets/icons/add-board.svg"; // Icono para crear nuevo panel
-import { ReactComponent as ViewModeIcon } from "../../../assets/icons/view-grid.svg"; // Icono para cambiar modo de vista
-import { ReactComponent as SearchIcon } from "../../../assets/icons/search.svg"; // Icono de búsqueda
-import { ReactComponent as FilterIcon } from "../../../assets/icons/filter-sort.svg"; // Icono para filtrar/ordenar
+import { ReactComponent as AddTaskIcon } from "../../../assets/icons/add-board.svg"; // Icono para crear nueva tarea
+import CreateTaskModal from "../../Taskboard/Modals/CreateTaskModal";
+import EditTaskModal from "../../Taskboard/Modals/EditTaskModal";
+import DeleteTaskModal from "../../Taskboard/Modals/DeleteTaskModal";
+import TaskDetailsModal from "../../Taskboard/Modals/TaskDetailsModal";
+import KanbanBoard from "../../Taskboard/KanbanBoard/KanbanBoard";
+import TaskList from "../../Taskboard/TaskList/TaskList";
+import "../../Taskboard/Taskboard.css";
 //===========================================================================//
 
 //===========================================================================//
 //                             COMPONENTE LISTTODOPANEL                     //
 //===========================================================================//
-const ListTodoPanel = () => {
-  // Este componente implementa la barra de herramientas con inputs interactivos
+const ListTodoPanel = ({ viewType = "kanban" }) => {
+  // Este componente implementa un sistema completo de gestión de tareas
+  // viewType: "kanban" para vista de tablero completo, "list" para vista de lista en sidebar
 
   //---------------------------------------------------------------------------//
   //  Estados para manejar la interfaz                                        //
   //---------------------------------------------------------------------------//
-  // Estado para controlar la visibilidad de los campos de entrada
-  // Objeto que determina qué input está visible en cada momento
-  const [visibleInputs, setVisibleInputs] = useState({
-    search: false,    // Campo de búsqueda
-    newPanel: false,  // Input para crear nuevo panel
-  });
+  // Estado para controlar la visibilidad del modal de crear tarea
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  
+  // Estado para controlar la visibilidad del modal de editar tarea
+  const [showEditModal, setShowEditModal] = useState(false);
+  
+  // Estado para controlar la visibilidad del modal de eliminar tarea
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
+  // Estado para controlar la visibilidad del modal de detalles de tarea
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  
+  // Estado para almacenar la tarea que se está editando/eliminando/viendo
+  const [selectedTask, setSelectedTask] = useState(null);
 
-  // Estados para los valores de los inputs
-  const [searchQuery, setSearchQuery] = useState("");     // Consulta de búsqueda
-  const [newPanelName, setNewPanelName] = useState("");   // Nombre del nuevo panel
+  // Estado para almacenar todas las tareas
+  const [tasks, setTasks] = useState([
+    // Datos de ejemplo para desarrollo
+    {
+      id: 1,
+      title: "Diseñar interfaz de usuario",
+      description: "Crear mockups y wireframes para la nueva funcionalidad",
+      status: "todo",
+      createdAt: "2025-06-11T10:00:00Z",
+      updatedAt: "2025-06-11T10:00:00Z"
+    },
+    {
+      id: 2,
+      title: "Implementar API REST",
+      description: "Desarrollar endpoints para CRUD de tareas",
+      status: "in-progress",
+      createdAt: "2025-06-11T11:00:00Z",
+      updatedAt: "2025-06-11T11:00:00Z"
+    },
+    {
+      id: 3,
+      title: "Configurar base de datos",
+      description: "Configurar esquemas y migraciones",
+      status: "done",
+      createdAt: "2025-06-10T09:00:00Z",
+      updatedAt: "2025-06-11T09:00:00Z"
+    }
+  ]);
 
   //---------------------------------------------------------------------------//
   //  Handlers para manejar interacciones del usuario                         //
   //---------------------------------------------------------------------------//
-  // Función para mostrar/ocultar un campo de entrada específico
-  // Esta función gestiona qué input está visible en cada momento
-  const toggleInput = (inputType) => {
-    // Cerrar todos los demás inputs primero
-    const newState = {
-      search: false,
-      newPanel: false
-    };
-    
-    // Alternar el estado del input seleccionado
-    newState[inputType] = !visibleInputs[inputType];
-    
-    // Actualizar el estado con la nueva configuración
-    setVisibleInputs(newState);
-    
-    // Limpiar los valores de los inputs que se están ocultando
-    if (visibleInputs.search && !newState.search) {
-      setSearchQuery("");
+  // Función para abrir el modal de crear tarea
+  const handleOpenCreateModal = () => {
+    setShowCreateModal(true);
+  };
+
+  // Función para cerrar el modal de crear tarea
+  const handleCloseCreateModal = () => {
+    setShowCreateModal(false);
+  };
+
+  // Función para crear una nueva tarea
+  const handleCreateTask = (newTask) => {
+    setTasks(prevTasks => [...prevTasks, newTask]);
+    console.log("Nueva tarea creada:", newTask);
+    // TODO: Aquí se enviaría la tarea al backend
+  };
+
+  // Función para actualizar una tarea (cambiar estado, etc.)
+  const handleUpdateTask = (updatedTask) => {
+    setTasks(prevTasks => 
+      prevTasks.map(task => 
+        task.id === updatedTask.id ? updatedTask : task
+      )
+    );
+    console.log("Tarea actualizada:", updatedTask);
+    // TODO: Aquí se enviaría la actualización al backend
+  };
+
+  // Función para eliminar una tarea
+  const handleDeleteTask = (taskId) => {
+    // Buscar la tarea para mostrarla en el modal de confirmación
+    const taskToDelete = tasks.find(task => task.id === taskId);
+    if (taskToDelete) {
+      setSelectedTask(taskToDelete);
+      setShowDeleteModal(true);
     }
-    
-    if (visibleInputs.newPanel && !newState.newPanel) {
-      setNewPanelName("");
+  };
+
+  // Función para confirmar eliminación de tarea (desde el modal)
+  const handleConfirmDeleteTask = (taskId) => {
+    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    console.log("Tarea eliminada:", taskId);
+    setShowDeleteModal(false);
+    setSelectedTask(null);
+    // TODO: Aquí se enviaría la eliminación al backend
+  };
+
+  // Función para editar una tarea (abrir modal de edición)
+  const handleEditTask = (task) => {
+    setSelectedTask(task);
+    setShowEditModal(true);
+  };
+
+  // Función para guardar cambios de edición de tarea
+  const handleSaveEditTask = (updatedTask) => {
+    setTasks(prevTasks => 
+      prevTasks.map(task => 
+        task.id === updatedTask.id ? updatedTask : task
+      )
+    );
+    console.log("Tarea editada:", updatedTask);
+    setShowEditModal(false);
+    setSelectedTask(null);
+    // TODO: Aquí se enviaría la actualización al backend
+  };
+
+  // Función para cerrar modales
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setSelectedTask(null);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setSelectedTask(null);
+  };
+
+  const handleCloseDetailsModal = () => {
+    setShowDetailsModal(false);
+    setSelectedTask(null);
+  };
+
+  // Función para manejar clics en tareas de la lista (para vista de sidebar)
+  const handleTaskClick = (task) => {
+    if (viewType === "list") {
+      // En vista de lista, al hacer clic se abre el modal de detalles
+      setSelectedTask(task);
+      setShowDetailsModal(true);
     }
-  };
-
-  // Función que se ejecuta cuando el usuario escribe en el campo de búsqueda
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  // Función que se ejecuta cuando el usuario escribe en el campo de nuevo panel
-  const handleNewPanelNameChange = (e) => {
-    setNewPanelName(e.target.value);
-  };
-
-  // Función que se ejecuta cuando se envía el formulario de búsqueda
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-    
-    console.log("Buscando:", searchQuery);
-    // TODO: Implementar la búsqueda real
-    
-    // No ocultamos el input después de la búsqueda para permitir búsquedas adicionales
-  };
-
-  // Función para crear un nuevo panel
-  const handleNewPanelSubmit = (e) => {
-    e.preventDefault();
-    if (!newPanelName.trim()) return;
-    
-    console.log("Creando nuevo panel:", newPanelName);
-    // TODO: Implementar la creación real del panel
-    
-    // Limpiar el input y ocultarlo después de crear el panel
-    setNewPanelName("");
-    setVisibleInputs(prev => ({...prev, newPanel: false}));
-  };
-
-  // Función para manejar las opciones de filtrado y modo de vista
-  const handleFilter = () => {
-    console.log("Abrir opciones de filtrado");
-    // TODO: Implementar el filtrado
-  };
-
-  const handleViewMode = () => {
-    console.log("Cambiar modo de vista");
-    // TODO: Implementar cambio de modo de vista
   };
 
   //---------------------------------------------------------------------------//
   //  Renderizado del componente ListTodoPanel                                //
   //---------------------------------------------------------------------------//
   return (
-    <div className="search-panel task-panel">
-      {/* Barra de herramientas horizontal con botones */}
-      <div className="toolbar-container">
-        <div className="toolbar-buttons">
-          {/* Botón para crear un nuevo panel de tareas */}
-          <button 
-            className={`toolbar-button ${visibleInputs.newPanel ? 'active' : ''}`}
-            onClick={() => toggleInput('newPanel')}
-            aria-label="Crear nuevo panel de tareas"
-            title="Crear nuevo panel de tareas"
-            aria-expanded={visibleInputs.newPanel}
-          >
-            <NewPanelIcon className="toolbar-icon" />
-          </button>
-          
-          {/* Botón para cambiar el modo de visualización */}
-          <button 
-            className="toolbar-button"
-            onClick={handleViewMode}
-            aria-label="Cambiar modo de vista"
-            title="Cambiar modo de vista"
-          >
-            <ViewModeIcon className="toolbar-icon" />
-          </button>
-          
-          {/* Botón de búsqueda - en la misma posición que en FilesPanel */}
-          <button 
-            className={`toolbar-button ${visibleInputs.search ? 'active' : ''}`}
-            onClick={() => toggleInput('search')}
-            aria-label="Buscar paneles"
-            title="Buscar paneles"
-            aria-expanded={visibleInputs.search}
-          >
-            <SearchIcon className="toolbar-icon" />
-          </button>
-        </div>
-      </div>
+    <div className={`search-panel task-panel ${viewType === "list" ? "task-panel-sidebar" : "task-panel-full"}`}>
+      {/* Renderizado condicional basado en el tipo de vista */}
+      {viewType === "list" ? (
+        // Vista de lista para sidebar
+        <TaskList
+          tasks={tasks}
+          onTaskClick={handleTaskClick}
+          onCreateTask={handleOpenCreateModal}
+        />
+      ) : (
+        // Vista de tablero Kanban para página completa
+        <KanbanBoard
+          tasks={tasks}
+          onUpdateTask={handleUpdateTask}
+          onDeleteTask={handleDeleteTask}
+          onEditTask={handleEditTask}
+        />
+      )}
 
-      {/* Contenedor para los formularios desplegables */}
-      <div className="input-group-container">
-        {/* Formulario para crear un nuevo panel - visible solo cuando se activa */}
-        {visibleInputs.newPanel && (
-          <form onSubmit={handleNewPanelSubmit} className="new-item-form">
-            <div className="new-item-input-container">
-              {/* Icono indicador del tipo de elemento a crear */}
-              <NewPanelIcon className="new-item-icon" />
-              {/* Campo para ingresar el nombre del nuevo panel */}
-              <input
-                type="text"
-                value={newPanelName}
-                onChange={handleNewPanelNameChange}
-                placeholder="Nombre del panel"
-                className="new-item-input"
-                aria-label="Nombre del nuevo panel"
-                autoFocus  // Enfoca automáticamente este campo al aparecer
-              />
-            </div>
-          </form>
-        )}
+      {/* Modal para crear nueva tarea (común a ambas vistas) */}
+      <CreateTaskModal
+        isOpen={showCreateModal}
+        onClose={handleCloseCreateModal}
+        onCreateTask={handleCreateTask}
+      />
 
-        {/* Campo de búsqueda desplegable - visible solo cuando se activa */}
-        {visibleInputs.search && (
-          <form onSubmit={handleSearch} className="search-form">
-            <div className="search-input-container">
-              {/* Icono de búsqueda dentro del campo */}
-              <SearchIcon className="search-icon" />
-              {/* Campo para ingresar la consulta de búsqueda */}
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                placeholder="Buscar paneles de tareas"
-                className="search-input"
-                aria-label="Buscar paneles"
-                autoFocus  // Enfoca automáticamente este campo al aparecer
-              />
-            </div>
-          </form>
-        )}
-      </div>
+      {/* Modal para editar tarea */}
+      <EditTaskModal
+        isOpen={showEditModal}
+        onClose={handleCloseEditModal}
+        onEditTask={handleSaveEditTask}
+        task={selectedTask}
+      />
 
-      {/* Área de contenido principal - vacía por ahora */}
-      <div className="task-panels-content">
-        {/* El contenido de los paneles de tareas se mostrará aquí */}
-      </div>
+      {/* Modal para eliminar tarea */}
+      <DeleteTaskModal
+        isOpen={showDeleteModal}
+        onClose={handleCloseDeleteModal}
+        onDeleteTask={handleConfirmDeleteTask}
+        task={selectedTask}
+      />
+
+      {/* Modal para ver detalles de tarea */}
+      <TaskDetailsModal
+        isOpen={showDetailsModal}
+        onClose={handleCloseDetailsModal}
+        task={selectedTask}
+      />
     </div>
   );
 };

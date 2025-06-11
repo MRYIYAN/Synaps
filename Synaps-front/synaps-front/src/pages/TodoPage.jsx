@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import SidebarPanel from "../components/SidebarPanel";
+import ListTodoPanel from "../components/Atomic/Panels/ListTodoPanel";
 
 // ------------------------------------------------------------
 // Componentes React
@@ -19,8 +21,12 @@ const Todo = function() {
 
   // HTML del formulario
   return (
-    <div>
-      <h1>Todo</h1>
+    <div className="app-layout">
+      <SidebarPanel defaultSelectedItem="list-todo" />
+      <main className="main-content">
+        {/* Aquí mostramos el tablero Kanban completo */}
+        <ListTodoPanel viewType="kanban" />
+      </main>
     </div>
   );
 }

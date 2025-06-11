@@ -121,11 +121,7 @@ export default function NoteItem( {
 
     if( hasChildren ) {
 
-      // Si es carpeta, recarga su contenido y expande/colapsa con un solo click
-      if( typeof window.getNotesForFolder === 'function' )
-        window.getNotesForFolder( id );
-        
-      // Toggle inmediato
+      // Si es carpeta, solo expandir/colapsar - el contenido ya está cargado en el árbol
       if( typeof onToggle === 'function' )
         onToggle();
     } else {

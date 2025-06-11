@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactComponent as FoldersIcon } from "../assets/icons/folders.svg";
 import { ReactComponent as GalaxyViewIcon } from "../assets/icons/waypoints.svg";
 import { ReactComponent as ListTodoIcon } from "../assets/icons/list-todo.svg";
@@ -29,9 +29,9 @@ const { getFolders } = FoldersHelper();
 
 // Configuración de los elementos de navegación
 const navigationItems = [
-  { id: "files", label: "Archivos", icon: FoldersIcon },
+  { id: "files", label: "Archivos", icon: FoldersIcon, url: '/markdowneditor' },
   { id: "galaxyview", label: "Vista de galaxia", icon: GalaxyViewIcon, url: '/galaxyview' },
-  { id: "list-todo", label: "Lista de tareas", icon: ListTodoIcon },
+  { id: "list-todo", label: "Lista de tareas", icon: ListTodoIcon, url: '/todo' },
   // { id: "secret-notes", label: "Notas secretas", icon: SecretNotesIcon },
 ];
 
@@ -43,12 +43,13 @@ const panelComponents = {
   // "secret-notes": SecretNotesPanel,
 };
 
-const SidebarPanel = () => {
+const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   
   // Estados para la interfaz de usuario
   const [rightPanelOpen, setRightPanelOpen]       = useState(true);
-  const [selectedItem, setSelectedItem]           = useState('files');
+  const [selectedItem, setSelectedItem]           = useState(defaultSelectedItem);
   const [indicatorPosition, setIndicatorPosition] = useState(0);
   const [isClosing, setIsClosing]                 = useState(false);
   const [showLogoutModal, setShowLogoutModal]     = useState(false);
@@ -98,8 +99,9 @@ const SidebarPanel = () => {
     // Notificar a FilesPanel que cambió la vault
     window.dispatchEvent(new Event("vaultChanged"));
 
-    getFolders(vault?.vault_id); 
-    getNotes(vault?.vault_id);  // Cargar notas de la vault seleccionada
+    // SOLO cargar notas - la API ya incluye carpetas y notas juntas
+    // Esto evita la duplicación causada por llamar getFolders() y getNotes() por separado
+    getNotes(vault?.vault_id);
 
     // Opcional: reiniciar nota seleccionada
     window.readNote?.('', vault?.vault_id);
@@ -219,16 +221,59 @@ const SidebarPanel = () => {
     fetchVaults();
   }, [handleVaultSelect]); // Include handleVaultSelect in dependency array
 
-  // Manejo de clics en la barra de navegación
-  const handleIconClick = (itemId, index) => {
-    if(selectedItem === itemId) {
-      if(rightPanelOpen)
-        handleCloseSidebar();
-      else
+  // Establecer la posición inicial del indicador basada en defaultSelectedItem
+  useEffect(() => {
+    const itemIndex = navigationItems.findIndex(item => item.id === defaultSelectedItem);
+    if (itemIndex !== -1) {
+      setIndicatorPosition(itemIndex * 48);
+    }
+  }, [defaultSelectedItem]);
+
+  // Sincronizar selección con la URL actual
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const currentItem = navigationItems.find(item => item.url === currentPath);
+    
+    if (currentItem && currentItem.id !== selectedItem) {
+      setSelectedItem(currentItem.id);
+      const itemIndex = navigationItems.findIndex(item => item.id === currentItem.id);
+      setIndicatorPosition(itemIndex * 48);
+      
+      // Solo mostrar panel si no es galaxy view
+      if (currentItem.id !== 'galaxyview') {
         setRightPanelOpen(true);
+      } else {
+        setRightPanelOpen(false);
+      }
+    }
+  }, [location.pathname]);
+
+  // Manejo de clics en la barra de navegación
+  const handleIconClick = (item, index) => {
+    const { id, url } = item;
+    
+    // Si el item ya está seleccionado, toggle del panel
+    if(selectedItem === id) {
+      if(rightPanelOpen) {
+        handleCloseSidebar();
+      } else {
+        setRightPanelOpen(true);
+      }
     } else {
-      setSelectedItem(itemId);
-      setRightPanelOpen(true);
+      // Cambiar selección
+      setSelectedItem(id);
+      
+      // Si tiene URL, navegar usando SPA
+      if(url) {
+        navigate(url);
+      }
+      
+      // Solo abrir el panel si no estamos navegando a galaxy view
+      if(id !== 'galaxyview') {
+        setRightPanelOpen(true);
+      } else {
+        setRightPanelOpen(false);
+      }
     }
     
     setIndicatorPosition(index * 48);
@@ -433,29 +478,17 @@ const handleCreateVault = async (vaultData) => {
           {navigationItems.map((item, index) => {
             const IconComponent = item.icon;
             const isActive = selectedItem === item.id;
-            const hasUrl   = 'url' in item && item.url;
 
             return (
               <li 
                 key={item.id} 
                 className={isActive ? "active" : ""} 
-                onClick={() => handleIconClick(item.id, index)}
+                onClick={() => handleIconClick(item, index)}
                 role="menuitem"
                 aria-current={isActive ? "page" : undefined}
+                style={{ cursor: 'pointer' }}
               >
-                {/* Si tiene una URl vinculada, creamos un link */}
-                {hasUrl ? (
-                  <a 
-                    href={item.url}
-                    tabIndex={0}
-                    className="nav-link"
-                    aria-label={item.title || item.id}
-                  >
-                    <IconComponent aria-hidden="true" />
-                  </a>
-                ) : (
-                  <IconComponent aria-hidden="true" />
-                )}
+                <IconComponent aria-hidden="true" />
               </li>
             );
           })}
@@ -476,7 +509,7 @@ const handleCreateVault = async (vaultData) => {
       </aside>
 
       {/* Side Bar - panel que aparece a la derecha de Activity Bar */}
-      {(rightPanelOpen || isClosing) && CurrentPanelComponent && location.pathname !== '/galaxyview' && (
+      {(rightPanelOpen || isClosing) && CurrentPanelComponent && selectedItem !== 'galaxyview' && (
         <div className={`right-options-panel ${isClosing ? 'closing' : ''}`}>
           {/* Logo en la parte superior */}
 
@@ -495,7 +528,7 @@ const handleCreateVault = async (vaultData) => {
             <CurrentPanelComponent
               notes={notes}
               getNotes={getNotes}
-           
+              viewType={selectedItem === "list-todo" ? "list" : undefined}
             />
           </div>
           {/* Componente de perfil de usuario en la parte inferior */}

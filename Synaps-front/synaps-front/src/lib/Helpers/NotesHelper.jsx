@@ -33,7 +33,7 @@ export function NotesHelper() {
   // FUNCIONES PRINCIPALES
   // =========================================================================
 
-  // Obtener notas de la API para un vault y carpeta específicos
+  // Obtener notas de la API para un vault específico
   const getNotes = async (vault_id, parent_id = 0) => {
     vault_id = parseInt(vault_id, 10);
     if (isNaN(vault_id)) {
@@ -43,8 +43,14 @@ export function NotesHelper() {
     
     try {
       const url = 'http://localhost:8010/api/getNotes';
-      const body = { parent_id, vault_id };
+      // SIEMPRE cargar toda la estructura del vault (parent_id = 0)
+      // Esto permite construir el árbol jerárquico completo donde:
+      // - Las carpetas se pueden expandir/colapsar localmente
+      // - No se pierde el contexto de navegación
+      // - El sidebar no se "recarga" al hacer clic en carpetas
+      const body = { parent_id: 0, vault_id };
 
+      console.log('Cargando estructura completa del vault:', vault_id);
       const { result, http_data } = await http_get(url, body);
       
       if (result !== 1) throw new Error('Error loading notes');
