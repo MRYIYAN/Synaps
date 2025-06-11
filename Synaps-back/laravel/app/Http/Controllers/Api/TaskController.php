@@ -17,7 +17,7 @@ class TaskController extends Controller
 {
     protected $taskService;
 
-    public function __construct(TaskService $taskService)
+    public function __construct( TaskService $taskService )
     {
         $this->taskService = $taskService;
     }
@@ -25,16 +25,16 @@ class TaskController extends Controller
     /**
      * Listar tareas con filtros
      */
-    public function index(Request $request): JsonResponse
+    public function index( Request $request ): JsonResponse
     {
         try {
             // Autenticación
             $auth_result = AuthHelper::getAuthenticatedUserId();
-            if($auth_result['error_response']) {
-                throw new Exception('Usuario no autenticado');
+            if( $auth_result['error_response'] ) {
+                throw new Exception( 'Usuario no autenticado' );
             }
             $user_id = $auth_result['user_id'];
-            $user_db = DatabaseHelper::connect($user_id);
+            $user_db = DatabaseHelper::connect( $user_id );
 
             // Validar parámetros
             $request->validate([
@@ -48,16 +48,16 @@ class TaskController extends Controller
                 'limit' => 'sometimes|integer|min:1|max:100'
             ]);
 
-            $vault_id = $request->get('vault_id');
+            $vault_id = $request->get( 'vault_id' );
             $filters = $request->only(['status', 'priority', 'assigned_to', 'folder_id', 'search']);
-            $page = $request->get('page', 1);
-            $limit = $request->get('limit', 15);
+            $page = $request->get( 'page', 1 );
+            $limit = $request->get( 'limit', 15 );
 
             // Usar conexión tenant
-            Task::setConnectionName($user_db);
-            TaskTag::setConnectionName($user_db);
+            Task::setConnectionName( $user_db );
+            TaskTag::setConnectionName( $user_db );
 
-            $tasks = $this->taskService->getPaginatedTasks($vault_id, $filters, $page, $limit);
+            $tasks = $this->taskService->getPaginatedTasks( $vault_id, $filters, $page, $limit );
 
             return response()->json([
                 'result' => 1,
@@ -70,8 +70,8 @@ class TaskController extends Controller
                 ]
             ]);
 
-        } catch (Exception $e) {
-            Log::error('TASK_CONTROLLER: Error al listar tareas', [
+        } catch( Exception $e ) {
+            Log::error( 'TASK_CONTROLLER: Error al listar tareas', [
                 'error' => $e->getMessage(),
                 'user_id' => $user_id ?? null
             ]);
@@ -86,16 +86,16 @@ class TaskController extends Controller
     /**
      * Crear nueva tarea
      */
-    public function store(Request $request): JsonResponse
+    public function store( Request $request ): JsonResponse
     {
         try {
             // Autenticación
             $auth_result = AuthHelper::getAuthenticatedUserId();
-            if($auth_result['error_response']) {
-                throw new Exception('Usuario no autenticado');
+            if( $auth_result['error_response'] ) {
+                throw new Exception( 'Usuario no autenticado' );
             }
             $user_id = $auth_result['user_id'];
-            $user_db = DatabaseHelper::connect($user_id);
+            $user_db = DatabaseHelper::connect( $user_id );
 
             // Validar datos
             $validated = $request->validate([
@@ -111,11 +111,11 @@ class TaskController extends Controller
             ]);
 
             // Usar conexión tenant
-            Task::setConnectionName($user_db);
-            TaskTag::setConnectionName($user_db);
+            Task::setConnectionName( $user_db );
+            TaskTag::setConnectionName( $user_db );
 
             // Crear tarea (siempre en estado 'todo')
-            $task = $this->taskService->createTask($validated, $user_id);
+            $task = $this->taskService->createTask( $validated, $user_id );
 
             return response()->json([
                 'result' => 1,
@@ -123,8 +123,8 @@ class TaskController extends Controller
                 'task' => $task
             ], 201);
 
-        } catch (Exception $e) {
-            Log::error('TASK_CONTROLLER: Error al crear tarea', [
+        } catch( Exception $e ) {
+            Log::error( 'TASK_CONTROLLER: Error al crear tarea', [
                 'error' => $e->getMessage(),
                 'data' => $request->all(),
                 'user_id' => $user_id ?? null
@@ -140,25 +140,25 @@ class TaskController extends Controller
     /**
      * Mostrar tarea específica
      */
-    public function show(Request $request, $task_id2): JsonResponse
+    public function show( Request $request, $task_id2 ): JsonResponse
     {
         try {
             // Autenticación
             $auth_result = AuthHelper::getAuthenticatedUserId();
-            if($auth_result['error_response']) {
-                throw new Exception('Usuario no autenticado');
+            if( $auth_result['error_response'] ) {
+                throw new Exception( 'Usuario no autenticado' );
             }
             $user_id = $auth_result['user_id'];
-            $user_db = DatabaseHelper::connect($user_id);
+            $user_db = DatabaseHelper::connect( $user_id );
 
             // Usar conexión tenant
-            Task::setConnectionName($user_db);
+            Task::setConnectionName( $user_db );
 
             $task = Task::with(['tags', 'assignedUser', 'creator', 'comments.user', 'attachments', 'folder'])
-                       ->where('task_id2', $task_id2)
+                       ->where( 'task_id2', $task_id2 )
                        ->first();
 
-            if(!$task) {
+            if( !$task ) {
                 return response()->json([
                     'result' => 0,
                     'message' => 'Tarea no encontrada'
@@ -170,8 +170,8 @@ class TaskController extends Controller
                 'task' => $task
             ]);
 
-        } catch (Exception $e) {
-            Log::error('TASK_CONTROLLER: Error al obtener tarea', [
+        } catch( Exception $e ) {
+            Log::error( 'TASK_CONTROLLER: Error al obtener tarea', [
                 'error' => $e->getMessage(),
                 'task_id2' => $task_id2,
                 'user_id' => $user_id ?? null
@@ -187,16 +187,16 @@ class TaskController extends Controller
     /**
      * Actualizar tarea
      */
-    public function update(Request $request, $task_id2): JsonResponse
+    public function update( Request $request, $task_id2 ): JsonResponse
     {
         try {
             // Autenticación
             $auth_result = AuthHelper::getAuthenticatedUserId();
-            if($auth_result['error_response']) {
-                throw new Exception('Usuario no autenticado');
+            if( $auth_result['error_response'] ) {
+                throw new Exception( 'Usuario no autenticado' );
             }
             $user_id = $auth_result['user_id'];
-            $user_db = DatabaseHelper::connect($user_id);
+            $user_db = DatabaseHelper::connect( $user_id );
 
             // Validar datos
             $validated = $request->validate([
@@ -212,19 +212,19 @@ class TaskController extends Controller
             ]);
 
             // Usar conexión tenant
-            Task::setConnectionName($user_db);
-            TaskTag::setConnectionName($user_db);
+            Task::setConnectionName( $user_db );
+            TaskTag::setConnectionName( $user_db );
 
-            $task = Task::where('task_id2', $task_id2)->first();
+            $task = Task::where( 'task_id2', $task_id2 )->first();
 
-            if(!$task) {
+            if( !$task ) {
                 return response()->json([
                     'result' => 0,
                     'message' => 'Tarea no encontrada'
                 ], 404);
             }
 
-            $updatedTask = $this->taskService->updateTask($task, $validated, $user_id);
+            $updatedTask = $this->taskService->updateTask( $task, $validated, $user_id );
 
             return response()->json([
                 'result' => 1,
@@ -232,8 +232,8 @@ class TaskController extends Controller
                 'task' => $updatedTask
             ]);
 
-        } catch (Exception $e) {
-            Log::error('TASK_CONTROLLER: Error al actualizar tarea', [
+        } catch( Exception $e ) {
+            Log::error( 'TASK_CONTROLLER: Error al actualizar tarea', [
                 'error' => $e->getMessage(),
                 'task_id2' => $task_id2,
                 'data' => $request->all(),
@@ -250,43 +250,53 @@ class TaskController extends Controller
     /**
      * Eliminar tarea
      */
-    public function destroy(Request $request, $task_id2): JsonResponse
+    public function destroy( Request $request, $task_id2 ): JsonResponse
     {
         try {
             // Autenticación
             $auth_result = AuthHelper::getAuthenticatedUserId();
-            if($auth_result['error_response']) {
-                throw new Exception('Usuario no autenticado');
+            if( $auth_result['error_response'] ) {
+                throw new Exception( 'Usuario no autenticado' );
             }
             $user_id = $auth_result['user_id'];
-            $user_db = DatabaseHelper::connect($user_id);
+            $user_db = DatabaseHelper::connect( $user_id );
 
             // Usar conexión tenant
-            Task::setConnectionName($user_db);
+            Task::setConnectionName( $user_db );
 
-            $task = Task::where('task_id2', $task_id2)->first();
+            // Buscar tarea incluyendo soft deletes
+            $task = Task::withTrashed()->where( 'task_id2', $task_id2 )->first();
 
-            if(!$task) {
+            if( !$task ) {
+                // Buscar tareas similares para debug
+                $similarTasks = Task::withTrashed()
+                    ->select( 'task_id2', 'title', 'vault_id', 'deleted_at' )
+                    ->where( 'task_id2', 'LIKE', '%' . substr( $task_id2, 0, 5 ) . '%' )
+                    ->limit( 5 )
+                    ->get();
+
                 return response()->json([
                     'result' => 0,
-                    'message' => 'Tarea no encontrada'
+                    'message' => 'Tarea no encontrada en la base de datos'
                 ], 404);
             }
 
-            $this->taskService->deleteTask($task, $user_id);
+            // Verificar si la tarea ya está eliminada
+            if( $task->trashed() ) {
+                return response()->json([
+                    'result' => 0,
+                    'message' => 'La tarea ya ha sido eliminada'
+                ], 410);
+            }
+
+            $this->taskService->deleteTask( $task, $user_id );
 
             return response()->json([
                 'result' => 1,
                 'message' => 'Tarea eliminada exitosamente'
             ]);
 
-        } catch (Exception $e) {
-            Log::error('TASK_CONTROLLER: Error al eliminar tarea', [
-                'error' => $e->getMessage(),
-                'task_id2' => $task_id2,
-                'user_id' => $user_id ?? null
-            ]);
-
+        } catch( Exception $e ) {
             return response()->json([
                 'result' => 0,
                 'message' => 'Error al eliminar la tarea: ' . $e->getMessage()
@@ -297,39 +307,34 @@ class TaskController extends Controller
     /**
      * Obtener estadísticas de tareas
      */
-    public function stats(Request $request): JsonResponse
+    public function stats( Request $request ): JsonResponse
     {
         try {
             // Autenticación
             $auth_result = AuthHelper::getAuthenticatedUserId();
-            if($auth_result['error_response']) {
-                throw new Exception('Usuario no autenticado');
+            if( $auth_result['error_response'] ) {
+                throw new Exception( 'Usuario no autenticado' );
             }
             $user_id = $auth_result['user_id'];
-            $user_db = DatabaseHelper::connect($user_id);
+            $user_db = DatabaseHelper::connect( $user_id );
 
             $request->validate([
                 'vault_id' => 'required|integer'
             ]);
 
-            $vault_id = $request->get('vault_id');
+            $vault_id = $request->get( 'vault_id' );
 
             // Usar conexión tenant
-            Task::setConnectionName($user_db);
+            Task::setConnectionName( $user_db );
 
-            $stats = $this->taskService->getTaskStats($vault_id);
+            $stats = $this->taskService->getTaskStats( $vault_id );
 
             return response()->json([
                 'result' => 1,
                 'stats' => $stats
             ]);
 
-        } catch (Exception $e) {
-            Log::error('TASK_CONTROLLER: Error al obtener estadísticas', [
-                'error' => $e->getMessage(),
-                'user_id' => $user_id ?? null
-            ]);
-
+        } catch( Exception $e ) {
             return response()->json([
                 'result' => 0,
                 'message' => 'Error al obtener estadísticas: ' . $e->getMessage()
@@ -340,16 +345,16 @@ class TaskController extends Controller
     /**
      * Actualización masiva de estado
      */
-    public function bulkUpdateStatus(Request $request): JsonResponse
+    public function bulkUpdateStatus( Request $request ): JsonResponse
     {
         try {
             // Autenticación
             $auth_result = AuthHelper::getAuthenticatedUserId();
-            if($auth_result['error_response']) {
-                throw new Exception('Usuario no autenticado');
+            if( $auth_result['error_response'] ) {
+                throw new Exception( 'Usuario no autenticado' );
             }
             $user_id = $auth_result['user_id'];
-            $user_db = DatabaseHelper::connect($user_id);
+            $user_db = DatabaseHelper::connect( $user_id );
 
             $validated = $request->validate([
                 'task_ids' => 'required|array|min:1',
@@ -358,7 +363,7 @@ class TaskController extends Controller
             ]);
 
             // Usar conexión tenant
-            Task::setConnectionName($user_db);
+            Task::setConnectionName( $user_db );
 
             $updated = $this->taskService->bulkUpdateStatus(
                 $validated['task_ids'],
@@ -372,13 +377,7 @@ class TaskController extends Controller
                 'updated_count' => $updated
             ]);
 
-        } catch (Exception $e) {
-            Log::error('TASK_CONTROLLER: Error en actualización masiva', [
-                'error' => $e->getMessage(),
-                'data' => $request->all(),
-                'user_id' => $user_id ?? null
-            ]);
-
+        } catch( Exception $e ) {
             return response()->json([
                 'result' => 0,
                 'message' => 'Error en la actualización masiva: ' . $e->getMessage()

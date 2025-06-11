@@ -31,7 +31,6 @@ class AuthHelper
     try
     {
       // Obtenemos el usuario completo autenticado usando el guard por defecto
-      Log::debug('AUTH_HELPER: Intentando obtener usuario con guard por defecto');
       $user = Auth::user();
       
       if( !$user )
@@ -39,8 +38,6 @@ class AuthHelper
 
       $user_id = $user->user_id;
       $user_id2 = $user->user_id2;
-      
-      Log::debug('AUTH_HELPER: IDs obtenidos', ['user_id' => $user_id, 'user_id2' => $user_id2]);
       
       if( !$user_id )
         throw new Exception( 'Usuario no autenticado' );

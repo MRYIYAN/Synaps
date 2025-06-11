@@ -40,7 +40,7 @@ class Task extends Model
     protected $dates = ['deleted_at'];
 
     // Métodos para manejar conexiones dinámicas
-    public static function setConnectionName( $connectionName)
+    public static function setConnectionName( $connectionName )
     {
         static::$connectionName = $connectionName;
     }
@@ -53,61 +53,61 @@ class Task extends Model
     // Relaciones
     public function vault()
     {
-        return $this->belongsTo(Vault::class, 'vault_id', 'vault_id' );
+        return $this->belongsTo( Vault::class, 'vault_id', 'vault_id' );
     }
 
     public function folder()
     {
-        return $this->belongsTo(FolderNote::class, 'folder_id', 'folder_id' );
+        return $this->belongsTo( FolderNote::class, 'folder_id', 'folder_id' );
     }
 
     public function assignedUser()
     {
         // Relación personalizada para acceder a usuarios en la BD principal
-        return $this->belongsTo(User::class, 'assigned_to', 'user_id' );
+        return $this->belongsTo( User::class, 'assigned_to', 'user_id' );
     }
 
     public function creator()
     {
         // Relación personalizada para acceder a usuarios en la BD principal  
-        return $this->belongsTo(User::class, 'created_by', 'user_id' );
+        return $this->belongsTo( User::class, 'created_by', 'user_id' );
     }
 
     // Métodos auxiliares para obtener usuarios directamente desde la BD principal
     public function getAssignedUserAttribute()
     {
-        if(!$this->assigned_to) return null;
+        if( !$this->assigned_to ) return null;
         return \DB::connection( 'synaps' )->table( 'users' )
-                 ->where( 'user_id', $this->assigned_to)
+                 ->where( 'user_id', $this->assigned_to )
                  ->first();
     }
 
     public function getCreatorUserAttribute()
     {
-        if(!$this->created_by) return null;
+        if( !$this->created_by ) return null;
         return \DB::connection( 'synaps' )->table( 'users' )
-                 ->where( 'user_id', $this->created_by)
+                 ->where( 'user_id', $this->created_by )
                  ->first();
     }
 
     public function tags()
     {
-        return $this->belongsToMany(TaskTag::class, 'task_tag_relations', 'task_id', 'tag_id' );
+        return $this->belongsToMany( TaskTag::class, 'task_tag_relations', 'task_id', 'tag_id' );
     }
 
     public function comments()
     {
-        return $this->hasMany(TaskComment::class, 'task_id', 'task_id' )->whereNull( 'deleted_at' );
+        return $this->hasMany( TaskComment::class, 'task_id', 'task_id' )->whereNull( 'deleted_at' );
     }
 
     public function attachments()
     {
-        return $this->hasMany(TaskAttachment::class, 'task_id', 'task_id' );
+        return $this->hasMany( TaskAttachment::class, 'task_id', 'task_id' );
     }
 
     public function history()
     {
-        return $this->hasMany(TaskHistory::class, 'task_id', 'task_id' );
+        return $this->hasMany( TaskHistory::class, 'task_id', 'task_id' );
     }
 
     // Scopes
@@ -126,23 +126,23 @@ class Task extends Model
         return $query->where( 'assigned_to', $userId );
     }
 
-    public function scopeOverdue( $query)
+    public function scopeOverdue( $query )
     {
-        return $query->where( 'due_date', '<', now())
-                    ->whereNotIn( 'status', ['done']);
+        return $query->where( 'due_date', '<', now() )
+                    ->whereNotIn( 'status', ['done'] );
     }
 
-    public function scopeTodo( $query)
+    public function scopeTodo( $query )
     {
         return $query->where( 'status', 'todo' );
     }
 
-    public function scopeInProgress( $query)
+    public function scopeInProgress( $query )
     {
         return $query->where( 'status', 'in-progress' );
     }
 
-    public function scopeDone( $query)
+    public function scopeDone( $query )
     {
         return $query->where( 'status', 'done' );
     }
@@ -189,20 +189,20 @@ class Task extends Model
     {
         parent::boot();
 
-        static::creating(function ( $task) {
+        static::creating( function ( $task ) {
             // Generar task_id2 único
             $task->task_id2 = self::generateUniqueId();
             
             // Asegurar que siempre se cree en estado 'todo'
-            if(!$task->status ) {
+            if( !$task->status ) {
                 $task->status = 'todo';
             }
         });
 
-        static::created(function ( $task) {
+        static::created( function ( $task ) {
             // Asegurar que TaskHistory use la misma conexión
-            if(static::$connectionName) {
-                TaskHistory::setConnectionName(static::$connectionName);
+            if( static::$connectionName ) {
+                TaskHistory::setConnectionName( static::$connectionName );
             }
             
             // Registrar en el historial
@@ -213,10 +213,10 @@ class Task extends Model
             ]);
         });
 
-        static::updating(function ( $task) {
+        static::updating( function ( $task ) {
             // Si cambia el status, actualizar completed_at
-            if( $task->isDirty( 'status' )) {
-                if( $task->status === 'done' && !$task->completed_at) {
+            if( $task->isDirty( 'status' ) ) {
+                if( $task->status === 'done' && !$task->completed_at ) {
                     $task->completed_at = now();
                 } elseif( $task->status !== 'done' ) {
                     $task->completed_at = null;
@@ -224,17 +224,17 @@ class Task extends Model
             }
         });
 
-        static::updated(function ( $task) {
+        static::updated( function ( $task ) {
             // Asegurar que TaskHistory use la misma conexión
-            if(static::$connectionName) {
-                TaskHistory::setConnectionName(static::$connectionName);
+            if( static::$connectionName ) {
+                TaskHistory::setConnectionName( static::$connectionName );
             }
             
             // Registrar cambios en el historial
             $changes = $task->getChanges();
-            unset( $changes['updated_at']); // No registrar cambios de updated_at
+            unset( $changes['updated_at'] ); // No registrar cambios de updated_at
 
-            foreach ( $changes as $field => $newValue) {
+            foreach( $changes as $field => $newValue ) {
                 $oldValue = $task->getOriginal( $field );
                 
                 TaskHistory::create([
@@ -251,6 +251,6 @@ class Task extends Model
 
     private static function generateUniqueId()
     {
-        return strtoupper(bin2hex(random_bytes(16)));
+        return strtoupper( bin2hex( random_bytes( 16 ) ) );
     }
 }

@@ -11,37 +11,37 @@ const TaskCard = ({
 }) => {
   
   // Formatear fecha de creación
-  const formatDate = (dateString) => {
-    if(!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
+  const formatDate = ( dateString ) => {
+    if( !dateString ) return '';
+    const date = new Date( dateString );
+    return date.toLocaleDateString( 'es-ES', {
       day: '2-digit',
       month: '2-digit',
       year: '2-digit'
     });
   };
 
-  const isDueSoon = (dueDate) => {
-    if(!dueDate) return false;
+  const isDueSoon = ( dueDate ) => {
+    if( !dueDate ) return false;
     const today = new Date();
-    const due = new Date(dueDate);
+    const due = new Date( dueDate );
     const diffTime = due - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil( diffTime / ( 1000 * 60 * 60 * 24 ) );
     return diffDays <= 3 && diffDays >= 0;
   };
 
   // Manejar inicio de arrastre
-  const handleDragStart = (e) => {
-    e.dataTransfer.setData('text/plain', task.task_id2);
+  const handleDragStart = ( e ) => {
+    e.dataTransfer.setData( 'text/plain', task.task_id2 );
     e.dataTransfer.effectAllowed = 'move';
-    if(onDragStart) {
-      onDragStart(task);
+    if( onDragStart ) {
+      onDragStart( task );
     }
   };
 
   // Manejar fin de arrastre
-  const handleDragEnd = (e) => {
-    if(onDragEnd) {
+  const handleDragEnd = ( e ) => {
+    if( onDragEnd ) {
       onDragEnd();
     }
   };
@@ -59,9 +59,9 @@ const TaskCard = ({
         <div className="task-card-menu">
           <button
             className="task-menu-button"
-            onClick={(e) => {
+            onClick={( e ) => {
               e.stopPropagation();
-              onEditTask && onEditTask(task);
+              onEditTask && onEditTask( task );
             }}
             title="Editar tarea"
           >
@@ -71,9 +71,9 @@ const TaskCard = ({
           </button>
           <button
             className="task-menu-button delete-button"
-            onClick={(e) => {
+            onClick={( e ) => {
               e.stopPropagation();
-              onDeleteTask && onDeleteTask(task);
+              onDeleteTask && onDeleteTask( task );
             }}
             title="Eliminar tarea"
           >
@@ -88,7 +88,7 @@ const TaskCard = ({
       {task.description && (
         <p className="task-card-description">
           {task.description.length > 100 
-            ? `${task.description.substring(0, 100)}...` 
+            ? `${task.description.substring( 0, 100 )}...` 
             : task.description
           }
         </p>
@@ -107,15 +107,15 @@ const TaskCard = ({
 
       {/* Fecha de vencimiento */}
       {task.due_date && (
-        <div className={`task-card-due ${isDueSoon(task.due_date) ? 'due-soon' : ''}`}>
-          Vence: {formatDate(task.due_date)}
+        <div className={`task-card-due ${isDueSoon( task.due_date ) ? 'due-soon' : ''}`}>
+          Vence: {formatDate( task.due_date )}
         </div>
       )}
 
       {/* Footer de la tarjeta */}
       <div className="task-card-footer">
         <div className="task-card-date">
-          Creada: {formatDate(task.created_at)}
+          Creada: {formatDate( task.created_at )}
         </div>
       </div>
     </div>

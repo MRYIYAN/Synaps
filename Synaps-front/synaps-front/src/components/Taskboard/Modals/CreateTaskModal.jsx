@@ -6,7 +6,7 @@ const CreateTaskModal = ( { isOpen, onClose, onCreateTask, currentVaultId } ) =>
 
   // Función para obtener la fecha actual en formato YYYY-MM-DD
   const getCurrentDate = () => {
-    return new Date().toISOString().split('T')[0];
+    return new Date().toISOString().split( 'T' )[0];
   };
 
   const [taskData, setTaskData] = useState( {
@@ -17,22 +17,22 @@ const CreateTaskModal = ( { isOpen, onClose, onCreateTask, currentVaultId } ) =>
   } );
 
   const [errors, setErrors] = useState( {} );
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState( false );
 
   // Manejar cambios en los inputs
-  const handleInputChange = (e) => {
+  const handleInputChange = ( e ) => {
     const { name, value } = e.target;
-    setTaskData(prev => ( {
+    setTaskData( prev => ( {
       ...prev,
       [name]: value
-    } ));
+    } ) );
     
     // Limpiar error del campo cuando el usuario empiece a escribir
-    if(errors[name]) {
-      setErrors(prev => ( {
+    if( errors[name] ) {
+      setErrors( prev => ( {
         ...prev,
         [name]: ''
-      } ));
+      } ) );
     }
   };
 
@@ -40,35 +40,35 @@ const CreateTaskModal = ( { isOpen, onClose, onCreateTask, currentVaultId } ) =>
   const validateForm = () => {
     const newErrors = {};
     
-    if(!taskData.title.trim()) {
+    if( !taskData.title.trim() ) {
       newErrors.title = 'El título es obligatorio';
     }
     
-    if(taskData.title.length > 255) {
+    if( taskData.title.length > 255 ) {
       newErrors.title = 'El título no puede tener más de 255 caracteres';
     }
     
-    if(taskData.description.length > 1000) {
+    if( taskData.description.length > 1000 ) {
       newErrors.description = 'La descripción no puede tener más de 1000 caracteres';
     }
 
-    if(!currentVaultId) {
+    if( !currentVaultId ) {
       newErrors.general = 'Debe seleccionar un vault antes de crear una tarea';
     }
     
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors( newErrors );
+    return Object.keys( newErrors ).length === 0;
   };
 
   // Manejar envío del formulario
-  const handleSubmit = async(e) => {
+  const handleSubmit = async( e ) => {
     e.preventDefault();
     
-    if(!validateForm()) {
+    if( !validateForm() ) {
       return;
     }
     
-    setIsSubmitting(true);
+    setIsSubmitting( true );
     
     try {
       // Preparar datos para enviar al backend
@@ -81,17 +81,16 @@ const CreateTaskModal = ( { isOpen, onClose, onCreateTask, currentVaultId } ) =>
       };
 
       // Solo incluir descripción si tiene contenido
-      if (taskData.description.trim()) {
+      if( taskData.description.trim() ) {
         newTaskData.description = taskData.description.trim();
       }
       
-      await onCreateTask(newTaskData);
+      await onCreateTask( newTaskData );
       handleClose();
-    } catch (error) {
-      console.error('Error al crear tarea:', error);
+    } catch( error ) {
       setErrors( { general: 'Error al crear la tarea. Inténtelo de nuevo.' } );
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting( false );
     }
   };
 
@@ -109,14 +108,14 @@ const CreateTaskModal = ( { isOpen, onClose, onCreateTask, currentVaultId } ) =>
   };
 
   // Manejar tecla Escape
-  const handleKeyDown = (e) => {
-    if(e.key === 'Escape') {
+  const handleKeyDown = ( e ) => {
+    if( e.key === 'Escape' ) {
       handleClose();
     }
   };
 
   // No renderizar si el modal no está abierto
-  if(!isOpen) return null;
+  if( !isOpen ) return null;
 
   // Renderizar el modal usando Portal para que aparezca fuera del contexto del sidebar
   return ReactDOM.createPortal(
@@ -128,7 +127,7 @@ const CreateTaskModal = ( { isOpen, onClose, onCreateTask, currentVaultId } ) =>
     >
       <div 
         className="task-modal" 
-        onClick={(e) => e.stopPropagation()}
+        onClick={( e ) => e.stopPropagation()}
       >
         {/* Header del modal */}
         <div className="task-modal-header">

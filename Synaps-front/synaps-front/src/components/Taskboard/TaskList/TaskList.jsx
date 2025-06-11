@@ -4,13 +4,13 @@ import '../Taskboard.css';
 const TaskList = ({ tasks, onTaskClick, onCreateTask, loading, stats }) => {
   
   // Ordenar tareas: primero las no completadas, luego por fecha de creación
-  const sortedTasks = [...tasks].sort((a, b) => {
+  const sortedTasks = [...tasks].sort( ( a, b ) => {
     // Primero por estado (done al final)
-    if(a.status === 'done' && b.status !== 'done') return 1;
-    if(a.status !== 'done' && b.status === 'done') return -1;
+    if( a.status === 'done' && b.status !== 'done' ) return 1;
+    if( a.status !== 'done' && b.status === 'done' ) return -1;
     
     // Luego por fecha de creación (más recientes primero)
-    return new Date(b.created_at) - new Date(a.created_at);
+    return new Date( b.created_at ) - new Date( a.created_at );
   });
 
   return (
@@ -35,11 +35,11 @@ const TaskList = ({ tasks, onTaskClick, onCreateTask, loading, stats }) => {
             <p>Cargando tareas...</p>
           </div>
         ) : sortedTasks.length > 0 ? (
-          sortedTasks.map(task => (
+          sortedTasks.map( task => (
             <div
               key={task.task_id2}
               className={`task-list-item-minimal ${task.status}`}
-              onClick={() => onTaskClick && onTaskClick(task)}
+              onClick={() => onTaskClick && onTaskClick( task )}
               title={task.description || task.title}
             >
               <span className="task-title-minimal">

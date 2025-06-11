@@ -3,47 +3,56 @@ import ReactDOM from 'react-dom';
 import '../Taskboard.css';
 
 const DeleteTaskModal = ({ isOpen, onClose, onDeleteTask, task }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [error, setError] = useState('');
+  const [isDeleting, setIsDeleting] = useState( false );
+  const [error, setError] = useState( '' );
+  
   // Manejar confirmación de eliminación
   const handleConfirmDelete = async() => {
-    if(!task || !onDeleteTask) return;
+    if( !task || !onDeleteTask ) {
+      setError( 'Información de tarea no disponible' );
+      return;
+    }
     
-    setIsDeleting(true);
-    setError('');
+    if( !task.task_id2 ) {
+      setError( 'ID de tarea no válido' );
+      return;
+    }
+    
+    setIsDeleting( true );
+    setError( '' );
     
     try {
-      const result = await onDeleteTask(task.task_id2);
+      const result = await onDeleteTask( task.task_id2 );
       
-      if(result && result.success) {
+      if( result && result.success ) {
         onClose();
       } else {
-        setError(result?.message || 'Error al eliminar la tarea');
+        const errorMessage = result?.message || 'Error al eliminar la tarea';
+        setError( errorMessage );
       }
-    } catch (error) {
-      console.error('Error al eliminar tarea:', error);
-      setError('Error al eliminar la tarea. Inténtelo de nuevo.');
+    } catch( error ) {
+      setError( 'Error al eliminar la tarea. Inténtelo de nuevo.' );
     } finally {
-      setIsDeleting(false);
+      setIsDeleting( false );
     }
   };
 
   // Manejar cierre del modal
   const handleClose = () => {
-    if(isDeleting) return; // No permitir cerrar mientras se está eliminando
-    setError('');
+    if( isDeleting ) return; // No permitir cerrar mientras se está eliminando
+    setError( '' );
     onClose();
   };
 
   // Manejar tecla Escape
-  const handleKeyDown = (e) => {
-    if(e.key === 'Escape' && !isDeleting) {
+  const handleKeyDown = ( e ) => {
+    if( e.key === 'Escape' && !isDeleting ) {
       handleClose();
     }
   };
 
   // No renderizar si el modal no está abierto o no hay tarea
-  if(!isOpen || !task) return null;
+  if( !isOpen || !task ) return null;
 
   // Renderizar el modal usando Portal para que aparezca fuera del contexto del sidebar
   return ReactDOM.createPortal(
@@ -52,11 +61,10 @@ const DeleteTaskModal = ({ isOpen, onClose, onDeleteTask, task }) => {
       onClick={isDeleting ? undefined : handleClose}
       onKeyDown={handleKeyDown}
       tabIndex={-1}
-    >
-      <div 
-        className="task-modal delete-modal" 
-        onClick={(e) => e.stopPropagation()}
-      >
+    >        <div 
+          className="task-modal delete-modal" 
+          onClick={( e ) => e.stopPropagation()}
+        >
         {/* Header del modal */}
         <div className="task-modal-header">
           <h2 className="task-modal-title">Eliminar Tarea</h2>
@@ -106,13 +114,13 @@ const DeleteTaskModal = ({ isOpen, onClose, onDeleteTask, task }) => {
             {task.description && (
               <p className="task-preview-description">
                 {task.description.length > 100 
-                  ? `${task.description.substring(0, 100)}...` 
+                  ? `${task.description.substring( 0, 100 )}...` 
                   : task.description
                 }
               </p>
             )}
             <span className="task-preview-date">
-              Creada el {new Date(task.created_at).toLocaleDateString('es-ES')}
+              Creada el {new Date( task.created_at ).toLocaleDateString( 'es-ES' )}
             </span>
           </div>
           

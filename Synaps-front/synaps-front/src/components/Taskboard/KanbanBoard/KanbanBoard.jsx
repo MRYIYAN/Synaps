@@ -32,11 +32,6 @@ const KanbanBoard = ({ tasks, onUpdateTask, onDeleteTask, onEditTask, onChangeTa
   const getTasksByStatus = useCallback( (status ) => {
     const filteredTasks = tasks.filter( task => task.status === status );
     
-    // Debug: mostrar cuántas tareas hay en cada columna
-    if(process.env.NODE_ENV === 'development') {
-      console.log(`[KanbanBoard] Tareas en columna "${status}":`, filteredTasks.length);
-    }
-    
     return filteredTasks;
   }, [tasks]);
 
