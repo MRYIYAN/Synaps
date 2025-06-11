@@ -60,13 +60,13 @@ class User extends Authenticatable
         parent::boot();
         
         static::creating(function ($user) {
-            \Illuminate\Support\Facades\Log::info('🔥 USER_MODEL_CREATING: Antes de crear usuario', [
+            \Illuminate\Support\Facades\Log::info('USER_MODEL_CREATING: Antes de crear usuario', [
                 'data' => $user->toArray()
             ]);
         });
         
         static::created(function ($user) {
-            \Illuminate\Support\Facades\Log::info('✨ USER_MODEL_CREATED: Usuario creado exitosamente', [
+            \Illuminate\Support\Facades\Log::info('USER_MODEL_CREATED: Usuario creado exitosamente', [
                 'user_id' => $user->user_id,
                 'email' => $user->user_email,
                 'data' => $user->toArray()
@@ -74,13 +74,13 @@ class User extends Authenticatable
         });
         
         static::saving(function ($user) {
-            \Illuminate\Support\Facades\Log::info('💾 USER_MODEL_SAVING: Guardando usuario', [
+            \Illuminate\Support\Facades\Log::info('USER_MODEL_SAVING: Guardando usuario', [
                 'data' => $user->toArray()
             ]);
         });
         
         static::saved(function ($user) {
-            \Illuminate\Support\Facades\Log::info('✅ USER_MODEL_SAVED: Usuario guardado', [
+            \Illuminate\Support\Facades\Log::info('USER_MODEL_SAVED: Usuario guardado', [
                 'user_id' => $user->user_id,
                 'data' => $user->toArray()
             ]);

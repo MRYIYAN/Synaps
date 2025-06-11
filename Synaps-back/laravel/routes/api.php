@@ -7,6 +7,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\VaultController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FolderNoteController;
 use App\Http\Controllers\NoteController;
@@ -35,7 +36,7 @@ Route::get( '/hello', function( Request $request ): \Illuminate\Http\JsonRespons
 //===========================================================================//
 try
 {
-    Route::middleware( ['auth.bearer', 'ensure.tenant'] )->group(function() {
+    Route::middleware( ['auth.bearer'] )->group(function() {
         //=======================//
         // VAULTS API           //
         //=======================//
@@ -204,6 +205,22 @@ try
          * @see UserController::updateUser()
          */
         Route::put( '/user', [UserController::class, 'updateUser'] );
+
+        /**
+         * GET /user/profile
+         * Obtiene el perfil completo del usuario autenticado.
+         *
+         * @see AuthController::getUserProfile()
+         */
+        Route::get( '/user/profile', [AuthController::class, 'getUserProfile'] );
+
+        /**
+         * PUT /user/profile
+         * Actualiza el perfil del usuario autenticado.
+         *
+         * @see AuthController::updateUserProfile()
+         */
+        Route::put( '/user/profile', [AuthController::class, 'updateUserProfile'] );
     } );
 }
 catch( Exception $e )

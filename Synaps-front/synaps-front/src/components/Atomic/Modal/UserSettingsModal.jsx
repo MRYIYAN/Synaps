@@ -15,6 +15,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close.svg";
 import { ReactComponent as CameraIcon } from "../../../assets/icons/camera.svg";
+import { toast } from 'react-toastify';
 
 /**
  * Modal para editar la configuración del usuario
@@ -26,14 +27,15 @@ import { ReactComponent as CameraIcon } from "../../../assets/icons/camera.svg";
  */
 const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
   // Estados del formulario
-  const [userName, setUserName] = useState('');
-  const [userLastName, setUserLastName] = useState('');
+  const [userFullName, setUserFullName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [username, setUsername] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [userData, setUserData] = useState(null);
   
   // Estados para cambio de contraseña
   const [showPasswordSection, setShowPasswordSection] = useState(false);
@@ -50,23 +52,50 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
   // TODO: Implementar referencia para input de archivo
   const fileInputRef = useRef(null);
 
-  // Inicializar los campos cuando se abre el modal o cambia el usuario
+  // Cargar datos del usuario cuando se abre el modal
   useEffect(() => {
-    if (isOpen && currentUser) {
-      setUserName(''); // Nombre real del usuario (vacío inicialmente)
-      setUserLastName(''); // Apellido del usuario (vacío inicialmente)
-      setUserEmail(currentUser.email || '');
-      setUsername(currentUser.name || ''); // El name del sidebar va al username
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      // TODO: Implementar inicialización de foto de perfil
-      setProfilePhoto(null);
-      setProfilePhotoPreview(currentUser.profile_photo || null);
-      setHasChanges(false);
-      setShowPasswordSection(false);
+    if (isOpen) {
+      fetchUserProfile();
     }
-  }, [isOpen, currentUser]);
+  }, [isOpen]);
+
+  // Función para obtener el perfil del usuario
+  const fetchUserProfile = async () => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al obtener perfil');
+      }
+
+      const data = await response.json();
+      if (data.result === 1 && data.user) {
+        setUserData(data.user);
+        setUserFullName(data.user.user_full_name || '');
+        setUserEmail(data.user.user_email || '');
+        setUsername(data.user.user_name || '');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setProfilePhoto(null);
+        setProfilePhotoPreview(null);
+        setHasChanges(false);
+        setShowPasswordSection(false);
+      }
+    } catch (error) {
+      console.error('Error al cargar perfil:', error);
+      toast.error('Error al cargar los datos del usuario');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Enfocar el primer campo cuando se abre el modal
   useEffect(() => {
@@ -79,17 +108,16 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
 
   // Verificar si hay cambios
   useEffect(() => {
-    if (currentUser) {
-      // Solo detectar cambios en los campos que realmente se van a actualizar
-      const usernameChanged = username !== (currentUser.name || '');
-      const emailChanged = userEmail !== (currentUser.email || '');
+    if (userData) {
+      const fullNameChanged = userFullName !== (userData.user_full_name || '');
+      const usernameChanged = username !== (userData.user_name || '');
+      const emailChanged = userEmail !== (userData.user_email || '');
       const passwordChanged = newPassword.length > 0;
-      // TODO: Implementar detección de cambios en foto de perfil
       const photoChanged = profilePhoto !== null;
       
-      setHasChanges(usernameChanged || emailChanged || passwordChanged || photoChanged);
+      setHasChanges(fullNameChanged || usernameChanged || emailChanged || passwordChanged || photoChanged);
     }
-  }, [username, userEmail, newPassword, profilePhoto, currentUser]);
+  }, [userFullName, username, userEmail, newPassword, profilePhoto, userData]);
 
   // TODO: Implementar funciones de foto de perfil
   // Manejar selección de foto de perfil
@@ -112,37 +140,74 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validaciones
+    if (newPassword && newPassword !== confirmPassword) {
+      toast.error('Las contraseñas no coinciden');
+      return;
+    }
+
+    if (newPassword && newPassword.length < 6) {
+      toast.error('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    if (newPassword && !currentPassword) {
+      toast.error('Debes ingresar tu contraseña actual');
+      return;
+    }
+
     setIsSaving(true);
 
     try {
-      // Crear objeto de datos solo con los campos que el usuario quiere actualizar
-      const userData = {};
+      const token = localStorage.getItem('access_token');
+      const updateData = {};
 
-      // Solo incluir nombre de usuario si cambió
-      if (username.trim() !== (currentUser.name || '')) {
-        userData.name = username.trim();
+      // Solo incluir campos que cambiaron
+      if (userFullName.trim() !== (userData.user_full_name || '')) {
+        updateData.user_full_name = userFullName.trim();
       }
 
-      // Solo incluir email si cambió
-      if (userEmail.trim() !== (currentUser.email || '')) {
-        userData.email = userEmail.trim();
+      if (username.trim() !== (userData.user_name || '')) {
+        updateData.user_name = username.trim();
+      }
+
+      if (userEmail.trim() !== (userData.user_email || '')) {
+        updateData.user_email = userEmail.trim();
       }
 
       // Solo incluir contraseña si se está cambiando
       if (newPassword.length > 0) {
-        userData.currentPassword = currentPassword;
-        userData.newPassword = newPassword;
+        updateData.current_password = currentPassword;
+        updateData.new_password = newPassword;
+        updateData.new_password_confirmation = confirmPassword;
       }
 
-      // TODO: Implementar subida de foto de perfil
-      if (profilePhoto) {
-        userData.profilePhoto = profilePhoto;
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updateData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || data.result !== 1) {
+        throw new Error(data.message || 'Error al actualizar perfil');
       }
 
-      await onSaveUser(userData);
+      toast.success('Perfil actualizado exitosamente');
+      
+      // Actualizar datos locales si se proporciona callback
+      if (onSaveUser) {
+        onSaveUser(data.user);
+      }
+      
       onClose();
     } catch (error) {
       console.error('Error al guardar usuario:', error);
+      toast.error(error.message || 'Error al guardar los cambios');
     } finally {
       setIsSaving(false);
     }
@@ -169,6 +234,19 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
   // }, [isOpen, hasChanges]);
 
   if (!isOpen) return null;
+
+  if (isLoading) {
+    return (
+      <div className="modal-overlay">
+        <div className="modal-content user-settings-modal">
+          <div className="loading-container">
+            <span className="loading-spinner"></span>
+            <p>Cargando datos del usuario...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="modal-overlay">
@@ -234,39 +312,21 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
 
           {/* Campos del formulario */}
           <div className="form-fields-container">
-            {/* Primera fila: Nombre y Apellido */}
-            <div className="form-row">
-              <div className="form-group half-width">
-                <label htmlFor="userName" className="form-label">
-                  Nombre
-                </label>
-                <div className="input-wrapper">
-                  <input
-                    ref={firstInputRef}
-                    id="userName"
-                    type="text"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    placeholder=""
-                    disabled={isSaving}
-                  />
-                </div>
-              </div>
-
-              <div className="form-group half-width">
-                <label htmlFor="userLastName" className="form-label">
-                  Apellido
-                </label>
-                <div className="input-wrapper">
-                  <input
-                    id="userLastName"
-                    type="text"
-                    value={userLastName}
-                    onChange={(e) => setUserLastName(e.target.value)}
-                    placeholder=""
-                    disabled={isSaving}
-                  />
-                </div>
+            {/* Campo de nombre completo */}
+            <div className="form-group">
+              <label htmlFor="userFullName" className="form-label">
+                Nombre completo
+              </label>
+              <div className="input-wrapper">
+                <input
+                  ref={firstInputRef}
+                  id="userFullName"
+                  type="text"
+                  value={userFullName}
+                  onChange={(e) => setUserFullName(e.target.value)}
+                  placeholder="Juan Pérez"
+                  disabled={isSaving}
+                />
               </div>
             </div>
 

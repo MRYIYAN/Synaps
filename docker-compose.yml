@@ -3,8 +3,6 @@
 # This version of Docker Compose file is designed to work with the Synaps project.
 # It includes services for Laravel, Redis, MariaDB, phpMyAdmin, and a Redis WebSocket bridge.
 
-version: '3.8'
-
 services:
 
   # --------------------------------- LARAVEL --------------------------------- #
@@ -16,13 +14,9 @@ services:
     ports:
       - "8010:80" # Laravel en Apache
     volumes:
-      - ./Synaps-back/laravel/app:/var/www/html/app
-      - ./Synaps-back/laravel/routes:/var/www/html/routes
-      - ./Synaps-back/laravel/resources:/var/www/html/resources
-      - ./Synaps-back/laravel/public:/var/www/html/public
-      - ./Synaps-back/laravel/.env:/var/www/html/.env 
-      - /c/Users:/windows-users:rw  
-    command: bash -c "composer require firebase/php-jwt && apache2-foreground" "composer dump-autload" 
+      - ./Synaps-back/laravel:/var/www/html
+      - ./SQL:/var/www/html/SQL
+    command: bash -c "composer require firebase/php-jwt && composer dump-autoload && apache2-foreground"
 
     depends_on:
       - synaps-mariadb
@@ -60,9 +54,9 @@ services:
       - synaps-redis
     environment:
       - REDIS_URL=redis://synaps-redis:6379
-      - WS_PORT=8082
+      - WS_PORT=8084
     ports:
-      - "8082:8082"   
+      - "8084:8084"   
 
   # --------------------------------- MARIADB --------------------------------- #
   synaps-mariadb:

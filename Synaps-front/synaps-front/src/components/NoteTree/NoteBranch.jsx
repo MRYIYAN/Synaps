@@ -17,8 +17,17 @@ export default function NoteBranch({ node, depth, selectedId2 }) {
   // Estado para controlar si está colapsado - iniciamos colapsado
   const [collapsed, setCollapsed] = useState( true );
 
+  // Validar que node sea un objeto válido
+  if( !node || typeof node !== 'object' || !node.id2 ) {
+    console.warn( 'NoteBranch: node inválido', node );
+    return null;
+  }
+
   // Comprueba si este nodo tiene hijos
   const hasChildren = ( node.type === 'folder' );
+
+  // Validar que children sea un array
+  const validChildren = Array.isArray( node.children ) ? node.children : [];
 
   // Callback para alternar estado colapsado (se pasa al hijo)
   function handleToggle() {
@@ -39,16 +48,24 @@ export default function NoteBranch({ node, depth, selectedId2 }) {
       />  
 
       {/* Si no está colapsado y tiene hijos, renderiza recursivamente */}
-      {hasChildren && !collapsed && node.children.length > 0 && (
+      {hasChildren && !collapsed && validChildren.length > 0 && (
         <div className={`node-branch ${collapsed ? 'collapsed' : ''}`}>
-          {node.children.map( ( child ) => (
-            <NoteBranch
-              className="node-branch"
-              key={child.id2}
-              node={child}
-              depth={depth + 1.25}
-            />
-          ) )}
+          {validChildren.map( ( child ) => {
+            // Verificar que cada hijo tenga id2 válido
+            if( !child || !child.id2 ) {
+              console.warn( 'NoteBranch: child sin id2 válido', child );
+              return null;
+            }
+
+            return (
+              <NoteBranch
+                className="node-branch"
+                key={child.id2}
+                node={child}
+                depth={depth + 1.25}
+              />
+            );
+          } ).filter( Boolean )}
         </div>
       )}
     </div>

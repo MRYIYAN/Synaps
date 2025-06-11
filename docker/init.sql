@@ -15,14 +15,12 @@ CREATE TABLE `users` (
   `user_email` varchar(255) NOT NULL,
   `user_name` varchar(255) NOT NULL,
   `user_full_name` varchar(255) DEFAULT NULL,
-  `user_password` varchar(255) NOT NULL
+  `user_password` varchar(255) NOT NULL,
+  PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 INSERT INTO `users` (`user_id`, `user_id2`, `user_email`, `user_name`, `user_full_name`,`user_password`) VALUES
 (1, 'F7D8S9FG78F9DG78D9F7G89DF789FDGU', 'test@example.com', 'Usuario de prueba', 'Usuario de Prueba Test', '$2y$12$423rSF4V2fqyddNr6AuCUeM1BiuIifLAEldi49Wr9tEwG5kX0azb.');
-
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`user_id`);
 
 -- Crear base por cliente
 CREATE DATABASE IF NOT EXISTS synaps_0001;
@@ -30,19 +28,21 @@ CREATE DATABASE IF NOT EXISTS synaps_0001;
 USE synaps_0001;
 
 CREATE TABLE `docs` (
-  `doc_id` int(11) NOT NULL,
+  `doc_id` int(11) NOT NULL AUTO_INCREMENT,
   `doc_id2` varchar(32) NOT NULL,
   `doc_name` varchar(255) NOT NULL,
-  `insert_date` datetime NOT NULL
+  `insert_date` datetime NOT NULL,
+  PRIMARY KEY (`doc_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 CREATE TABLE `folders_notes` (
-  `folder_id` int(11) NOT NULL,
+  `folder_id` int(11) NOT NULL AUTO_INCREMENT,
   `folder_id2` varchar(32) NOT NULL,
   `folder_title` varchar(255) NOT NULL,
   `vault_id` int(11) NOT NULL,
   `parent_id` int(11) NOT NULL,
-  `children_count` int(11) NOT NULL
+  `children_count` int(11) NOT NULL,
+  PRIMARY KEY (`folder_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 INSERT INTO `folders_notes` (`folder_id`, `folder_id2`, `folder_title`, `parent_id`, `vault_id`, `children_count`) VALUES
@@ -61,21 +61,23 @@ INSERT INTO `folders_notes` (`folder_id`, `folder_id2`, `folder_title`, `parent_
 (31, 'wGUfaC17T45cew6TfyGcmP4RMowB0lpX', 'TEST', 0, 1, 1);
 
 CREATE TABLE `log` (
-  `log_id` int(11) NOT NULL,
+  `log_id` int(11) NOT NULL AUTO_INCREMENT,
   `log_id2` varchar(32) NOT NULL,
   `log_message` varchar(255) NOT NULL,
-  `insert_date` datetime NOT NULL
+  `insert_date` datetime NOT NULL,
+  PRIMARY KEY (`log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 CREATE TABLE `notes` (
-  `note_id` int(11) NOT NULL,
+  `note_id` int(11) NOT NULL AUTO_INCREMENT,
   `note_id2` varchar(32) NOT NULL,
   `parent_id` int(11) NOT NULL,
   `note_title` varchar(255) NOT NULL,
   `note_markdown` text NOT NULL,
   `vault_id` int(11) NOT NULL,
   `insert_date` datetime NOT NULL,
-  `last_update_date` datetime NOT NULL
+  `last_update_date` datetime NOT NULL,
+  PRIMARY KEY (`note_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 INSERT INTO `notes` (`note_id`, `note_id2`, `parent_id`, `note_title`, `note_markdown`, `insert_date`, `vault_id`, `last_update_date`) VALUES
@@ -152,20 +154,22 @@ INSERT INTO `notes` (`note_id`, `note_id2`, `parent_id`, `note_title`, `note_mar
 (114, 'YAhpuPuhEzGOw4y4pWIQMSFRqgpFBbgQ', 31, 'TEST', '# TEST', '2025-05-19 00:40:21', 1, '2025-05-19 00:40:21');
 
 CREATE TABLE `notifications` (
-  `notification_id` int(11) NOT NULL,
+  `notification_id` int(11) NOT NULL AUTO_INCREMENT,
   `notification_id2` varchar(32) NOT NULL,
   `notification_message` text NOT NULL,
-  `insert_date` datetime NOT NULL
+  `insert_date` datetime NOT NULL,
+  PRIMARY KEY (`notification_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 CREATE TABLE `vaults` (
-  `vault_id` int(11) NOT NULL,
+  `vault_id` int(11) NOT NULL AUTO_INCREMENT,
   `vault_id2` char(50) NOT NULL,
   `vault_title` varchar(255) NOT NULL,
   `user_id` int(11) NOT NULL,
   `logical_path` varchar(255) NOT NULL,
   `is_private` tinyint(1) DEFAULT 0,
-  `created_at` datetime DEFAULT current_timestamp()
+  `created_at` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`vault_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 INSERT INTO `vaults` (`vault_id`, `vault_id2`, `vault_title`, `user_id`, `logical_path`, `is_private`, `created_at`) VALUES

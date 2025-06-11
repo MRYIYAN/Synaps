@@ -78,40 +78,46 @@ const RegisterForm = () => {
    * @param {string} value - Valor del campo nombre a validar
    * @returns {boolean} - true si es válido, false si hay errores
    */
-  const validateName = (value) => {
+  const validateName = ( value ) => {
+    // Inicializar value con valor por defecto
+    let validationResult = false;
+    
     // Verificar que el nombre no esté vacío
-    if (value.trim() === '') {
-      setNameError('El nombre no puede estar vacío');
-      return false;
+    if( value.trim() === '' ) {
+      setNameError( 'El nombre no puede estar vacío' );
+      return validationResult;
     }
     
     // Evitar más de un espacio consecutivo para mantener formato limpio
-    if (value.includes('  ')) {
-      setNameError('El nombre no puede contener más de un espacio consecutivo');
-      return false;
+    if( value.includes( '  ' ) ) {
+      setNameError( 'El nombre no puede contener más de un espacio consecutivo' );
+      return validationResult;
     }
     
     // Prohibir números en el nombre para mayor autenticidad
-    if (/\d/.test(value)) {
-      setNameError('El nombre no puede contener números');
-      return false;
+    if( /\d/.test( value ) ) {
+      setNameError( 'El nombre no puede contener números' );
+      return validationResult;
     }
     
     // Solo permitir letras y espacios - caracteres especiales prohibidos
-    if (/[^\p{L}\p{M}\s]/u.test(value)) {
-      setNameError('El nombre no puede contener caracteres especiales');
-      return false;
+    if( /[^\p{L}\p{M}\s]/u.test( value ) ) {
+      setNameError( 'El nombre no puede contener caracteres especiales' );
+      return validationResult;
     }
     
     // Detección de emojis y caracteres unicode especiales
-    if (/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(value)) {
-      setNameError('El nombre no puede contener emojis');
-      return false;
+    if( /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test( value ) ) {
+      setNameError( 'El nombre no puede contener emojis' );
+      return validationResult;
     }
     
     // Limpiar error si todas las validaciones pasan
-    setNameError('');
-    return true;
+    setNameError( '' );
+    validationResult = true;
+    
+    // Retornar value
+    return validationResult;
   };
 
   //---------------------------------------------------------------------------//
@@ -446,53 +452,52 @@ const RegisterForm = () => {
   /**
    * Maneja la navegación al siguiente paso con validación forzada
    */
-  const handleNextStep = (e) => {
+  const handleNextStep = ( e ) => {
     e.preventDefault();
     
     // Marcar todos los campos como tocados para mostrar errores
-    setNameTouched(true);
-    setUsernameTouched(true);
-    setEmailTouched(true);
+    setNameTouched( true );
+    setUsernameTouched( true );
+    setEmailTouched( true );
     
     // Ejecutar validación completa del paso 1
-    const nameValid = validateName(name);
-    const usernameValid = validateUsername(username);
-    const emailValid = validateEmail(email);
+    const nameValid = validateName( name );
+    const usernameValid = validateUsername( username );
+    const emailValid = validateEmail( email );
     
     // Solo proceder si todos los campos son válidos
-    if (!(nameValid && usernameValid && emailValid)) {
+    if( !( nameValid && usernameValid && emailValid ) )
       return;
-    }
     
     // Iniciar animación de transición hacia el siguiente paso
-    setAnimationDirection('next');
-    setIsAnimating(true);
+    setAnimationDirection( 'next' );
+    setIsAnimating( true );
     
     // Cambiar al paso 2 después de la animación
-    setTimeout(() => {
-      setFormStep(2);
-      set_error_msg('');
+    setTimeout( () => {
+      setFormStep( 2 );
+      set_error_msg( '' );
       
       // Finalizar animación
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, 50);
-    }, 300);
+      setTimeout( () => {
+        setIsAnimating( false );
+      }, 50 );
+    }, 300 );
   };
 
   /**
    * Maneja la navegación al paso anterior con animación
    */
-  const handlePrevStep = (e) => {
+  const handlePrevStep = ( e ) => {
     e.preventDefault();
     
     // Iniciar animación de transición hacia el paso anterior
-    setAnimationDirection('prev');
-    setIsAnimating(true);
+    setAnimationDirection( 'prev' );
+    setIsAnimating( true );
     
     // Cambiar al paso 1 después de la animación
-    setTimeout(() => {
-      setFormStep(1);
+    setTimeout( () => {
+      setFormStep( 1 );
       set_error_msg('');
       
       // Finalizar animación
@@ -508,70 +513,67 @@ const RegisterForm = () => {
   /**
    * Maneja el envío final del formulario con validación completa
    * 
-   * async: Función asíncrona que maneja el envío del formulario
    * @param {Event} e - Evento de envío del formulario
+   * @returns {Promise<boolean>} true si el registro fue exitoso
    */
-  const handle_submit = async(e) => { 
+  const handle_submit = async( e ) => { 
+    // Inicializar value con valor por defecto
+    let value = false;
+    
     e.preventDefault();
     
     // Marcar todos los campos del paso 2 como tocados
-    setPasswordTouched(true);
-    setConfirmPasswordTouched(true);
+    setPasswordTouched( true );
+    setConfirmPasswordTouched( true );
     
     // Ejecutar validación completa del paso 2
-    const passwordValid = validatePassword(password);
-    const confirmValid = validateConfirmPassword(confirmPassword);
+    const passwordValid = validatePassword( password );
+    const confirmValid = validateConfirmPassword( confirmPassword );
     
     // Solo proceder si ambos campos son válidos
-    if (!(passwordValid && confirmValid)) {
-      return;
-    }
-
-    console.log('🚀 FRONTEND: Iniciando proceso de registro');
-    console.log('📤 FRONTEND: Enviando datos:', { name, username, email, password_length: password.length });
+    if( !( passwordValid && confirmValid ) )
+      return value;
 
     // Configuración de la petición HTTP
     let url = 'http://localhost:8010/api/register';
     let body = { name, username, email, password };
 
     try {
+
       // Enviar datos al servidor
-      console.log('📡 FRONTEND: Enviando petición HTTP a:', url);
-      let http_response = await http_post(url, body);
-      console.log('📨 FRONTEND: Respuesta recibida del servidor:', http_response);
+      let { result, message, http_response } = await http_post( url, body );
       
       // Verificar si el registro fue exitoso
-      if (http_response && http_response.result === 1) {
-        // Registro exitoso - mostrar mensaje y redirigir después de un delay
-        console.log('✅ FRONTEND: Registro exitoso!');
-        console.log('🎉 FRONTEND: Usuario registrado correctamente');
-        set_error_msg(''); // Limpiar mensajes de error
-        set_success_msg('¡Registro exitoso! Redirigiendo al login en');
-        setCountdown(3); // Inicializar countdown
+      if( result === 1 ) {
+        set_error_msg( '' ); // Limpiar mensajes de error
+        set_success_msg( '¡Registro exitoso! Redirigiendo al login en' );
+        setCountdown( 3 ); // Inicializar countdown
         
         // Crear intervalo para la cuenta regresiva
-        const countdownInterval = setInterval(() => {
-          setCountdown(prevCount => {
-            if (prevCount <= 1) {
-              clearInterval(countdownInterval);
-              console.log('🔄 FRONTEND: Redirigiendo al login...');
+        const countdownInterval = setInterval( () => {
+          setCountdown( prevCount => {
+            if( prevCount <= 1 ) {
+              clearInterval( countdownInterval );
               window.location.href = '/login';
               return 0;
             }
             return prevCount - 1;
-          });
-        }, 1000);
+          } );
+        }, 1000 );
+        
+        value = true;
       } else {
         // Mostrar mensaje de error del servidor
         const errorMessage = http_response?.message || 'Error al crear la cuenta. Inténtalo de nuevo.';
-        console.log('❌ FRONTEND: Error en el registro:', errorMessage);
-        set_success_msg(''); // Limpiar mensajes de éxito
-        set_error_msg(errorMessage);
+        set_success_msg( '' ); // Limpiar mensajes de éxito
+        set_error_msg( errorMessage );
       }
-    } catch (error) {
-      console.error('💥 FRONTEND: Excepción capturada:', error);
-      set_error_msg('Error al crear la cuenta. Inténtalo de nuevo.');
+    } catch( error ) {
+      set_error_msg( 'Error al crear la cuenta. Inténtalo de nuevo.' );
     }
+    
+    // Retornar value
+    return value;
   };
 
   //---------------------------------------------------------------------------//
