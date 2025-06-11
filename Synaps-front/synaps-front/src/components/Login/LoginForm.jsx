@@ -23,6 +23,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   // Estados para validaciones en tiempo real
   const [emailError, setEmailError] = useState('');
@@ -235,15 +236,37 @@ const LoginForm = () => {
           <label htmlFor="password" className="login-label">
             Contraseña:
           </label>
-          <input 
-            type="password"
-            id="password"
-            className={`login-input ${passwordError && isPasswordTouched ? 'input-error' : ''}`}
-            value={password}
-            onChange={handlePasswordChange}
-            onBlur={handlePasswordBlur}
-            required
-          />
+          <div className="password-input-container">
+            <input 
+              type={showPassword ? "text" : "password"}
+              id="password"
+              className={`login-input password-input ${passwordError && isPasswordTouched ? 'input-error' : ''}`}
+              value={password}
+              onChange={handlePasswordChange}
+              onBlur={handlePasswordBlur}
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showPassword ? (
+                <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/>
+                  <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/>
+                  <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/>
+                  <path d="m2 2 20 20"/>
+                </svg>
+              ) : (
+                <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              )}
+            </button>
+          </div>
           {passwordError && isPasswordTouched && (
             <p className="input-error-message">
               <svg className="error-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -275,6 +298,16 @@ const LoginForm = () => {
             <p className="login-error">{error}</p>
           </div>
         )}
+        
+        {/* Enlace para registro */}
+        <div className="auth-link-container">
+          <p className="auth-link-text">
+            ¿Aún no tienes una cuenta?{' '}
+            <a href="/register" className="auth-link">
+              Regístrate aquí
+            </a>
+          </p>
+        </div>
       </form>
     </div>
   );

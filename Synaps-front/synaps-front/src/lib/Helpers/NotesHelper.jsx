@@ -1,6 +1,7 @@
 import { http_post, http_get } from '../http.js';
 import { useEffect, useState } from "react";
 import { showErrorNotification } from '../../components/Atomic/Notification/NotificationSystem';
+import { removeDuplicates, mergeWithoutDuplicates } from '../utils/notesDedupe.js';
 
 /**
  * Helper para gestión de notas
@@ -57,21 +58,25 @@ export function NotesHelper() {
         type: item.type
       }));
 
-      // Actualizar estado local y global preservando las carpetas
+      // Actualizar estado local y global de manera inteligente
       setNotes(prev => {
-        // Obtener elementos actuales de window (incluye carpetas)
+        // Obtener elementos actuales de window
         const currentItems = window.currentNotes || [];
         
-        // Filtrar notas existentes con el mismo parent_id pero mantener carpetas
-        const filteredItems = currentItems.filter(item => 
-          item.parent_id !== parent_id || item.type === 'folder'
-        );
+        // Remover todos los elementos del parent_id actual para reemplazarlos
+        const filteredItems = currentItems.filter(item => {
+          return item.parent_id !== parent_id;
+        });
         
-        // Añadir nuevas notas
-        const updated = [...filteredItems, ...newItems];
-        window.currentNotes = updated;
+        // Combinar elementos filtrados con nuevos elementos evitando duplicados
+        const updated = mergeWithoutDuplicates(filteredItems, newItems);
         
-        return updated;
+        // Aplicar limpieza final para eliminar cualquier duplicado restante
+        const cleanedItems = removeDuplicates(updated);
+        
+        window.currentNotes = cleanedItems;
+        
+        return cleanedItems;
       });
 
     } catch (error) {

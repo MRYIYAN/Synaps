@@ -10,7 +10,7 @@ import { http_get } from '../../lib/http';
 
 // Host y puerto del bridge WS
 const WS_HOST = window.location.hostname === 'localhost' ? 'localhost' : 'synaps-redis-ws-bridge';
-const WS_PORT = 8082;
+const WS_PORT = 8084;
 
 /**
  * Editor con sincronización WebSocket por Redis

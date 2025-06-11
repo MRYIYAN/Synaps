@@ -32,7 +32,7 @@ const redis_url = process.env.REDIS_URL || 'redis://localhost:6380';
  * Puerto del WebSocket server
  * @type {number}
  */
-const PORT = 8082;
+const PORT = 8084;
 
 /**
  * Host del WebSocket server

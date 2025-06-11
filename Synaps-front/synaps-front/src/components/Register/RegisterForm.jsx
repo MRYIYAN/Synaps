@@ -28,6 +28,8 @@ const RegisterForm = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationDirection, setAnimationDirection] = useState('');
   const [error_msg, set_error_msg] = useState('');
+  const [success_msg, set_success_msg] = useState('');
+  const [countdown, setCountdown] = useState(null);
 
   //---------------------------------------------------------------------------//
   //  Estados para los campos de entrada del formulario                        //
@@ -63,6 +65,12 @@ const RegisterForm = () => {
   const [isStep2Valid, setIsStep2Valid] = useState(false);
 
   //---------------------------------------------------------------------------//
+  //  Estados para mostrar/ocultar contraseñas                                 //
+  //---------------------------------------------------------------------------//
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  //---------------------------------------------------------------------------//
   //  Función para validar el nombre completo del usuario                      //
   //---------------------------------------------------------------------------//
   /**
@@ -70,40 +78,46 @@ const RegisterForm = () => {
    * @param {string} value - Valor del campo nombre a validar
    * @returns {boolean} - true si es válido, false si hay errores
    */
-  const validateName = (value) => {
+  const validateName = ( value ) => {
+    // Inicializar value con valor por defecto
+    let validationResult = false;
+    
     // Verificar que el nombre no esté vacío
-    if (value.trim() === '') {
-      setNameError('El nombre no puede estar vacío');
-      return false;
+    if( value.trim() === '' ) {
+      setNameError( 'El nombre no puede estar vacío' );
+      return validationResult;
     }
     
     // Evitar más de un espacio consecutivo para mantener formato limpio
-    if (value.includes('  ')) {
-      setNameError('El nombre no puede contener más de un espacio consecutivo');
-      return false;
+    if( value.includes( '  ' ) ) {
+      setNameError( 'El nombre no puede contener más de un espacio consecutivo' );
+      return validationResult;
     }
     
     // Prohibir números en el nombre para mayor autenticidad
-    if (/\d/.test(value)) {
-      setNameError('El nombre no puede contener números');
-      return false;
+    if( /\d/.test( value ) ) {
+      setNameError( 'El nombre no puede contener números' );
+      return validationResult;
     }
     
     // Solo permitir letras y espacios - caracteres especiales prohibidos
-    if (/[^\p{L}\p{M}\s]/u.test(value)) {
-      setNameError('El nombre no puede contener caracteres especiales');
-      return false;
+    if( /[^\p{L}\p{M}\s]/u.test( value ) ) {
+      setNameError( 'El nombre no puede contener caracteres especiales' );
+      return validationResult;
     }
     
     // Detección de emojis y caracteres unicode especiales
-    if (/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test(value)) {
-      setNameError('El nombre no puede contener emojis');
-      return false;
+    if( /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u.test( value ) ) {
+      setNameError( 'El nombre no puede contener emojis' );
+      return validationResult;
     }
     
     // Limpiar error si todas las validaciones pasan
-    setNameError('');
-    return true;
+    setNameError( '' );
+    validationResult = true;
+    
+    // Retornar value
+    return validationResult;
   };
 
   //---------------------------------------------------------------------------//
@@ -438,53 +452,52 @@ const RegisterForm = () => {
   /**
    * Maneja la navegación al siguiente paso con validación forzada
    */
-  const handleNextStep = (e) => {
+  const handleNextStep = ( e ) => {
     e.preventDefault();
     
     // Marcar todos los campos como tocados para mostrar errores
-    setNameTouched(true);
-    setUsernameTouched(true);
-    setEmailTouched(true);
+    setNameTouched( true );
+    setUsernameTouched( true );
+    setEmailTouched( true );
     
     // Ejecutar validación completa del paso 1
-    const nameValid = validateName(name);
-    const usernameValid = validateUsername(username);
-    const emailValid = validateEmail(email);
+    const nameValid = validateName( name );
+    const usernameValid = validateUsername( username );
+    const emailValid = validateEmail( email );
     
     // Solo proceder si todos los campos son válidos
-    if (!(nameValid && usernameValid && emailValid)) {
+    if( !( nameValid && usernameValid && emailValid ) )
       return;
-    }
     
     // Iniciar animación de transición hacia el siguiente paso
-    setAnimationDirection('next');
-    setIsAnimating(true);
+    setAnimationDirection( 'next' );
+    setIsAnimating( true );
     
     // Cambiar al paso 2 después de la animación
-    setTimeout(() => {
-      setFormStep(2);
-      set_error_msg('');
+    setTimeout( () => {
+      setFormStep( 2 );
+      set_error_msg( '' );
       
       // Finalizar animación
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, 50);
-    }, 300);
+      setTimeout( () => {
+        setIsAnimating( false );
+      }, 50 );
+    }, 300 );
   };
 
   /**
    * Maneja la navegación al paso anterior con animación
    */
-  const handlePrevStep = (e) => {
+  const handlePrevStep = ( e ) => {
     e.preventDefault();
     
     // Iniciar animación de transición hacia el paso anterior
-    setAnimationDirection('prev');
-    setIsAnimating(true);
+    setAnimationDirection( 'prev' );
+    setIsAnimating( true );
     
     // Cambiar al paso 1 después de la animación
-    setTimeout(() => {
-      setFormStep(1);
+    setTimeout( () => {
+      setFormStep( 1 );
       set_error_msg('');
       
       // Finalizar animación
@@ -500,38 +513,67 @@ const RegisterForm = () => {
   /**
    * Maneja el envío final del formulario con validación completa
    * 
-   * async: Función asíncrona que maneja el envío del formulario
    * @param {Event} e - Evento de envío del formulario
+   * @returns {Promise<boolean>} true si el registro fue exitoso
    */
-  const handle_submit = async(e) => { 
+  const handle_submit = async( e ) => { 
+    // Inicializar value con valor por defecto
+    let value = false;
+    
     e.preventDefault();
     
     // Marcar todos los campos del paso 2 como tocados
-    setPasswordTouched(true);
-    setConfirmPasswordTouched(true);
+    setPasswordTouched( true );
+    setConfirmPasswordTouched( true );
     
     // Ejecutar validación completa del paso 2
-    const passwordValid = validatePassword(password);
-    const confirmValid = validateConfirmPassword(confirmPassword);
+    const passwordValid = validatePassword( password );
+    const confirmValid = validateConfirmPassword( confirmPassword );
     
     // Solo proceder si ambos campos son válidos
-    if (!(passwordValid && confirmValid)) {
-      return;
-    }
+    if( !( passwordValid && confirmValid ) )
+      return value;
 
-    // Configuración de la petición HTTP, no se si esta bien xd
+    // Configuración de la petición HTTP
     let url = 'http://localhost:8010/api/register';
     let body = { name, username, email, password };
 
     try {
+
       // Enviar datos al servidor
-      let http_response = await http_post(url, body);
-      console.log(http_response);
-      // TODO: Implementar redirección o mensaje de éxito :)
-    } catch (error) {
-      console.error('Error al registrar:', error);
-      set_error_msg('Error al crear la cuenta. Inténtalo de nuevo.');
+      let { result, message, http_response } = await http_post( url, body );
+      
+      // Verificar si el registro fue exitoso
+      if( result === 1 ) {
+        set_error_msg( '' ); // Limpiar mensajes de error
+        set_success_msg( '¡Registro exitoso! Redirigiendo al login en' );
+        setCountdown( 3 ); // Inicializar countdown
+        
+        // Crear intervalo para la cuenta regresiva
+        const countdownInterval = setInterval( () => {
+          setCountdown( prevCount => {
+            if( prevCount <= 1 ) {
+              clearInterval( countdownInterval );
+              window.location.href = '/login';
+              return 0;
+            }
+            return prevCount - 1;
+          } );
+        }, 1000 );
+        
+        value = true;
+      } else {
+        // Mostrar mensaje de error del servidor
+        const errorMessage = http_response?.message || 'Error al crear la cuenta. Inténtalo de nuevo.';
+        set_success_msg( '' ); // Limpiar mensajes de éxito
+        set_error_msg( errorMessage );
+      }
+    } catch( error ) {
+      set_error_msg( 'Error al crear la cuenta. Inténtalo de nuevo.' );
     }
+    
+    // Retornar value
+    return value;
   };
 
   //---------------------------------------------------------------------------//
@@ -620,30 +662,74 @@ const RegisterForm = () => {
               {/* Campo: Contraseña */}
               <div className="form-group">
                 <label htmlFor="password">Contraseña</label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  onBlur={handlePasswordBlur}
-                  className={passwordTouched && passwordError ? 'error' : ''}
-                  required
-                />
+                <div className="password-input-container">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={handlePasswordChange}
+                    onBlur={handlePasswordBlur}
+                    className={`password-input ${passwordTouched && passwordError ? 'error' : ''}`}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  >
+                    {showPassword ? (
+                      <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/>
+                        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/>
+                        <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/>
+                        <path d="m2 2 20 20"/>
+                      </svg>
+                    ) : (
+                      <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 {passwordTouched && passwordError && <div className="field-error">{passwordError}</div>}
               </div>
               
               {/* Campo: Confirmación de contraseña */}
               <div className="form-group">
                 <label htmlFor="confirmPassword">Confirmar contraseña</label>
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
-                  onBlur={handleConfirmPasswordBlur}
-                  className={confirmPasswordTouched && confirmPasswordError ? 'error' : ''}
-                  required
-                />
+                <div className="password-input-container">
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={handleConfirmPasswordChange}
+                    onBlur={handleConfirmPasswordBlur}
+                    className={`password-input ${confirmPasswordTouched && confirmPasswordError ? 'error' : ''}`}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={showConfirmPassword ? "Ocultar confirmación de contraseña" : "Mostrar confirmación de contraseña"}
+                  >
+                    {showConfirmPassword ? (
+                      <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/>
+                        <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/>
+                        <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/>
+                        <path d="m2 2 20 20"/>
+                      </svg>
+                    ) : (
+                      <svg className="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 {confirmPasswordTouched && confirmPasswordError && 
                   <div className="field-error">{confirmPasswordError}</div>
                 }
@@ -671,7 +757,32 @@ const RegisterForm = () => {
       
       {/* Mensaje de error general */}
       {error_msg && <div className="error-message">{error_msg}</div>}
+      
+      {/* Mensaje de éxito */}
+      {success_msg && (
+        <div className="success-message">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span>
+            {success_msg} {countdown !== null && (
+              <span className="countdown-number">{countdown}</span>
+            )} {countdown !== null && countdown > 1 ? 'segundos...' : countdown === 1 ? 'segundo...' : ''}
+          </span>
+        </div>
+      )}
+      
+      {/* Enlace para login */}
+      <div className="auth-link-container">
+        <p className="auth-link-text">
+          ¿Ya tienes una cuenta?{' '}
+          <a href="/login" className="auth-link">
+            Inicia sesión aquí
+          </a>
+        </p>
+      </div>
     </div>
+
   );
 };
 

@@ -32,18 +32,22 @@
 
 /* Animación de escritura para el subtítulo */
 @keyframes typing {
+
   0% { 
     width: 0; 
     opacity: 1;
   }
+
   99% { 
     opacity: 1;
   }
+
   100% { 
     width: 100%; 
     opacity: 1;
     border-right: transparent;
   }
+
 }
 
 @keyframes blink-caret {
@@ -662,5 +666,149 @@ footer, .footer {
 /* Opcional: Si necesitas mantener el texto legible contra cualquier fondo */
 .footer * {
   text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); /* Añade un sutil sombreado al texto */
+}
+
+/*---------------------------------------------------------------------------*/
+/*  Enlaces de navegación entre login y registro                             */
+/*---------------------------------------------------------------------------*/
+/* Contenedor del enlace de navegación */
+.auth-link-container {
+  text-align: center;          /* Centrado del texto */
+  margin-top: 20px;            /* Espaciado superior */
+  width: 100%;                 /* Ancho completo */
+}
+
+/* Texto del enlace */
+.auth-link-text {
+  color: rgba(251, 251, 251, 0.7); /* Color gris claro */
+  font-size: 14px;             /* Tamaño de fuente */
+  font-weight: 400;            /* Peso normal */
+  margin: 0;                   /* Sin margen */
+  line-height: 1.5;            /* Altura de línea */
+}
+
+/* Enlace de navegación */
+.auth-link {
+  color: var(--liquid-lava);   /* Color naranja de la marca */
+  text-decoration: none;       /* Sin subrayado */
+  font-weight: 500;            /* Peso medio */
+  transition: all 0.3s ease;  /* Transición suave */
+  border-bottom: 1px solid transparent; /* Borde transparente inicial */
+}
+
+.auth-link:hover {
+  color: #ff7a1f;              /* Color más claro en hover */
+  border-bottom: 1px solid #ff7a1f; /* Subrayado en hover */
+  transform: translateY(-1px); /* Pequeño movimiento hacia arriba */
+}
+
+.auth-link:active {
+  transform: translateY(0);    /* Volver a posición original al hacer clic */
+}
+
+/*---------------------------------------------------------------------------*/
+/* ESTILOS PARA MOSTRAR/OCULTAR CONTRASEÑA                                  */
+/*---------------------------------------------------------------------------*/
+
+/* Contenedor de input de contraseña con botón */
+.password-input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Input de contraseña con espacio para el botón */
+.password-input {
+  padding-right: 45px !important; /* Espacio para el botón del ojo */
+}
+
+/* Botón para mostrar/ocultar contraseña */
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+/* Icono del ojo */
+.eye-icon {
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.2s ease;
+}
+
+/* Efectos hover y focus en el botón */
+.password-toggle-btn:hover .eye-icon {
+  color: var(--liquid-lava);
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+  background-color: rgba(245, 110, 15, 0.1);
+}
+
+.password-toggle-btn:focus .eye-icon {
+  color: var(--liquid-lava);
+}
+
+/* Animación suave para el cambio de icono */
+.password-toggle-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Asegurar que el botón sea accesible */
+.password-toggle-btn:focus-visible {
+  outline: 2px solid var(--liquid-lava);
+  outline-offset: 2px;
+}
+
+/*---------------------------------------------------------------------------*/
+/* RESPONSIVE PARA MOSTRAR/OCULTAR CONTRASEÑA                               */
+/*---------------------------------------------------------------------------*/
+
+/* En pantallas móviles, hacer el área de click más grande */
+@media (max-width: 768px) {
+  .password-toggle-btn {
+    right: 8px;
+    padding: 8px;
+  }
+  
+  .eye-icon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .password-input {
+    padding-right: 48px !important;
+  }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .password-toggle-btn {
+    right: 6px;
+    padding: 10px;
+  }
+  
+  .eye-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .password-input {
+    padding-right: 50px !important;
+  }
 }
 

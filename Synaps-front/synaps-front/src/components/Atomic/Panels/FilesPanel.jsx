@@ -18,6 +18,7 @@ import { ReactComponent as UploadIcon }     from "../../../assets/icons/upload.s
 import NoteTree from "../../NoteTree/NoteTree.jsx";
 import { http_post } from '../../../lib/http.js';
 import FileUploadModal from '../Modal/FileUploadModal';
+import { updateOrAdd } from '../../../lib/utils/notesDedupe.js';
 
 
 
@@ -37,14 +38,20 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
   useEffect(() => {
     const syncNotes = () => {
       const currentNotes = window.currentNotes || notesProp || [];
-      setNotes(currentNotes);
+      setNotes(prev => {
+        // Solo actualizar si hay diferencias para evitar re-renders innecesarios
+        if (JSON.stringify(prev) !== JSON.stringify(currentNotes)) {
+          return currentNotes;
+        }
+        return prev;
+      });
     };
 
     // Sincronización inicial
     syncNotes();
 
-    // Configurar intervalo para sincronización periódica
-    const interval = setInterval(syncNotes, 100);
+    // Configurar intervalo para sincronización periódica con menor frecuencia
+    const interval = setInterval(syncNotes, 500);
     
     return () => {
       clearInterval(interval);
@@ -120,6 +127,26 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
   // Almacenan los nombres ingresados por el usuario para nuevas notas y carpetas
   const [newNoteName, setNewNoteName] = useState( "" );       // Nombre de nueva nota
   const [newFolderName, setNewFolderName] = useState( "" );   // Nombre de nueva carpeta
+
+  //---------------------------------------------------------------------------//
+  //  Función helper para actualizar notas sin duplicados                      //
+  //---------------------------------------------------------------------------//
+  
+  // Función centralizada para agregar o actualizar elementos sin duplicados
+  const updateNotesWithoutDuplicates = (newItem, shouldSelect = true) => {
+    setNotes(prev => {
+      const currentNotes = window.currentNotes || [];
+      const updated = updateOrAdd(currentNotes, newItem);
+      
+      window.currentNotes = updated;
+      
+      if (shouldSelect) {
+        setSelectedItemId2(newItem.id2);
+      }
+      
+      return updated;
+    });
+  };
 
   //---------------------------------------------------------------------------//
   //  Handlers para manejar interacciones del usuario                          //
@@ -260,16 +287,13 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
       , type     : 'note'
     };
 
-    // Actualizamos el estado de notas y la variable global en paralelo
-    setNotes( prev => {
-      const updated = [...(window.currentNotes || []), note];
-      window.currentNotes = updated;
-
-      // Marcamos como seleccionado el nuevo item
-      setSelectedItemId2( data.note_id2 );
+    // Usar función helper para evitar duplicados
+    updateNotesWithoutDuplicates(note, true);
+    
+    // Abrir la nota en el editor
+    if (window.readNote) {
       window.readNote( data.note_id2, window.currentVaultId );
-      return updated;
-    } );
+    }
     
     // Limpiar el input y ocultarlo después de crear la nota
     setNewNoteName( "" );  // Reinicia el campo de nombre
@@ -302,15 +326,8 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
       , type     : 'folder'
     };
 
-    // Actualizamos el estado de notas y la variable global en paralelo
-    setNotes( prev => {
-      const updated = [...(window.currentNotes || []), folder];
-      window.currentNotes = updated;
-
-      // Marcamos como seleccionado el nuevo item
-      setSelectedItemId2( data.folder_id2 );
-      return updated;
-    } );
+    // Usar función helper para evitar duplicados
+    updateNotesWithoutDuplicates(folder, true);
     
     // Limpiar el input y ocultarlo después de crear la carpeta
     setNewFolderName( "" );  // Reinicia el campo de nombre
@@ -343,18 +360,13 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
 
   // Función para manejar el éxito de la subida de archivos
   const handleUploadSuccess = (note) => {
-    // Actualizar la lista de notas
-    setNotes( prev => {
-      const updated = [...(window.currentNotes || []), note];
-      window.currentNotes = updated;
-
-      // Marcar como seleccionado el nuevo item
-      setSelectedItemId2( note.id2 );
-      if (window.readNote) {
-        window.readNote( note.id2, window.currentVaultId );
-      }
-      return updated;
-    } );
+    // Usar función helper para evitar duplicados
+    updateNotesWithoutDuplicates(note, true);
+    
+    // Abrir la nota en el editor
+    if (window.readNote) {
+      window.readNote( note.id2, window.currentVaultId );
+    }
 
     // Cerrar el modal
     setShowUploadModal(false);

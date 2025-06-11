@@ -187,7 +187,7 @@ F --> A
 
 ---
 
-✨ Todo el entorno fue construido desde cero, configurado, probado y validado para dejar funcionando **Synaps Backend en contenedor Docker** de forma estable y escalable.
+Todo el entorno fue construido desde cero, configurado, probado y validado para dejar funcionando **Synaps Backend en contenedor Docker** de forma estable y escalable.
 
 📝 _By IanP_
 

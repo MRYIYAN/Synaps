@@ -17,14 +17,19 @@ class DatabaseHelper
     /**
      * Cambia la conexión activa a la base de datos del tenant correspondiente.
      *
-     * @param int|null  $tenant_id  ID numérico del tenant (usuario)
-     * @return string   Nombre de la conexión configurada ('tenant')
+     * @param int|null $tenant_id ID numérico del tenant (usuario)
+     * @return string Nombre de la conexión configurada ('tenant')
      */
     public static function connect( ?int $tenant_id = null ): string
     {
+        // Inicializar value con valor por defecto
+        $value = config( 'database.default' );
+
         // Si es global, devolvemos la conexión por defecto
-        if( $tenant_id === null )
-            return config( 'database.default' );
+        if( $tenant_id === null ) {
+            // Retornar value
+            return $value;
+        }
 
         // Construye el nombre de la base de datos: synaps_0001, synaps_0002, ...
         $databaseName = 'synaps_' . str_pad( (string)$tenant_id, 4, '0', STR_PAD_LEFT );
@@ -45,6 +50,9 @@ class DatabaseHelper
             ]
         ] );
 
-        return 'tenant';
+        $value = 'tenant';
+
+        // Retornar value
+        return $value;
     }
 }

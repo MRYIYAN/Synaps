@@ -226,13 +226,76 @@
   display: flex;               /* Layout flexbox */
   align-items: center;         /* Centrado vertical */
   gap: 6px;                    /* Espacio entre elementos */
-  width: 100% !important;      /* Ancho completo */
-  padding-left: 0 !important;  /* Sin padding izquierdo */
+  width: 100% !important;      /* Mismo ancho que los inputs */
+  max-width: 100% !important;  /* Limitar ancho máximo */
+  padding: 12px 16px;          /* Mismo padding que los inputs */
+  box-sizing: border-box;      /* Incluir padding en el ancho */
   background-color: rgba(255, 0, 0, 0.2); /* Fondo rojizo transparente */
   border: 1px solid rgba(255, 0, 0, 0.4); /* Borde rojizo */
+  border-radius: 6px;          /* Mismos bordes redondeados que inputs */
   backdrop-filter: blur(5px);  /* Efecto blur */
   position: relative;          /* Contexto de posicionamiento */
   z-index: 5;                  /* Capa intermedia */
+}
+
+/* Mensaje de éxito */
+.success-message {
+  color: #4ade80;              /* Verde brillante para éxito */
+  font-size: 13px;             /* Tamaño pequeño */
+  margin-top: 8px !important;  /* Espaciado superior */
+  display: flex;               /* Layout flexbox */
+  align-items: center;         /* Centrado vertical */
+  gap: 8px;                    /* Espacio entre icono y texto */
+  width: 100% !important;      /* Mismo ancho que los inputs */
+  max-width: 100% !important;  /* Limitar ancho máximo */
+  padding: 12px 16px;          /* Mismo padding que los inputs */
+  box-sizing: border-box;      /* Incluir padding en el ancho */
+  background-color: rgba(74, 222, 128, 0.15); /* Fondo verde transparente */
+  border: 1px solid rgba(74, 222, 128, 0.3); /* Borde verde */
+  border-radius: 6px;          /* Mismos bordes redondeados que inputs */
+  backdrop-filter: blur(5px);  /* Efecto blur */
+  position: relative;          /* Contexto de posicionamiento */
+  z-index: 5;                  /* Capa intermedia */
+}
+
+.success-message svg {
+  color: #4ade80;              /* Color verde del icono */
+  flex-shrink: 0;              /* Evitar que se encoja */
+}
+
+.success-message span {
+  flex: 1;                     /* Ocupar espacio disponible */
+}
+
+.countdown-number {
+  font-weight: 700;            /* Peso más fuerte */
+  color: #22c55e;              /* Verde más intenso */
+  background-color: rgba(34, 197, 94, 0.2); /* Fondo verde claro */
+  border-radius: 50%;          /* Forma circular */
+  width: 24px;                 /* Ancho fijo */
+  height: 24px;                /* Alto fijo */
+  display: inline-flex;        /* Flexbox inline */
+  align-items: center;         /* Centrado vertical */
+  justify-content: center;     /* Centrado horizontal */
+  margin: 0 4px;               /* Margen horizontal */
+  font-size: 14px;             /* Tamaño de fuente */
+  transition: all 0.3s ease;   /* Transición suave */
+  animation: pulse 1s ease-in-out infinite; /* Animación de pulso */
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -601,6 +664,44 @@
   transition: transform 0.3s ease, opacity 0.3s ease; /* Transiciones suaves */
 }
 
+/*---------------------------------------------------------------------------*/
+/*  Enlaces de navegación entre login y registro                            */
+/*---------------------------------------------------------------------------*/
+/* Contenedor del enlace de navegación */
+.auth-link-container {
+  text-align: center;          /* Centrado del texto */
+  margin-top: 20px;            /* Espaciado superior */
+  width: 100%;                 /* Ancho completo */
+}
+
+/* Texto del enlace */
+.auth-link-text {
+  color: rgba(251, 251, 251, 0.7); /* Color gris claro */
+  font-size: 14px;             /* Tamaño de fuente */
+  font-weight: 400;            /* Peso normal */
+  margin: 0;                   /* Sin margen */
+  line-height: 1.5;            /* Altura de línea */
+}
+
+/* Enlace de navegación */
+.auth-link {
+  color: var(--liquid-lava);   /* Color naranja de la marca */
+  text-decoration: none;       /* Sin subrayado */
+  font-weight: 500;            /* Peso medio */
+  transition: all 0.3s ease;  /* Transición suave */
+  border-bottom: 1px solid transparent; /* Borde transparente inicial */
+}
+
+.auth-link:hover {
+  color: #ff7a1f;              /* Color más claro en hover */
+  border-bottom: 1px solid #ff7a1f; /* Subrayado en hover */
+  transform: translateY(-1px); /* Pequeño movimiento hacia arriba */
+}
+
+.auth-link:active {
+  transform: translateY(0);    /* Volver a posición original al hacer clic */
+}
+
 /*===========================================================================*/
 /*                        NOTAS DE IMPLEMENTACIÓN                           */
 /*===========================================================================*/
@@ -610,3 +711,140 @@
 /*  - Footer completamente transparente sin interferencias visuales         */
 /*  - Sistema responsive optimizado para todos los dispositivos             */
 /*===========================================================================*/
+
+/*---------------------------------------------------------------------------*/
+/* ESTILOS PARA MOSTRAR/OCULTAR CONTRASEÑA EN REGISTRO                      */
+/*---------------------------------------------------------------------------*/
+
+/* Contenedor de input de contraseña con botón para registro */
+.form-group .password-input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Input de contraseña con espacio para el botón en registro */
+.form-group .password-input {
+  padding-right: 45px !important; /* Espacio para el botón del ojo */
+  width: 100% !important;
+  height: 45px !important;
+  padding-left: 12px !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  box-sizing: border-box;
+  background-color: rgba(30, 29, 34, 0.7) !important;
+  backdrop-filter: blur(5px) !important;
+  border: none !important;
+  border-radius: 6px !important;
+  color: var(--snow) !important;
+  font-size: 15px !important;
+  text-align: left !important;
+  transition: all 0.2s ease-in-out !important;
+  position: relative;
+  z-index: 5;
+}
+
+/* Botón para mostrar/ocultar contraseña en registro */
+.form-group .password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+/* Icono del ojo en registro */
+.form-group .eye-icon {
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.2s ease;
+}
+
+/* Efectos hover y focus en el botón de registro */
+.form-group .password-toggle-btn:hover .eye-icon {
+  color: var(--liquid-lava);
+}
+
+.form-group .password-toggle-btn:focus {
+  outline: none;
+  background-color: rgba(245, 110, 15, 0.1);
+}
+
+.form-group .password-toggle-btn:focus .eye-icon {
+  color: var(--liquid-lava);
+}
+
+/* Animación suave para el cambio de icono en registro */
+.form-group .password-toggle-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Asegurar que el botón sea accesible en registro */
+.form-group .password-toggle-btn:focus-visible {
+  outline: 2px solid var(--liquid-lava);
+  outline-offset: 2px;
+}
+
+/* Estados de focus específicos para inputs con botón */
+.form-group .password-input:focus {
+  outline: none !important;
+  border: 1px solid #FF7F00 !important;
+  box-shadow: 0 0 0 1px rgba(255, 127, 0, 0.2) !important;
+  background-color: #232327 !important;
+}
+
+/* Estados de error específicos para inputs con botón */
+.form-group .password-input.error {
+  border: 1px solid #e74c3c !important;
+  box-shadow: 0 0 0 1px rgba(231, 76, 60, 0.2) !important;
+  background-color: rgba(231, 76, 60, 0.05) !important;
+}
+
+/*---------------------------------------------------------------------------*/
+/* RESPONSIVE PARA MOSTRAR/OCULTAR CONTRASEÑA EN REGISTRO                   */
+/*---------------------------------------------------------------------------*/
+
+/* En pantallas móviles, hacer el área de click más grande para registro */
+@media (max-width: 768px) {
+  .form-group .password-toggle-btn {
+    right: 8px;
+    padding: 8px;
+  }
+  
+  .form-group .eye-icon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .form-group .password-input {
+    padding-right: 48px !important;
+  }
+}
+
+/* Para pantallas muy pequeñas en registro */
+@media (max-width: 480px) {
+  .form-group .password-toggle-btn {
+    right: 6px;
+    padding: 10px;
+  }
+  
+  .form-group .eye-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .form-group .password-input {
+    padding-right: 50px !important;
+  }
+}

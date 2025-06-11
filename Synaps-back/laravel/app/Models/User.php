@@ -52,6 +52,42 @@ class User extends Authenticatable
     public $timestamps = false;
 
     //---------------------------------------------------------------------------//
+    //  Boot method para eventos del modelo                                      //
+    //---------------------------------------------------------------------------//
+    
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($user) {
+            \Illuminate\Support\Facades\Log::info('USER_MODEL_CREATING: Antes de crear usuario', [
+                'data' => $user->toArray()
+            ]);
+        });
+        
+        static::created(function ($user) {
+            \Illuminate\Support\Facades\Log::info('USER_MODEL_CREATED: Usuario creado exitosamente', [
+                'user_id' => $user->user_id,
+                'email' => $user->user_email,
+                'data' => $user->toArray()
+            ]);
+        });
+        
+        static::saving(function ($user) {
+            \Illuminate\Support\Facades\Log::info('USER_MODEL_SAVING: Guardando usuario', [
+                'data' => $user->toArray()
+            ]);
+        });
+        
+        static::saved(function ($user) {
+            \Illuminate\Support\Facades\Log::info('USER_MODEL_SAVED: Usuario guardado', [
+                'user_id' => $user->user_id,
+                'data' => $user->toArray()
+            ]);
+        });
+    }
+
+    //---------------------------------------------------------------------------//
     //  Atributos rellenables para asignación masiva.                            //
     //---------------------------------------------------------------------------//
 
@@ -64,8 +100,9 @@ class User extends Authenticatable
         'user_id2',
         'user_email',
         'user_name',
+        'user_full_name',
         'user_password',
-        'user_profile_photo',
+        'first_login',
     ];
 
     //---------------------------------------------------------------------------//

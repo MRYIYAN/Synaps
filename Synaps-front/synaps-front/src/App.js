@@ -6,7 +6,6 @@ import keycloak, { keycloakInitOptions } from "./keycloak";
 // Sistema de notificaciones
 import NotificationSystem from "./components/Atomic/Notification/NotificationSystem";
 
-
 // ---------------------------------------------
 // Importamos las páginas de la aplicación
 // ---------------------------------------------

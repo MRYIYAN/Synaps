@@ -36,14 +36,16 @@ const http_post_file = async (url, formData) => {
       credentials: 'include'
     });
 
-    http_data = await response.json();
+    const responseData = await response.json();
 
     if (!response.ok) {
-      message = http_data.message || response.statusText || 'Error';
+      message = responseData.message || response.statusText || 'Error';
       showErrorNotification(message);
     } else {
-      result = 1;
-      message = http_data.message || 'OK';
+      // Extraer la estructura correcta de la respuesta
+      result = responseData.result || 1;
+      message = responseData.message || 'OK';
+      http_data = responseData.http_data || responseData; // Si no hay http_data, usar la respuesta completa
     }
 
   } catch (error) {
@@ -194,49 +196,50 @@ const FileUploadModal = ({
       formData.append('parent_id2', window.selectedItemId2 || '');
 
       // Realizar la subida con seguimiento de progreso
-      const response = await http_post_file('http://localhost:8010/api/uploadFile', formData);
+      const { result, http_data } = await http_post_file('http://localhost:8010/api/uploadFile', formData);
 
-      if (response.result !== 1) {
-        throw new Error(response.message || 'Error al subir el archivo');
+      if (result !== 1) {
+        throw new Error(http_data.message || 'Error al subir el archivo');
       }
-
-      const result = response;
+       if (result !== 1) {
+        throw new Error(http_data.message || 'Error al subir el archivo');
+      }
       
-      if (result.result === 1) {
-        // Crear nota basada en el archivo subido
-        const noteData = result.http_data.note;
-        const note = {
-          id: noteData.note_id,
-          id2: noteData.note_id2,
-          title: noteData.note_title,
-          parent_id: noteData.parent_id,
-          type: 'note'
-        };
+      // Crear nota basada en el archivo subido
+      const noteData = http_data.note;
+      const note = {
+        id: noteData.note_id,
+        id2: noteData.note_id2,
+        title: noteData.note_title,
+        parent_id: noteData.parent_id,
+        type: 'note'
+      };
 
-        // Actualizar la lista de notas globalmente
-        if (window.currentNotes) {
+      // Actualizar la lista de notas globalmente evitando duplicados
+      if (window.currentNotes) {
+        const noteExists = window.currentNotes.some(existingNote => existingNote.id2 === note.id2);
+        
+        if (!noteExists) {
           window.currentNotes = [...window.currentNotes, note];
         }
-
-        // Marcar como seleccionado el nuevo item
-        if (window.setSelectedItemId2) {
-          window.setSelectedItemId2(noteData.note_id2);
-        }
-        
-        // Abrir la nota
-        if (window.readNote) {
-          window.readNote(noteData.note_id2, window.currentVaultId);
-        }
-
-        // Llamar al callback de éxito
-        onUpload(note);
-        
-        // Limpiar estado
-        setSelectedFile(null);
-        setUploadProgress(100);
-      } else {
-        throw new Error(result.message || 'Error al procesar el archivo');
       }
+
+      // Marcar como seleccionado el nuevo item
+      if (window.setSelectedItemId2) {
+        window.setSelectedItemId2(noteData.note_id2);
+      }
+      
+      // Abrir la nota
+      if (window.readNote) {
+        window.readNote(noteData.note_id2, window.currentVaultId);
+      }
+
+      // Llamar al callback de éxito
+      onUpload(note);
+      
+      // Limpiar estado
+      setSelectedFile(null);
+      setUploadProgress(100);
     } catch (error) {
       console.error('Error al subir archivo:', error);
       setError(error.message || 'Error al subir el archivo');

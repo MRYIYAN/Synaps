@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libfreetype6-dev \
     mariadb-client \
+    dos2unix \
     && docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl
 
 # Habilitar Apache mod_rewrite
@@ -33,3 +34,22 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Instalar dependencias de Laravel
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+# Copiar script de entrypoint
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN dos2unix /usr/local/bin/docker-entrypoint.sh \
+    && chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Crear directorios de storage necesarios
+RUN mkdir -p storage/app/public/profile_photos \
+    && mkdir -p storage/logs \
+    && mkdir -p storage/framework/cache \
+    && mkdir -p storage/framework/sessions \
+    && mkdir -p storage/framework/views
+
+# Establecer permisos específicos para storage
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
+# Usar el script de entrypoint personalizado
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

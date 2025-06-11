@@ -697,6 +697,9 @@ class NoteController extends Controller
       // Extraemos el contenido del archivo según su tipo
       $content = $this->extractFileContent( $file );
       
+      // Guardamos el archivo físicamente en storage/app/public/uploads
+      $filePath = $file->store('uploads', 'public');
+      
       // Generamos el nombre de la nota basado en el archivo
       $noteName = pathinfo( $file->getClientOriginalName(), PATHINFO_FILENAME );
       

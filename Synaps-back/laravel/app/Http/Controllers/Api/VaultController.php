@@ -68,6 +68,12 @@ class VaultController extends Controller
             //==============================//
             // CONEXIÓN DINÁMICA AL TENANT  //
             //==============================//
+            Log::info('VAULT_CONTROLLER: Antes de conectar a tenant', [
+                'user_id' => $user_id,
+                'user_id_type' => gettype($user_id),
+                'user_object' => $user ? $user->toArray() : null
+            ]);
+            
             $connection = DatabaseHelper::connect( $user_id );
 
             Log::debug( 'Conectado a DB', [
@@ -77,7 +83,24 @@ class VaultController extends Controller
             //=======================//
             // CONSULTA DE VAULTS    //
             //=======================//
-            $vaults = Vault::all();
+            try {
+                // Usar la conexión apropiada (tenant o default)
+                if ($connection === 'tenant') {
+                    $vaults = DB::connection('tenant')->table('vaults')->get();
+                } else {
+                    // Fallback a la BD principal si no hay tenant disponible
+                    $vaults = Vault::all();
+                }
+            } catch (\Exception $dbError) {
+                Log::warning('VAULT_CONTROLLER: Error accediendo a BD tenant, usando BD principal', [
+                    'user_id' => $user_id,
+                    'connection' => $connection,
+                    'error' => $dbError->getMessage()
+                ]);
+                
+                // Fallback a la BD principal
+                $vaults = Vault::all();
+            }
 
             //=========================//
             // RESPUESTA JSON          //
@@ -141,8 +164,31 @@ class VaultController extends Controller
             $validated = $request->validate( [
                 'vault_title'   => 'required|string|max:255',
                 'logical_path'  => 'required|string|max:255',
-                'is_private'    => 'boolean'
+                'is_private'    => 'boolean',
+                'pin'           => 'nullable|string|max:8'
             ] );
+
+            //=========================//
+            // VALIDACIÓN DE PIN SI ES VAULT PRIVADA
+            //=========================//
+            if ($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
+                if (strlen($validated['pin']) < 4) {
+                    throw new Exception('El PIN debe tener al menos 4 dígitos');
+                }
+            }
+
+            //=========================//
+            // VERIFICAR QUE NO EXISTA OTRO VAULT CON EL MISMO NOMBRE
+            //=========================//
+            $duplicateVault = DB::connection('tenant')
+                ->table('vaults')
+                ->where('vault_title', $validated['vault_title'])
+                ->where('user_id', $user_id)
+                ->first();
+
+            if ($duplicateVault) {
+                throw new Exception('Ya existe un vault con ese nombre');
+            }
 
             $vault_id2 = Str::uuid()->toString();
             $insertData = [
@@ -153,6 +199,11 @@ class VaultController extends Controller
                 'is_private'    => $validated['is_private'] ?? false,
                 'created_at'    => now()
             ];
+
+            // Solo incluir PIN si se proporciona y la vault es privada
+            if ($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
+                $insertData['pin'] = $validated['pin'];
+            }
 
             Log::debug( 'Datos a insertar:', [$insertData] );
 
@@ -239,6 +290,15 @@ class VaultController extends Controller
             ]);
 
             //=========================//
+            // VALIDACIÓN DE PIN SI ES VAULT PRIVADA
+            //=========================//
+            if ($validated['is_private'] && isset($validated['pin']) && !empty($validated['pin'])) {
+                if (strlen($validated['pin']) < 4) {
+                    throw new Exception('El PIN debe tener al menos 4 dígitos');
+                }
+            }
+
+            //=========================//
             // VERIFICAR QUE EL VAULT EXISTE Y PERTENECE AL USUARIO
             //=========================//
             $existingVault = DB::connection('tenant')
@@ -252,12 +312,25 @@ class VaultController extends Controller
             }
 
             //=========================//
+            // VERIFICAR QUE NO EXISTA OTRO VAULT CON EL MISMO NOMBRE
+            //=========================//
+            $duplicateVault = DB::connection('tenant')
+                ->table('vaults')
+                ->where('vault_title', $validated['vault_title']) 
+                ->where('user_id', $user_id)
+                ->where('vault_id2', '!=', $vault_id2) // Excluir el vault actual
+                ->first();
+
+            if ($duplicateVault) {
+                throw new Exception('Ya existe un vault con ese nombre');
+            }
+
+            //=========================//
             // PREPARAR DATOS PARA ACTUALIZACIÓN
             //=========================//
             $updateData = [
                 'vault_title'   => $validated['vault_title'],
-                'is_private'    => $validated['is_private'] ?? false,
-                'updated_at'    => now()
+                'is_private'    => $validated['is_private'] ?? false
             ];
 
             // Solo actualizar PIN si se proporciona y la vault es privada
@@ -377,7 +450,7 @@ class VaultController extends Controller
             //=========================//
             // VERIFICAR PIN
             //=========================//
-            if ($vault->pin === $validated['pin']) {
+            if ((int)$vault->pin === (int)$validated['pin']) {
                 $result = 1;
                 $message = 'PIN correcto';
             } else {
