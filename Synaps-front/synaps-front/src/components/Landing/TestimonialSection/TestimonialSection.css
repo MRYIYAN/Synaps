@@ -249,7 +249,7 @@
 
 /* Cambiar posición de las comillas a arriba a la derecha */
 .testimonial-text::before {
-  content: '"';
+  content: '\22';
   position: absolute;
   right: 10px;           
   left: auto;            

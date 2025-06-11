@@ -139,7 +139,7 @@
 }
 
 .form-label.required::after {
-  content: " *";
+  content: " \*";
   color: #f56e0f;
   font-weight: 700;
 }
@@ -603,7 +603,7 @@
 }
 
 .form-label.required::after {
-  content: " *";
+  content: " \*";
   color: #f56e0f;
 }
 

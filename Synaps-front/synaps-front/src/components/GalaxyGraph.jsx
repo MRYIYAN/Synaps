@@ -99,7 +99,7 @@ const GalaxyGraph = ( { data } ) => {
     const graph = graph_pointer.current;
 
     // Si existe el gráfico, aplicamos los efectos de repulsión
-    if( graph ) {
+    if( graph && typeof graph.d3Force === 'function' ) {
 
       // Aplicamos la repulsión a los nodos
       graph.d3Force( 'charge' ).strength( -85 );
@@ -168,13 +168,17 @@ const GalaxyGraph = ( { data } ) => {
         // Al arrastrar, desactivamos la repulsión para que los demás nodos no se muevan
         onNodeDrag = { ( node ) => {
           const graph = graph_pointer.current;
-          graph.d3Force( 'charge' ).strength( 0 );
+          if (graph && typeof graph.d3Force === 'function') {
+            graph.d3Force( 'charge' ).strength( 0 );
+          }
         } }
 
         // Al soltar, restauramos la repulsión original
         onNodeDragEnd = { ( node ) => {
           const graph = graph_pointer.current;
-          graph.d3Force( 'charge' ).strength( -50 );
+          if (graph && typeof graph.d3Force === 'function') {
+            graph.d3Force( 'charge' ).strength( -50 );
+          }
         } }
 
         // Evento onClick - abre modal con editor de solo lectura y sincroniza con sidebar
@@ -191,7 +195,12 @@ const GalaxyGraph = ( { data } ) => {
         } }
 
         // Ajustamos el zoom al terminar el cálculo
-        onEngineStop={ () => graph_pointer.current.zoomToFit( 1000 ) } 
+        onEngineStop={ () => {
+          const graph = graph_pointer.current;
+          if (graph && typeof graph.zoomToFit === 'function') {
+            graph.zoomToFit( 1000 );
+          }
+        }}
       />
 
       {/* Modal con editor embebido */}

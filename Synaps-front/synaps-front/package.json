@@ -7,6 +7,7 @@
     "@codemirror/lang-markdown": "^6.3.2",
     "@codemirror/lang-python": "^6.2.1",
     "@codemirror/theme-one-dark": "^6.1.2",
+    "@craco/craco": "^7.1.0",
     "@lexical/react": "^0.31.1",
     "@mdxeditor/editor": "^3.32.3",
     "@react-keycloak/web": "^3.4.0",
@@ -55,9 +56,9 @@
     "@wendellhu/redi": "^0.18.1"
   },
   "scripts": {
-    "start": "PORT=3000 react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

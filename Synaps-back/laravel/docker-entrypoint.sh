@@ -1,8 +1,14 @@
 #!/bin/bash
 
-# Configuración optimizada para Laravel con subida de imágenes de perfil
+echo " Esperando a MariaDB..."
+until nc -z synaps-mariadb 3306; do
+  echo " Esperando conexión a la base de datos..."
+  sleep 2
+done
 
-# Instalar dependencias necesarias
+echo " MariaDB disponible. Continuando..."
+
+# Dependencias y optimización
 composer require firebase/php-jwt --no-interaction
 composer dump-autoload --optimize
 
@@ -17,18 +23,23 @@ mkdir -p storage/framework/sessions
 mkdir -p storage/framework/views
 mkdir -p bootstrap/cache
 
-# Configurar enlace simbólico para acceso público a storage
+# Crear directorios necesarios
+mkdir -p storage/app/public/profile_photos storage/app/public/uploads \
+        storage/app/public/documents storage/app/public/images \
+        storage/logs storage/framework/cache \
+        storage/framework/sessions storage/framework/views \
+        bootstrap/cache
+
+# Enlace simbólico
 if [ ! -L public/storage ]; then
     php artisan storage:link
 fi
 
-# Configurar permisos para subida de archivos
+# Permisos
 chown -R www-data:www-data storage bootstrap/cache
 chown -R www-data:www-data public/storage 2>/dev/null || true
 chmod -R 775 storage bootstrap/cache
 chmod -R 755 public/storage 2>/dev/null || true
-
-# Permisos específicos para profile_photos (escritura completa)
 chmod -R 775 storage/app/public/profile_photos
 chown -R www-data:www-data storage/app/public/profile_photos
 
@@ -48,6 +59,10 @@ if [ -d storage/app/public/profile_photos ] && [ -w storage/app/public/profile_p
     :
 fi
 
+# Migraciones base principal
+php artisan config:clear
+php artisan migrate --force
+
 # Verificar permisos
 PERMS=$(stat -c %a storage/app/public/profile_photos 2>/dev/null || echo "000")
 if [ "$PERMS" = "775" ] || [ "$PERMS" = "777" ]; then
@@ -56,5 +71,12 @@ else
     chmod 775 storage/app/public/profile_photos
 fi
 
-# Iniciar Apache
+# Migración tenant si existe
+php artisan migrate --database=tenant --force || echo " Tenant no migrado (puede no existir aún)."
+
+# Cache Laravel
+php artisan config:cache
+php artisan route:cache
+
+echo " Sistema listo. Iniciando Apache..."
 exec apache2-foreground

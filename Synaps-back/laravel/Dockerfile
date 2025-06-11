@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     mariadb-client \
     dos2unix \
+    netcat-openbsd \
     && docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl
 
 # Habilitar Apache mod_rewrite
@@ -40,6 +41,8 @@ COPY docker-entrypoint.sh /usr/local/bin/
 RUN dos2unix /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
 
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
 # Crear directorios de storage necesarios
 RUN mkdir -p storage/app/public/profile_photos \
     && mkdir -p storage/logs \
@@ -50,6 +53,3 @@ RUN mkdir -p storage/app/public/profile_photos \
 # Establecer permisos específicos para storage
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
-
-# Usar el script de entrypoint personalizado
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

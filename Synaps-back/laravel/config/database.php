@@ -123,6 +123,20 @@ return [
             'strict' => true,
             'engine' => null,
         ],
+
+        'tenant' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST', 'synaps-mariadb'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('TENANT_DATABASE', 'synaps_0001'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', 'rootpassword'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ],
     ],
 
     /*
