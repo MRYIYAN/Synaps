@@ -37,28 +37,38 @@ const FilesPanel = ({ notes: notesProp, getNotes }) => {
   useEffect(() => {
     const syncNotes = () => {
       const currentNotes = window.currentNotes || notesProp || [];
-      setNotes(currentNotes);
+      // Solo actualizar si realmente hay cambios para evitar re-renders innecesarios
+      setNotes(prev => {
+        if (JSON.stringify(prev) !== JSON.stringify(currentNotes)) {
+          return currentNotes;
+        }
+        return prev;
+      });
     };
 
     // Sincronización inicial
     syncNotes();
 
-    // Configurar intervalo para sincronización periódica
-    const interval = setInterval(syncNotes, 100);
+    // Configurar intervalo para sincronización periódica (reducido la frecuencia)
+    const interval = setInterval(syncNotes, 500);
     
     return () => {
       clearInterval(interval);
     };
   }, [notesProp]);
 
-  // Exponer la función global para cargar notas por carpeta
+  // Exponer la función global para cargar notas por carpeta (deprecada - ya no necesaria)
   useEffect(() => {
+    // Función de compatibilidad - ya no se usa para navegación de carpetas
+    // La navegación se maneja directamente en el árbol con expand/collapse
     window.getNotesForFolder = (parent_id) => {
       if (!currentVaultId) {
         console.error("No hay vault seleccionado");
         return;
       }
-      getNotes(currentVaultId, parent_id);
+      // Por compatibilidad, simplemente recargar todo el vault
+      console.log("getNotesForFolder llamada - recargando vault completo");
+      getNotes(currentVaultId, 0);
     };
 
     // Actualiza currentVaultId si cambia globalmente

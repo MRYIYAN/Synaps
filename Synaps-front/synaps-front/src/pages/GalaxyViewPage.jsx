@@ -41,7 +41,7 @@ const GalaxyView = function() {
   if( !graphData )
     return (
     <div className="layout-markdown-editor">
-      <SidebarPanel />
+      <SidebarPanel defaultSelectedItem="galaxyview" />
       <div className="loading-icon-container">
         <LoadingSpinner className="status-icon loading animate-spin" />
       </div>
@@ -51,7 +51,7 @@ const GalaxyView = function() {
   // HTML del formulario
   return (
     <div className="layout-markdown-editor">
-      <SidebarPanel />
+      <SidebarPanel defaultSelectedItem="galaxyview" />
       <GalaxyGraph data={graphData} />
     </div>
   );

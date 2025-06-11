@@ -54,7 +54,7 @@ const MarkdownEditor = function() {
 
   return (
     <div className="layout-markdown-editor">
-      <SidebarPanel />
+      <SidebarPanel defaultSelectedItem="files" />
       <div className="md-editor-wrapper">
         <MDEditorWS note_id2={selectedNoteId2} vault_id={selectedVaultId} />
       </div>

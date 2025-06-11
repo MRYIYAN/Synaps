@@ -113,9 +113,15 @@ export function FoldersHelper() {
         type: 'folder'
       }));
       
-      // Combinar con notas existentes (remover carpetas viejas, mantener notas, añadir nuevas carpetas)
-      const existingNotes = (window.currentNotes || []).filter(n => n.type !== 'folder');
-      const combined = [...existingNotes, ...transformedFolders];
+      // SOLO añadir carpetas a la lista existente, evitando duplicados
+      // Filtrar carpetas existentes del mismo vault/parent antes de añadir nuevas
+      const existingItems = window.currentNotes || [];
+      const filteredExisting = existingItems.filter(item => 
+        !(item.type === 'folder' && item.parent_id === parent_id)
+      );
+      
+      // Combinar elementos filtrados con nuevas carpetas
+      const combined = [...filteredExisting, ...transformedFolders];
       
       window.currentNotes = combined;
       

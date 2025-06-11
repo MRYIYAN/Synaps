@@ -32,7 +32,7 @@ export function NotesHelper() {
   // FUNCIONES PRINCIPALES
   // =========================================================================
 
-  // Obtener notas de la API para un vault y carpeta específicos
+  // Obtener notas de la API para un vault específico
   const getNotes = async (vault_id, parent_id = 0) => {
     vault_id = parseInt(vault_id, 10);
     if (isNaN(vault_id)) {
@@ -42,8 +42,14 @@ export function NotesHelper() {
     
     try {
       const url = 'http://localhost:8010/api/getNotes';
-      const body = { parent_id, vault_id };
+      // SIEMPRE cargar toda la estructura del vault (parent_id = 0)
+      // Esto permite construir el árbol jerárquico completo donde:
+      // - Las carpetas se pueden expandir/colapsar localmente
+      // - No se pierde el contexto de navegación
+      // - El sidebar no se "recarga" al hacer clic en carpetas
+      const body = { parent_id: 0, vault_id };
 
+      console.log('Cargando estructura completa del vault:', vault_id);
       const { result, http_data } = await http_get(url, body);
       
       if (result !== 1) throw new Error('Error loading notes');
@@ -57,21 +63,13 @@ export function NotesHelper() {
         type: item.type
       }));
 
-      // Actualizar estado local y global preservando las carpetas
-      setNotes(prev => {
-        // Obtener elementos actuales de window (incluye carpetas)
-        const currentItems = window.currentNotes || [];
-        
-        // Filtrar notas existentes con el mismo parent_id pero mantener carpetas
-        const filteredItems = currentItems.filter(item => 
-          item.parent_id !== parent_id || item.type === 'folder'
-        );
-        
-        // Añadir nuevas notas
-        const updated = [...filteredItems, ...newItems];
-        window.currentNotes = updated;
-        
-        return updated;
+      console.log('Estructura cargada:', newItems.length, 'elementos');
+
+      // Reemplazar completamente con toda la estructura del vault
+      // Esto permite que el árbol se construya correctamente con todos los niveles
+      setNotes(() => {
+        window.currentNotes = [...newItems];
+        return [...newItems];
       });
 
     } catch (error) {
