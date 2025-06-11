@@ -171,7 +171,7 @@ CREATE TABLE `vaults` (
   `logical_path` varchar(255) NOT NULL,
   `is_private` tinyint(1) DEFAULT 0,
   `created_at` datetime DEFAULT current_timestamp(),
-  `pin` int(11) default null
+  `pin` int(11) default null,
   PRIMARY KEY (`vault_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
