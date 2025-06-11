@@ -131,17 +131,19 @@ const MarkdownEditor = function() {
   }, [selectedNoteId2] );
 
   return (
-    <div className="layout-markdown-editor">
-      <SidebarPanel />
-      <div className="md-editor-wrapper">
-        <MDEditorWS note_id2={selectedNoteId2} vault_id={selectedVaultId} />
-        {selectedNoteId2 && (
-          <MultiUserButton documentTitle="Documento de Synaps" />
-        )}
+    <>
+      <div className="layout-markdown-editor">
+        <SidebarPanel />
+        <div className="md-editor-wrapper">
+          <MDEditorWS note_id2={selectedNoteId2} vault_id={selectedVaultId} />
+          {selectedNoteId2 && (
+            <MultiUserButton documentTitle="Documento de Synaps" />
+          )}
+        </div>
+        
+        {/* Tour Component */}
+        <AppTour run={runTour} onFinish={handleTourFinish} />
       </div>
-      
-      {/* Tour Component */}
-      <AppTour run={runTour} onFinish={handleTourFinish} />
     </>
   );
 }
