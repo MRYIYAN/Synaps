@@ -1,0 +1,424 @@
+/* Estilos para el componente Tour personalizado - Marca Synaps */
+
+/* Overlay de fondo - completamente transparente */
+.tour-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  z-index: 9998;
+  cursor: pointer;
+  pointer-events: none; /* Permite clicks a través del overlay */
+}
+
+/* Tooltip del tour - Diseño Synaps */
+.tour-tooltip {
+  position: fixed;
+  background: linear-gradient(145deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+  border: 3px solid #F56E0F;
+  border-radius: 16px;
+  box-shadow: 
+    0 0 30px rgba(245, 110, 15, 0.5),
+    0 10px 40px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  width: 380px;
+  z-index: 9999;
+  animation: tour-tooltip-fade-in 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  backdrop-filter: blur(20px);
+  pointer-events: auto; /* Permite interacción con el tooltip */
+}
+
+/* Estilo especial para el tooltip centrado del último paso */
+.tour-tooltip.centered {
+  transform: translateX(-50%);
+  box-shadow: 
+    0 0 60px rgba(245, 110, 15, 0.8),
+    0 20px 80px rgba(0, 0, 0, 0.9),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+  animation: tour-tooltip-center-fade-in 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  border-width: 4px;
+  width: 420px;
+}
+
+/* Estilo especial para el header del último paso */
+.tour-tooltip.centered .tour-tooltip-header h3 {
+  font-size: 24px;
+  text-align: center;
+  background: linear-gradient(45deg, #ffffff 0%, #F56E0F 50%, #ff8533 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Estilo especial para el contenido del último paso */
+.tour-tooltip.centered .tour-tooltip-content {
+  text-align: center;
+  padding: 30px 24px;
+}
+
+.tour-tooltip.centered .tour-tooltip-content p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #f5f5f5;
+}
+
+/* Estilo especial para los botones del último paso */
+.tour-tooltip.centered .tour-buttons {
+  justify-content: center;
+}
+
+.tour-tooltip.centered .tour-button-primary {
+  background: linear-gradient(135deg, #F56E0F 0%, #ff8533 25%, #F56E0F 75%, #e55a00 100%);
+  font-size: 14px;
+  padding: 12px 24px;
+  font-weight: 700;
+}
+
+/* Animación especial para el tooltip centrado */
+@keyframes tour-tooltip-center-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.6) translateY(-40px) rotateY(-20deg);
+    filter: blur(20px);
+  }
+  30% {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(0.9) translateY(-20px) rotateY(-10deg);
+    filter: blur(10px);
+  }
+  70% {
+    opacity: 0.9;
+    transform: translateX(-50%) scale(1.05) translateY(-5px) rotateY(5deg);
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) translateY(0) rotateY(0deg);
+    filter: blur(0px);
+  }
+}
+
+/* Header del tooltip - Estilo Synaps */
+.tour-tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 12px 24px;
+  border-bottom: 2px solid rgba(245, 110, 15, 0.4);
+  background: linear-gradient(135deg, rgba(245, 110, 15, 0.1) 0%, transparent 100%);
+}
+
+.tour-tooltip-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(245, 110, 15, 0.3);
+  background: linear-gradient(45deg, #ffffff 0%, #F56E0F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Botón de cerrar - Estilo Synaps */
+.tour-close {
+  background: linear-gradient(135deg, rgba(245, 110, 15, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
+  border: 2px solid #F56E0F;
+  font-size: 26px;
+  color: #F56E0F;
+  cursor: pointer;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(245, 110, 15, 0.5);
+}
+
+.tour-close:hover {
+  background: linear-gradient(135deg, #F56E0F 0%, #ff8533 100%);
+  color: #000000;
+  transform: scale(1.15) rotate(90deg);
+  box-shadow: 0 0 20px rgba(245, 110, 15, 0.8);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+/* Contenido del tooltip - Estilo Synaps */
+.tour-tooltip-content {
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(26, 26, 26, 0.1) 100%);
+}
+
+.tour-tooltip-content p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #f0f0f0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  font-weight: 400;
+}
+
+/* Footer del tooltip - Estilo Synaps */
+.tour-tooltip-footer {
+  padding: 20px 24px 24px 24px;
+  border-top: 2px solid rgba(245, 110, 15, 0.4);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(245, 110, 15, 0.05) 100%);
+  border-radius: 0 0 16px 16px;
+}
+
+/* Progress indicator - Estilo Synaps */
+.tour-progress {
+  font-size: 14px;
+  color: #F56E0F;
+  margin-bottom: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(245, 110, 15, 0.3);
+}
+
+/* Botones - Diseño Synaps mejorado */
+.tour-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.tour-button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tour-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.tour-button:hover::before {
+  left: 100%;
+}
+
+.tour-button-primary {
+  background: linear-gradient(135deg, #F56E0F 0%, #ff8533 25%, #F56E0F 75%, #e55a00 100%);
+  color: #000000;
+  box-shadow: 
+    0 6px 20px rgba(245, 110, 15, 0.4),
+    0 0 30px rgba(245, 110, 15, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-weight: 800;
+}
+
+.tour-button-primary:hover {
+  background: linear-gradient(135deg, #ff8533 0%, #F56E0F 25%, #ff8533 75%, #F56E0F 100%);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 10px 30px rgba(245, 110, 15, 0.6),
+    0 0 40px rgba(245, 110, 15, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.tour-button-secondary {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(26, 26, 26, 0.8) 100%);
+  color: #F56E0F;
+  border: 2px solid #F56E0F;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(245, 110, 15, 0.1);
+  text-shadow: 0 0 10px rgba(245, 110, 15, 0.3);
+}
+
+.tour-button-secondary:hover {
+  background: linear-gradient(135deg, rgba(245, 110, 15, 0.2) 0%, rgba(245, 110, 15, 0.1) 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(245, 110, 15, 0.3),
+    inset 0 1px 0 rgba(245, 110, 15, 0.2);
+}
+
+.tour-button-skip {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(68, 68, 68, 0.2) 100%);
+  color: #888888;
+  border: 1px solid #444444;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.tour-button-skip:hover {
+  background: linear-gradient(135deg, rgba(68, 68, 68, 0.3) 0%, rgba(102, 102, 102, 0.2) 100%);
+  border-color: #666666;
+  color: #aaaaaa;
+  transform: translateY(-1px);
+}
+
+/* Highlight para elementos del tour - Estilo Synaps mejorado */
+.tour-highlight {
+  position: relative;
+  z-index: 9997;
+  box-shadow: 
+    0 0 0 4px rgba(245, 110, 15, 0.8),
+    0 0 30px rgba(245, 110, 15, 0.6),
+    0 0 60px rgba(245, 110, 15, 0.3),
+    inset 0 0 20px rgba(245, 110, 15, 0.1);
+  border-radius: 8px;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  animation: tour-highlight-pulse 2s ease-in-out infinite;
+}
+
+/* Animación de pulso para el highlight */
+@keyframes tour-highlight-pulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 0 4px rgba(245, 110, 15, 0.8),
+      0 0 30px rgba(245, 110, 15, 0.6),
+      0 0 60px rgba(245, 110, 15, 0.3),
+      inset 0 0 20px rgba(245, 110, 15, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 0 6px rgba(245, 110, 15, 1),
+      0 0 40px rgba(245, 110, 15, 0.8),
+      0 0 80px rgba(245, 110, 15, 0.5),
+      inset 0 0 30px rgba(245, 110, 15, 0.2);
+  }
+}
+
+/* Animación de entrada - Mejorada para Synaps */
+@keyframes tour-tooltip-fade-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px) rotateX(-15deg);
+    filter: blur(10px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05) translateY(-5px) rotateX(-5deg);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotateX(0deg);
+    filter: blur(0px);
+  }
+}
+
+/* Responsive - Optimizado para Synaps */
+@media (max-width: 768px) {
+  .tour-tooltip {
+    width: 340px;
+    max-width: calc(100vw - 30px);
+    border-width: 2px;
+  }
+  
+  .tour-tooltip.centered {
+    width: 360px;
+    max-width: calc(100vw - 20px);
+  }
+  
+  .tour-tooltip.centered .tour-tooltip-header h3 {
+    font-size: 20px;
+  }
+  
+  .tour-tooltip.centered .tour-tooltip-content p {
+    font-size: 15px;
+  }
+  
+  .tour-tooltip.centered .tour-button-primary {
+    font-size: 12px;
+    padding: 10px 20px;
+  }
+  
+  .tour-tooltip-header {
+    padding: 20px 20px 10px 20px;
+  }
+  
+  .tour-tooltip-header h3 {
+    font-size: 18px;
+  }
+  
+  .tour-close {
+    width: 32px;
+    height: 32px;
+    font-size: 22px;
+  }
+  
+  .tour-tooltip-content {
+    padding: 20px;
+  }
+  
+  .tour-tooltip-content p {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  
+  .tour-tooltip-footer {
+    padding: 16px 20px 20px 20px;
+  }
+  
+  .tour-progress {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  
+  .tour-buttons {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .tour-button {
+    font-size: 11px;
+    padding: 6px 12px;
+    letter-spacing: 0.4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tour-tooltip {
+    width: 300px;
+    max-width: calc(100vw - 20px);
+  }
+  
+  .tour-tooltip.centered {
+    width: 320px;
+  }
+  
+  .tour-tooltip.centered .tour-tooltip-header h3 {
+    font-size: 18px;
+  }
+  
+  .tour-tooltip.centered .tour-tooltip-content p {
+    font-size: 14px;
+  }
+  
+  .tour-buttons {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .tour-button {
+    width: 100%;
+    justify-content: center;
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+}

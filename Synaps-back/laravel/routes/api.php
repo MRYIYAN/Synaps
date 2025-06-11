@@ -37,6 +37,15 @@ Route::get( '/hello', function( Request $request ): \Illuminate\Http\JsonRespons
 try
 {
     Route::middleware( ['auth.bearer'] )->group(function() {
+
+        /**
+         * GET /loginCheck
+         * Recupera el estado del login
+         *
+         * @see AuthController::loginCheck()
+         */
+        Route::get( '/loginCheck', [AuthController::class, 'loginCheck'] );
+
         //=======================//
         // VAULTS API           //
         //=======================//
@@ -205,6 +214,14 @@ try
          * @see UserController::updateUser()
          */
         Route::put( '/user', [UserController::class, 'updateUser'] );
+
+        /**
+         * GET /user/first-login
+         * Verifica si es el primer login del usuario y actualiza el estado.
+         *
+         * @see UserController::checkFirstLogin()
+         */
+        Route::get( '/user/first-login', [UserController::class, 'checkFirstLogin'] );
 
         /**
          * GET /user/profile

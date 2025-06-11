@@ -44,6 +44,13 @@ class AuthController extends Controller
         $user = $request->attributes->get( 'token_data', [] );
 
         if( !empty( $user ) ) {
+            // Buscar el usuario en la base de datos para obtener el campo first_login
+            $userModel = \App\Models\User::find( $user['user_id'] ?? null );
+            
+            if( $userModel ) {
+                $user['first_login'] = $userModel->first_login ?? false;
+            }
+            
             $value = response()->json( [
                 'result' => 1,
                 'message' => 'Token válido',
@@ -123,10 +130,24 @@ class AuthController extends Controller
                 //Guardar el token en sesión
                 session( [ 'keycloak_token' => $response->json()['access_token'] ] );
 
+                // Buscar el usuario en la base de datos para verificar si es su primer login
+                $user = \App\Models\User::where( 'user_email', $request->email )->first();
+                $isFirstLogin = false;
+                
+                if( $user && $user->first_login ) {
+                    $isFirstLogin = true;
+                    // Actualizar el campo first_login a false
+                    $user->first_login = false;
+                    $user->save();
+                }
+
                 // Si llegamos hasta aquí, está todo OK
                 $result = 1;
                 $access_token = $response->json()['access_token'];
                 $http_code = 200;
+                
+                // Agregar información del primer login a la respuesta
+                $message = $isFirstLogin ? 'first_login' : '';
             } else {
                 // Si falla el login, devolvemos una alerta
                 $http_code = 401;
@@ -191,6 +212,7 @@ class AuthController extends Controller
                 'user_name' => $request->username,
                 'user_full_name' => $request->name,
                 'user_password' => $hash_password,
+                'first_login' => true,
                 'created_at' => now(),
                 'updated_at' => now()
             ];

@@ -107,6 +107,7 @@ class User extends Authenticatable
         'tenant_setup_completed',
         'tenant_created_at',
         'tenant_metadata',
+        'first_login',
     ];
 
     //---------------------------------------------------------------------------//
