@@ -20,6 +20,10 @@ import ListTodoPanel    from './Atomic/Panels/ListTodoPanel';
 import { NotesHelper } from '../lib/Helpers/NotesHelper.jsx';
 import { FoldersHelper } from '../lib/Helpers/FoldersHelper.jsx';
 import { http_get, http_post } from '../lib/http.js';
+import VaultSessionManager from '../lib/vaultSessionManager.js';
+
+// Componente de debug (solo en desarrollo)
+import VaultSessionDebug from './Debug/VaultSessionDebug.jsx';
 
 const { getFolders } = FoldersHelper(); 
 
@@ -69,23 +73,19 @@ const SidebarPanel = () => {
   // Estado para el modal de configuración de usuario
   const [showUserSettingsModal, setShowUserSettingsModal] = useState(false);
 
-  // Estados para manejo de PIN en vaults privadas
-  const [vaultPin, setVaultPin] = useState("");
-  const [vaultPinError, setVaultPinError] = useState("");
-
   // Usar NotesHelper para obtener notas y función getNotes
   const { notes, getNotes } = NotesHelper();
 
   // Función para manejar el selector de vault
   const handleVaultSelect = useCallback((vault) => {
-    // Si la vault es privada y tiene PIN, mostrar modal de autenticación
-    if (vault.is_private && vault.pin) {
+    // Verificar si la vault necesita autenticación por PIN
+    if (VaultSessionManager.vaultNeedsAuthentication(vault)) {
       setPendingVault(vault);
       setShowVaultPinModal(true);
       return;
     }
     
-    // Si no es privada o no tiene PIN, proceder directamente
+    // Si no necesita autenticación, proceder directamente
     performVaultSelection(vault);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setCurrentVault]);
@@ -103,11 +103,15 @@ const SidebarPanel = () => {
 
     // Opcional: reiniciar nota seleccionada
     window.readNote?.('', vault?.vault_id);
-  }, [getFolders, getNotes]);
+  }, [getNotes]);
 
   // Función para manejar autenticación exitosa de PIN
   const handleVaultPinSuccess = useCallback((vault) => {
     console.log('PIN authentication successful for vault:', vault);
+    
+    // Marcar la vault como autenticada en la sesión
+    VaultSessionManager.markVaultAsAuthenticated(vault.vault_id2);
+    
     setShowVaultPinModal(false);
     setPendingVault(null);
     performVaultSelection(vault);
@@ -250,6 +254,9 @@ const SidebarPanel = () => {
     // Limpiar datos de sesión
     localStorage.removeItem('access_token');
     
+    // Limpiar autenticaciones de vaults de la sesión
+    VaultSessionManager.handleUserLogout();
+    
     // Limpiar datos globales
     window.currentNotes = [];
     window.currentVaultId = 0;
@@ -358,6 +365,16 @@ const handleCreateVault = async (vaultData) => {
   // Función para manejar la edición de vault
   const handleEditVault = async (updatedVaultData) => {
     try {
+      // Si se cambió el PIN o se removió la privacidad, limpiar autenticación
+      if (currentVault && currentVault.vault_id2 === updatedVaultData.vault_id2) {
+        const pinChanged = currentVault.pin !== updatedVaultData.pin;
+        const privacyChanged = currentVault.is_private !== updatedVaultData.is_private;
+        
+        if (pinChanged || privacyChanged) {
+          VaultSessionManager.removeVaultAuthentication(updatedVaultData.vault_id2);
+        }
+      }
+
       // Actualizar la vault en el estado local
       setVaults(prevVaults => 
         prevVaults.map(vault => 
@@ -381,25 +398,6 @@ const handleCreateVault = async (vaultData) => {
 
     } catch (error) {
       console.error("Error al actualizar vault:", error);
-    }
-  };
-
-  // Función para manejar el envío del PIN en la vault
-  const handlePinSubmit = (enteredPin) => {
-    setVaultPin(enteredPin);
-
-    // Validar el PIN (simulación, reemplazar con lógica real)
-    const isValidPin = enteredPin === "1234"; // Ejemplo: el PIN correcto es "1234"
-
-    if (isValidPin) {
-      setShowVaultPinModal(false);
-      setVaultPinError("");
-
-      // Aquí puedes continuar con la acción que requería el PIN, como abrir la vault
-      // Por ejemplo, llamar a una función para abrir la vault:
-      // openVault(currentVault);
-    } else {
-      setVaultPinError("PIN incorrecto. Inténtalo de nuevo.");
     }
   };
 
@@ -554,6 +552,9 @@ const handleCreateVault = async (vaultData) => {
         currentUser={currentUser}
         onSaveUser={handleUserSave}
       />
+
+      {/* Debug component - Solo en desarrollo */}
+      {/*<VaultSessionDebug vaults={vaults} />*/}
     </div>
   );
 };
