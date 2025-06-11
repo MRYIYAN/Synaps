@@ -155,3 +155,187 @@ export async function http_get( url, body = {} ) {
     
   }
 }
+
+// Helper para PUT con Bearer
+export async function http_put( url, body, headers, credentials = 'include' ) {
+
+  // Inicializamos los valores a devolver
+  let result    = 0;
+  let message   = '';
+  let http_data = [];
+
+  try {
+    
+    // Si no se han especificado cabeceras, insertamos las de JSON por defecto
+    if( !headers ) {
+      headers = {
+          'Content-Type': 'application/json'
+        , Accept        : 'application/json'
+      }; 
+    }
+
+    // Agregar token de autorización si existe
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    }
+
+    // Ejecutamos la solicitud PUT a la ruta backend especificada
+    let http_response = await fetch( url, {
+        method     : 'PUT'
+      , headers    : headers
+      , credentials: credentials
+      , body       : JSON.stringify( body )
+    } );
+
+    // Capturamos los datos de la respuesta
+    http_data = await http_response.json();
+
+    // Si la petición ha sido incorrecta, registramos el mensaje de error
+    if( !http_response.ok ) {
+      message = http_data.message || http_response.statusText || 'Error';
+      // Mostrar notificación de error
+      showHttpErrorNotification(message, http_response.status);
+    }
+    
+    // Caso de éxito
+    else {
+      result = 1;
+      message = http_data.message || 'OK';
+    }
+
+  } catch( error ) {
+
+    // Mensaje de error de red u otra excepción
+    message = error.message || 'Network error';
+    
+    // Mostrar notificación de error de red
+    showHttpErrorNotification( message, 0 );
+
+  } finally {
+    
+    // Calculamos el objeto a devolver
+    return { result, message, http_data };
+    
+  }
+}
+
+// Helper para PUT con FormData (multipart)
+export async function http_put_multipart( url, formData, credentials = 'include' ) {
+
+  // Inicializamos los valores a devolver
+  let result    = 0;
+  let message   = '';
+  let http_data = [];
+
+  try {
+    
+    // Para FormData no especificamos Content-Type, el navegador lo hará automáticamente
+    let headers = {
+      Accept: 'application/json'
+    };
+
+    // Agregar token de autorización si existe
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    }
+
+    // Ejecutamos la solicitud PUT a la ruta backend especificada
+    let http_response = await fetch( url, {
+        method     : 'PUT'
+      , headers    : headers
+      , credentials: credentials
+      , body       : formData
+    } );
+
+    // Capturamos los datos de la respuesta
+    http_data = await http_response.json();
+
+    // Si la petición ha sido incorrecta, registramos el mensaje de error
+    if( !http_response.ok ) {
+      message = http_data.message || http_response.statusText || 'Error';
+      // Mostrar notificación de error
+      showHttpErrorNotification(message, http_response.status);
+    }
+    
+    // Caso de éxito
+    else {
+      result = 1;
+      message = http_data.message || 'OK';
+    }
+
+  } catch( error ) {
+
+    // Mensaje de error de red u otra excepción
+    message = error.message || 'Network error';
+    // Mostrar notificación de error de red
+    showHttpErrorNotification(message, 0);
+
+  } finally {
+    
+    // Calculamos el objeto a devolver
+    return { result, message, http_data };
+    
+  }
+}
+
+// Helper para POST con FormData (multipart)
+export async function http_post_multipart( url, formData, credentials = 'include' ) {
+
+  // Inicializamos los valores a devolver
+  let result    = 0;
+  let message   = '';
+  let http_data = [];
+
+  try {
+    
+    // Para FormData no especificamos Content-Type, el navegador lo hará automáticamente
+    let headers = {
+      Accept: 'application/json'
+    };
+
+    // Agregar token de autorización si existe
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      headers['Authorization'] = 'Bearer ' + token;
+    }
+
+    // Ejecutamos la solicitud POST a la ruta backend especificada
+    let http_response = await fetch( url, {
+        method     : 'POST'
+      , headers    : headers
+      , credentials: credentials
+      , body       : formData
+    } );
+
+    // Capturamos los datos de la respuesta
+    http_data = await http_response.json();
+
+    // Si la petición ha sido incorrecta, registramos el mensaje de error
+    if( !http_response.ok ) {
+      message = http_data.message || http_response.statusText || 'Error';
+      // Mostrar notificación de error
+      showHttpErrorNotification(message, http_response.status);
+    }
+    
+    // Caso de éxito
+    else {
+      result = 1;
+      message = http_data.message || 'OK';
+    }
+
+  } catch( error ) {
+
+    // Mensaje de error de red u otra excepción
+    message = error.message || 'Network error';
+    // Mostrar notificación de error de red
+    showHttpErrorNotification(message, 0);
+
+  } finally {
+    
+    // Calculamos el objeto a devolver
+    return { result, message, http_data };
+    
+  }
+}

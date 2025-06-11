@@ -6,7 +6,6 @@
 //  1. Cambiar el nombre de usuario                                                   //
 //  2. Cambiar el email                                                               //
 //  3. Cambiar la contraseña                                                          //
-//  4. Subir foto de perfil                                                           //
 //  NOTA: Los campos nombre y apellido son solo visuales/decorativos                  //
 //  y no se envían al backend para actualización.                                     //
 //  Sin validaciones - acepta cualquier entrada del usuario.                          //
@@ -14,8 +13,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close.svg";
-import { ReactComponent as CameraIcon } from "../../../assets/icons/camera.svg";
-import { toast } from 'react-toastify';
+import { http_get, http_put } from '../../../lib/http';
+import '../../styles/UserSettingsModal.css';  
 
 /**
  * Modal para editar la configuración del usuario
@@ -40,17 +39,15 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
   // Estados para cambio de contraseña
   const [showPasswordSection, setShowPasswordSection] = useState(false);
   
-  // TODO: Implementar estados para foto de perfil
-  const [profilePhoto, setProfilePhoto] = useState(null);
-  const [profilePhotoPreview, setProfilePhotoPreview] = useState(null);
-  
   // Estado para detectar cambios
   const [hasChanges, setHasChanges] = useState(false);
 
+  // Estados para validación
+  const [errors, setErrors] = useState({});
+  const [validationMessages, setValidationMessages] = useState({});
+
   // Referencias
   const firstInputRef = useRef(null);
-  // TODO: Implementar referencia para input de archivo
-  const fileInputRef = useRef(null);
 
   // Cargar datos del usuario cuando se abre el modal
   useEffect(() => {
@@ -59,155 +56,189 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
     }
   }, [isOpen]);
 
-  // Función para obtener el perfil del usuario
+  // Función para obtener el perfil del usuario usando http_get
   const fetchUserProfile = async () => {
     setIsLoading(true);
     try {
-      const token = localStorage.getItem('access_token');
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      const url = `http://localhost:8010/api/user`;
+      const { result, http_data } = await http_get(url);
 
-      if (!response.ok) {
-        throw new Error('Error al obtener perfil');
-      }
-
-      const data = await response.json();
-      if (data.result === 1 && data.user) {
-        setUserData(data.user);
-        setUserFullName(data.user.user_full_name || '');
-        setUserEmail(data.user.user_email || '');
-        setUsername(data.user.user_name || '');
+      if (result === 1 && http_data.user) {
+        setUserData(http_data.user);
+        setUserFullName(http_data.user.user_full_name || '');
+        setUserEmail(http_data.user.user_email || '');
+        setUsername(http_data.user.user_name || '');
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
-        setProfilePhoto(null);
-        setProfilePhotoPreview(null);
         setHasChanges(false);
         setShowPasswordSection(false);
+        setErrors({});
+        setValidationMessages({});
+      } else {
+        throw new Error('Error al cargar perfil del usuario');
       }
     } catch (error) {
       console.error('Error al cargar perfil:', error);
-      toast.error('Error al cargar los datos del usuario');
+      if (window.showNotification) {
+        window.showNotification({
+          type: 'error',
+          title: 'Error',
+          message: 'Error al cargar los datos del usuario'
+        });
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Enfocar el primer campo cuando se abre el modal
-  useEffect(() => {
-    if (isOpen && firstInputRef.current) {
-      setTimeout(() => {
-        firstInputRef.current.focus();
-      }, 100);
-    }
-  }, [isOpen]);
-
   // Verificar si hay cambios
   useEffect(() => {
     if (userData) {
-      const fullNameChanged = userFullName !== (userData.user_full_name || '');
       const usernameChanged = username !== (userData.user_name || '');
-      const emailChanged = userEmail !== (userData.user_email || '');
+      const fullNameChanged = userFullName !== (userData.user_full_name || '');
       const passwordChanged = newPassword.length > 0;
-      const photoChanged = profilePhoto !== null;
       
-      setHasChanges(fullNameChanged || usernameChanged || emailChanged || passwordChanged || photoChanged);
+      setHasChanges(usernameChanged || fullNameChanged || passwordChanged);
     }
-  }, [userFullName, username, userEmail, newPassword, profilePhoto, userData]);
+  }, [username, userFullName, newPassword, userData]);
 
-  // TODO: Implementar funciones de foto de perfil
-  // Manejar selección de foto de perfil
-  const handlePhotoSelect = (e) => {
-    // TODO: Implementar selección y validación de foto de perfil
-    // - Validar tipo de archivo (solo imágenes)
-    // - Validar tamaño (máximo 5MB)
-    // - Crear preview de la imagen
-    // - Manejar errores de validación
-    console.log('TODO: Implementar handlePhotoSelect');
-  };
-
-  // Manejar clic en el área de foto
-  const handlePhotoAreaClick = () => {
-    // TODO: Implementar clic en área de foto para abrir selector de archivos
-    console.log('TODO: Implementar handlePhotoAreaClick');
+  // Funciones de validación
+  const validatePassword = (password) => {
+    const errors = [];
+    if (password.length < 8) {
+      errors.push('Mínimo 8 caracteres');
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push('Al menos una mayúscula');
+    }
+    if (!/[a-z]/.test(password)) {
+      errors.push('Al menos una minúscula');
+    }
+    if (!/[0-9]/.test(password)) {
+      errors.push('Al menos un número');
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      errors.push('Al menos un símbolo especial');
+    }
+    return errors;
   };
 
   // Manejar envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Limpiar errores previos
+    setErrors({});
+    setValidationMessages({});
+
     // Validaciones
+    let hasValidationErrors = false;
+    const newErrors = {};
+    const newMessages = {};
+
     if (newPassword && newPassword !== confirmPassword) {
-      toast.error('Las contraseñas no coinciden');
-      return;
+      hasValidationErrors = true;
+      newErrors.confirmPassword = true;
+      newMessages.confirmPassword = 'Las contraseñas no coinciden';
     }
 
-    if (newPassword && newPassword.length < 6) {
-      toast.error('La contraseña debe tener al menos 6 caracteres');
-      return;
+    if (newPassword) {
+      const passwordErrors = validatePassword(newPassword);
+      if (passwordErrors.length > 0) {
+        hasValidationErrors = true;
+        newErrors.newPassword = true;
+        newMessages.newPassword = passwordErrors.join(', ');
+      }
     }
 
     if (newPassword && !currentPassword) {
-      toast.error('Debes ingresar tu contraseña actual');
+      hasValidationErrors = true;
+      newErrors.currentPassword = true;
+      newMessages.currentPassword = 'Debes ingresar tu contraseña actual';
+    }
+
+    if (hasValidationErrors) {
+      setErrors(newErrors);
+      setValidationMessages(newMessages);
+      if (window.showNotification) {
+        window.showNotification({
+          type: 'error',
+          title: 'Error de validación',
+          message: 'Por favor corrige los errores antes de continuar'
+        });
+      }
       return;
     }
 
     setIsSaving(true);
 
     try {
-      const token = localStorage.getItem('access_token');
+      const url = `http://localhost:8010/api/user`;
       const updateData = {};
 
       // Solo incluir campos que cambiaron
-      if (userFullName.trim() !== (userData.user_full_name || '')) {
-        updateData.user_full_name = userFullName.trim();
-      }
-
       if (username.trim() !== (userData.user_name || '')) {
-        updateData.user_name = username.trim();
+        updateData.name = username.trim(); // El backend espera 'name' para user_name
       }
 
-      if (userEmail.trim() !== (userData.user_email || '')) {
-        updateData.user_email = userEmail.trim();
+      if (userFullName.trim() !== (userData.user_full_name || '')) {
+        updateData.full_name = userFullName.trim(); // El backend espera 'full_name' para user_full_name
       }
 
       // Solo incluir contraseña si se está cambiando
       if (newPassword.length > 0) {
-        updateData.current_password = currentPassword;
-        updateData.new_password = newPassword;
-        updateData.new_password_confirmation = confirmPassword;
+        updateData.currentPassword = currentPassword;
+        updateData.newPassword = newPassword;
       }
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updateData)
-      });
+      const response = await http_put(url, updateData);
+      const result = response.result;
+      const http_data = response.http_data;
 
-      const data = await response.json();
-
-      if (!response.ok || data.result !== 1) {
-        throw new Error(data.message || 'Error al actualizar perfil');
+      if (result !== 1) {
+        throw new Error(http_data?.message || 'Error al actualizar perfil');
       }
 
-      toast.success('Perfil actualizado exitosamente');
+      if (window.showNotification) {
+        window.showNotification({
+          type: 'success',
+          title: 'Éxito',
+          message: 'Perfil actualizado exitosamente'
+        });
+      }
       
       // Actualizar datos locales si se proporciona callback
       if (onSaveUser) {
-        onSaveUser(data.user);
+        // Si la respuesta incluye los datos actualizados del usuario, usarlos
+        if (http_data && http_data.user) {
+          const updatedUserData = {
+            ...userData,
+            user_name: http_data.user.name || username.trim(),
+            user_full_name: http_data.user.full_name || userFullName.trim()
+          };
+          onSaveUser(updatedUserData);
+        } else {
+          // Fallback con los datos locales
+          const updatedUserData = {
+            ...userData,
+            user_name: username.trim(),
+            user_full_name: userFullName.trim()
+          };
+          onSaveUser(updatedUserData);
+        }
       }
       
       onClose();
     } catch (error) {
       console.error('Error al guardar usuario:', error);
-      toast.error(error.message || 'Error al guardar los cambios');
+      if (window.showNotification) {
+        window.showNotification({
+          type: 'error',
+          title: 'Error',
+          message: error.message || 'Error al guardar los cambios'
+        });
+      }
     } finally {
       setIsSaving(false);
     }
@@ -221,17 +252,6 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
     }
     onClose();
   };
-
-  // Manejar tecla ESC - DESHABILITADO: Solo se puede cerrar con el icono
-  // useEffect(() => {
-  //   const handleEsc = (event) => {
-  //     if (event.keyCode === 27 && isOpen) {
-  //       handleCancel();
-  //     }
-  //   };
-  //   document.addEventListener('keydown', handleEsc);
-  //   return () => document.removeEventListener('keydown', handleEsc);
-  // }, [isOpen, hasChanges]);
 
   if (!isOpen) return null;
 
@@ -253,6 +273,9 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
       <div className="modal-content user-settings-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header del modal */}
         <div className="modal-header-modern">
+          <div className="modal-user-info">
+            <div className="user-name-display">Configuración de Usuario</div>
+          </div>
           <button 
             className="modal-close-button" 
             onClick={handleCancel}
@@ -260,56 +283,10 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
           >
             <CloseIcon />
           </button>
-          <div className="modal-user-info">
-            <div className="user-name-display">Configuración de Usuario</div>
-          </div>
         </div>
 
         {/* Formulario */}
         <form onSubmit={handleSubmit} className={`user-settings-form ${showPasswordSection ? 'password-section-active' : ''}`}>
-          {/* Sección de foto de perfil - centrada */}
-          <div className="profile-section-centered">
-            <div className="profile-photo-wrapper">
-              <div 
-                className={`profile-photo-container ${profilePhotoPreview ? 'has-image' : ''}`}
-                onClick={handlePhotoAreaClick}
-              >
-                {profilePhotoPreview ? (
-                  <>
-                    <img 
-                      src={profilePhotoPreview} 
-                      alt="Foto de perfil" 
-                      className="profile-photo-preview"
-                    />
-                    <div className="photo-overlay">
-                      <CameraIcon className="camera-icon" />
-                    </div>
-                  </>
-                ) : (
-                  <div className="photo-placeholder">
-                    <CameraIcon className="camera-icon-placeholder" />
-                  </div>
-                )}
-              </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoSelect}
-                style={{ display: 'none' }}
-              />
-              {profilePhotoPreview && (
-                <button
-                  type="button"
-                  className="change-photo-text"
-                  onClick={handlePhotoAreaClick}
-                >
-                  Haz clic para cambiar
-                </button>
-              )}
-            </div>
-          </div>
-
           {/* Campos del formulario */}
           <div className="form-fields-container">
             {/* Campo de nombre completo */}
@@ -322,11 +299,15 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
                   ref={firstInputRef}
                   id="userFullName"
                   type="text"
+                  className={errors.userFullName ? 'error' : ''}
                   value={userFullName}
                   onChange={(e) => setUserFullName(e.target.value)}
                   placeholder="Juan Pérez"
                   disabled={isSaving}
                 />
+                {validationMessages.userFullName && (
+                  <span className="error-message">{validationMessages.userFullName}</span>
+                )}
               </div>
             </div>
 
@@ -339,11 +320,15 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
                 <input
                   id="userEmail"
                   type="email"
+                  className={errors.userEmail ? 'error' : ''}
                   value={userEmail}
                   onChange={(e) => setUserEmail(e.target.value)}
                   placeholder="juan@ejemplo.com"
-                  disabled={isSaving}
+                  disabled={true}
                 />
+                {validationMessages.userEmail && (
+                  <span className="error-message">{validationMessages.userEmail}</span>
+                )}
               </div>
             </div>
 
@@ -358,10 +343,13 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="username-input"
+                  className={`username-input ${errors.username ? 'error' : ''}`}
                   placeholder="juanperez"
                   disabled={isSaving}
                 />
+                {validationMessages.username && (
+                  <span className="error-message">{validationMessages.username}</span>
+                )}
               </div>
             </div>
 
@@ -386,11 +374,15 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
                       <input
                         id="currentPassword"
                         type="password"
+                        className={errors.currentPassword ? 'error' : ''}
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
                         placeholder="Ingresa tu contraseña actual"
                         disabled={isSaving}
                       />
+                      {validationMessages.currentPassword && (
+                        <span className="error-message">{validationMessages.currentPassword}</span>
+                      )}
                     </div>
                   </div>
 
@@ -402,11 +394,15 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
                       <input
                         id="newPassword"
                         type="password"
+                        className={errors.newPassword ? 'error' : ''}
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="Ingresa una nueva contraseña"
+                        placeholder="Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo"
                         disabled={isSaving}
                       />
+                      {validationMessages.newPassword && (
+                        <span className="error-message">{validationMessages.newPassword}</span>
+                      )}
                     </div>
                   </div>
 
@@ -418,11 +414,15 @@ const UserSettingsModal = ({ isOpen, onClose, currentUser, onSaveUser }) => {
                       <input
                         id="confirmPassword"
                         type="password"
+                        className={errors.confirmPassword ? 'error' : ''}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Confirma tu nueva contraseña"
                         disabled={isSaving}
                       />
+                      {validationMessages.confirmPassword && (
+                        <span className="error-message">{validationMessages.confirmPassword}</span>
+                      )}
                     </div>
                   </div>
 

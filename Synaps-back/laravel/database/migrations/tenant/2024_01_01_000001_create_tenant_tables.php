@@ -75,6 +75,7 @@ return new class extends Migration
             $table->string('logical_path', 255);
             $table->boolean('is_private')->default(0);
             $table->dateTime('created_at')->useCurrent();
+            $table->integer('pin')->nullable();
             $table->index('vault_id2');
             $table->index('user_id');
         });

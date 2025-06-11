@@ -9,7 +9,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 /**
@@ -50,9 +49,9 @@ class UserController extends Controller
                 'message' => 'Usuario obtenido exitosamente',
                 'user' => [
                     'id' => $user->user_id,
-                    'name' => $user->user_name,
-                    'email' => $user->user_email,
-                    'profile_photo' => $user->user_profile_photo ? url('storage/' . $user->user_profile_photo) : null,
+                    'user_full_name' => $user->user_full_name,
+                    'user_email' => $user->user_email,
+                    'user_name' => $user->user_name,
                     // No incluir la contraseña por seguridad
                 ]
             ]);
@@ -99,6 +98,7 @@ class UserController extends Controller
             // Validar los datos de entrada
             $validatedData = $request->validate([
                 'name' => 'sometimes|required|string|min:2|max:255',
+                'full_name' => 'sometimes|required|string|min:2|max:255',
                 'email' => [
                     'sometimes',
                     'required',
@@ -108,7 +108,6 @@ class UserController extends Controller
                 ],
                 'currentPassword' => 'sometimes|required_with:newPassword|string',
                 'newPassword' => 'sometimes|required_with:currentPassword|string|min:6|max:255',
-                'profilePhoto' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:5120', // Máximo 5MB
             ]);
 
             // Verificar contraseña actual si se está cambiando
@@ -130,6 +129,11 @@ class UserController extends Controller
                 $updated = true;
             }
 
+            if (isset($validatedData['full_name']) && $validatedData['full_name'] !== $user->user_full_name) {
+                $user->user_full_name = $validatedData['full_name'];
+                $updated = true;
+            }
+
             if (isset($validatedData['email']) && $validatedData['email'] !== $user->user_email) {
                 $user->user_email = $validatedData['email'];
                 $updated = true;
@@ -137,19 +141,6 @@ class UserController extends Controller
 
             if (isset($validatedData['newPassword'])) {
                 $user->user_password = Hash::make($validatedData['newPassword']);
-                $updated = true;
-            }
-
-            // Manejar subida de foto de perfil
-            if ($request->hasFile('profilePhoto')) {
-                // Eliminar foto anterior si existe
-                if ($user->user_profile_photo) {
-                    Storage::disk('public')->delete($user->user_profile_photo);
-                }
-
-                // Subir nueva foto
-                $photoPath = $request->file('profilePhoto')->store('profile_photos', 'public');
-                $user->user_profile_photo = $photoPath;
                 $updated = true;
             }
 
@@ -163,8 +154,8 @@ class UserController extends Controller
                 'user' => [
                     'id' => $user->user_id,
                     'name' => $user->user_name,
+                    'full_name' => $user->user_full_name,
                     'email' => $user->user_email,
-                    'profile_photo' => $user->user_profile_photo ? url('storage/' . $user->user_profile_photo) : null,
                 ]
             ]);
 

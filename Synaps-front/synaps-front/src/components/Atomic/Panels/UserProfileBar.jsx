@@ -3,6 +3,7 @@ import { ReactComponent as VaultIcon } from "../../../assets/icons/vault.svg";
 import { ReactComponent as SettingsHexIcon } from "../../../assets/icons/settings-hex.svg";
 import { ReactComponent as AddVaultIcon } from "../../../assets/icons/add-vault.svg";
 import { ReactComponent as LockIcon } from "../../../assets/icons/lock.svg";
+import { ReactComponent as EditIcon } from "../../../assets/icons/edit.svg";
 import ContextMenu from "../Menu/ContextMenu";
 
 /**
@@ -163,23 +164,40 @@ const UserProfileBar = ({ currentUser, vaults = [], currentVault, onVaultSelect,
   return (
     <div className="user-profile-bar">
       {/* Selector de Vault */}
-      <div className="vault-section" ref={vaultButtonRef} onClick={handleVaultSelectorClick}>
-        <div className="vault-icon-wrapper">
-          <VaultIcon className="vault-icon" />
-        </div>
-        <div className="vault-selector">
-          <span className="vault-name">
-            {currentVault ? 
-              (currentVault.name || currentVault.vault_title || 'Vault sin nombre') : 
-              "Seleccionar Vault"
-            }
-          </span>
-        </div>
-        {/* Mostrar icono de lock si la vault actual es privada */}
-        {currentVault && currentVault.is_private && (
-          <div className="vault-lock-icon">
-            <LockIcon />
+      <div className="vault-section-container">
+        <div className="vault-section" ref={vaultButtonRef} onClick={handleVaultSelectorClick}>
+          <div className="vault-icon-wrapper">
+            <VaultIcon className="vault-icon" />
           </div>
+          <div className="vault-selector">
+            <span className="vault-name">
+              {currentVault ? 
+                (currentVault.name || currentVault.vault_title || 'Vault sin nombre') : 
+                "Seleccionar Vault"
+              }
+            </span>
+          </div>
+          {/* Mostrar icono de lock si la vault actual es privada */}
+          {currentVault && currentVault.is_private && (
+            <div className="vault-lock-icon">
+              <LockIcon />
+            </div>
+          )}
+        </div>
+        {/* Botón de edición directo */}
+        {currentVault && (
+          <button 
+            className="vault-edit-button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (typeof onEditVault === 'function') {
+                onEditVault(currentVault);
+              }
+            }}
+            title="Editar vault"
+          >
+            <EditIcon />
+          </button>
         )}
       </div>
       

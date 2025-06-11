@@ -102,11 +102,6 @@ class User extends Authenticatable
         'user_name',
         'user_full_name',
         'user_password',
-        'user_profile_photo',
-        'tenant_database_name',
-        'tenant_setup_completed',
-        'tenant_created_at',
-        'tenant_metadata',
         'first_login',
     ];
 

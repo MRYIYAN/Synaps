@@ -12,6 +12,7 @@ import LogoutConfirmModal from "./Atomic/Modal/LogoutConfirmModal";
 import CreateVaultModal from "./Atomic/Modal/CreateVaultModal";
 import EditVaultModal from "./Atomic/Modal/EditVaultModal";
 import VaultPinModal from "./Atomic/Modal/VaultPinModal";
+import UserSettingsModal from "./Atomic/Modal/UserSettingsModal";
 import UserProfileBar from "./Atomic/Panels/UserProfileBar";
 import FilesPanel      from './Atomic/Panels/FilesPanel';
 import GalaxyViewPanel  from './Atomic/Panels/GalaxyViewPanel';
@@ -47,7 +48,6 @@ const SidebarPanel = () => {
   const [indicatorPosition, setIndicatorPosition] = useState(0);
   const [isClosing, setIsClosing]                 = useState(false);
   const [showLogoutModal, setShowLogoutModal]     = useState(false);
-  const [showSettingsMenu, setShowSettingsMenu]   = useState(false);
   const [showCreateVaultModal, setShowCreateVaultModal] = useState(false);
   const [showEditVaultModal, setShowEditVaultModal] = useState(false);
   const [editingVault, setEditingVault] = useState(null);
@@ -57,14 +57,17 @@ const SidebarPanel = () => {
   const [pendingVault, setPendingVault] = useState(null);
 
   // Estados para los datos del usuario y las vaults
-  // TODO: Reemplazar con datos reales de la API
   const [currentUser, setCurrentUser] = useState({
     name: "",
+    email: "",
     avatar: null
   });
 
   const [vaults, setVaults] = useState([]);
   const [currentVault, setCurrentVault] = useState(null);
+  
+  // Estado para el modal de configuración de usuario
+  const [showUserSettingsModal, setShowUserSettingsModal] = useState(false);
 
   // Estados para manejo de PIN en vaults privadas
   const [vaultPin, setVaultPin] = useState("");
@@ -119,11 +122,63 @@ const SidebarPanel = () => {
 
   // Cargar datos iniciales
   useEffect(() => {
-    // Cargar datos del usuario (simulado)
-    setCurrentUser({
-      name: "Usuario",
-      avatar: null
-    });
+    // Función para cargar datos del usuario desde la API
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          console.warn('No hay token de autenticación');
+          setCurrentUser({
+            name: "Usuario",
+            email: "usuario@ejemplo.com",
+            avatar: null
+          });
+          return;
+        }
+
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.result === 1 && data.user) {
+            setCurrentUser({
+              name: data.user.user_full_name || data.user.user_name || "Usuario",
+              email: data.user.user_email || "usuario@ejemplo.com",
+              avatar: data.user.profile_photo || null
+            });
+          } else {
+            // Fallback si no se puede obtener los datos
+            setCurrentUser({
+              name: "Usuario",
+              email: "usuario@ejemplo.com", 
+              avatar: null
+            });
+          }
+        } else {
+          console.error('Error al obtener datos del usuario');
+          setCurrentUser({
+            name: "Usuario",
+            email: "usuario@ejemplo.com",
+            avatar: null
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar datos del usuario:', error);
+        setCurrentUser({
+          name: "Usuario", 
+          email: "usuario@ejemplo.com",
+          avatar: null
+        });
+      }
+    };
+
+    // Cargar datos del usuario
+    fetchUserData();
 
     // Cargar vaults reales desde la API
     const fetchVaults = async () => {
@@ -214,8 +269,12 @@ const SidebarPanel = () => {
   
   // Nueva función para manejar el menú de configuración
   const handleSettingsClick = () => {
-    setShowSettingsMenu(!showSettingsMenu);
-    // TODO: Implementar el menú de configuración
+    setShowUserSettingsModal(true);
+  };
+  
+  // Función para cerrar el modal de configuración de usuario
+  const handleUserSettingsClose = () => {
+    setShowUserSettingsModal(false);
   };
   
   /**
@@ -342,6 +401,16 @@ const handleCreateVault = async (vaultData) => {
     } else {
       setVaultPinError("PIN incorrecto. Inténtalo de nuevo.");
     }
+  };
+
+  // Función para actualizar el usuario actual después de guardar cambios
+  const handleUserSave = (updatedUser) => {
+    setCurrentUser(prev => ({
+      ...prev,
+      name: updatedUser.user_full_name || updatedUser.user_name || prev.name,
+      email: updatedUser.user_email || prev.email,
+      avatar: updatedUser.profile_photo || prev.avatar
+    }));
   };
 
   // Determinamos qué componente mostrar en el panel basado en la selección actual
@@ -476,6 +545,14 @@ const handleCreateVault = async (vaultData) => {
         onClose={handleVaultPinClose}
         onSuccess={handleVaultPinSuccess}
         vault={pendingVault}
+      />
+
+      {/* Modal de configuración de usuario */}
+      <UserSettingsModal
+        isOpen={showUserSettingsModal}
+        onClose={handleUserSettingsClose}
+        currentUser={currentUser}
+        onSaveUser={handleUserSave}
       />
     </div>
   );

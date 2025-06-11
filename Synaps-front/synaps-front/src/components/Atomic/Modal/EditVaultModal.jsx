@@ -16,7 +16,7 @@
 //====================================================================================//
 // Importaciones de React y sus hooks para manejo de estado y efectos
 import React, { useState, useRef, useEffect } from 'react';
-import { http_post } from '../../../lib/http';
+import { http_put } from '../../../lib/http';
 
 // Iconos SVG utilizados en la interfaz
 import { ReactComponent as CloseIcon } from "../../../assets/icons/close.svg";
@@ -304,7 +304,7 @@ const EditVaultModal = ({ isOpen, onClose, onEditVault, vault }) => {
         pin: (isPrivate && !removePIN) ? pin : null
       };
 
-      const result = await http_post(url, body, 'PUT');
+      const result = await http_put(url, body);
 
       await new Promise(resolve => setTimeout(resolve, 1000));
 

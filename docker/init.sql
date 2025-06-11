@@ -16,12 +16,13 @@ CREATE TABLE `users` (
   `user_name` varchar(255) NOT NULL,
   `user_full_name` varchar(255) DEFAULT NULL,
   `user_password` varchar(255) NOT NULL,
+  `user_profile_photo` varchar(500) DEFAULT NULL,
   `first_login` tinyint(1) DEFAULT 1,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 INSERT INTO `users` (`user_id`, `user_id2`, `user_email`, `user_name`, `user_full_name`,`user_password`) VALUES
-(1, 'F7D8S9FG78F9DG78D9F7G89DF789FDGU', 'test@example.com', 'Usuario de prueba', 'Usuario de Prueba Test', '$2y$12$423rSF4V2fqyddNr6AuCUeM1BiuIifLAEldi49Wr9tEwG5kX0azb.');
+(1, 'F7D8S9FG78F9DG78D9F7G89DF789FDGU', 'test@example.com', 'Usuario de prueba', 'Usuario de Prueba Test', '$2y$10$6IdSom7etaa06Vl8YjSeg.zQh//JfL0WktZAqXvqMeXERKVXrXj02');
 
 -- Crear base por cliente
 CREATE DATABASE IF NOT EXISTS synaps_0001;
@@ -170,6 +171,7 @@ CREATE TABLE `vaults` (
   `logical_path` varchar(255) NOT NULL,
   `is_private` tinyint(1) DEFAULT 0,
   `created_at` datetime DEFAULT current_timestamp(),
+  `pin` int(11) default null
   PRIMARY KEY (`vault_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
@@ -177,23 +179,7 @@ INSERT INTO `vaults` (`vault_id`, `vault_id2`, `vault_title`, `user_id`, `logica
 (1, 'd78fsd9g789sd7d8f9sdf7f89as789', 'TEST', 1, '/SynapsVaults/TEST', 0, '2025-05-18 20:54:54'),
 (2, 'F7D8FG97DF89GF7SD89', 'TEST2', 1, '/SynapsVaults/TEST2', 0, '2025-05-18 20:54:54');
 
-ALTER TABLE `docs`
-  ADD PRIMARY KEY (`doc_id`);
-
-ALTER TABLE `folders_notes`
-  ADD PRIMARY KEY (`folder_id`);
-
-ALTER TABLE `log`
-  ADD PRIMARY KEY (`log_id`);
-
-ALTER TABLE `notes`
-  ADD PRIMARY KEY (`note_id`);
-
-ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`notification_id`);
-
-ALTER TABLE `vaults`
-  ADD PRIMARY KEY (`vault_id`);
+-- Las claves primarias ya están definidas en CREATE TABLE, no necesitamos ALTER TABLE
 
 ALTER TABLE `docs`
   MODIFY `doc_id` int(11) NOT NULL AUTO_INCREMENT;
