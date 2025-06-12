@@ -22,8 +22,8 @@ services:
       - ./Synaps-back/laravel/routes:/var/www/html/routes
       - ./Synaps-back/laravel/resources:/var/www/html/resources
       - ./Synaps-back/laravel/public:/var/www/html/public
-      - ./Synaps-back/laravel/.env:/var/www/html/.env 
       - /c/Users:/windows-users:rw  
+      - ./Synaps-back/laravel/.env:/var/www/html/.env
     # El script docker-entrypoint.sh se encarga de la configuración inicial
 
     depends_on:

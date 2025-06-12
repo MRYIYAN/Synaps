@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y \
     mariadb-client \
     dos2unix \
     netcat-openbsd \
-    && docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl
+    git curl nano bash \
+    && docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl bcmath gd
 
 # Habilitar Apache mod_rewrite
 RUN a2enmod rewrite
@@ -22,6 +23,9 @@ RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /e
 
 # Copiar el código fuente al contenedor
 COPY . /var/www/html
+
+# Instalar Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Establecer el directorio de trabajo
 WORKDIR /var/www/html

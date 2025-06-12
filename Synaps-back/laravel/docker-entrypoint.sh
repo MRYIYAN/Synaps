@@ -8,6 +8,11 @@ done
 
 echo " MariaDB disponible. Continuando..."
 
+# -----------------------------------------
+# 1. LIMPIAR CACHÉ DE CONFIG INMEDIATAMENTE
+# -----------------------------------------
+php artisan config:clear
+
 # Dependencias y optimización
 composer require firebase/php-jwt --no-interaction
 composer dump-autoload --optimize
@@ -60,7 +65,6 @@ if [ -d storage/app/public/profile_photos ] && [ -w storage/app/public/profile_p
 fi
 
 # Migraciones base principal
-php artisan config:clear
 php artisan migrate --force
 
 # Verificar permisos
@@ -74,7 +78,9 @@ fi
 # Migración tenant si existe
 php artisan migrate --database=tenant --force || echo " Tenant no migrado (puede no existir aún)."
 
-# Cache Laravel
+# -----------------------------------------
+# 2. AL FINAL REGENERAR CACHÉ
+# -----------------------------------------
 php artisan config:cache
 php artisan route:cache
 

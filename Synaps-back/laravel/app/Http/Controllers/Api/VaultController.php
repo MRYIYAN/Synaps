@@ -163,7 +163,7 @@ class VaultController extends Controller
             //=========================//
             $validated = $request->validate( [
                 'vault_title'   => 'required|string|max:255',
-                'logical_path'  => 'required|string|max:255',
+                'logical_path'  => 'nullable|string|max:255',
                 'is_private'    => 'boolean',
                 'pin'           => 'nullable|string|max:8'
             ] );
@@ -195,7 +195,7 @@ class VaultController extends Controller
                 'vault_id2'     => $vault_id2,
                 'vault_title'   => $validated['vault_title'],
                 'user_id'       => $user_id,
-                'logical_path'  => $validated['logical_path'],
+                // 'logical_path'  => $validated['logical_path'], // Eliminado
                 'is_private'    => $validated['is_private'] ?? false,
                 'created_at'    => now()
             ];

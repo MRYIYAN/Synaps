@@ -165,12 +165,12 @@ function handle_ws_message( ws, message, set_token_callback )
         clearTimeout(global.persist_timers.get(token));
       }
 
-      // Nuevo timer para guardar en DB en 5s
+      // Nuevo timer para guardar en DB en 2s
       if(!global.persist_timers) global.persist_timers = new Map();
       const timer = setTimeout(() => {
         persistToDatabase(token, markdown, jwt);
         global.persist_timers.delete(token);
-      }, 5000);
+      }, 2000);
 
       global.persist_timers.set(token, timer);
 

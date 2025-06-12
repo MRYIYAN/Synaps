@@ -197,7 +197,8 @@ ALTER TABLE `notifications`
   MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `vaults`
-  MODIFY `vault_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `vault_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3,
+  MODIFY `logical_path` varchar(255) DEFAULT NULL;
 
 -- ============================================
 -- TABLAS DE TAREAS (TASK MANAGEMENT SYSTEM)
