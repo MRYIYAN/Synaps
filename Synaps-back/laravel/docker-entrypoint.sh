@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#  Elimina la caché de configuración si existe (para forzar la lectura de .env)
+rm -f bootstrap/cache/config.php
+
 echo " Esperando a MariaDB..."
 until nc -z synaps-mariadb 3306; do
   echo " Esperando conexión a la base de datos..."

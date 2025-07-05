@@ -16,14 +16,15 @@ services:
     ports:
       - "8010:80" # Laravel en Apache
     volumes:
-      - ./Synaps-back/laravel:/var/www/html
+      # - ./Synaps-back/laravel:/var/www/html   # Eliminado
       - ./SQL:/var/www/html/SQL
       - ./Synaps-back/laravel/app:/var/www/html/app
       - ./Synaps-back/laravel/routes:/var/www/html/routes
       - ./Synaps-back/laravel/resources:/var/www/html/resources
       - ./Synaps-back/laravel/public:/var/www/html/public
       - /c/Users:/windows-users:rw  
-      - ./Synaps-back/laravel/.env:/var/www/html/.env
+    env_file:
+      - ./Synaps-back/laravel/.env
     # El script docker-entrypoint.sh se encarga de la configuración inicial
 
     depends_on:

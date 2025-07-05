@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -169,4 +168,15 @@ return [
         App\Providers\RouteServiceProvider::class, // <-- ESTE ES CLAVE
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Flask Secret Key (ejemplo de acceso directo a variable de entorno)
+    |--------------------------------------------------------------------------
+    |
+    | Si necesitas exponer FLASK_SECRET_KEY en la config de Laravel,
+    | puedes hacerlo así para que esté disponible en config('app.flask_secret_key')
+    |
+    */
+
+    'flask_secret_key' => env('FLASK_SECRET_KEY'),
 ];

@@ -24,6 +24,7 @@ RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /e
 # Copiar el código fuente al contenedor
 COPY . /var/www/html
 
+
 # Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
