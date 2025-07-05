@@ -94,7 +94,12 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
   // Función separada para realizar la selección de vault después de autenticación exitosa
   const performVaultSelection = useCallback((vault) => {
     setCurrentVault(vault);
+    
+    // Actualizar el vault_id actual - usar vault_id (ID numérico) para la selección actual
     window.currentVaultId = parseInt(vault?.vault_id || 0, 10);
+    
+    // También podemos guardar el vault_id2 (UUID) para referencia si es necesario
+    window.currentVaultId2 = vault?.vault_id2 || '';
 
     // Notificar a FilesPanel que cambió la vault
     window.dispatchEvent(new Event("vaultChanged"));
@@ -193,8 +198,7 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
         const { result, http_data } = await http_get(url);
         
         if(result === 1) {
-          const vaults = http_data || [];
-          console.log('Vaults loaded from API:', vaults);
+          const vaults = http_data.vaults || [];
           
           // Asegurar que cada vault tenga una propiedad name
           const processedVaults = vaults.map((vault, index) => ({
@@ -334,54 +338,18 @@ const SidebarPanel = ({ defaultSelectedItem = 'files' }) => {
  * Realiza validaciones frontend y luego llama al backend usando fetch.
  * Retorna una Promise para que el modal pueda usar async/await y mostrar animaciones.
  */
-const handleCreateVault = async(vaultData) => {
+const handleCreateVault = async(newVault) => {
   // Retornamos Promise para poder usar async/await desde el modal
   return new Promise(async(resolve, reject) => {
     // Simular un retraso para ver la animación de carga
     setTimeout(async() => {
       try {
-        // 1. Caso especial para demostración: "Error" provoca error
-        if(vaultData.name && vaultData.name.toLowerCase() === "error") {
-          reject(new Error('Ya existe una vault con ese nombre.'));
-          return;
-        }
-
-        // 2. Verificar nombres duplicados (validación real, solo frontend)
-        if(vaults.some(v => v.name.toLowerCase() === vaultData.name.toLowerCase())) {
-          reject(new Error('Ya existe una vault con ese nombre.'));
-          return;
-        }
-
-        // 3. Validar PIN en vaults privadas
-        if(vaultData.isPrivate && (!vaultData.pin || vaultData.pin.length < 4)) {
-          reject(new Error('El PIN debe tener al menos 4 dígitos.'));
-          return;
-        }
-
-        // Preparar datos para http_post
-        const url = "http://localhost:8010/api/vaults";
-        const body = vaultData;
-        
-        // Realizar la solicitud POST al backend usando http_post
-        const http_response = await http_post(url, body);
-
-        // Verificar si la respuesta es exitosa
-        if(http_response.result !== 1) {
-          reject(new Error(http_response.message || "Error al crear la vault."));
-          return;
-        }
-
-        // Obtener la vault creada desde la respuesta
-        const responseData = http_response.http_data;
-        const newVault = {
-          ...responseData.data,
-          name: responseData.data.vault_title,
-          id: responseData.data.vault_id2
-        };
 
         // Actualizar el estado con la nueva vault
         setVaults((prevVaults) => [...prevVaults, newVault]);
-        setCurrentVault(newVault);
+        
+        // Seleccionar la nueva vault como la actual
+        performVaultSelection(newVault);
 
         // Resolvemos la promesa para que se muestre la animación de éxito
         resolve(newVault);

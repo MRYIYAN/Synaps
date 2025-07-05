@@ -272,9 +272,9 @@ const CreateVaultModal = ({ isOpen, onClose, onCreateVault }) => {
 
       // Llama al callback para actualizar el sidebar
       onCreateVault({
-        ...result.data,
-        name: result.data.vault_title,
-        id: result.data.vault_id2
+        ...result.http_data.vault,
+        name: result.http_data.vault.vault_title,
+        id: result.http_data.vault.vault_id2
       });
 
     } catch (error) {
